@@ -1,6 +1,7 @@
 import 'dart:math';
 import 'dart:ui';
 
+import 'package:coozy_cafe/AppLocalization.dart';
 import 'package:coozy_cafe/database_helper/DatabaseHelper.dart';
 import 'package:coozy_cafe/model/table_info_model.dart';
 import 'package:coozy_cafe/pages/main_screen/table_screen/new_table_info_dialog.dart';
@@ -45,8 +46,10 @@ class _TableScreenState extends State<TableScreen>
         child: Scaffold(
           resizeToAvoidBottomInset: true,
           appBar: AppBar(
-            title: const Text(
-              "Table Info",
+            title: Text(
+              AppLocalizations.of(context)
+                      ?.translate(StringValue.table_info_app_bar_title) ??
+                  "Table Info",
             ),
             leadingWidth: 35,
             centerTitle: false,
@@ -72,8 +75,13 @@ class _TableScreenState extends State<TableScreen>
                           color: Colors.white,
                         ),
                 ),
-                tooltip:
-                    isGridView ? "Switch to List View" : "Switch to Grid View",
+                tooltip: isGridView
+                    ? (AppLocalizations.of(context)
+                            ?.translate(StringValue.common_list_view_tooltip) ??
+                        "Switch to List View")
+                    : (AppLocalizations.of(context)
+                            ?.translate(StringValue.common_grid_view_tooltip) ??
+                        "Switch to Grid View"),
               ),
               IconButton(
                 onPressed: () async {
@@ -85,31 +93,55 @@ class _TableScreenState extends State<TableScreen>
                           // Handle the creation of the new table here
                           Constants.debugLog(TableScreen,
                               'Created new table: ${newTableInfoModel}');
-                          var result = await RestaurantRepository()
+                          int? result = await RestaurantRepository()
                               .addNewTableInfo(newTableInfoModel);
                           Constants.debugLog(
                               TableScreen, "Created new:$result");
                           setState(() {
                             loadData();
                           });
-                          Navigator.of(context).pop(); // Close the dialog
-                          Constants.customTimerPopUpDialogMessage(
-                              classObject: TableScreen,
-                              isLoading: true,
-                              context: context,
-                              descriptions:
-                                  "New table has been added successfully.",
-                              title: "",
-                              titleIcon: Lottie.asset(
-                                MediaQuery.of(context).platformBrightness ==
-                                        Brightness.light
-                                    ? StringImagePath
-                                        .done_light_brown_color_lottie
-                                    : StringImagePath.done_brown_color_lottie,
-                                repeat: false,
-                              ),
-                              showForHowDuration: const Duration(seconds: 3),
-                              navigatorKey: navigatorKey);
+                          Navigator.of(context).pop();
+                          if (result != null && result > 0) {
+                            Constants.customTimerPopUpDialogMessage(
+                                classObject: TableScreen,
+                                isLoading: true,
+                                context: context,
+                                descriptions: AppLocalizations.of(context)
+                                        ?.translate(StringValue
+                                            .table_added_successfully_text) ??
+                                    "New table has been added successfully.",
+                                title: "",
+                                titleIcon: Lottie.asset(
+                                  MediaQuery.of(context).platformBrightness ==
+                                          Brightness.light
+                                      ? StringImagePath
+                                          .done_light_brown_color_lottie
+                                      : StringImagePath.done_brown_color_lottie,
+                                  repeat: false,
+                                ),
+                                showForHowDuration: const Duration(seconds: 3),
+                                navigatorKey: navigatorKey);
+                          } else {
+                            Constants.customTimerPopUpDialogMessage(
+                                classObject: TableScreen,
+                                isLoading: true,
+                                context: context,
+                                descriptions: AppLocalizations.of(context)
+                                        ?.translate(StringValue
+                                            .table_failed_to_added_text) ??
+                                    "Fail to add new table info.",
+                                title: "",
+                                titleIcon: Lottie.asset(
+                                  MediaQuery.of(context).platformBrightness ==
+                                          Brightness.light
+                                      ? StringImagePath
+                                          .done_light_brown_color_lottie
+                                      : StringImagePath.done_brown_color_lottie,
+                                  repeat: false,
+                                ),
+                                showForHowDuration: const Duration(seconds: 3),
+                                navigatorKey: navigatorKey);
+                          }
                         },
                       );
                     },
@@ -119,7 +151,9 @@ class _TableScreenState extends State<TableScreen>
                   Icons.add,
                   color: Colors.white,
                 ),
-                tooltip: "Add new Table",
+                tooltip: AppLocalizations.of(context)
+                        ?.translate(StringValue.add_table_icon_tooltip_text) ??
+                    "Add a new Table",
               ),
             ],
           ),
@@ -140,36 +174,9 @@ class _TableScreenState extends State<TableScreen>
 
   Widget buildReorderableGridView() {
     return ReorderableGridView.builder(
-      itemCount: list == null ? 0 : list?.length ?? 0,
+      itemCount: list == null ? 0 : list!.length,
       itemBuilder: (context, index) => buildGridItem(list![index], index),
-      onReorder: (oldIndex, newIndex) async {
-        Constants.debugLog(TableScreen, "reorder: $oldIndex -> $newIndex");
-        var db = await _databaseHelper.database;
-
-        await db!.transaction((txn) async {
-          // Update sortOrderIndex in the database
-          final int minIndex = min(oldIndex, newIndex);
-          final int maxIndex = max(oldIndex, newIndex);
-
-          // Get the item being moved
-          final TableInfoModel movingItem = list!.removeAt(oldIndex);
-          // Insert the item at the new position
-          list!.insert(newIndex, movingItem);
-
-          // Update sortOrderIndex for affected items
-          for (int i = minIndex; i <= maxIndex; i++) {
-            final TableInfoModel currentItem = list![i];
-            currentItem.sortOrderIndex = i;
-            await txn.update(
-              _databaseHelper.tableInfoTable,
-              currentItem.toJson(),
-              where: 'id = ?',
-              whereArgs: [currentItem.id],
-            );
-          }
-        });
-        setState(() {});
-      },
+      onReorder: onReOrder,
       placeholderBuilder: (dragIndex, dropIndex, dragWidget) {
         return Container(
           decoration: BoxDecoration(
@@ -193,57 +200,6 @@ class _TableScreenState extends State<TableScreen>
     );
   }
 
-  Widget buildReorderableListView() {
-    return ReorderableListView.builder(
-      itemCount: list == null ? 0 : list?.length ?? 0,
-      itemBuilder: (context, index) => buildListItem(list![index], index),
-      onReorder: (oldIndex, newIndex) async {
-        Constants.debugLog(TableScreen, "reorder: $oldIndex -> $newIndex");
-        var db = await _databaseHelper.database;
-
-        await db!.transaction((txn) async {
-          // Update sortOrderIndex in the database
-          final int minIndex = min(oldIndex, newIndex);
-          final int maxIndex = max(oldIndex, newIndex);
-
-          // Get the item being moved
-          final TableInfoModel movingItem = list!.removeAt(oldIndex);
-          // Insert the item at the new position
-          list!.insert(newIndex, movingItem);
-
-          // Update sortOrderIndex for affected items
-          for (int i = minIndex; i <= maxIndex; i++) {
-            final TableInfoModel currentItem = list![i];
-            currentItem.sortOrderIndex = i;
-            await txn.update(
-              _databaseHelper.tableInfoTable,
-              currentItem.toJson(),
-              where: 'id = ?',
-              whereArgs: [currentItem.id],
-            );
-          }
-        });
-        setState(() {});
-      },
-      proxyDecorator: (child, index, animation) {
-        return AnimatedBuilder(
-          animation: animation,
-          builder: (BuildContext context, Widget? child) {
-            final double animValue =
-                Curves.easeInOut.transform(animation.value);
-            final double elevation = lerpDouble(1, 6, animValue)!;
-            final double scale = lerpDouble(1, 1.02, animValue)!;
-            return Transform.scale(
-              scale: scale,
-              child: buildListItem(list![index], index),
-            );
-          },
-          child: child,
-        );
-      },
-    );
-  }
-
   Widget buildGridItem(TableInfoModel model, var index) {
     return Card(
       key: ValueKey("$index"),
@@ -263,14 +219,34 @@ class _TableScreenState extends State<TableScreen>
               child: Center(
                 child: Padding(
                   padding: const EdgeInsets.symmetric(horizontal: 10),
-                  child: Row(
+                  child: Column(
                     mainAxisAlignment: MainAxisAlignment.start,
                     crossAxisAlignment: CrossAxisAlignment.start,
                     mainAxisSize: MainAxisSize.min,
-                    children: <Widget>[
-                      Expanded(
-                        child:
-                            Text("${model.name}", textAlign: TextAlign.center),
+                    children: [
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.start,
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        mainAxisSize: MainAxisSize.min,
+                        children: <Widget>[
+                          Expanded(
+                            child: Text(
+                                "${AppLocalizations.of(context)?.translate(StringValue.table_name_label_text) ?? "Table Name"}: ${model.name}",
+                                textAlign: TextAlign.start),
+                          ),
+                        ],
+                      ),
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.start,
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        mainAxisSize: MainAxisSize.min,
+                        children: <Widget>[
+                          Expanded(
+                            child: Text(
+                                "${AppLocalizations.of(context)?.translate(StringValue.table_nos_of_chairs_label_text) ?? "Nos Of Chairs per Table"}: ${model.nosOfChairs}",
+                                textAlign: TextAlign.start),
+                          ),
+                        ],
                       ),
                     ],
                   ),
@@ -282,60 +258,7 @@ class _TableScreenState extends State<TableScreen>
             top: 8.0, // Adjust the top position as needed
             right: 8.0, // Adjust the right position as needed
             child: GestureDetector(
-              onTap: () async {
-                // Handle the delete action here
-                Constants.debugLog(
-                    TableScreen, 'Delete table with ID: ${model.id}');
-                int? result =
-                    await RestaurantRepository().deleteTableInfo(model.id!);
-                Constants.debugLog(
-                    TableScreen, "Delete RestaurantRepository result:$result");
-                if (result != -1) {
-                  list?.removeAt(index);
-                  setState(() {});
-                  Constants.customTimerPopUpDialogMessage(
-                      classObject: TableScreen,
-                      isLoading: true,
-                      context: context,
-                      descriptions:
-                          "Select table has been remove successfully.",
-                      title: "",
-                      titleIcon: Lottie.asset(
-                        MediaQuery.of(context).platformBrightness ==
-                                Brightness.light
-                            ? StringImagePath.done_light_brown_color_lottie
-                            : StringImagePath.done_brown_color_lottie,
-                        repeat: false,
-                      ),
-                      showForHowDuration: const Duration(seconds: 3),
-                      navigatorKey: navigatorKey);
-                  // Fluttertoast.showToast(
-                  //     msg: "Select table has been remove successfully.",
-                  //     timeInSecForIosWeb: 3,
-                  //     toastLength: Toast.LENGTH_SHORT);
-                } else {
-                  Constants.customTimerPopUpDialogMessage(
-                      classObject: TableScreen,
-                      isLoading: true,
-                      context: context,
-                      descriptions: "Failed to delete you select table.",
-                      title: "",
-                      titleIcon: Lottie.asset(
-                        MediaQuery.of(context).platformBrightness ==
-                                Brightness.light
-                            ? StringImagePath.done_light_brown_color_lottie
-                            : StringImagePath.done_brown_color_lottie,
-                        repeat: false,
-                      ),
-                      showForHowDuration: const Duration(seconds: 3),
-                      navigatorKey: navigatorKey);
-                  // Fluttertoast.showToast(
-                  //     msg: "Failed to delete you select table.",
-                  //     timeInSecForIosWeb: 3,
-                  //     toastLength: Toast.LENGTH_SHORT);
-                  setState(() {});
-                }
-              },
+              onTap: () async => onDeletedAction(model, index),
               child: const Icon(
                 Icons.delete,
                 color: Colors.red,
@@ -345,6 +268,30 @@ class _TableScreenState extends State<TableScreen>
           ),
         ],
       ),
+    );
+  }
+
+  Widget buildReorderableListView() {
+    return ReorderableListView.builder(
+      itemCount: list == null ? 0 : list!.length,
+      itemBuilder: (context, index) => buildListItem(list![index], index),
+      onReorder: onReOrder,
+      proxyDecorator: (child, index, animation) {
+        return AnimatedBuilder(
+          animation: animation,
+          builder: (BuildContext context, Widget? child) {
+            final double animValue =
+                Curves.easeInOut.transform(animation.value);
+            final double elevation = lerpDouble(1, 6, animValue)!;
+            final double scale = lerpDouble(1, 1.02, animValue)!;
+            return Transform.scale(
+              scale: scale,
+              child: buildListItem(list![index], index),
+            );
+          },
+          child: child,
+        );
+      },
     );
   }
 
@@ -367,88 +314,76 @@ class _TableScreenState extends State<TableScreen>
                 await updateTableInfo(model, index);
               },
               borderRadius: BorderRadius.circular(5.0),
-              child: Center(
-                child: Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 10),
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.start,
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    mainAxisSize: MainAxisSize.min,
-                    children: <Widget>[
-                      Expanded(
-                        child:
-                            Text("${model.name}", textAlign: TextAlign.center),
+              child: Padding(
+                padding: const EdgeInsets.all(5.0),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.start,
+                  crossAxisAlignment: CrossAxisAlignment.center,
+                  mainAxisSize: MainAxisSize.min,
+                  children: <Widget>[
+                    Expanded(
+                      child: Column(
+                        mainAxisAlignment: MainAxisAlignment.start,
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          Row(
+                            mainAxisAlignment: MainAxisAlignment.start,
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            mainAxisSize: MainAxisSize.min,
+                            children: <Widget>[
+                              Expanded(
+                                child: Text(
+                                    "${AppLocalizations.of(context)?.translate(StringValue.table_name_label_text) ?? "Table Name"}: ${model.name}",
+                                    textAlign: TextAlign.start),
+                              ),
+                            ],
+                          ),
+                          SizedBox(
+                            height: 5,
+                          ),
+                          Row(
+                            mainAxisAlignment: MainAxisAlignment.start,
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            mainAxisSize: MainAxisSize.min,
+                            children: <Widget>[
+                              Expanded(
+                                child: Text(
+                                    "${AppLocalizations.of(context)?.translate(StringValue.table_nos_of_chairs_label_text) ?? "Nos Of Chairs per Table"}: ${model.nosOfChairs}",
+                                    textAlign: TextAlign.start),
+                              ),
+                            ],
+                          ),
+                        ],
                       ),
-                      GestureDetector(
-                        onTap: () async {
-                          // Handle the delete action here
-                          Constants.debugLog(
-                              TableScreen, 'Delete table with ID: ${model.id}');
-                          int? result = await RestaurantRepository()
-                              .deleteTableInfo(model.id!);
-                          Constants.debugLog(TableScreen,
-                              "Delete RestaurantRepository result:$result");
-                          if (result != -1) {
-                            list?.removeAt(index);
-                            setState(() {});
-                            Constants.customTimerPopUpDialogMessage(
-                                classObject: TableScreen,
-                                isLoading: true,
-                                context: context,
-                                descriptions:
-                                    "Select table has been remove successfully.",
-                                title: "",
-                                titleIcon: Lottie.asset(
-                                  MediaQuery.of(context).platformBrightness ==
-                                          Brightness.light
-                                      ? StringImagePath
-                                          .done_light_brown_color_lottie
-                                      : StringImagePath.done_brown_color_lottie,
-                                  repeat: false,
-                                ),
-                                showForHowDuration: const Duration(seconds: 3),
-                                navigatorKey: navigatorKey);
-                            // Fluttertoast.showToast(
-                            //     msg: "Select table has been remove successfully.",
-                            //     timeInSecForIosWeb: 3,
-                            //     toastLength: Toast.LENGTH_SHORT);
-                          } else {
-                            Constants.customTimerPopUpDialogMessage(
-                                classObject: TableScreen,
-                                isLoading: true,
-                                context: context,
-                                descriptions:
-                                    "Failed to delete you select table.",
-                                title: "",
-                                titleIcon: Lottie.asset(
-                                  MediaQuery.of(context).platformBrightness ==
-                                          Brightness.light
-                                      ? StringImagePath
-                                          .done_light_brown_color_lottie
-                                      : StringImagePath.done_brown_color_lottie,
-                                  // fit: BoxFit.fill,
-                                  // width: 22,
-                                  // height: 22,
-                                  // animate: true,
-                                  repeat: false,
-                                ),
-                                showForHowDuration: const Duration(seconds: 3),
-                                navigatorKey: navigatorKey);
-                            // Fluttertoast.showToast(
-                            //     msg: "Failed to delete you select table.",
-                            //     timeInSecForIosWeb: 3,
-                            //     toastLength: Toast.LENGTH_SHORT);
-                            setState(() {});
-                          }
+                    ),
+                    Visibility(
+                      visible: index == 0 ? false : true,
+                      child: IconButton(
+                        onPressed: () async {
+                          await onMoveItemUp(index);
                         },
-                        child: const Icon(
-                          Icons.delete,
-                          color: Colors.red,
-                          size: 24.0,
-                        ),
+                        icon: Icon(Icons.arrow_upward_rounded),
                       ),
-                    ],
-                  ),
+                    ),
+                    Visibility(
+                      visible: index < (list!.length - 1),
+                      child: IconButton(
+                        onPressed: () async {
+                          await onMoveItemDown(index);
+                        },
+                        icon: Icon(Icons.arrow_downward_rounded),
+                      ),
+                    ),
+                    GestureDetector(
+                      onTap: () async => onDeletedAction(model, index),
+                      child: const Icon(
+                        Icons.delete,
+                        color: Colors.red,
+                        size: 24.0,
+                      ),
+                    ),
+                  ],
                 ),
               ),
             ),
@@ -474,7 +409,8 @@ class _TableScreenState extends State<TableScreen>
   }
 
   Future<void> updateTableInfo(TableInfoModel model, index) async {
-    Constants.debugLog(TableScreen,"updateTableInfo:model:${model.toString()}");
+    Constants.debugLog(
+        TableScreen, "updateTableInfo:model:${model.toString()}");
     showDialog(
       context: context,
       builder: (context) {
@@ -487,5 +423,140 @@ class _TableScreenState extends State<TableScreen>
         );
       },
     );
+  }
+
+  onDeletedAction(TableInfoModel model, index) async {
+    // Handle the delete action here
+    Constants.debugLog(TableScreen, 'Delete table with ID: ${model.id}');
+    int? result = await RestaurantRepository()
+        .deleteTableInfo(tableInfoModelToDelete: model);
+    Constants.debugLog(
+        TableScreen, "Delete RestaurantRepository result:$result");
+    if (result != null && result > 0) {
+      list?.removeAt(index);
+      setState(() {});
+      Constants.customTimerPopUpDialogMessage(
+          classObject: TableScreen,
+          isLoading: true,
+          context: context,
+          descriptions: AppLocalizations.of(context)
+                  ?.translate(StringValue.table_deleted_successfully_text) ??
+              "Select table has been deleted successfully.",
+          title: "",
+          titleIcon: Lottie.asset(
+            MediaQuery.of(context).platformBrightness == Brightness.light
+                ? StringImagePath.done_light_brown_color_lottie
+                : StringImagePath.done_brown_color_lottie,
+            repeat: false,
+          ),
+          showForHowDuration: const Duration(seconds: 3),
+          navigatorKey: navigatorKey);
+      // Fluttertoast.showToast(
+      //     msg: "Select table has been remove successfully.",
+      //     timeInSecForIosWeb: 3,
+      //     toastLength: Toast.LENGTH_SHORT);
+    } else {
+      Constants.customTimerPopUpDialogMessage(
+          classObject: TableScreen,
+          isLoading: true,
+          context: context,
+          descriptions: AppLocalizations.of(context)
+                  ?.translate(StringValue.table_failed_to_deleted_text) ??
+              "Failed to delete you select table.",
+          title: null,
+          titleIcon: Lottie.asset(
+            MediaQuery.of(context).platformBrightness == Brightness.light
+                ? StringImagePath.done_light_brown_color_lottie
+                : StringImagePath.done_brown_color_lottie,
+            repeat: false,
+          ),
+          showForHowDuration: const Duration(seconds: 3),
+          navigatorKey: navigatorKey);
+      // Fluttertoast.showToast(
+      //     msg: "Failed to delete you select table.",
+      //     timeInSecForIosWeb: 3,
+      //     toastLength: Toast.LENGTH_SHORT);
+      setState(() {});
+    }
+  }
+
+  void onReOrder(int oldIndex, int newIndex) async {
+    Constants.debugLog(TableScreen, "reorder: $oldIndex -> $newIndex");
+    var db = await _databaseHelper.database;
+    setState(() {
+      if (newIndex > oldIndex) {
+        // Adjust the index if the item is moved down in the list
+        newIndex -= 1;
+      }
+
+      final TableInfoModel movingItem = list!.removeAt(oldIndex);
+      list!.insert(newIndex, movingItem);
+    });
+
+    await db!.transaction((txn) async {
+      // Update sortOrderIndex for affected items
+      for (int i = min(oldIndex, newIndex); i <= max(oldIndex, newIndex); i++) {
+        final TableInfoModel currentItem = list![i];
+        currentItem.sortOrderIndex = i;
+        await txn.update(
+          _databaseHelper.tableInfoTable,
+          currentItem.toJson(),
+          where: 'id = ?',
+          whereArgs: [currentItem.id],
+        );
+      }
+    });
+  }
+
+  Future<void> onMoveItemUp(int currentIndex) async {
+    if (currentIndex > 0) {
+      Constants.debugLog(TableScreen, "move item up from $currentIndex index");
+      var db = await _databaseHelper.database;
+
+      setState(() {
+        final TableInfoModel movingItem = list!.removeAt(currentIndex);
+        list!.insert(currentIndex - 1, movingItem);
+      });
+      await db!.transaction((txn) async {
+        for (int i = currentIndex - 1; i <= currentIndex; i++) {
+          final TableInfoModel currentItem = list![i];
+          currentItem.sortOrderIndex = i;
+
+          await txn.update(
+            _databaseHelper.tableInfoTable,
+            currentItem.toJson(),
+            where: 'id = ?',
+            whereArgs: [currentItem.id],
+          );
+        }
+      });
+    }
+  }
+
+  Future<void> onMoveItemDown(int currentIndex) async {
+    if (currentIndex < (list!.length - 1)) {
+      Constants.debugLog(
+          TableScreen, "move item down from $currentIndex index");
+      var db = await _databaseHelper.database;
+
+      setState(() {
+        final TableInfoModel movingItem = list!.removeAt(currentIndex);
+        list!.insert(currentIndex + 1, movingItem);
+      });
+
+      await db!.transaction((txn) async {
+        for (int i = currentIndex; i <= currentIndex + 1; i++) {
+          final TableInfoModel currentItem = list![i];
+          currentItem.sortOrderIndex = i;
+
+          await txn.update(
+            _databaseHelper.tableInfoTable,
+            currentItem.toJson(),
+            where: 'id = ?',
+            whereArgs: [currentItem.id],
+          );
+        }
+      });
+    }
   }
 }

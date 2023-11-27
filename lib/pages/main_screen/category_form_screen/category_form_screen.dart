@@ -1,7 +1,5 @@
 import 'package:coozy_cafe/bloc/category_form_bloc/category_form_bloc.dart';
-import 'package:coozy_cafe/model/sub_category.dart';
 import 'package:coozy_cafe/pages/pages.dart';
-import 'package:coozy_cafe/repositories/components/restaurant_repository.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
@@ -165,7 +163,7 @@ class _CategoryFormScreenState extends State<CategoryFormScreen> {
                           ),
                           leading: IconButton(
                             icon: const Icon(Icons.remove),
-                            onPressed: () async{
+                            onPressed: () async {
                               context
                                   .read<CategoryFormBloc>()
                                   .add(RemoveSubcategoryEvent(index));
@@ -177,10 +175,11 @@ class _CategoryFormScreenState extends State<CategoryFormScreen> {
                             },
                           ),
                           subtitle: Visibility(
-                            visible:
-                                state.selectedSubcategories[newIndex] == 'CreateNew',
+                            visible: state.selectedSubcategories[newIndex] ==
+                                'CreateNew',
                             child: TextFormField(
-                              controller:    state.newSubcategoryControllers[newIndex],
+                              controller:
+                                  state.newSubcategoryControllers[newIndex],
                               keyboardType: TextInputType.text,
                               textInputAction: TextInputAction.done,
                               decoration: const InputDecoration(

@@ -80,8 +80,8 @@ class RestaurantRepository {
   }
 
 // Delete a table info
-  Future<int?> deleteTableInfo(int id) async {
-    return await _databaseHelper.deleteTableInfo(id);
+  Future<int?> deleteTableInfo({TableInfoModel? tableInfoModelToDelete}) async {
+    return await _databaseHelper.deleteTableInfo(tableInfoModelToDelete!);
   }
 
 

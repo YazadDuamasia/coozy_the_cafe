@@ -160,40 +160,6 @@ class _MenuItemFormState extends State<MenuItemForm> {
                             decoration: InputDecoration(
                               labelText: "Duration",
                               hintText: "cooking duration",
-                              border: OutlineInputBorder(
-                                borderSide: BorderSide(
-                                  color: Theme.of(context).colorScheme.primary,
-                                ),
-                                borderRadius: BorderRadius.circular(5),
-                              ),
-                              disabledBorder: OutlineInputBorder(
-                                borderSide: BorderSide(
-                                  color: Theme.of(context).disabledColor,
-                                ),
-                                borderRadius: BorderRadius.circular(5),
-                              ),
-                              enabledBorder: OutlineInputBorder(
-                                borderSide: BorderSide(
-                                  color: Theme.of(context).colorScheme.primary,
-                                ),
-                                borderRadius: BorderRadius.circular(5),
-                              ),
-                              focusedBorder: OutlineInputBorder(
-                                borderSide: BorderSide(
-                                    color:
-                                        Theme.of(context).colorScheme.primary),
-                                borderRadius: BorderRadius.circular(5),
-                              ),
-                              errorBorder: OutlineInputBorder(
-                                borderSide: BorderSide(
-                                    color: Theme.of(context).colorScheme.error),
-                                borderRadius: BorderRadius.circular(5),
-                              ),
-                              focusedErrorBorder: OutlineInputBorder(
-                                borderSide: BorderSide(
-                                    color: Theme.of(context).colorScheme.error),
-                                borderRadius: BorderRadius.circular(5),
-                              ),
                             ),
                             autovalidateMode:
                                 AutovalidateMode.onUserInteraction,

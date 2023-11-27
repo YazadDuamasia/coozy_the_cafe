@@ -7,13 +7,13 @@ abstract class StringValue {
   static String common_cancel = "common_cancel";
   static String common_accept = "common_accept";
   static String common_reject = "common_reject";
-  static String common_submit="common_submit";
+  static String common_submit = "common_submit";
+  static String common_update="common_update";
 
   static String common_email_label = "common_email_label";
   static String common_email_hint = "common_email_hint";
   static String common_password_label = "common_password_label";
   static String common_password_hint = "common_password_hint";
-
 
   //LoginScreen
   static String login_welcome = "login_welcome";
@@ -23,12 +23,16 @@ abstract class StringValue {
   static String login_or = "login_or";
   static String login_email_label = "login_email_label";
   static String login_email_hint = "login_email_hint";
-  static String login_email_validator_error_msg = "login_email_validator_error_msg";
-  static String login_email_validator_empty_error_msg = "login_email_validator_empty_error_msg";
+  static String login_email_validator_error_msg =
+      "login_email_validator_error_msg";
+  static String login_email_validator_empty_error_msg =
+      "login_email_validator_empty_error_msg";
   static String login_password_label = "login_password_label";
   static String login_password_hint = "login_password_hint";
-  static String login_password_validator_error_empty_msg = "login_password_validator_error_empty_msg";
-  static String login_password_validator_error_msg = "login_password_validator_error_msg";
+  static String login_password_validator_error_empty_msg =
+      "login_password_validator_error_empty_msg";
+  static String login_password_validator_error_msg =
+      "login_password_validator_error_msg";
   static String login_captcha_label = "login_captcha_label";
   static String login_captcha_hint = "login_captcha_hint";
 
@@ -40,7 +44,21 @@ abstract class StringValue {
   static String login_google_login_error = "login_google_login_error";
   static String login_Ok = "login_Ok";
 
-
+  //TableScreen
+  static String add_new_table_title = "add_new_table_title";
+  static String table_name_label_text = "table_name_label_text";
+  static String table_name_hint_text = "table_name_hint_text";
+  static String table_name_error_text = "table_name_error_text";
+  static String table_nos_of_chairs_label_text = "table_nos_of_chairs_label_text";
+  static String table_nos_of_chairs_hint_text = "table_nos_of_chairs_hint_text";
+  static String table_info_app_bar_title = "table_info_app_bar_title";
+  static String common_list_view_tooltip="common_list_view_tooltip";
+  static String common_grid_view_tooltip="common_grid_view_tooltip";
+  static String table_added_successfully_text="table_added_successfully_text";
+  static String table_failed_to_added_text="table_failed_to_added_text";
+  static String add_table_icon_tooltip_text="add_table_icon_tooltip_text";
+  static String table_deleted_successfully_text="table_deleted_successfully_text";
+  static String table_failed_to_deleted_text="table_failed_to_deleted_text";
 
 
 

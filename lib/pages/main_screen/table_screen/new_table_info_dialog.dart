@@ -32,7 +32,10 @@ class _NewTableDialogState extends State<NewTableDialog> {
   @override
   Widget build(BuildContext context) {
     return AlertDialog(
-      title: const Text('Create New Table'),
+      title: Text(
+          AppLocalizations.of(context)
+              ?.translate(StringValue.add_new_table_title) ??
+          'Create New Table'),
       content: Form(
         key: _formKey,
         child: Column(
@@ -46,16 +49,22 @@ class _NewTableDialogState extends State<NewTableDialog> {
                   child: TextFormField(
                     controller: _tableNameController,
                     focusNode: _tableNameFocusNode,
-                    decoration: const InputDecoration(
-                      labelText: 'Table Name',
-                      hintText: 'Enter table name like Table1',
+                    decoration: InputDecoration(
+                      labelText: AppLocalizations.of(context)
+                              ?.translate(StringValue.table_name_label_text) ??
+                          'Table Name',
+                      hintText: AppLocalizations.of(context)
+                              ?.translate(StringValue.table_name_hint_text) ??
+                          'Enter table name like Table1',
                     ),
                     autovalidateMode: AutovalidateMode.onUserInteraction,
                     keyboardType: TextInputType.text,
                     textInputAction: TextInputAction.done,
                     validator: (value) {
                       if (value!.isEmpty) {
-                        return "Table name is required.";
+                        return AppLocalizations.of(context)?.translate(
+                                StringValue.table_name_error_text) ??
+                            "Table name is required.";
                       } else {
                         return null;
                       }
@@ -79,9 +88,13 @@ class _NewTableDialogState extends State<NewTableDialog> {
                     controller: _nosOfChairsController,
                     keyboardType: TextInputType.number,
                     textInputAction: TextInputAction.done,
-                    decoration: const InputDecoration(
-                      labelText: 'Nos Of Chairs per Table',
-                      hintText: 'Enter number of chairs',
+                    decoration: InputDecoration(
+                      labelText: AppLocalizations.of(context)?.translate(
+                              StringValue.table_nos_of_chairs_label_text) ??
+                          'Nos Of Chairs per Table',
+                      hintText: AppLocalizations.of(context)?.translate(
+                              StringValue.table_nos_of_chairs_hint_text) ??
+                          'Enter number of chairs',
                     ),
                     inputFormatters: [FilteringTextInputFormatter.digitsOnly],
                     onFieldSubmitted: (String value) {
@@ -108,8 +121,10 @@ class _NewTableDialogState extends State<NewTableDialog> {
             if (_formKey.currentState!.validate()) {
               _formKey.currentState!.save();
               String tableName = _tableNameController.text;
-              int? nosOfChairs = int.tryParse(_nosOfChairsController.text.toString());
-              TableInfoModel tableInfoModel = TableInfoModel(name: tableName, nosOfChairs: nosOfChairs ?? 4);
+              int? nosOfChairs =
+                  int.tryParse(_nosOfChairsController.text.toString());
+              TableInfoModel tableInfoModel = TableInfoModel(
+                  name: tableName, nosOfChairs: nosOfChairs ?? 4);
               widget.onCreate(tableInfoModel);
             }
           },

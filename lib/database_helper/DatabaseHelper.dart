@@ -63,14 +63,14 @@ class DatabaseHelper {
 
     // Create the 'subcategories' table
     await db.execute('''
-  CREATE TABLE $subcategoriesTable(
+    CREATE TABLE $subcategoriesTable (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
     name TEXT,
     createdDate TEXT,
     categoryId INTEGER,
     FOREIGN KEY(categoryId) REFERENCES $categoriesTable(id)
-  )
-''');
+    )
+    ''');
 
     // Create the '$menuItemsTable' table
     await db.execute('''
@@ -206,17 +206,6 @@ class DatabaseHelper {
     FOREIGN KEY (paymentModeId) REFERENCES $paymentModeTable (id)
   )
 ''');
-
-    // Create a trigger to update sortOrderIndex after a deletion
-    await db.execute('''
-    CREATE TRIGGER update_sort_order 
-    AFTER DELETE ON $tableInfoTable 
-    BEGIN
-      UPDATE $tableInfoTable 
-      SET sortOrderIndex = sortOrderIndex - 1 
-      WHERE sortOrderIndex > OLD.sortOrderIndex; 
-    END;
-    ''');
   }
 
   // Method to backup the database with the current date
@@ -938,14 +927,23 @@ class DatabaseHelper {
   }
 
 // Delete a table info
-  Future<int?> deleteTableInfo(int tableInfoId) async {
+  Future<int?> deleteTableInfo(TableInfoModel model) async {
     final db = await database;
 
+    // Start a transaction to ensure atomicity
     return db!.transaction((txn) async {
-      // Delete the item and check the result
-      int rowsAffected = await txn
-          .delete(tableInfoTable, where: 'id = ?', whereArgs: [tableInfoId]);
+      int sortRecordIndexToDelete = model.sortOrderIndex ?? 0;
 
+      // Step 1: Delete the item from the database
+      int rowsAffected = await txn.delete(tableInfoTable, where: 'id = ?', whereArgs: [model.id]);
+
+      // Step 2: Decrement the sortOrderIndex for items with a higher index
+      await txn.rawUpdate(
+        'UPDATE $tableInfoTable SET sortOrderIndex = sortOrderIndex - 1 WHERE sortOrderIndex > ?',
+        [sortRecordIndexToDelete],
+      );
+
+      // Return the result of the transaction
       return rowsAffected;
     });
   }

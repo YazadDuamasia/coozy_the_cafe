@@ -53,120 +53,127 @@ class _MyAppState extends State<MyApp> {
       child: BlocConsumer<ThemeCubit, ThemeState>(
         listener: (context, state) {},
         builder: (context, state) {
-          return MaterialApp(
-            title: Constants.appName,
-            debugShowCheckedModeBanner: false,
-            theme: ThemeData(
-              useMaterial3: true,
-              colorScheme: AppColor.lightColorScheme,
-              fontFamily: "Sono",
-              appBarTheme: AppBarTheme(
+          return PageStorage(
+            bucket: bucketGlobal,
+            child: MaterialApp(
+              title: Constants.appName,
+              debugShowCheckedModeBanner: false,
+              theme: ThemeData(
+                useMaterial3: true,
+                colorScheme: AppColor.lightColorScheme,
+                fontFamily: "Sono",
+                appBarTheme: AppBarTheme(
                   centerTitle: false,
                   titleTextStyle:
                       Theme.of(context).textTheme.headlineSmall!.copyWith(
                             color: Colors.white,
                           ),
                   backgroundColor: AppColor.lightColorScheme.primary,
+                ),
+                visualDensity: VisualDensity.adaptivePlatformDensity,
+                brightness: Brightness.light,
+                // cardTheme: Theme.of(context)
+                //     .cardTheme
+                //     .copyWith(color: AppColor.lightColorScheme.tertiaryContainer),
+                textSelectionTheme: TextSelectionThemeData(
+                  cursorColor: Theme.of(context).colorScheme.primary,
+                  selectionColor:
+                      Theme.of(context).primaryColor.withOpacity(0.7),
+                  selectionHandleColor: Theme.of(context).primaryColor,
+                ),
               ),
-              visualDensity: VisualDensity.adaptivePlatformDensity,
-              brightness: Brightness.light,
-              // cardTheme: Theme.of(context)
-              //     .cardTheme
-              //     .copyWith(color: AppColor.lightColorScheme.tertiaryContainer),
-              textSelectionTheme: TextSelectionThemeData(
-                cursorColor: Theme.of(context).colorScheme.primary,
-                selectionColor: Theme.of(context).primaryColor.withOpacity(0.7),
-                selectionHandleColor: Theme.of(context).primaryColor,
+              darkTheme: ThemeData(
+                useMaterial3: true,
+                colorScheme: AppColor.darkColorScheme,
+                fontFamily: "Sono",
+                appBarTheme: AppBarTheme(
+                  centerTitle: false,
+                  titleTextStyle:
+                      Theme.of(context).textTheme.headlineSmall!.copyWith(
+                            color: Colors.white,
+                          ),
+                  backgroundColor: AppColor.darkColorScheme.primary,
+                ),
+                visualDensity: VisualDensity.adaptivePlatformDensity,
+                // cardTheme: Theme.of(context)
+                //     .cardTheme
+                //     .copyWith(color: AppColor.darkColorScheme.tertiaryContainer),
+                textSelectionTheme: TextSelectionThemeData(
+                  cursorColor: Theme.of(context).colorScheme.primary,
+                  selectionColor:
+                      Theme.of(context).primaryColor.withOpacity(0.7),
+                  selectionHandleColor: Theme.of(context).primaryColor,
+                ),
+                brightness: Brightness.dark,
               ),
-            ),
-            darkTheme: ThemeData(
-              useMaterial3: true,
-              colorScheme: AppColor.darkColorScheme,
-              fontFamily: "Sono",
-              appBarTheme: AppBarTheme(
-                centerTitle: false,
-                titleTextStyle:
-                    Theme.of(context).textTheme.headlineSmall!.copyWith(
-                          color: Colors.white,
+              // themeAnimationCurve: Curves.linear,
+              // themeAnimationDuration: const Duration(seconds: 2),
+              builder: (context, child) {
+                return Theme(
+                  data: Theme.of(context).copyWith(
+                    inputDecorationTheme: InputDecorationTheme(
+                      border: OutlineInputBorder(
+                        borderSide: BorderSide(
+                          color: Theme.of(context).colorScheme.primary,
                         ),
-                backgroundColor: AppColor.darkColorScheme.primary,
-              ),
-              visualDensity: VisualDensity.adaptivePlatformDensity,
-              // cardTheme: Theme.of(context)
-              //     .cardTheme
-              //     .copyWith(color: AppColor.darkColorScheme.tertiaryContainer),
-              textSelectionTheme: TextSelectionThemeData(
-                cursorColor: Theme.of(context).colorScheme.primary,
-                selectionColor: Theme.of(context).primaryColor.withOpacity(0.7),
-                selectionHandleColor: Theme.of(context).primaryColor,
-              ),
-              brightness: Brightness.dark,
-            ),
-            // themeAnimationCurve: Curves.linear,
-            // themeAnimationDuration: const Duration(seconds: 2),
-            builder: (context, child) {
-              return Theme(
-                data: Theme.of(context).copyWith(
-                  inputDecorationTheme: InputDecorationTheme(
-                    border: OutlineInputBorder(
-                      borderSide: BorderSide(
-                        color: Theme.of(context).colorScheme.primary,
+                        borderRadius: BorderRadius.circular(5),
                       ),
-                      borderRadius: BorderRadius.circular(5),
-                    ),
-                    disabledBorder: OutlineInputBorder(
-                      borderSide: BorderSide(
-                        color: Theme.of(context).disabledColor,
+                      disabledBorder: OutlineInputBorder(
+                        borderSide: BorderSide(
+                          color: Theme.of(context).disabledColor,
+                        ),
+                        borderRadius: BorderRadius.circular(5),
                       ),
-                      borderRadius: BorderRadius.circular(5),
-                    ),
-                    enabledBorder: OutlineInputBorder(
-                      borderSide: BorderSide(
-                        color: Theme.of(context).colorScheme.primary,
+                      enabledBorder: OutlineInputBorder(
+                        borderSide: BorderSide(
+                          color: Theme.of(context).colorScheme.primary,
+                        ),
+                        borderRadius: BorderRadius.circular(5),
                       ),
-                      borderRadius: BorderRadius.circular(5),
-                    ),
-                    focusedBorder: OutlineInputBorder(
-                      borderSide:
-                      BorderSide(color: Theme.of(context).colorScheme.primary),
-                      borderRadius: BorderRadius.circular(5),
-                    ),
-                    errorBorder: OutlineInputBorder(
-                      borderSide: BorderSide(color: Theme.of(context).colorScheme.error),
-                      borderRadius: BorderRadius.circular(5),
-                    ),
-                    focusedErrorBorder: OutlineInputBorder(
-                      borderSide: BorderSide(color: Theme.of(context).colorScheme.error),
-                      borderRadius: BorderRadius.circular(5),
+                      focusedBorder: OutlineInputBorder(
+                        borderSide: BorderSide(
+                            color: Theme.of(context).colorScheme.primary),
+                        borderRadius: BorderRadius.circular(5),
+                      ),
+                      errorBorder: OutlineInputBorder(
+                        borderSide: BorderSide(
+                            color: Theme.of(context).colorScheme.error),
+                        borderRadius: BorderRadius.circular(5),
+                      ),
+                      focusedErrorBorder: OutlineInputBorder(
+                        borderSide: BorderSide(
+                            color: Theme.of(context).colorScheme.error),
+                        borderRadius: BorderRadius.circular(5),
+                      ),
                     ),
                   ),
-                ),
-                child: ScrollConfiguration(
-                  behavior:
-                      ScrollConfiguration.of(context).copyWith(dragDevices: {
-                    PointerDeviceKind.mouse,
-                    PointerDeviceKind.touch,
-                    PointerDeviceKind.trackpad,
-                    PointerDeviceKind.stylus
-                  }),
-                  child: child!,
-                ),
-              );
-            },
-            themeMode: state.themeMode,
-            restorationScopeId: 'app',
-            navigatorKey: navigatorKey,
-            onGenerateRoute: RouteGenerator.generateRoute,
-            initialRoute: RouteName.splashRoute,
-            useInheritedMediaQuery: true,
-            localizationsDelegates: [
-              AppLocalizationsDelegate(languages),
-              GlobalMaterialLocalizations.delegate,
-              GlobalWidgetsLocalizations.delegate,
-            ],
-            supportedLocales: languages
-                .map((language) => Locale(language.code!, ''))
-                .toList(),
+                  child: ScrollConfiguration(
+                    behavior:
+                        ScrollConfiguration.of(context).copyWith(dragDevices: {
+                      PointerDeviceKind.mouse,
+                      PointerDeviceKind.touch,
+                      PointerDeviceKind.trackpad,
+                      PointerDeviceKind.stylus
+                    }),
+                    child: child!,
+                  ),
+                );
+              },
+              themeMode: state.themeMode,
+              restorationScopeId: 'app',
+              navigatorKey: navigatorKey,
+              onGenerateRoute: RouteGenerator.generateRoute,
+              initialRoute: RouteName.splashRoute,
+              useInheritedMediaQuery: true,
+              localizationsDelegates: [
+                AppLocalizationsDelegate(languages),
+                GlobalMaterialLocalizations.delegate,
+                GlobalWidgetsLocalizations.delegate,
+              ],
+              supportedLocales: languages
+                  .map((language) => Locale(language.code!, ''))
+                  .toList(),
+            ),
           );
         },
       ),

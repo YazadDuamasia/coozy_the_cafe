@@ -49,16 +49,22 @@ class _TableUpdateDialogState extends State<TableUpdateDialog> {
                   child: TextFormField(
                     controller: _tableNameController,
                     focusNode: _tableNameFocusNode,
-                    decoration: const InputDecoration(
-                      labelText: 'Table Name',
-                      hintText: 'Enter table name like Table1',
+                    decoration: InputDecoration(
+                      labelText: AppLocalizations.of(context)
+                              ?.translate(StringValue.table_name_label_text) ??
+                          'Table Name',
+                      hintText: AppLocalizations.of(context)
+                              ?.translate(StringValue.table_name_hint_text) ??
+                          'Enter table name like Table1',
                     ),
                     autovalidateMode: AutovalidateMode.onUserInteraction,
                     keyboardType: TextInputType.text,
                     textInputAction: TextInputAction.done,
                     validator: (value) {
                       if (value!.isEmpty) {
-                        return "Table name is required.";
+                        return AppLocalizations.of(context)?.translate(
+                                StringValue.table_name_error_text) ??
+                            "Table name is required.";
                       } else {
                         return null;
                       }
@@ -82,9 +88,13 @@ class _TableUpdateDialogState extends State<TableUpdateDialog> {
                     controller: _nosOfChairsController,
                     keyboardType: TextInputType.number,
                     textInputAction: TextInputAction.done,
-                    decoration: const InputDecoration(
-                      labelText: 'Nos Of Chairs per Table',
-                      hintText: 'Enter number of chairs',
+                    decoration: InputDecoration(
+                      labelText: AppLocalizations.of(context)?.translate(
+                              StringValue.table_nos_of_chairs_label_text) ??
+                          'Nos Of Chairs per Table',
+                      hintText: AppLocalizations.of(context)?.translate(
+                              StringValue.table_nos_of_chairs_hint_text) ??
+                          'Enter number of chairs',
                     ),
                     inputFormatters: [FilteringTextInputFormatter.digitsOnly],
                     onFieldSubmitted: (String value) {
@@ -121,9 +131,9 @@ class _TableUpdateDialogState extends State<TableUpdateDialog> {
               widget.onUpdate(tableInfoModel);
             }
           },
-          child: Text(AppLocalizations.of(context!)
-                  ?.translate(StringValue.common_submit) ??
-              "Submit"),
+          child: Text(AppLocalizations.of(context)
+                  ?.translate(StringValue.common_update) ??
+              "Update"),
         ),
       ],
     );
