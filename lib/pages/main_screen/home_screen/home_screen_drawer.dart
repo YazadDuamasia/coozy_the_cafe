@@ -1,3 +1,4 @@
+import 'package:coozy_cafe/AppLocalization.dart';
 import 'package:coozy_cafe/utlis/utlis.dart';
 import 'package:flutter/material.dart';
 import 'package:material_design_icons_flutter/material_design_icons_flutter.dart';
@@ -35,7 +36,11 @@ class HomeScreenDrawer extends StatelessWidget {
           ),
           ListTile(
             leading: const Icon(Icons.table_restaurant),
-            title: const Text('Tables view'),
+            title: Text(
+              AppLocalizations.of(context)
+                      ?.translate(StringValue.table_info_app_bar_title) ??
+                  "Table Info",
+            ),
             onTap: () {
               Navigator.pop(context);
               navigationRoutes.navigateToTableInfoScreen();
@@ -54,6 +59,7 @@ class HomeScreenDrawer extends StatelessWidget {
             title: const Text('Menu category'),
             onTap: () {
               Navigator.pop(context);
+              navigationRoutes.navigateToMenuCategoryFullListScreen();
             },
           ),
           ListTile(

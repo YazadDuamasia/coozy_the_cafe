@@ -1,13 +1,13 @@
-class Subcategory {
+class SubCategory {
   int? id;
   String? name;
   String? createdDate;
   int? categoryId;
 
-  Subcategory({this.id, this.name, this.createdDate, this.categoryId});
+  SubCategory({this.id, this.name, this.createdDate, this.categoryId});
 
-  factory Subcategory.fromJson(Map<String, dynamic> json) {
-    return Subcategory(
+  factory SubCategory.fromJson(Map<String, dynamic> json) {
+    return SubCategory(
       id: json['id'],
       name: json['name'],
       createdDate: json['createdDate'],
@@ -24,13 +24,13 @@ class Subcategory {
     };
   }
 
-  Subcategory copyWith({
+  SubCategory copyWith({
     int? id,
     String? name,
     String? createdDate,
     int? categoryId,
   }) {
-    return Subcategory(
+    return SubCategory(
       id: id ?? this.id,
       name: name ?? this.name,
       createdDate: createdDate ?? this.createdDate,
@@ -38,7 +38,7 @@ class Subcategory {
     );
   }
 
-  static List<String?>? getSubcategoryNames(List<Subcategory?>? subcategories) {
+  static List<String?>? getSubCategoryNames(List<SubCategory?>? subcategories) {
     if (subcategories == null) {
       return null;
     } else {
@@ -50,6 +50,6 @@ class Subcategory {
 
   @override
   String toString() {
-    return 'Subcategory(id: $id, name: $name,  createdDate: $createdDate, categoryId: $categoryId)';
+    return 'SubCategory(id: $id, name: $name,  createdDate: $createdDate, categoryId: $categoryId)';
   }
 }

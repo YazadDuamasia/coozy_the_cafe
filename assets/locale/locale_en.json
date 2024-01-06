@@ -53,5 +53,17 @@
   "table_added_successfully_text": "New table has been added successfully.",
   "table_failed_to_added_text": "Fail to add new table info .",
   "table_deleted_successfully_text": "Select table has been deleted successfully.",
-  "table_failed_to_deleted_text": "Failed to delete you select table."
+  "table_failed_to_deleted_text": "Failed to delete you select table.",
+  "add_menu_category_icon_tooltip_text": "Add a new menu category",
+  "add_menu_category_appbar_text": "Add new menu category",
+  "menu_category_label_text": "Category Name",
+  "menu_category_hint_text": "Enter the category name",
+  "menu_category_error_text": "Please enter category name",
+  "add_menu_sub_category_btn_text": "Add new sub-category",
+  "add_new_menu_sub_category_label_text": "SubCategory Name",
+  "add_new_menu_sub_category_hint_text": "Add new sub-category",
+  "add_new_menu_sub_category_error_text": "Enter your sub-category name",
+  "menu_category_added_successfully_text": "New Menu Category has been added successfully.",
+  "menu_category_added_failed_successfully_text": "Failed to add new menu category.Please Try again.",
+  "menu_sub_category_new_added_failed_successfully_text": "Error occurred during subcategory creation."
 }

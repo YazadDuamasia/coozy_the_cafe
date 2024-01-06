@@ -57,7 +57,8 @@ class DatabaseHelper {
     await db.execute('''
       CREATE TABLE $categoriesTable(
         id INTEGER PRIMARY KEY AUTOINCREMENT,
-        name TEXT
+        name TEXT,
+        createdDate TEXT
       )
     ''');
 
@@ -287,7 +288,8 @@ class DatabaseHelper {
 
   // Category CRUD operations
   Future<int?> addCategory(Category category) async {
-    return await _database?.insert(categoriesTable, category.toJson());
+    return await _database?.insert(categoriesTable, category.toJson(),
+        conflictAlgorithm: ConflictAlgorithm.replace);
   }
 
   Future<List<Category>?> getCategories() async {
@@ -303,6 +305,27 @@ class DatabaseHelper {
     return List.generate(maps.length, (i) {
       return Category.fromJson(maps[i]);
     });
+  }
+
+  Future<List<Category?>?> getCategoriesBasedOnName({String? name}) async {
+    if (name != null && name.isNotEmpty) {
+      final List<Map<String, dynamic>>? maps = await _database?.query(
+        categoriesTable,
+        where: 'name = ?',
+        whereArgs: [name],
+        orderBy: 'name ASC',
+      );
+
+      if (maps == null) {
+        return null;
+      }
+
+      return List.generate(maps.length, (i) {
+        return Category.fromJson(maps[i]);
+      });
+    } else {
+      return null;
+    }
   }
 
   Future<int?> updateCategory(Category category) async {
@@ -324,35 +347,36 @@ class DatabaseHelper {
 
   // Subcategory CRUD operations
   // Create a new subcategory
-  Future<int> createSubcategory(Subcategory subcategory) async {
+  Future<int> createSubcategory(SubCategory subcategory) async {
     final db = await database;
-    return await db!.insert(subcategoriesTable, subcategory.toJson());
+    return await db!.insert(subcategoriesTable, subcategory.toJson(),
+        conflictAlgorithm: ConflictAlgorithm.replace);
   }
 
   // Get a list of all subcategories
-  Future<List<Subcategory>> getSubcategories() async {
+  Future<List<SubCategory>> getSubcategories() async {
     final db = await database;
     final List<Map<String, dynamic>> maps = await db!.query(subcategoriesTable);
     return List.generate(maps.length, (i) {
-      return Subcategory.fromJson(maps[i]);
+      return SubCategory.fromJson(maps[i]);
     });
   }
 
   // Get a single subcategory by ID
-  Future<Subcategory?> getSubcategory(int id) async {
+  Future<SubCategory?> getSubcategory(int id) async {
     final db = await database;
     final List<Map<String, dynamic>> maps = await db!.rawQuery(
       'SELECT * FROM $subcategoriesTable ORDER BY name ASC', // Order by the 'name' column in ascending order
     );
     if (maps.isNotEmpty) {
-      return Subcategory.fromJson(maps.first);
+      return SubCategory.fromJson(maps.first);
     } else {
       return null;
     }
   }
 
   // Update a subcategory
-  Future<int?> updateSubcategory(Subcategory subcategory) async {
+  Future<int?> updateSubcategory(SubCategory subcategory) async {
     final db = await database;
     return await db!.update(
       subcategoriesTable,
@@ -935,7 +959,8 @@ class DatabaseHelper {
       int sortRecordIndexToDelete = model.sortOrderIndex ?? 0;
 
       // Step 1: Delete the item from the database
-      int rowsAffected = await txn.delete(tableInfoTable, where: 'id = ?', whereArgs: [model.id]);
+      int rowsAffected = await txn
+          .delete(tableInfoTable, where: 'id = ?', whereArgs: [model.id]);
 
       // Step 2: Decrement the sortOrderIndex for items with a higher index
       await txn.rawUpdate(

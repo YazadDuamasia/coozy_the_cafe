@@ -1,3 +1,5 @@
+import 'package:coozy_cafe/pages/main_screen/menu_category_screen/add_new_menu_category_screen.dart';
+import 'package:coozy_cafe/pages/main_screen/menu_category_screen/menu_category_full_list_screen.dart';
 import 'package:coozy_cafe/pages/main_screen/menu_screen/menu_full_list_screen.dart';
 import 'package:coozy_cafe/pages/main_screen/table_screen/table_screen.dart';
 import 'package:coozy_cafe/pages/pages.dart';
@@ -39,12 +41,27 @@ class RouteGenerator {
           curve: Curves.easeInOut,
           child: const TableScreen(),
         );
-   case RouteName.menuFullListScreenRoute:
+      case RouteName.menuFullListScreenRoute:
         return PageTransition(
           type: PageTransitionType.rightToLeftWithFade,
           settings: settings,
           curve: Curves.easeInOut,
           child: MenuFullListScreen(),
+        );
+
+      case RouteName.menuCategoryFullListRoute:
+        return PageTransition(
+          type: PageTransitionType.rightToLeftWithFade,
+          settings: settings,
+          curve: Curves.easeInOut,
+          child: const MenuCategoryFullListScreen(),
+        );
+      case RouteName.addNewMenuCategoryScreenRoute:
+        return PageTransition(
+          type: PageTransitionType.rightToLeftWithFade,
+          settings: settings,
+          curve: Curves.easeInOut,
+          child: const AddNewMenuCategoryScreen(),
         );
 
       default:

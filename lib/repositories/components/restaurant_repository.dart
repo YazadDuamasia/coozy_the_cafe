@@ -20,6 +20,10 @@ class RestaurantRepository {
   Future<List<Category>?> getCategories() async {
     return await _databaseHelper.getCategories();
   }
+// Retrieves a list of all categories from the database.
+  Future<List<Category?>?> getCategoryBasedOnName(String? categoryName) async {
+    return await _databaseHelper.getCategoriesBasedOnName(name: categoryName);
+  }
 
 // Updates an existing category in the database.
   Future<int?> updateCategory(Category category) async {
@@ -34,22 +38,22 @@ class RestaurantRepository {
 // Subcategory CRUD operations
 
 // Creates a new subcategory in the database.
-  Future<int> createSubcategory(Subcategory subcategory) async {
+  Future<int> createSubcategory(SubCategory subcategory) async {
     return await _databaseHelper.createSubcategory(subcategory);
   }
 
 // Retrieves a list of all subcategories from the database.
-  Future<List<Subcategory>> getSubcategories() async {
+  Future<List<SubCategory>> getSubcategories() async {
     return await _databaseHelper.getSubcategories();
   }
 
 // Retrieves a single subcategory by ID.
-  Future<Subcategory?> getSubcategory(int id) async {
+  Future<SubCategory?> getSubcategory(int id) async {
     return await _databaseHelper.getSubcategory(id);
   }
 
 // Updates an existing subcategory in the database.
-  Future<int?> updateSubcategory(Subcategory subcategory) async {
+  Future<int?> updateSubcategory(SubCategory subcategory) async {
     return await _databaseHelper.updateSubcategory(subcategory);
   }
 

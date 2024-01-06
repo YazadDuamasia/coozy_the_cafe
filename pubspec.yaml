@@ -40,7 +40,7 @@ dependencies:
   #
   package_info_plus: ^5.0.1
   platform_info: ^4.0.2
-  flutter_localization: ^0.1.14
+  flutter_localization: ^0.2.0
   #
   bubble_showcase: ^1.1.0
   font_awesome_flutter: ^10.6.0
@@ -52,7 +52,7 @@ dependencies:
   image_picker: ^1.0.4
   file_picker: ^6.1.1
   #
-  animations: ^2.0.8
+  animations: ^2.0.11
   #
   http: ^1.1.1
   internet_connection_checker_plus: ^2.1.0
@@ -64,7 +64,7 @@ dependencies:
   rxdart: ^0.27.7
   #
   carousel_slider: ^4.2.1
-  cached_network_image: ^3.3.0
+  cached_network_image: ^3.3.1
   shimmer: ^3.0.0
   fancy_shimmer_image: ^2.0.3
   url_launcher: ^6.2.1
@@ -79,10 +79,10 @@ dependencies:
   video_player: ^2.8.1
 
   #  Range Slider
-  syncfusion_flutter_core: ^23.2.4
-  syncfusion_flutter_sliders: ^23.2.4
-  syncfusion_flutter_charts: ^23.2.4
-  syncfusion_flutter_xlsio: ^23.2.4
+  syncfusion_flutter_core: ^24.1.44
+  syncfusion_flutter_sliders: ^24.1.44
+  syncfusion_flutter_charts: ^24.1.44
+  syncfusion_flutter_xlsio: ^24.1.44
 
   geolocator: ^10.1.0
   app_settings: ^5.1.1
@@ -96,12 +96,12 @@ dependencies:
   duration_picker: ^1.1.1
   reorderable_grid_view: ^2.2.8
 
-  uuid:
+  uuid: ^4.2.2
 
   url_strategy: ^0.2.0
 
-dependency_overrides:
-  web: ^0.4.0
+#dependency_overrides:
+#  web: ^0.4.0
 
 dev_dependencies:
   flutter_test:

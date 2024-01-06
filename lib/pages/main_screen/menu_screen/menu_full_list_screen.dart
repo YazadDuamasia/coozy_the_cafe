@@ -9,8 +9,10 @@ class MenuFullListScreen extends StatefulWidget {
   _MenuFullListScreenState createState() => _MenuFullListScreenState();
 }
 
-class _MenuFullListScreenState extends State<MenuFullListScreen> {
+class _MenuFullListScreenState extends State<MenuFullListScreen>
+    with TickerProviderStateMixin {
   List<MenuItem>? list = [];
+  bool isLoading = true;
 
   @override
   void initState() {
@@ -84,7 +86,7 @@ class _MenuFullListScreenState extends State<MenuFullListScreen> {
     // You can make an API call or update your data source.
     loadData();
     await Future.delayed(
-        const Duration(seconds: 2)); // Simulate a delay for demonstration.
+        const Duration(seconds: 1)); // Simulate a delay for demonstration.
     setState(() {});
   }
 

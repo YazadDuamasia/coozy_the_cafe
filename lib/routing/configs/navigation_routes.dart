@@ -29,7 +29,17 @@ class NavigationRoutes {
   navigateToTableInfoScreen() {
     navigatorKey.currentState!.pushNamed(RouteName.tableInfoScreenRoute);
   }
+
   navigateToMenuFullListScreen() {
     navigatorKey.currentState!.pushNamed(RouteName.menuFullListScreenRoute);
+  }
+
+  navigateToMenuCategoryFullListScreen() {
+    navigatorKey.currentState!.pushNamed(RouteName.menuCategoryFullListRoute);
+  }
+
+  Future navigateToAddNewMenuCategoryScreen() async {
+    return await navigatorKey.currentState!
+        .pushNamed(RouteName.addNewMenuCategoryScreenRoute);
   }
 }

@@ -19,7 +19,7 @@ class _MenuItemFormState extends State<MenuItemForm> {
   final _formKey = GlobalKey<FormState>();
   final RestaurantRepository _repository = RestaurantRepository();
   List<Category> categories = [];
-  List<Subcategory> subcategories = [];
+  List<SubCategory> subcategories = [];
   int? selectedCategoryId;
   int? selectedSubcategoryId;
   String? name;

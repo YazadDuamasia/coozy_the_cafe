@@ -164,15 +164,15 @@ class _TableScreenState extends State<TableScreen>
                   child: AnimatedSwitcher(
                     duration: Duration(milliseconds: 500),
                     child: isGridView
-                        ? Center(child: buildReorderableGridView())
-                        : buildReorderableListView(),
+                        ? Center(child: buildGridView())
+                        : buildListView(),
                   )),
         ),
       ),
     );
   }
 
-  Widget buildReorderableGridView() {
+  Widget buildGridView() {
     return ReorderableGridView.builder(
       itemCount: list == null ? 0 : list!.length,
       itemBuilder: (context, index) => buildGridItem(list![index], index),
@@ -271,7 +271,7 @@ class _TableScreenState extends State<TableScreen>
     );
   }
 
-  Widget buildReorderableListView() {
+  Widget buildListView() {
     return ReorderableListView.builder(
       itemCount: list == null ? 0 : list!.length,
       itemBuilder: (context, index) => buildListItem(list![index], index),

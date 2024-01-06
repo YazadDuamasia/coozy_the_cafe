@@ -8,7 +8,7 @@ abstract class StringValue {
   static String common_accept = "common_accept";
   static String common_reject = "common_reject";
   static String common_submit = "common_submit";
-  static String common_update="common_update";
+  static String common_update = "common_update";
 
   static String common_email_label = "common_email_label";
   static String common_email_hint = "common_email_hint";
@@ -40,7 +40,8 @@ abstract class StringValue {
   static String login_loading_inactive_btn = "login_loading_inactive_btn";
   static String login_via_facebook_tooltip = "login_via_facebook_tooltip";
   static String login_via_google_tooltip = "login_via_google_tooltip";
-  static String login_via_phone_number_tooltip = "login_via_phone_number_tooltip";
+  static String login_via_phone_number_tooltip =
+      "login_via_phone_number_tooltip";
   static String login_google_login_error = "login_google_login_error";
   static String login_Ok = "login_Ok";
 
@@ -49,17 +50,39 @@ abstract class StringValue {
   static String table_name_label_text = "table_name_label_text";
   static String table_name_hint_text = "table_name_hint_text";
   static String table_name_error_text = "table_name_error_text";
-  static String table_nos_of_chairs_label_text = "table_nos_of_chairs_label_text";
+  static String table_nos_of_chairs_label_text =
+      "table_nos_of_chairs_label_text";
   static String table_nos_of_chairs_hint_text = "table_nos_of_chairs_hint_text";
   static String table_info_app_bar_title = "table_info_app_bar_title";
-  static String common_list_view_tooltip="common_list_view_tooltip";
-  static String common_grid_view_tooltip="common_grid_view_tooltip";
-  static String table_added_successfully_text="table_added_successfully_text";
-  static String table_failed_to_added_text="table_failed_to_added_text";
-  static String add_table_icon_tooltip_text="add_table_icon_tooltip_text";
-  static String table_deleted_successfully_text="table_deleted_successfully_text";
-  static String table_failed_to_deleted_text="table_failed_to_deleted_text";
+  static String common_list_view_tooltip = "common_list_view_tooltip";
+  static String common_grid_view_tooltip = "common_grid_view_tooltip";
+  static String table_added_successfully_text = "table_added_successfully_text";
+  static String table_failed_to_added_text = "table_failed_to_added_text";
+  static String add_table_icon_tooltip_text = "add_table_icon_tooltip_text";
+  static String table_deleted_successfully_text =
+      "table_deleted_successfully_text";
+  static String table_failed_to_deleted_text = "table_failed_to_deleted_text";
 
+  //category
+  static String add_menu_category_icon_tooltip_text =
+      "add_menu_category_icon_tooltip_text";
 
-
+  //add_menu_category_screen
+  static String add_menu_category_appbar_text = "add_menu_category_appbar_text";
+  static String menu_category_label_text = "menu_category_label_text";
+  static String menu_category_hint_text = "menu_category_hint_text";
+  static String menu_category_error_text = "menu_category_error_text";
+  static String add_menu_sub_category_btn_text =
+      "add_menu_sub_category_btn_text";
+  static String menu_category_added_successfully_text =
+      "menu_category_added_successfully_text";
+  static String menu_category_added_failed_successfully_text =
+      "menu_category_added_failed_successfully_text";
+  static String add_new_menu_sub_category_error_text =
+      "add_new_menu_sub_category_error_text";
+  static String add_new_menu_sub_category_label_text =
+      "add_new_menu_sub_category_label_text";
+  static String add_new_menu_sub_category_hint_text =
+      "add_new_menu_sub_category_hint_text";
+  static String menu_sub_category_new_added_failed_successfully_text="menu_sub_category_new_added_failed_successfully_text";
 }
