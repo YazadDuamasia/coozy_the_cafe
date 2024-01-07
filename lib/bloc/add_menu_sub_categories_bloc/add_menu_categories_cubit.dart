@@ -81,23 +81,24 @@ class AddMenuCategoryCubit extends Cubit<AddMenuCategoryState> {
     Constants.debugLog(
         AddMenuCategoryCubit, "newCategory:${newCategory.toJson()}");
     List<String>? subCategoryList = _subCategoryListController.value ?? [];
-    Constants.debugLog(AddMenuCategoryCubit, "newSubCategory:${subCategoryList}");
+    Constants.debugLog(
+        AddMenuCategoryCubit, "newSubCategory:${subCategoryList}");
     repository.addCategory(newCategory).then((categoryId) async {
       Constants.debugLog(AddMenuCategoryCubit, "categoryId:${categoryId}");
       if (categoryId == null) {
-         Constants.customTimerPopUpDialogMessage(
+        Constants.customAutoDismissAlertDialog(
             classObject: AddMenuCategoryCubit,
-            isLoading: true,
             context: context,
-            descriptions: AppLocalizations.of(navigatorKey.currentContext!)?.translate(
-                    StringValue.menu_category_added_failed_successfully_text) ??
-                "New Menu Category has been added successfully.",
+            descriptions: AppLocalizations.of(navigatorKey.currentContext!)
+                    ?.translate(StringValue
+                        .menu_category_added_failed_successfully_text) ??
+                "Failed to add new menu category.Please Try again.",
             title: "",
             titleIcon: Lottie.asset(
               StringImagePath.warming_cricle_blink_icon_lottie,
               repeat: false,
             ),
-            showForHowDuration: const Duration(seconds: 3),
+            barrierDismissible: true,
             navigatorKey: navigatorKey);
 
         return;
@@ -135,44 +136,42 @@ class AddMenuCategoryCubit extends Cubit<AddMenuCategoryState> {
           if (errorOccurred) {
             Constants.debugLog(AddMenuCategoryCubit,
                 "Error occurred during creation of $errorIndex subcategory .");
-            Constants.customTimerPopUpDialogMessage(
+            Constants.customAutoDismissAlertDialog(
                 classObject: AddMenuCategoryCubit,
-                isLoading: true,
+                barrierDismissible: true,
                 context: context,
-                descriptions: AppLocalizations.of(navigatorKey.currentContext!)?.translate(StringValue
-                        .menu_sub_category_new_added_failed_successfully_text) ??
+                descriptions: AppLocalizations.of(navigatorKey.currentContext!)
+                        ?.translate(StringValue
+                            .menu_sub_category_new_added_failed_successfully_text) ??
                     "Error occurred during subcategory creation.",
                 title: "",
                 titleIcon: Lottie.asset(
                   StringImagePath.warming_cricle_blink_icon_lottie,
                   repeat: false,
                 ),
-                showForHowDuration: const Duration(seconds: 3),
                 navigatorKey: navigatorKey);
             return;
           }
         }
         Navigator.pop(context);
-        Constants.customTimerPopUpDialogMessage(
+        Constants.customAutoDismissAlertDialog(
             classObject: AddMenuCategoryCubit,
-            isLoading: true,
-            context:navigatorKey.currentContext!,
-            descriptions: AppLocalizations.of(navigatorKey.currentContext!)?.translate(
-                    StringValue.menu_category_added_successfully_text) ??
+            barrierDismissible: true,
+            context: navigatorKey.currentContext!,
+            descriptions: AppLocalizations.of(navigatorKey.currentContext!)
+                    ?.translate(
+                        StringValue.menu_category_added_successfully_text) ??
                 "New Menu Category has been added successfully.",
             title: "",
             titleIcon: Lottie.asset(
-              MediaQuery.of(navigatorKey.currentContext!).platformBrightness == Brightness.light
+              MediaQuery.of(navigatorKey.currentContext!).platformBrightness ==
+                      Brightness.light
                   ? StringImagePath.done_light_brown_color_lottie
                   : StringImagePath.done_brown_color_lottie,
               repeat: false,
             ),
-            showForHowDuration: const Duration(seconds: 3),
             navigatorKey: navigatorKey);
-
-
       }
     });
   }
-
 }

@@ -102,9 +102,8 @@ class _TableScreenState extends State<TableScreen>
                           });
                           Navigator.of(context).pop();
                           if (result != null && result > 0) {
-                            Constants.customTimerPopUpDialogMessage(
+                            Constants.customAutoDismissAlertDialog(
                                 classObject: TableScreen,
-                                isLoading: true,
                                 context: context,
                                 descriptions: AppLocalizations.of(context)
                                         ?.translate(StringValue
@@ -119,12 +118,11 @@ class _TableScreenState extends State<TableScreen>
                                       : StringImagePath.done_brown_color_lottie,
                                   repeat: false,
                                 ),
-                                showForHowDuration: const Duration(seconds: 3),
                                 navigatorKey: navigatorKey);
                           } else {
-                            Constants.customTimerPopUpDialogMessage(
+                            Constants.customAutoDismissAlertDialog(
                                 classObject: TableScreen,
-                                isLoading: true,
+
                                 context: context,
                                 descriptions: AppLocalizations.of(context)
                                         ?.translate(StringValue
@@ -139,7 +137,6 @@ class _TableScreenState extends State<TableScreen>
                                       : StringImagePath.done_brown_color_lottie,
                                   repeat: false,
                                 ),
-                                showForHowDuration: const Duration(seconds: 3),
                                 navigatorKey: navigatorKey);
                           }
                         },
@@ -435,9 +432,8 @@ class _TableScreenState extends State<TableScreen>
     if (result != null && result > 0) {
       list?.removeAt(index);
       setState(() {});
-      Constants.customTimerPopUpDialogMessage(
+      Constants.customAutoDismissAlertDialog(
           classObject: TableScreen,
-          isLoading: true,
           context: context,
           descriptions: AppLocalizations.of(context)
                   ?.translate(StringValue.table_deleted_successfully_text) ??
@@ -449,16 +445,15 @@ class _TableScreenState extends State<TableScreen>
                 : StringImagePath.done_brown_color_lottie,
             repeat: false,
           ),
-          showForHowDuration: const Duration(seconds: 3),
           navigatorKey: navigatorKey);
       // Fluttertoast.showToast(
       //     msg: "Select table has been remove successfully.",
       //     timeInSecForIosWeb: 3,
       //     toastLength: Toast.LENGTH_SHORT);
     } else {
-      Constants.customTimerPopUpDialogMessage(
+      Constants.customAutoDismissAlertDialog(
           classObject: TableScreen,
-          isLoading: true,
+
           context: context,
           descriptions: AppLocalizations.of(context)
                   ?.translate(StringValue.table_failed_to_deleted_text) ??
@@ -470,7 +465,6 @@ class _TableScreenState extends State<TableScreen>
                 : StringImagePath.done_brown_color_lottie,
             repeat: false,
           ),
-          showForHowDuration: const Duration(seconds: 3),
           navigatorKey: navigatorKey);
       // Fluttertoast.showToast(
       //     msg: "Failed to delete you select table.",

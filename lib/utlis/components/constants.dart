@@ -1,9 +1,11 @@
 import 'dart:async';
 import 'dart:math' as math;
+import 'package:coozy_cafe/utlis/utlis.dart';
 import 'package:flutter/foundation.dart' show kDebugMode;
 import 'package:flutter/material.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:geolocator/geolocator.dart';
+import 'package:intl/intl.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:app_settings/app_settings.dart';
 import 'package:platform_info/platform_info.dart';
@@ -202,8 +204,6 @@ class Constants {
     }
   }
 
-
-
   static progressDialogCustomMessage(
       {required bool? isLoading,
       required BuildContext? context,
@@ -303,13 +303,45 @@ class Constants {
     }
   }
 
-  static void customTimerPopUpDialogMessage({
+  static String getPostTime(String creationTime) {
+    var date = DateTime.now();
+    DateTime newCreationTime = DateTime.parse(creationTime).toLocal();
+    var previous =
+        DateTime.now().toLocal().subtract(Duration(days: 1)).toLocal();
+
+    var hour = (int.parse(DateFormat("HH").format(newCreationTime)) -
+        int.parse(DateFormat("HH").format(date)));
+    var minutes = (int.parse(DateFormat("mm").format(newCreationTime)) -
+        int.parse(DateFormat("mm").format(date)));
+    String msg = "";
+    if (DateFormat("dd MM yyyy").format(newCreationTime) ==
+        DateFormat("dd MM yyyy").format(date)) {
+      msg = hour == 0
+          ? minutes == 0
+              ? 'Just now'
+              : '${minutes.abs()} minutes ago'
+          : '${hour.abs()} h ago';
+    } else if (DateUtil.localFormat(creationTime, "dd MM yyyy") ==
+        DateFormat("dd MM yyyy").format(previous)) {
+      msg = "Yesterday";
+    } else {
+      if (DateFormat("yyyy").format(date) ==
+          DateFormat("yyyy").format(newCreationTime)) {
+        msg = DateUtil.localFormatDateTime(newCreationTime, "dd MMM") ?? "";
+      } else {
+        msg = DateUtil.localFormatDateTime(newCreationTime, "dd MMM yyyy") ?? "";
+      }
+    }
+    return msg;
+  }
+
+  static void customAutoDismissAlertDialog({
     required Type? classObject,
-    required bool? isLoading,
     required BuildContext? context,
     Duration? showForHowDuration,
     Widget? titleIcon,
     String? title,
+    bool? barrierDismissible,
     required String? descriptions,
     required GlobalKey<NavigatorState> navigatorKey,
   }) async {
@@ -351,61 +383,59 @@ class Constants {
               children: <Widget>[
                 Visibility(
                   visible: title?.isNotEmpty ?? false,
-                  child: Column(
+                  child: Row(
                     mainAxisSize: MainAxisSize.min,
                     mainAxisAlignment: MainAxisAlignment.center,
                     crossAxisAlignment: CrossAxisAlignment.center,
                     children: [
-                      Row(
-                        mainAxisSize: MainAxisSize.min,
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        crossAxisAlignment: CrossAxisAlignment.center,
-                        children: [
-                          Expanded(
-                            child: Padding(
-                              padding: const EdgeInsets.only(
-                                  left: 5, right: 5, bottom: 10, top: 0),
-                              child: Text(
-                                title ?? "",
-                                textAlign: TextAlign.center,
-                                style: Theme.of(context)
-                                    .textTheme
-                                    .titleMedium!
-                                    .copyWith(
-                                      color: Theme.of(context).brightness ==
-                                              Brightness.light
-                                          ? Colors.white
-                                          : null,
-                                      fontWeight: FontWeight.w600,
-                                    ),
-                              ),
-                            ),
-                          ),
-                        ],
-                      ),
-                    ],
-                  ),
-                ),
-                Row(
-                  mainAxisSize: MainAxisSize.min,
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  crossAxisAlignment: CrossAxisAlignment.center,
-                  children: [
-                    Expanded(
-                      child: Text(
-                        descriptions ?? "",
-                        style:
-                            Theme.of(context).textTheme.titleMedium!.copyWith(
+                      Expanded(
+                        child: Padding(
+                          padding: const EdgeInsets.only(
+                              left: 5, right: 5, bottom: 10, top: 0),
+                          child: Text(
+                            title ?? "",
+                            textAlign: TextAlign.center,
+                            style: Theme.of(context)
+                                .textTheme
+                                .titleMedium!
+                                .copyWith(
                                   color: Theme.of(context).brightness ==
                                           Brightness.light
                                       ? Colors.white
                                       : null,
-                                  fontWeight: FontWeight.w700,
+                                  fontWeight: FontWeight.w600,
                                 ),
-                        textAlign: TextAlign.center,
+                          ),
+                        ),
                       ),
-                    ),
-                  ],
+                    ],
+                  ),
+                ),
+                Visibility(
+                  visible: (descriptions == null || descriptions.isEmpty)
+                      ? false
+                      : true,
+                  child: Row(
+                    mainAxisSize: MainAxisSize.min,
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    crossAxisAlignment: CrossAxisAlignment.center,
+                    children: [
+                      Expanded(
+                        child: Text(
+                          descriptions ?? "",
+                          style:
+                              Theme.of(context).textTheme.titleMedium!.copyWith(
+                                    color: Theme.of(context).brightness ==
+                                            Brightness.light
+                                        ? Colors.white
+                                        : null,
+                                    fontWeight: FontWeight.w700,
+                                  ),
+                          textAlign: TextAlign.center,
+                        ),
+                      ),
+                    ],
+                  ),
                 ),
               ],
             ),
@@ -426,33 +456,34 @@ class Constants {
         ],
       ),
     );
-    Timer? couter;
+    Timer? counter;
 
-    if (!isLoading!) {
-      if ((couter?.isActive ?? false) == true) {
-        couter?.cancel();
-        Constants.debugLog(
-            Constants, "customTimerPopUpDialogMessage:Timer has stopped");
-      }
-      navigatorKey.currentState?.pop();
-    } else {
-      await showDialog(
-        context: context,
-        barrierDismissible: false,
-        builder: (BuildContext context) {
-          couter = Timer(
-            showForHowDuration ?? const Duration(seconds: 40),
-            () async {
-              if ((couter?.isActive ?? false) == true) {
-                couter?.cancel();
-                navigatorKey.currentState?.pop();
+    counter = new Timer(
+      showForHowDuration ?? const Duration(seconds: 3),
+      () {
+        print("Timer callback executed");
+        counter?.cancel();
+        navigatorKey.currentState?.pop();
+      },
+    );
+
+    await showDialog(
+      context: context,
+      barrierDismissible: barrierDismissible ?? false,
+      builder: (BuildContext context) {
+        return WillPopScope(
+            onWillPop: () async {
+              // Prevent manual dismissal by the user
+              print("manual dismissal is been call by the user");
+              if (counter!.isActive) {
+                print("counter been cancel. ");
+                counter.cancel();
               }
+              return true;
             },
-          );
-          return dialog;
-        },
-      );
-    }
+            child: dialog);
+      },
+    );
   }
 
   static void customPopUpDialogMessage(
