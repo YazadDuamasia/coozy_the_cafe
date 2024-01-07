@@ -4,4 +4,5 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 List<BlocProvider> blocProviders = [
   BlocProvider<ThemeCubit>(create: (context) => ThemeCubit()..loadTheme()),
   BlocProvider<HomePageBottomNavCubit>(create: (context) => HomePageBottomNavCubit()),
+  BlocProvider<AddMenuCategoryCubit>(create: (context) => AddMenuCategoryCubit()),
 ];

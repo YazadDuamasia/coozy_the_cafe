@@ -69,7 +69,7 @@ class OrderItem {
       'isMenuItem': isMenuItem,
       'menuItem': menuItem?.toJson(),
       'selectedVariation': selectedVariation?.toJson(),
-    };
+    }..removeWhere((key, value) => value == null);
   }
 }
 /*

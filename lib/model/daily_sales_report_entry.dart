@@ -30,7 +30,7 @@ class DailySalesReportEntry {
       'dailyCost': dailyCost,
       'dailyProfit': dailyProfit,
       'profitPercentage': profitPercentage,
-    };
+    }..removeWhere((key, value) => value == null);
   }
 
   DailySalesReportEntry copyWith({
@@ -85,7 +85,7 @@ class MenuItemSalesReport {
       'totalAmount': totalAmount,
       'totalCost': totalCost,
       'totalProfit': totalProfit,
-    };
+    }..removeWhere((key, value) => value == null);
   }
 
   MenuItemSalesReport copyWith({

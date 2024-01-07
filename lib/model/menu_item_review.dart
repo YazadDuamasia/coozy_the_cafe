@@ -38,6 +38,6 @@ class MenuItemReview {
       'rating': rating,
       'reviewText': reviewText,
       'reviewDate': reviewDate == null ? null : reviewDate!.toIso8601String(),
-    };
+    }..removeWhere((key, value) => value == null);
   }
 }

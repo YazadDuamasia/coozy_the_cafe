@@ -18,7 +18,7 @@ class Category {
       'id': id,
       'name': name,
       'createdDate': createdDate,
-    };
+    }..removeWhere((key, value) => value == null);
   }
 
   Category copyWith({

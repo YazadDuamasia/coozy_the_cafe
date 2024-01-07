@@ -74,7 +74,7 @@ class MenuItem {
       'stockQuantity': stockQuantity,
       'purchaseUnit': purchaseUnit,
       'variations': variations?.map((v) => v.toJson()).toList(),
-    };
+    }..removeWhere((key, value) => value == null);
   }
 
   MenuItem copyWith({
@@ -163,7 +163,7 @@ class MenuItemVariation {
       'sellingPrice': sellingPrice,
       'stockQuantity': stockQuantity,
       'isTodayAvailable': isTodayAvailable,
-    };
+    }..removeWhere((key, value) => value == null);
   }
 
   MenuItemVariation copyWith({

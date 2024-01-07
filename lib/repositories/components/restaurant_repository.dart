@@ -21,8 +21,8 @@ class RestaurantRepository {
     return await _databaseHelper.getCategories();
   }
 // Retrieves a list of all categories from the database.
-  Future<List<Category?>?> getCategoryBasedOnName(String? categoryName) async {
-    return await _databaseHelper.getCategoriesBasedOnName(name: categoryName);
+  Future<Category?> getCategoryBasedOnName(String? categoryName) async {
+    return await _databaseHelper.getCategoryBasedOnName(name: categoryName);
   }
 
 // Updates an existing category in the database.

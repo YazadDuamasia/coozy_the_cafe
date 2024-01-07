@@ -21,7 +21,7 @@ class SubCategory {
       'name': name,
       'createdDate': createdDate,
       'categoryId': categoryId
-    };
+    }..removeWhere((key, value) => value == null);
   }
 
   SubCategory copyWith({

@@ -100,7 +100,7 @@ class OrderModel {
       'deliveryAddress': deliveryAddress ?? "",
       'customer': customerData,
       'orderItems': itemData,
-    };
+    }..removeWhere((key, value) => value == null);
   }
 }
 

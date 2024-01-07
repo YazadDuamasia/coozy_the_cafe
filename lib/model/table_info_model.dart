@@ -26,7 +26,7 @@ class TableInfoModel {
       'name': name,
       'sortOrderIndex': sortOrderIndex,
       'nosOfChairs': nosOfChairs,
-    };
+    }..removeWhere((key, value) => value == null);
   }
 
   @override

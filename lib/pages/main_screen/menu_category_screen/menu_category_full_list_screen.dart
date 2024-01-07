@@ -1,8 +1,9 @@
+import 'dart:convert';
+
 import 'package:coozy_cafe/AppLocalization.dart';
 import 'package:coozy_cafe/model/category.dart';
 import 'package:coozy_cafe/model/sub_category.dart';
 import 'package:coozy_cafe/repositories/repositories.dart';
-import 'package:coozy_cafe/utlis/components/string_value.dart';
 import 'package:coozy_cafe/utlis/utlis.dart';
 import 'package:flutter/material.dart';
 
@@ -95,6 +96,7 @@ class _MenuCategoryFullListScreenState
       isLoading = true;
     });
     categoryList = await RestaurantRepository().getCategories();
+    Constants.debugLog(MenuCategoryFullListScreen, "categoryList:${json.encode(categoryList)}");
     setState(() {
       isLoading = false;
     });

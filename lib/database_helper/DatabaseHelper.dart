@@ -288,12 +288,18 @@ class DatabaseHelper {
 
   // Category CRUD operations
   Future<int?> addCategory(Category category) async {
-    return await _database?.insert(categoriesTable, category.toJson(),
-        conflictAlgorithm: ConflictAlgorithm.replace);
+    final db = await database;
+    Category? model = await getCategoryBasedOnName(name: category.name);
+    if (model == null) {
+      return await db?.insert(categoriesTable, category.toJson(),
+          conflictAlgorithm: ConflictAlgorithm.replace);
+    }
+    return null;
   }
 
   Future<List<Category>?> getCategories() async {
-    final List<Map<String, dynamic>>? maps = await _database?.query(
+    final db = await database;
+    final List<Map<String, dynamic>>? maps = await db?.query(
       categoriesTable,
       orderBy: 'name ASC', // Order by the 'name' column in ascending order
     );
@@ -307,29 +313,32 @@ class DatabaseHelper {
     });
   }
 
-  Future<List<Category?>?> getCategoriesBasedOnName({String? name}) async {
+  Future<Category?> getCategoryBasedOnName({String? name}) async {
+    final db = await database;
+
     if (name != null && name.isNotEmpty) {
-      final List<Map<String, dynamic>>? maps = await _database?.query(
+      final List<Map<String, dynamic>>? maps = await db?.query(
         categoriesTable,
         where: 'name = ?',
         whereArgs: [name],
         orderBy: 'name ASC',
+        limit: 1, // Limit the result to one record
       );
 
-      if (maps == null) {
+      if (maps == null || maps.isEmpty) {
         return null;
       }
 
-      return List.generate(maps.length, (i) {
-        return Category.fromJson(maps[i]);
-      });
+      // Return the first (and only) record as a single object
+      return Category.fromJson(maps.first);
     } else {
       return null;
     }
   }
 
   Future<int?> updateCategory(Category category) async {
-    return await _database?.update(
+    final db = await database;
+    return await db?.update(
       categoriesTable,
       category.toJson(),
       where: 'id = ?',
@@ -338,7 +347,8 @@ class DatabaseHelper {
   }
 
   Future<int?> deleteCategory(int categoryId) async {
-    return await _database?.delete(
+    final db = await database;
+    return await db?.delete(
       categoriesTable,
       where: 'id = ?',
       whereArgs: [categoryId],

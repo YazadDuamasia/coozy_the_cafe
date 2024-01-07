@@ -21,7 +21,7 @@ class PaymentMode {
       'id': id,
       'paymentMethodName': paymentMethodName,
       'uniqueHashId': uniqueHashId,
-    };
+    }..removeWhere((key, value) => value == null);;
   }
 }
 
@@ -121,7 +121,7 @@ class Invoice {
       'orderItems': orderItems == null
           ? null
           : orderItems!.map((item) => item.toJson()).toList(),
-    };
+    }..removeWhere((key, value) => value == null);
   }
 
   String generateInvoiceHashId(var orderId) {

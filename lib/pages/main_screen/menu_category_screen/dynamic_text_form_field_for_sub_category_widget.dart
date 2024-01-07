@@ -5,7 +5,7 @@ import 'package:flutter/material.dart';
 class DynamicTextFormFieldForSubCategoryWidget extends StatefulWidget {
   final String? initialValue;
   final void Function(String) onChanged;
-  final void Function() onDelete;
+  final VoidCallback  onDelete;
 
   const DynamicTextFormFieldForSubCategoryWidget(
       {Key? key,

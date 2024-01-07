@@ -18,7 +18,7 @@ class Customer {
       'id': id,
       'name': name,
       'phoneNumber': phoneNumber,
-    };
+    }..removeWhere((key, value) => value == null);
   }
 
   Customer copyWith({

@@ -153,7 +153,6 @@ class Constants {
     } catch (e) {
       print(e);
       return false;
-
     }
   }
 
@@ -202,6 +201,8 @@ class Constants {
       return randomNumberGenerator(min, max);
     }
   }
+
+
 
   static progressDialogCustomMessage(
       {required bool? isLoading,
@@ -302,8 +303,6 @@ class Constants {
     }
   }
 
-
-
   static void customTimerPopUpDialogMessage({
     required Type? classObject,
     required bool? isLoading,
@@ -314,7 +313,6 @@ class Constants {
     required String? descriptions,
     required GlobalKey<NavigatorState> navigatorKey,
   }) async {
-    Timer? couter;
     Constants.debugLog(classObject, "title:$title");
     AlertDialog dialog = AlertDialog(
       shape: RoundedRectangleBorder(
@@ -396,13 +394,14 @@ class Constants {
                     Expanded(
                       child: Text(
                         descriptions ?? "",
-                        style: Theme.of(context).textTheme.titleMedium!.copyWith(
-                              color: Theme.of(context).brightness ==
-                                      Brightness.light
-                                  ? Colors.white
-                                  : null,
-                              fontWeight: FontWeight.w700,
-                            ),
+                        style:
+                            Theme.of(context).textTheme.titleMedium!.copyWith(
+                                  color: Theme.of(context).brightness ==
+                                          Brightness.light
+                                      ? Colors.white
+                                      : null,
+                                  fontWeight: FontWeight.w700,
+                                ),
                         textAlign: TextAlign.center,
                       ),
                     ),
@@ -427,6 +426,7 @@ class Constants {
         ],
       ),
     );
+    Timer? couter;
 
     if (!isLoading!) {
       if ((couter?.isActive ?? false) == true) {
@@ -438,15 +438,15 @@ class Constants {
     } else {
       await showDialog(
         context: context,
-        barrierDismissible: true,
+        barrierDismissible: false,
         builder: (BuildContext context) {
           couter = Timer(
             showForHowDuration ?? const Duration(seconds: 40),
             () async {
               if ((couter?.isActive ?? false) == true) {
                 couter?.cancel();
+                navigatorKey.currentState?.pop();
               }
-              navigatorKey.currentState?.pop();
             },
           );
           return dialog;
@@ -455,15 +455,14 @@ class Constants {
     }
   }
 
-  static void customPopUpDialogMessage({
-    required Type? classObject,
-    required BuildContext? context,
-    Widget? titleIcon,
-    String? title,
-    required String? descriptions,
-    required Color? textColorDescriptions,
-    required List<Widget>? actions
-  }) async {
+  static void customPopUpDialogMessage(
+      {required Type? classObject,
+      required BuildContext? context,
+      Widget? titleIcon,
+      String? title,
+      required String? descriptions,
+      required Color? textColorDescriptions,
+      required List<Widget>? actions}) async {
     Constants.debugLog(classObject, "title:$title");
     Constants.debugLog(classObject, "descriptions:$descriptions");
     AlertDialog dialog = AlertDialog(
