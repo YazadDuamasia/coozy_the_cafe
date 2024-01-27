@@ -194,7 +194,7 @@ class _MenuCategoryFullListScreenState
 
   // menuItemWidget(result!["categories"]) ,
   Widget menuItemWidget(LoadedState state) {
-    var map = state.data!["categories"];
+    var map = state.data?["categories"];
     if (map != null && map.isNotEmpty) {
       return CustomScrollView(
         shrinkWrap: true,
