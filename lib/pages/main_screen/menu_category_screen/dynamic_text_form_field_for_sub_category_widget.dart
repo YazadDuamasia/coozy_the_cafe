@@ -7,7 +7,7 @@ class DynamicTextFormFieldForSubCategoryWidget extends StatefulWidget {
   final void Function(String) onChanged;
   final VoidCallback  onDelete;
 
-  const DynamicTextFormFieldForSubCategoryWidget(
+   DynamicTextFormFieldForSubCategoryWidget(
       {Key? key,
       this.initialValue,
       required this.onChanged,
@@ -35,6 +35,7 @@ class _DynamicTextFormFieldForSubCategoryWidgetState
   @override
   Widget build(BuildContext context) {
     return TextFormField(
+      key: UniqueKey(),
       controller: _controller,
       focusNode: _focusNode,
       onChanged: widget.onChanged,

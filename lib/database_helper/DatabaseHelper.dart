@@ -364,22 +364,35 @@ class DatabaseHelper {
   }
 
   // Get a list of all subcategories
-  Future<List<SubCategory>> getSubcategories() async {
+  Future<List<SubCategory>?> getSubcategories() async {
     final db = await database;
-    final List<Map<String, dynamic>> maps = await db!.query(subcategoriesTable);
-    return List.generate(maps.length, (i) {
-      return SubCategory.fromJson(maps[i]);
-    });
+    final List<Map<String, dynamic>> maps = await db!.query(
+      subcategoriesTable,
+      orderBy: 'name ASC',
+    );
+    if (maps != null && maps.isNotEmpty) {
+      return List.generate(maps.length, (i) {
+        return SubCategory.fromJson(maps[i]);
+      });
+    } else {
+      return null;
+    }
   }
 
-  // Get a single subcategory by ID
-  Future<SubCategory?> getSubcategory(int id) async {
+  // get Subcategory Base CategoryId
+  Future<List<SubCategory>?> getSubcategoryBaseCategoryId(int id) async {
     final db = await database;
-    final List<Map<String, dynamic>> maps = await db!.rawQuery(
-      'SELECT * FROM $subcategoriesTable ORDER BY name ASC', // Order by the 'name' column in ascending order
+    final List<Map<String, dynamic>?>? maps = await db?.query(
+      subcategoriesTable,
+      where: 'id = ?',
+      whereArgs: [id],
+      orderBy: 'name ASC',
     );
-    if (maps.isNotEmpty) {
-      return SubCategory.fromJson(maps.first);
+
+    if (maps != null && maps.isNotEmpty) {
+      return List.generate(maps.length, (i) {
+        return SubCategory.fromJson(maps[i]!);
+      });
     } else {
       return null;
     }

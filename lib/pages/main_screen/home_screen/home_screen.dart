@@ -51,25 +51,24 @@ class _HomeScreenState extends State<HomeScreen>
               leading: IconButton(
                 icon: const Icon(
                   Icons.menu,
-                  color: Colors.white,
                 ),
                 onPressed: () {
                   if (_scaffoldKey!.currentState!.isDrawerOpen) {
-                    _scaffoldKey?.currentState!.closeDrawer();
+                    _scaffoldKey.currentState!.closeDrawer();
                     //close drawer, if drawer is open
                   } else {
-                    _scaffoldKey!.currentState!.openDrawer();
+                    _scaffoldKey.currentState!.openDrawer();
                     //open drawer, if drawer is closed
                   }
                 },
               ),
               bottom: TabBar(
-                tabs: <Widget>[
-                  const Tab(
+                tabs: const <Widget>[
+                  Tab(
                     text: 'Waiter',
                   ),
-                  const Tab(text: 'kitchen'),
-                  const Tab(text: 'more'),
+                  Tab(text: 'kitchen'),
+                  Tab(text: 'more'),
                 ],
                 tabAlignment: TabAlignment.fill,
                 indicatorColor: Theme.of(context).dividerColor,
@@ -85,26 +84,34 @@ class _HomeScreenState extends State<HomeScreen>
                     .copyWith(fontWeight: FontWeight.bold),
               ),
               actions: [
-                PopupMenuButton(
-                  onSelected: (value) {
-                    print(value);
-                  },
-                  itemBuilder: (BuildContext bc) {
-                    return const [
-                      PopupMenuItem(
-                        child: Text("Backup"),
-                        value: 'backup',
-                      ),
-                      PopupMenuItem(
-                        child: Text("Export"),
-                        value: 'export',
-                      ),
-                      PopupMenuItem(
-                        child: Text("Restore"),
-                        value: 'restore',
-                      )
-                    ];
-                  },
+                Theme(
+                  data: Theme.of(context),
+                  child: PopupMenuButton(
+                    onSelected: (value) {
+                      print(value);
+                    },
+                    itemBuilder: (BuildContext bc) {
+                      return const [
+                        PopupMenuItem(
+                          child: Text("Backup"),
+                          value: 'backup',
+                        ),
+                        PopupMenuItem(
+                          child: Text("Export"),
+                          value: 'export',
+                        ),
+                        PopupMenuItem(
+                          child: Text("Restore"),
+                          value: 'restore',
+                        )
+                      ];
+                    },
+                    icon: Icon(
+                      Icons.more_vert_rounded,
+                      size: Theme.of(context).appBarTheme.iconTheme?.size,
+                      color: Theme.of(context).appBarTheme.iconTheme?.color,
+                    ),
+                  ),
                 ),
               ],
             ),

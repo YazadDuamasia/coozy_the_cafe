@@ -3,6 +3,7 @@ import 'package:intl/intl.dart';
 import '../utlis.dart';
 
 class DateUtil {
+  static const DATE_FORMAT = "yyyy-MM-ddTHH:mm:ss.SSSSSSZ";
   // 'yyyy-MM-dd HH:mm' =>"2022-02-21 04:14"
   static const DATE_FORMAT1 = 'yyyy-MM-dd HH:mm';
 
@@ -40,6 +41,7 @@ class DateUtil {
 
   // 'eeee'=>"Friday"
   static const DATE_FORMAT12 = 'eeee';
+
 
   // 'EEE'=>"Fri"
   static const DATE_FORMAT13 = 'EEE';
@@ -79,6 +81,17 @@ class DateUtil {
     return updatedDt;
   }
 
+
+  static DateTime? stringToLocalDate(String? utcTime, String dateFormat) {
+    try {
+      if (utcTime != null) {
+        return DateFormat(dateFormat).parse(utcTime).toLocal();
+      }
+    } catch (e) {
+      Constants.debugLog(DateUtil, "StringToLocalDate: error - ${e.toString()}");
+    }
+    return null;
+  }
 
   static DateTime stringToDate(String? time, String dateFormat) {
     DateTime? input;
@@ -144,5 +157,20 @@ class DateUtil {
       return false;
       // throw Exception('Invalid date format');
     }
+  }
+
+  static DateTime? stringToLocalDateTime(String? utcTime, String dateFormat) {
+    try {
+      if (utcTime != null) {
+        // Parse the input string using the provided date format
+        var parsedDateTime = DateFormat(dateFormat).parse(utcTime);
+
+        // Convert the parsed UTC DateTime to local DateTime
+        return parsedDateTime.toLocal();
+      }
+    } catch (e) {
+      Constants.debugLog(DateUtil, "StringToLocalDateTime: error - ${e.toString()}");
+    }
+    return null;
   }
 }

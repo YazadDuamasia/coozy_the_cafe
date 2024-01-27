@@ -9,7 +9,6 @@ import 'package:coozy_cafe/routing/routs.dart';
 import 'package:coozy_cafe/simple_bloc_observer.dart';
 import 'package:coozy_cafe/utlis/utlis.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -65,16 +64,23 @@ class _MyAppState extends State<MyApp> {
                 appBarTheme: AppBarTheme(
                   centerTitle: false,
                   titleTextStyle:
-                      Theme.of(context).textTheme.headlineSmall!.copyWith(
+                      Theme.of(context).textTheme.titleLarge!.copyWith(
                             color: Colors.white,
                           ),
                   backgroundColor: AppColor.lightColorScheme.primary,
+                  iconTheme: IconThemeData(
+                    color: Colors.white,
+                    // Set the default color for the leading icon
+                    size: 24.0, // Set the default size for the leading icon
+                  ),
+                  actionsIconTheme: IconThemeData(
+                    color: Colors.white,
+                    // Set the default color for the leading icon
+                    size: 24.0, // Set the default size for the leading icon
+                  ),
                 ),
                 visualDensity: VisualDensity.adaptivePlatformDensity,
                 brightness: Brightness.light,
-                // cardTheme: Theme.of(context)
-                //     .cardTheme
-                //     .copyWith(color: AppColor.lightColorScheme.tertiaryContainer),
                 textSelectionTheme: TextSelectionThemeData(
                   cursorColor: Theme.of(context).colorScheme.primary,
                   selectionColor:
@@ -93,11 +99,17 @@ class _MyAppState extends State<MyApp> {
                             color: Colors.white,
                           ),
                   backgroundColor: AppColor.darkColorScheme.primary,
+                  iconTheme: IconThemeData(
+                    color: Colors.white,
+                    // Set the default color for the leading icon
+                    size: 24.0, // Set the default size for the leading icon
+                  ),
+                  actionsIconTheme: IconThemeData(
+                    color: Colors.white, // Set the default color for the leading icon
+                    size: 24.0, // Set the default size for the leading icon
+                  ),
                 ),
                 visualDensity: VisualDensity.adaptivePlatformDensity,
-                // cardTheme: Theme.of(context)
-                //     .cardTheme
-                //     .copyWith(color: AppColor.darkColorScheme.tertiaryContainer),
                 textSelectionTheme: TextSelectionThemeData(
                   cursorColor: Theme.of(context).colorScheme.primary,
                   selectionColor:

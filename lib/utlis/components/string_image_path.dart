@@ -11,6 +11,8 @@ abstract class StringImagePath {
   static String sign_up_large_left_size_image2 = "assets/images/sign_up2.jpg";
   static String sign_up_large_left_size_image3 = "assets/images/sign_up3.jpg";
   static String place_holder_profile_user = "assets/images/profile_user.png";
+  static String place_holder_menu_category_screen = "assets/images/empty_menu_category_placeholder.png";
+  static String place_holder_menu_category_screen_1 = "assets/images/empty_menu_category_placeholder_1.png";
   static String hill = "assets/images/hill.jpg";
   static String sun_rise = "assets/images/sun_rise.jpg";
   static String sun_set = "assets/images/sun_set.jpg";

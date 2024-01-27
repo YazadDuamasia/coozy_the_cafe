@@ -1,15 +1,15 @@
 import 'dart:async';
 import 'dart:math' as math;
-import 'package:coozy_cafe/utlis/utlis.dart';
+
+import 'package:app_settings/app_settings.dart';
 import 'package:flutter/foundation.dart' show kDebugMode;
 import 'package:flutter/material.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:geolocator/geolocator.dart';
-import 'package:intl/intl.dart';
-import 'package:shared_preferences/shared_preferences.dart';
-import 'package:app_settings/app_settings.dart';
-import 'package:platform_info/platform_info.dart';
 import 'package:permission_handler/permission_handler.dart';
+import 'package:platform_info/platform_info.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+import 'package:timeago/timeago.dart' as timeago;
 
 class Constants {
   static const String prefThemeModeKey = "user_theme";
@@ -73,6 +73,36 @@ class Constants {
 
       return defaultString.toString();
     }*/
+  }
+
+  static String getTextTimeAgo(
+      {String? dateStr,
+      required String? localizedCode,
+      DateTime? dateTime,
+      bool? allowFromNow}) {
+    Constants.debugLog(Constants, "date:${dateStr}");
+    Constants.debugLog(Constants, "dateTime:${dateTime}");
+    if (dateStr != null && dateStr.isNotEmpty) {
+      DateTime? passingDate = DateTime.tryParse(dateStr)?.toLocal();
+      DateTime? now = DateTime.now().toLocal();
+      Duration? duration = now.difference(passingDate!);
+      DateTime? result = now.subtract(duration).toLocal();
+    return  timeago.format(result,
+          locale: localizedCode,
+          allowFromNow: allowFromNow ?? true,
+          clock: now);
+    } else if (dateTime != null) {
+      DateTime? now = DateTime.now().toLocal();
+      Duration? duration = now.difference(dateTime);
+      DateTime? result = now.subtract(duration).toLocal();
+      return  timeago.format(result,
+          locale: localizedCode,
+          allowFromNow: allowFromNow ?? true,
+          clock: now);
+
+    } else {
+      return "";
+    }
   }
 
   ///print log at platform  level
@@ -301,38 +331,6 @@ class Constants {
             return dialog;
           });
     }
-  }
-
-  static String getPostTime(String creationTime) {
-    var date = DateTime.now();
-    DateTime newCreationTime = DateTime.parse(creationTime).toLocal();
-    var previous =
-        DateTime.now().toLocal().subtract(Duration(days: 1)).toLocal();
-
-    var hour = (int.parse(DateFormat("HH").format(newCreationTime)) -
-        int.parse(DateFormat("HH").format(date)));
-    var minutes = (int.parse(DateFormat("mm").format(newCreationTime)) -
-        int.parse(DateFormat("mm").format(date)));
-    String msg = "";
-    if (DateFormat("dd MM yyyy").format(newCreationTime) ==
-        DateFormat("dd MM yyyy").format(date)) {
-      msg = hour == 0
-          ? minutes == 0
-              ? 'Just now'
-              : '${minutes.abs()} minutes ago'
-          : '${hour.abs()} h ago';
-    } else if (DateUtil.localFormat(creationTime, "dd MM yyyy") ==
-        DateFormat("dd MM yyyy").format(previous)) {
-      msg = "Yesterday";
-    } else {
-      if (DateFormat("yyyy").format(date) ==
-          DateFormat("yyyy").format(newCreationTime)) {
-        msg = DateUtil.localFormatDateTime(newCreationTime, "dd MMM") ?? "";
-      } else {
-        msg = DateUtil.localFormatDateTime(newCreationTime, "dd MMM yyyy") ?? "";
-      }
-    }
-    return msg;
   }
 
   static void customAutoDismissAlertDialog({

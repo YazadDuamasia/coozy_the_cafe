@@ -51,8 +51,6 @@ class _TableScreenState extends State<TableScreen>
                       ?.translate(StringValue.table_info_app_bar_title) ??
                   "Table Info",
             ),
-            leadingWidth: 35,
-            centerTitle: false,
             actions: [
               IconButton(
                 onPressed: () {
@@ -67,12 +65,12 @@ class _TableScreenState extends State<TableScreen>
                       ? const Icon(
                           Icons.list,
                           key: ValueKey('list'),
-                          color: Colors.white,
+
                         )
                       : const Icon(
                           Icons.grid_view,
                           key: ValueKey('grid'),
-                          color: Colors.white,
+
                         ),
                 ),
                 tooltip: isGridView
@@ -146,7 +144,6 @@ class _TableScreenState extends State<TableScreen>
                 },
                 icon: const Icon(
                   Icons.add,
-                  color: Colors.white,
                 ),
                 tooltip: AppLocalizations.of(context)
                         ?.translate(StringValue.add_table_icon_tooltip_text) ??
@@ -173,6 +170,10 @@ class _TableScreenState extends State<TableScreen>
     return ReorderableGridView.builder(
       itemCount: list == null ? 0 : list!.length,
       itemBuilder: (context, index) => buildGridItem(list![index], index),
+      shrinkWrap: true,
+      addAutomaticKeepAlives: false,
+      physics: const ClampingScrollPhysics(parent: AlwaysScrollableScrollPhysics()),
+      addRepaintBoundaries: true,
       onReorder: onReOrder,
       placeholderBuilder: (dragIndex, dropIndex, dragWidget) {
         return Container(

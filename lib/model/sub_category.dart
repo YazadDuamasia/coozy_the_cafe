@@ -48,6 +48,18 @@ class SubCategory {
     }
   }
 
+  // Convert dynamic list to List<SubCategory>
+  static List<SubCategory>? convertDynamicListToSubCategoryList(List<dynamic>? dynamicList) {
+    if (dynamicList == null) {
+      return null;
+    }
+
+    return dynamicList.map((dynamicItem) {
+      return SubCategory.fromJson(dynamicItem as Map<String, dynamic>);
+    }).toList();
+  }
+
+
   @override
   String toString() {
     return 'SubCategory(id: $id, name: $name,  createdDate: $createdDate, categoryId: $categoryId)';

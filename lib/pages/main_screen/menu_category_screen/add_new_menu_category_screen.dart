@@ -89,6 +89,7 @@ class _AddNewMenuCategoryScreenState extends State<AddNewMenuCategoryScreen> {
                                     .menuCategoryNameController,
                                 focusNode: _menuCategoryCubit
                                     .menuCategoryNameFocusNode,
+                                autofocus: false,
                                 decoration: InputDecoration(
                                   labelText: AppLocalizations.of(context)
                                           ?.translate(StringValue
@@ -113,8 +114,7 @@ class _AddNewMenuCategoryScreenState extends State<AddNewMenuCategoryScreen> {
                                   return null;
                                 },
                                 onFieldSubmitted: (String value) {
-                                  FocusScope.of(context)
-                                      .requestFocus(FocusNode());
+                                  FocusScope.of(context).unfocus();
                                 },
                               ),
                             ),
@@ -165,16 +165,18 @@ class _AddNewMenuCategoryScreenState extends State<AddNewMenuCategoryScreen> {
                                                     key: UniqueKey(),
                                                     initialValue: state
                                                         .subCategoryList[index],
-                                                    onChanged: (value) async =>
-                                                        _menuCategoryCubit
-                                                            .onChangeSubCategory(
-                                                                value, index),
-                                                    onDelete: () async {
+                                                    onChanged: (value) async {
                                                       _menuCategoryCubit
-                                                          .removeSubCategory(
-                                                              index);
+                                                          .onChangeSubCategory(
+                                                          value, index);
+                                                    },
+                                                    onDelete: () async {
+                                                      _menuCategoryCubit.removeSubCategory(index);
+                                                      FocusScope.of(context).unfocus();
                                                       setState(() {});
-                                                    }),
+                                                    },
+
+                                                ),
                                           ),
                                         ),
                                       ],
@@ -201,10 +203,11 @@ class _AddNewMenuCategoryScreenState extends State<AddNewMenuCategoryScreen> {
                               child: ElevatedButton(
                                 onPressed: () async {
                                   _menuCategoryCubit.addSubCategory('');
+                                  FocusScope.of(context).unfocus();
                                   setState(() {});
                                 },
                                 style: ElevatedButton.styleFrom(
-                                    padding: const EdgeInsets.all(10)),
+                                    padding: const EdgeInsets.all(10),elevation: 5),
                                 child: Text(AppLocalizations.of(context)
                                         ?.translate(StringValue
                                             .add_menu_sub_category_btn_text) ??

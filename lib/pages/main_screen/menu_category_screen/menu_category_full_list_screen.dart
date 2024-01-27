@@ -1,11 +1,13 @@
-import 'dart:convert';
-
 import 'package:coozy_cafe/AppLocalization.dart';
+import 'package:coozy_cafe/bloc/menu_category_full_list_cubit/menu_category_full_list_cubit.dart';
 import 'package:coozy_cafe/model/category.dart';
 import 'package:coozy_cafe/model/sub_category.dart';
-import 'package:coozy_cafe/repositories/repositories.dart';
+import 'package:coozy_cafe/pages/main_screen/menu_category_screen/menu_sub_category_expansion_child_listview_widget.dart';
 import 'package:coozy_cafe/utlis/utlis.dart';
+import 'package:coozy_cafe/widgets/post_time_text_widget/post_time_text_widget.dart';
+import 'package:coozy_cafe/widgets/responsive_layout/responsive_layout.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 
 class MenuCategoryFullListScreen extends StatefulWidget {
   const MenuCategoryFullListScreen({Key? key}) : super(key: key);
@@ -17,25 +19,23 @@ class MenuCategoryFullListScreen extends StatefulWidget {
 
 class _MenuCategoryFullListScreenState
     extends State<MenuCategoryFullListScreen> {
-  Size? size;
-  Orientation? orientation;
-  List<Category>? categoryList = [];
-  List<SubCategory>? SubCategoryList = [];
-  bool isLoading = true;
+  ScrollController? _controller = ScrollController();
+  String? searchQuery = '';
+  TextEditingController? searchController = TextEditingController(text: "");
 
   @override
   void initState() {
     super.initState();
+    searchController = TextEditingController(text: "");
+    searchQuery = "";
+    _controller = ScrollController();
     WidgetsBinding.instance.addPostFrameCallback((_) {
-      loadData();
+      BlocProvider.of<MenuCategoryFullListCubit>(context).loadData();
     });
   }
 
   @override
   Widget build(BuildContext context) {
-    size = MediaQuery.of(context).size;
-    orientation = MediaQuery.of(context).orientation;
-
     return SafeArea(
       child: WillPopScope(
         onWillPop: () async {
@@ -48,18 +48,14 @@ class _MenuCategoryFullListScreenState
             title: const Text(
               "Menu Category",
             ),
-            leadingWidth: 35,
             centerTitle: false,
             actions: [
               IconButton(
                 onPressed: () async {
-                  navigationRoutes
-                      .navigateToAddNewMenuCategoryScreen()
-                      .then((value) async => loadData());
+                  await handleNewCategory();
                 },
                 icon: const Icon(
                   Icons.add,
-                  color: Colors.white,
                 ),
                 tooltip: AppLocalizations.of(context)?.translate(
                         StringValue.add_menu_category_icon_tooltip_text) ??
@@ -67,43 +63,366 @@ class _MenuCategoryFullListScreenState
               ),
             ],
           ),
-          body: SingleChildScrollView(
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.start,
-              crossAxisAlignment: CrossAxisAlignment.start,
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                Row(
+          body: BlocConsumer<MenuCategoryFullListCubit,
+              MenuCategoryFullListState>(
+            listener: (context, state) {
+              // TODO: implement listener
+            },
+            builder: (context, state) {
+              if (state is InitialState) {
+                return Container();
+              } else if (state is LoadingState) {
+                return Container();
+              } else if (state is LoadedState) {
+                return Column(
                   mainAxisAlignment: MainAxisAlignment.start,
                   crossAxisAlignment: CrossAxisAlignment.start,
-                  mainAxisSize: MainAxisSize.min,
+                  mainAxisSize: MainAxisSize.max,
                   children: [
+                    Padding(
+                      padding: const EdgeInsets.all(10.0),
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.start,
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          Expanded(
+                            child: SearchAnchor(
+                              builder: (BuildContext context,
+                                  SearchController controller) {
+                                return SearchBar(
+                                  controller: controller,
+                                  padding: const MaterialStatePropertyAll<
+                                          EdgeInsets>(
+                                      EdgeInsets.symmetric(horizontal: 10.0)),
+                                  onTap: () {
+                                    controller.openView();
+                                  },
+                                  onChanged: (_) {
+                                    if (!controller.isOpen) {
+                                      scrollToItemAndExpand(controller.text);
+                                    } else {
+                                      controller.openView();
+                                    }
+                                  },
+                                  onSubmitted: (value) {
+                                    scrollToItemAndExpand(value);
+                                  },
+                                  leading: const Icon(Icons.search),
+                                );
+                              },
+                              isFullScreen: false,
+                              viewConstraints: BoxConstraints(
+                                maxHeight:
+                                    MediaQuery.of(context).size.height * .35,
+                              ),
+                              suggestionsBuilder: (BuildContext context,
+                                  SearchController controller) {
+                                List<String> suggestions = [];
+                                if (state.data != null &&
+                                    state.data!.isNotEmpty &&
+                                    state.data!.containsKey("categories") &&
+                                    state.data!['categories'] != null) {
+                                  state.data!['categories'].forEach((category) {
+                                    suggestions
+                                        .add(category['name'].toString());
+
+                                    if (category['subCategories'] != null) {
+                                      // Ensure that 'subCategories' is a List<Map<String, dynamic>>
+                                      suggestions.addAll((category[
+                                              'subCategories'] as List<dynamic>)
+                                          .map((subCategory) =>
+                                              subCategory['name'].toString()));
+                                    }
+                                  });
+                                } else {
+                                  suggestions = [];
+                                }
+                                List<Widget> suggestionWidgets = suggestions
+                                    .where((suggestion) => suggestion
+                                        .toLowerCase()
+                                        .contains(controller.value.text
+                                            .toLowerCase()))
+                                    .map((suggestion) => ListTile(
+                                          title: Text(suggestion),
+                                          onTap: () {
+                                            setState(() {
+                                              controller.closeView(suggestion);
+                                            });
+                                          },
+                                        ))
+                                    .toList();
+                                return suggestionWidgets.isEmpty
+                                    ? [
+                                        const Row(
+                                          mainAxisAlignment:
+                                              MainAxisAlignment.start,
+                                          crossAxisAlignment:
+                                              CrossAxisAlignment.start,
+                                          mainAxisSize: MainAxisSize.min,
+                                          children: [
+                                            Expanded(
+                                                child: Text("No suggestions")),
+                                          ],
+                                        )
+                                      ]
+                                    : suggestionWidgets;
+                              },
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
                     Expanded(
-                      child: Container(),
+                      child: menuItemWidget(state),
                     ),
                   ],
-                ),
-              ],
-            ),
+                );
+              } else if (state is ErrorState) {
+                return Container();
+              } else if (state is NoInternetState) {
+                return Container();
+              } else {
+                return Container();
+              }
+            },
           ),
         ),
       ),
     );
   }
 
-  Future<void> loadData() async {
-    setState(() {
-      isLoading = true;
-    });
-    categoryList = await RestaurantRepository().getCategories();
-    Constants.debugLog(MenuCategoryFullListScreen, "categoryList:${json.encode(categoryList)}");
-    setState(() {
-      isLoading = false;
-    });
+  // menuItemWidget(result!["categories"]) ,
+  Widget menuItemWidget(LoadedState state) {
+    var map = state.data!["categories"];
+    if (map != null && map.isNotEmpty) {
+      return CustomScrollView(
+        shrinkWrap: true,
+        controller: _controller,
+        physics: const ClampingScrollPhysics(
+            parent: AlwaysScrollableScrollPhysics()),
+        slivers: [
+          SliverList(
+            delegate: SliverChildBuilderDelegate((context, index) {
+              var category = map![index];
+              return menuCategoryExpansionTileItem(
+                  state: state,
+                  model: category,
+                  index: index,
+                  totalItemLength: map?.length ?? 0);
+            },
+                addAutomaticKeepAlives: true,
+                addRepaintBoundaries: false,
+                childCount: map?.length ?? 0),
+          ),
+        ],
+      );
+    } else {
+      return Center(
+        child: Padding(
+          padding:
+              const EdgeInsets.only(left: 20, right: 20, bottom: 0, top: 0),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            mainAxisAlignment: MainAxisAlignment.center,
+            crossAxisAlignment: CrossAxisAlignment.center,
+            children: [
+              Row(
+                mainAxisSize: MainAxisSize.min,
+                mainAxisAlignment: MainAxisAlignment.center,
+                crossAxisAlignment: CrossAxisAlignment.center,
+                children: [
+                  Expanded(
+                    child: Text("No Category been inserted",
+                        textAlign: TextAlign.center,
+                        style: Theme.of(context).textTheme.bodyLarge),
+                  ),
+                ],
+              ),
+              Row(
+                mainAxisSize: MainAxisSize.min,
+                mainAxisAlignment: MainAxisAlignment.center,
+                crossAxisAlignment: CrossAxisAlignment.center,
+                children: [
+                  ElevatedButton(
+                    onPressed: () async {
+                      await handleNewCategory();
+                    },
+                    child: const Text('Add new category'),
+                    style: ElevatedButton.styleFrom(
+                        padding: const EdgeInsets.only(
+                            top: 10, bottom: 10, right: 25, left: 25),
+                        elevation: 5),
+                  ),
+                ],
+              ),
+            ],
+          ),
+        ),
+      );
+    }
+  }
+
+  Widget menuCategoryExpansionTileItem(
+      {required LoadedState state,
+      dynamic model,
+      required int index,
+      required int totalItemLength}) {
+    Category category = Category(
+        id: model["id"],
+        createdDate: model["createdDate"],
+        name: model["name"]);
+
+    List<dynamic>? dynamicSubCategories =
+        model["subCategories"] as List<dynamic>?;
+
+    List<SubCategory>? subCategoryList =
+        SubCategory.convertDynamicListToSubCategoryList(dynamicSubCategories);
+    final theme = Theme.of(context);
+    return Theme(
+      data: theme.copyWith(dividerColor: Colors.transparent),
+      child: Padding(
+        padding: EdgeInsets.only(
+            left: 10,
+            right: 10,
+            top: 10,
+            bottom: (index < totalItemLength - 1) ? 0 : 10),
+        child: ClipRRect(
+          borderRadius: BorderRadius.circular(10),
+          child: ExpansionTile(
+            // shape: Border(),
+            key: state.expansionTileKeys![index] ?? GlobalKey(),
+            maintainState: true,
+            collapsedBackgroundColor: theme.colorScheme.primaryContainer,
+            backgroundColor: theme.colorScheme.primaryContainer,
+            childrenPadding: const EdgeInsets.symmetric(horizontal: 10),
+            subtitle: PostTimeTextWidget(
+              key: UniqueKey(),
+              creationDate: category.createdDate ?? "",
+              localizedCode: AppLocalizations.getCurrentLanguageCode(context),
+            ),
+            title: Row(
+              mainAxisAlignment: MainAxisAlignment.start,
+              crossAxisAlignment: CrossAxisAlignment.start,
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Expanded(child: Text("${category.name ?? ""}")),
+              ],
+            ),
+            controller: state.expandedTitleControllerList![index],
+            children: <Widget>[
+              Visibility(
+                visible: (subCategoryList != null && subCategoryList.isNotEmpty)
+                    ? true
+                    : false,
+                child: ResponsiveLayout(
+                  mobile: MenuSubCategoryExpansionChildListViewWidget(
+                      key: UniqueKey(),
+                      subCategoryList: subCategoryList,
+                      itemsToShow: 5),
+                  tablet: MenuSubCategoryExpansionChildListViewWidget(
+                      key: UniqueKey(),
+                      subCategoryList: subCategoryList,
+                      itemsToShow: 10),
+                  desktop: MenuSubCategoryExpansionChildListViewWidget(
+                    key: UniqueKey(),
+                    subCategoryList: subCategoryList,
+                    itemsToShow: 10,
+                  ),
+                ),
+              )
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+
+  void scrollToItemAndExpand(String keyword) {
+    if (BlocProvider.of<MenuCategoryFullListCubit>(context).state
+        is LoadedState) {
+      LoadedState loadedState =
+          BlocProvider.of<MenuCategoryFullListCubit>(context).state
+              as LoadedState;
+
+      int index = -1;
+      /*
+      /*this also working Fine*/
+      for (int i = 0; i < loadedState.data!['categories'].length; i++) {
+        var category = loadedState.data!['categories'][i];
+        if (category['name'].toString().toLowerCase() ==
+            keyword.toLowerCase()) {
+          index = i;
+          break;
+        }
+
+        if (category['subCategories'] != null) {
+          var subCategories = category['subCategories'];
+          for (int j = 0; j < subCategories.length; j++) {
+            if (subCategories[j]['name'].toString().toLowerCase() ==
+                keyword.toLowerCase()) {
+              index = i;
+              break;
+            }
+          }
+        }
+      }*/
+
+      index = loadedState.data!['categories'].indexWhere((category) {
+        bool isCategoryMatch =
+            category['name'].toString().toLowerCase() == keyword.toLowerCase();
+
+        if (isCategoryMatch) {
+          return true;
+        }
+
+        if (category['subCategories'] != null) {
+          return (category['subCategories'] as List).any((subCategory) =>
+              subCategory['name'].toString().toLowerCase() ==
+              keyword.toLowerCase());
+        }
+
+        return false;
+      });
+
+      if (index != -1) {
+        // Obtain the RenderBox
+        RenderBox renderBox = loadedState
+            .expansionTileKeys![index]!.currentContext
+            ?.findRenderObject() as RenderBox;
+
+        // Get the size of the RenderBox
+        double itemHeight = renderBox.size.height;
+
+        // Calculate the position
+        double position = index * itemHeight;
+
+        setState(() {
+          // Toggle the isExpanded state
+          if ((loadedState.expandedTitleControllerList != null ||
+                  loadedState.expandedTitleControllerList!.isNotEmpty) &&
+              loadedState.expandedTitleControllerList![index].isExpanded ==
+                  false) {
+            loadedState.expandedTitleControllerList![index].expand();
+          }
+        });
+
+        // Scroll and toggle the isExpanded state
+        _controller!.animateTo(
+          position,
+          duration: const Duration(milliseconds: 500),
+          curve: Curves.easeInOut,
+        );
+      }
+    }
   }
 
   @override
   void dispose() {
     super.dispose();
+  }
+
+  Future<void> handleNewCategory() async {
+    navigationRoutes.navigateToAddNewMenuCategoryScreen().then((value) async => context.read<MenuCategoryFullListCubit>().loadData());
   }
 }

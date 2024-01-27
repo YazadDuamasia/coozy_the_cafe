@@ -20,6 +20,7 @@ class RestaurantRepository {
   Future<List<Category>?> getCategories() async {
     return await _databaseHelper.getCategories();
   }
+
 // Retrieves a list of all categories from the database.
   Future<Category?> getCategoryBasedOnName(String? categoryName) async {
     return await _databaseHelper.getCategoryBasedOnName(name: categoryName);
@@ -43,13 +44,13 @@ class RestaurantRepository {
   }
 
 // Retrieves a list of all subcategories from the database.
-  Future<List<SubCategory>> getSubcategories() async {
+  Future<List<SubCategory>?> getSubcategories() async {
     return await _databaseHelper.getSubcategories();
   }
 
 // Retrieves a single subcategory by ID.
-  Future<SubCategory?> getSubcategory(int id) async {
-    return await _databaseHelper.getSubcategory(id);
+  Future<List<SubCategory>?> getSubcategoryBaseCategoryId({int? id}) async {
+    return await _databaseHelper.getSubcategoryBaseCategoryId(id!);
   }
 
 // Updates an existing subcategory in the database.
@@ -87,8 +88,6 @@ class RestaurantRepository {
   Future<int?> deleteTableInfo({TableInfoModel? tableInfoModelToDelete}) async {
     return await _databaseHelper.deleteTableInfo(tableInfoModelToDelete!);
   }
-
-
 
   Future<int?> getTableInfoRecordCount() async {
     return await _databaseHelper.getTableInfoRecordCount();

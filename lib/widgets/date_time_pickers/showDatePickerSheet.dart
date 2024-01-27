@@ -56,6 +56,9 @@ Future<DateTime?> showDatePickerSheet({
         Column(
           children: [
             Row(
+              mainAxisAlignment: MainAxisAlignment.start,
+              crossAxisAlignment: CrossAxisAlignment.start,
+              mainAxisSize: MainAxisSize.min,
               children: [
                 Expanded(
                   child: TextButton(
@@ -131,6 +134,9 @@ Future<TimeOfDay?> showTimePickerSheet({
         Column(
           children: [
             Row(
+              mainAxisAlignment: MainAxisAlignment.start,
+              crossAxisAlignment: CrossAxisAlignment.start,
+              mainAxisSize: MainAxisSize.min,
               children: [
                 Expanded(
                   child: TextButton(

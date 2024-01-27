@@ -1,5 +1,3 @@
-import 'dart:convert';
-
 import 'package:coozy_cafe/AppLocalization.dart';
 import 'package:coozy_cafe/model/category.dart';
 import 'package:coozy_cafe/model/sub_category.dart';
