@@ -137,8 +137,7 @@ class _AddNewMenuCategoryScreenState extends State<AddNewMenuCategoryScreen> {
                                   return Container();
                                 } else if (state is AddMenuCategoryUpdated) {
                                   return ListView.separated(
-                                    itemCount: (state.subCategoryList == null ||
-                                            state.subCategoryList.isEmpty)
+                                    itemCount: (state.subCategoryList.isEmpty)
                                         ? 0
                                         : state.subCategoryList.length,
                                     shrinkWrap: true,
