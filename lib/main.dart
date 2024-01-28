@@ -27,7 +27,7 @@ Future<void> main() async {
 }
 
 class MyApp extends StatefulWidget {
-  const MyApp({Key? key}) : super(key: key);
+  const MyApp({super.key});
 
   @override
   State<MyApp> createState() => _MyAppState();
@@ -65,12 +65,12 @@ class _MyAppState extends State<MyApp> {
                             color: Colors.white,
                           ),
                   backgroundColor: AppColor.lightColorScheme.primary,
-                  iconTheme: IconThemeData(
+                  iconTheme: const IconThemeData(
                     color: Colors.white,
                     // Set the default color for the leading icon
                     size: 24.0, // Set the default size for the leading icon
                   ),
-                  actionsIconTheme: IconThemeData(
+                  actionsIconTheme: const IconThemeData(
                     color: Colors.white,
                     // Set the default color for the leading icon
                     size: 24.0, // Set the default size for the leading icon
@@ -96,12 +96,12 @@ class _MyAppState extends State<MyApp> {
                             color: Colors.white,
                           ),
                   backgroundColor: AppColor.darkColorScheme.primary,
-                  iconTheme: IconThemeData(
+                  iconTheme: const IconThemeData(
                     color: Colors.white,
                     // Set the default color for the leading icon
                     size: 24.0, // Set the default size for the leading icon
                   ),
-                  actionsIconTheme: IconThemeData(
+                  actionsIconTheme: const IconThemeData(
                     color: Colors.white,
                     // Set the default color for the leading icon
                     size: 24.0, // Set the default size for the leading icon

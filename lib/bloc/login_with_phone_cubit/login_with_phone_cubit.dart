@@ -95,21 +95,21 @@ class LoginWithPhoneCubit extends Cubit<LoginWithPhoneState> {
   void getPublicIp() async {
     String? ipv4 = await getPublicIp4();
     if (ipv4 != null) {
-      var country_code = await getIpInfo(ipv4);
-      Constants.debugLog(LoginWithPhoneCubit,
-          ":getPublicIp:IPV4:country_code:${country_code}");
-      if (country_code != null && country_code.isNotEmpty) {
-        var data = CountryPickerUtils.getCountryByIso3Code(country_code);
+      var countryCode = await getIpInfo(ipv4);
+      Constants.debugLog(
+          LoginWithPhoneCubit, ":getPublicIp:IPV4:country_code:$countryCode");
+      if (countryCode != null && countryCode.isNotEmpty) {
+        var data = CountryPickerUtils.getCountryByIso3Code(countryCode);
         _phoneNumberIosCodeController.sink.add(data);
       }
     } else {
       String? ipv6 = await getPublicIp6();
       if (ipv6 != null) {
-        var country_code = await getIpInfo(ipv6);
-        Constants.debugLog(LoginWithPhoneCubit,
-            ":getPublicIp:IPV6:country_code:${country_code}");
-        if (country_code != null && country_code.isNotEmpty) {
-          var data = CountryPickerUtils.getCountryByIso3Code(country_code);
+        var countryCode = await getIpInfo(ipv6);
+        Constants.debugLog(
+            LoginWithPhoneCubit, ":getPublicIp:IPV6:country_code:$countryCode");
+        if (countryCode != null && countryCode.isNotEmpty) {
+          var data = CountryPickerUtils.getCountryByIso3Code(countryCode);
           _phoneNumberIosCodeController.sink.add(data);
         }
       } else {
@@ -184,7 +184,7 @@ class LoginWithPhoneCubit extends Cubit<LoginWithPhoneState> {
       if (response.statusCode == 200) {
         final data = jsonDecode(response.body);
         // final country = data['country_name'] as String;
-        final country_code_iso3 = data['country_code_iso3'] as String;
+        final countryCodeIso3 = data['country_code_iso3'] as String;
         // final region = data['region'] as String;
         // final city = data['city'] as String;
         // final latitude = data['latitude'] as double;
@@ -199,7 +199,7 @@ class LoginWithPhoneCubit extends Cubit<LoginWithPhoneState> {
         // print('Longitude: $longitude');
         // print('Time zone: $timezone');
         // print('ISP: $isp');
-        return country_code_iso3;
+        return countryCodeIso3;
       } else {
         // print('Failed to get IP info');
         return null;
@@ -209,6 +209,7 @@ class LoginWithPhoneCubit extends Cubit<LoginWithPhoneState> {
     } catch (e) {
       return null;
     }
+    return null;
   }
 
   @override

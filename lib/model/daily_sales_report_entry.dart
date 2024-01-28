@@ -64,9 +64,7 @@ class MenuItemSalesReport {
       this.totalAmount,
       this.totalCost,
       this.totalProfit,
-      this.profitPercentage
-      });
-
+      this.profitPercentage});
 
   factory MenuItemSalesReport.fromJson(Map<String, dynamic> json) {
     return MenuItemSalesReport(

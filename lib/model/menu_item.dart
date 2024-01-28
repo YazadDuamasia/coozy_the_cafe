@@ -7,7 +7,8 @@ class MenuItem {
   int? categoryId;
   int? subcategoryId;
   bool? isTodayAvailable;
-  bool?isSimpleVariation; //If it true then add field like unitPrice,sellingPrice,stockQuantity,purchaseUnit else false go for MenuItemVariation list
+  bool?
+      isSimpleVariation; //If it true then add field like unitPrice,sellingPrice,stockQuantity,purchaseUnit else false go for MenuItemVariation list
   double? costPrice; // Added unit price property
   double? sellingPrice; // Added selling price property
   double? stockQuantity;
@@ -104,7 +105,7 @@ class MenuItem {
       subcategoryId: subcategoryId ?? this.subcategoryId,
       isTodayAvailable: isTodayAvailable ?? this.isTodayAvailable,
       isSimpleVariation: isSimpleVariation ?? this.isSimpleVariation,
-      costPrice: unitPrice ?? this.costPrice,
+      costPrice: unitPrice ?? costPrice,
       sellingPrice: sellingPrice ?? this.sellingPrice,
       stockQuantity: stockQuantity ?? this.stockQuantity,
       quantity: quantity ?? this.quantity,
@@ -187,7 +188,6 @@ class MenuItemVariation {
       stockQuantity: stockQuantity ?? this.stockQuantity,
     );
   }
-
 
   @override
   String toString() {

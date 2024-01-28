@@ -241,7 +241,7 @@ class PhoneNumberTextFormField extends StatefulWidget {
   final bool disableAutoFillHints;
 
   const PhoneNumberTextFormField({
-    Key? key,
+    super.key,
     this.initialCountryCode,
     this.disableAutoFillHints = false,
     this.obscureText = false,
@@ -284,7 +284,7 @@ class PhoneNumberTextFormField extends StatefulWidget {
     this.showCursor = true,
     this.flagsButtonMargin = EdgeInsets.zero,
     this.priorityList,
-  }) : super(key: key);
+  });
 
   @override
   State<PhoneNumberTextFormField> createState() =>
@@ -447,11 +447,11 @@ class _PhoneNumberTextFormFieldState extends State<PhoneNumberTextFormField> {
                     ),
                   ),
                 ),
-                Row(
+                const Row(
                   mainAxisAlignment: MainAxisAlignment.start,
                   crossAxisAlignment: CrossAxisAlignment.center,
                   mainAxisSize: MainAxisSize.min,
-                  children: const [
+                  children: [
                     Expanded(
                       child: Text("Please enter proper world name..",
                           textAlign: TextAlign.center),
@@ -475,7 +475,7 @@ class _PhoneNumberTextFormFieldState extends State<PhoneNumberTextFormField> {
             setState(() {});
           },
           itemBuilder: _buildDialogItem,
-          priorityList: widget.priorityList ?? null,
+          priorityList: widget.priorityList,
         ),
       ),
     );

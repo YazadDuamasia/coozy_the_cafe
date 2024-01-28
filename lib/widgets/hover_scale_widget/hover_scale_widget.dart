@@ -6,11 +6,10 @@ class HoverScaleWidget extends StatefulWidget {
   final Duration duration;
 
   const HoverScaleWidget(
-      {Key? key,
+      {super.key,
       required this.child,
       this.scaleFactor = 0.9,
-      this.duration = const Duration(milliseconds: 200)
-      }) : super(key: key);
+      this.duration = const Duration(milliseconds: 200)});
 
   @override
   _HoverScaleWidgetState createState() => _HoverScaleWidgetState();

@@ -28,7 +28,7 @@ class LoadedState extends MenuCategoryFullListState {
 class ErrorState extends MenuCategoryFullListState {
   final String? errorMessage;
 
-  ErrorState(this.errorMessage);
+  const ErrorState(this.errorMessage);
 
   @override
   List<Object> get props => [errorMessage!];

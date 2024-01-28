@@ -32,12 +32,12 @@ class HttpCallGenerator {
       final uri = Uri.parse(url ?? "");
       late http.Response response;
 
-      var headerMap = null;
+      var headerMap;
       if (headers != null || headers!.isNotEmpty) {
         headerMap = convert.json.decode(headers);
       }
 
-      var bodyMap = null;
+      var bodyMap;
       if (params != null || params!.isNotEmpty) {
         bodyMap = convert.json.decode(params);
       }
@@ -73,7 +73,7 @@ class HttpCallGenerator {
               .timeout(const Duration(seconds: 15),
                   onTimeout: () => throw TimeoutException(
                       "The connection has timed out, Please try again!"));
-          ;
+          {}
           break;
         case HTTPMethod.POST_ENCODE:
           String curl = await generateCurlCommandForPost(
@@ -181,7 +181,7 @@ class HttpCallGenerator {
         };
         return result;
       } else {
-        if (response.body == null || response.body.isEmpty) {
+        if (response.body.isEmpty) {
           Map<String, dynamic> result = {
             "isError": true,
             "response": "Something when wrong."

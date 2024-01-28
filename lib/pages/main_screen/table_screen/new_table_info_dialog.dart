@@ -7,7 +7,7 @@ import 'package:flutter/services.dart';
 class NewTableDialog extends StatefulWidget {
   final Function(TableInfoModel) onCreate;
 
-  NewTableDialog({required this.onCreate});
+  const NewTableDialog({super.key, required this.onCreate});
 
   @override
   _NewTableDialogState createState() => _NewTableDialogState();
@@ -32,8 +32,7 @@ class _NewTableDialogState extends State<NewTableDialog> {
   @override
   Widget build(BuildContext context) {
     return AlertDialog(
-      title: Text(
-          AppLocalizations.of(context)
+      title: Text(AppLocalizations.of(context)
               ?.translate(StringValue.add_new_table_title) ??
           'Create New Table'),
       content: Form(

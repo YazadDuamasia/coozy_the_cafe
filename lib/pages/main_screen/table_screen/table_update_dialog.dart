@@ -8,7 +8,8 @@ class TableUpdateDialog extends StatefulWidget {
   final TableInfoModel currentTableName;
   final Function(TableInfoModel) onUpdate;
 
-  TableUpdateDialog({required this.currentTableName, required this.onUpdate});
+  const TableUpdateDialog(
+      {super.key, required this.currentTableName, required this.onUpdate});
 
   @override
   _TableUpdateDialogState createState() => _TableUpdateDialogState();

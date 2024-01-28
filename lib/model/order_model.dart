@@ -46,7 +46,7 @@ class OrderModel {
 
   factory OrderModel.fromJson(Map<String, dynamic> json) {
     // Deserialize the customer
-    final customerData = json['customer'] == null ? null : json['customer'];
+    final customerData = json['customer'];
     final Customer? customer =
         customerData == null ? null : Customer.fromJson(customerData);
 

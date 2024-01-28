@@ -6,8 +6,10 @@ class AnimatedButton extends StatelessWidget {
   Widget? iconWidget;
 
   AnimatedButton(
-      {Key? key, required this.onTap, required this.isPressed, this.iconWidget})
-      : super(key: key);
+      {super.key,
+      required this.onTap,
+      required this.isPressed,
+      this.iconWidget});
 
   @override
   Widget build(BuildContext context) {

@@ -5,6 +5,7 @@ class RouteName {
   static const String homeScreenRoute = '/homeScreen';
   static const String tableInfoScreenRoute = '/tableInfoScreen';
   static const String menuFullListScreenRoute = '/menuFullListScreenRoute';
-  static const String menuCategoryFullListRoute="/menuCategoryFullListScreen";
-  static const String addNewMenuCategoryScreenRoute="/addNewMenuCategoryScreen";
+  static const String menuCategoryFullListRoute = "/menuCategoryFullListScreen";
+  static const String addNewMenuCategoryScreenRoute =
+      "/addNewMenuCategoryScreen";
 }

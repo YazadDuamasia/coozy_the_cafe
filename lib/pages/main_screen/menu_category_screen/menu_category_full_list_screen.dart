@@ -11,7 +11,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
 class MenuCategoryFullListScreen extends StatefulWidget {
-  const MenuCategoryFullListScreen({Key? key}) : super(key: key);
+  const MenuCategoryFullListScreen({super.key});
 
   @override
   _MenuCategoryFullListScreenState createState() =>
@@ -266,7 +266,7 @@ class _MenuCategoryFullListScreenState
               crossAxisAlignment: CrossAxisAlignment.start,
               mainAxisSize: MainAxisSize.min,
               children: [
-                Expanded(child: Text("${category.name ?? ""}")),
+                Expanded(child: Text(category.name ?? "")),
               ],
             ),
             controller: state.expandedTitleControllerList![index],
@@ -383,6 +383,7 @@ class _MenuCategoryFullListScreenState
   }
 
   Future<void> handleNewCategory() async {
-    navigationRoutes.navigateToAddNewMenuCategoryScreen().then((value) async => context.read<MenuCategoryFullListCubit>().loadData());
+    navigationRoutes.navigateToAddNewMenuCategoryScreen().then(
+        (value) async => context.read<MenuCategoryFullListCubit>().loadData());
   }
 }

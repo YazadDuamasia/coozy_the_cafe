@@ -5,7 +5,7 @@ import 'package:coozy_cafe/utlis/utlis.dart';
 import 'package:coozy_cafe/config/config.dart';
 
 class SplashScreenMobileLayout extends StatefulWidget {
-  const SplashScreenMobileLayout({Key? key}) : super(key: key);
+  const SplashScreenMobileLayout({super.key});
 
   @override
   State<SplashScreenMobileLayout> createState() =>
@@ -27,7 +27,7 @@ class _SplashScreenMobileLayoutState extends State<SplashScreenMobileLayout> {
     );
     for (int i = 0; i < 50; i++) {
       listParticleColor.add(
-        Color(new Random().nextInt(0xffffffff)).withAlpha(0xff),
+        Color(Random().nextInt(0xffffffff)).withAlpha(0xff),
       );
     }
     super.initState();
@@ -95,7 +95,7 @@ class _SplashScreenMobileLayoutState extends State<SplashScreenMobileLayout> {
                         children: [
                           Card(
                             elevation: 2,
-                            margin:const EdgeInsets.only(left: 30,right: 30),
+                            margin: const EdgeInsets.only(left: 30, right: 30),
                             child: PulseAnimation(
                               maxScale: 1.0,
                               minScale: 0.8,
@@ -121,14 +121,15 @@ class _SplashScreenMobileLayoutState extends State<SplashScreenMobileLayout> {
                         children: [
                           Card(
                             elevation: 2,
-                            margin:const EdgeInsets.only(left: 30,right: 30),
+                            margin: const EdgeInsets.only(left: 30, right: 30),
                             child: PulseAnimation(
                               maxScale: 1.0,
                               minScale: 0.8,
                               child: Padding(
                                 padding: const EdgeInsets.all(10.0),
                                 child: SizedBox(
-                                  width: MediaQuery.of(context).size.width * .65,
+                                  width:
+                                      MediaQuery.of(context).size.width * .65,
                                   child: appLogoLight,
                                 ),
                               ),

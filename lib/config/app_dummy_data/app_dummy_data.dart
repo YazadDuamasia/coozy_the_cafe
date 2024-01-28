@@ -1,5 +1,5 @@
 class AppDummyData {
-  static const String? menuCatergoryData = '''
+  static const String menuCatergoryData = '''
   {
   "categories": [
     {

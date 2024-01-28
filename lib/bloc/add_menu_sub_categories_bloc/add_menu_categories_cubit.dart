@@ -15,10 +15,10 @@ import 'package:rxdart/rxdart.dart';
 part 'add_menu_category_state.dart';
 
 class AddMenuCategoryCubit extends Cubit<AddMenuCategoryState> {
-  FocusNode menuCategoryNameFocusNode = new FocusNode();
+  FocusNode menuCategoryNameFocusNode = FocusNode();
   TextEditingController menuCategoryNameController =
-      new TextEditingController(text: "");
-  BehaviorSubject<List<String>?> _subCategoryListController =
+      TextEditingController(text: "");
+  final BehaviorSubject<List<String>?> _subCategoryListController =
       BehaviorSubject<List<String>>.seeded([]);
 
   AddMenuCategoryCubit() : super(AddMenuCategoryInitial());
@@ -38,8 +38,8 @@ class AddMenuCategoryCubit extends Cubit<AddMenuCategoryState> {
   }
 
   void resetData() {
-    menuCategoryNameController = new TextEditingController(text: "");
-    menuCategoryNameFocusNode = new FocusNode();
+    menuCategoryNameController = TextEditingController(text: "");
+    menuCategoryNameFocusNode = FocusNode();
     List<String> currentList = [];
     _subCategoryListController.add(currentList);
 
@@ -79,10 +79,9 @@ class AddMenuCategoryCubit extends Cubit<AddMenuCategoryState> {
     Constants.debugLog(
         AddMenuCategoryCubit, "newCategory:${newCategory.toJson()}");
     List<String>? subCategoryList = _subCategoryListController.value ?? [];
-    Constants.debugLog(
-        AddMenuCategoryCubit, "newSubCategory:${subCategoryList}");
+    Constants.debugLog(AddMenuCategoryCubit, "newSubCategory:$subCategoryList");
     repository.addCategory(newCategory).then((categoryId) async {
-      Constants.debugLog(AddMenuCategoryCubit, "categoryId:${categoryId}");
+      Constants.debugLog(AddMenuCategoryCubit, "categoryId:$categoryId");
       if (categoryId == null) {
         Constants.customAutoDismissAlertDialog(
             classObject: AddMenuCategoryCubit,
@@ -108,7 +107,7 @@ class AddMenuCategoryCubit extends Cubit<AddMenuCategoryState> {
           var errorIndex = -1; // Flag to track if an error occurred
           if (category != null) {
             for (int i = 0; i < subCategoryList.length; i++) {
-              if (subCategoryList[i] != null && subCategoryList[i].isNotEmpty) {
+              if (subCategoryList[i].isNotEmpty) {
                 SubCategory subCategory = SubCategory(
                   name: subCategoryList[i],
                   createdDate: DateTime.now().toUtc().toIso8601String(),
@@ -119,7 +118,7 @@ class AddMenuCategoryCubit extends Cubit<AddMenuCategoryState> {
                 if (subcategoryId > 0) {
                   // Subcategory added successfully
                   Constants.debugLog(AddMenuCategoryCubit,
-                      "${subCategory.name} Subcategory added successfully from ${i} position with ID: $subcategoryId");
+                      "${subCategory.name} Subcategory added successfully from $i position with ID: $subcategoryId");
                 } else {
                   // Failed to add subcategory, handle the error
                   Constants.debugLog(

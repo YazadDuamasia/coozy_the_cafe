@@ -1,6 +1,6 @@
 part of 'login_with_phone_cubit.dart';
 
-abstract class LoginWithPhoneState  extends Equatable{
+abstract class LoginWithPhoneState extends Equatable {
   const LoginWithPhoneState();
 }
 
@@ -32,4 +32,3 @@ class LoginWithPhoneNoInternetState extends LoginWithPhoneState {
   @override
   List<Object> get props => [];
 }
-

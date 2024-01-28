@@ -2,9 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:lottie/lottie.dart';
 
 class LoadingPage extends StatefulWidget {
-
-  const LoadingPage({Key? key})
-      : super(key: key);
+  const LoadingPage({super.key});
 
   @override
   State<LoadingPage> createState() => _LoadingPageState();
