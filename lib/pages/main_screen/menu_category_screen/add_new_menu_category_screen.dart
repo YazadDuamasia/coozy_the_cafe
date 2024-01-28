@@ -201,7 +201,6 @@ class _AddNewMenuCategoryScreenState extends State<AddNewMenuCategoryScreen> {
                               child: ElevatedButton(
                                 onPressed: () async {
                                   _menuCategoryCubit.addSubCategory('');
-                                  FocusScope.of(context).unfocus();
                                   setState(() {});
                                 },
                                 style: ElevatedButton.styleFrom(
