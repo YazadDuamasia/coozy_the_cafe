@@ -21,12 +21,9 @@ Future<void> main() async {
   // Load the theme from shared preferences
   final prefs = await SharedPreferences.getInstance();
   final index = prefs.getInt('theme') ?? 0;
-  BlocOverrides.runZoned(
-    () {
-      runApp(const MyApp());
-    },
-    blocObserver: SimpleBlocObserver(),
-  );
+  Bloc.observer = SimpleBlocObserver();
+
+  runApp(const MyApp());
 }
 
 class MyApp extends StatefulWidget {
@@ -105,7 +102,8 @@ class _MyAppState extends State<MyApp> {
                     size: 24.0, // Set the default size for the leading icon
                   ),
                   actionsIconTheme: IconThemeData(
-                    color: Colors.white, // Set the default color for the leading icon
+                    color: Colors.white,
+                    // Set the default color for the leading icon
                     size: 24.0, // Set the default size for the leading icon
                   ),
                 ),
