@@ -28,7 +28,7 @@ class _DynamicTextFormFieldForSubCategoryWidgetState
     super.initState();
     _controller = TextEditingController(text: "");
     _controller.text = widget.initialValue ?? "";
-    _focusNode = FocusNode();
+    _focusNode = FocusNode()..requestFocus();
   }
 
   @override
