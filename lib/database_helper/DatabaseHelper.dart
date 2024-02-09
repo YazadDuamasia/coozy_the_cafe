@@ -370,7 +370,7 @@ class DatabaseHelper {
       subcategoriesTable,
       orderBy: 'name ASC',
     );
-    if (maps != null && maps.isNotEmpty) {
+    if (maps.isNotEmpty) {
       return List.generate(maps.length, (i) {
         return SubCategory.fromJson(maps[i]);
       });
@@ -677,7 +677,7 @@ class DatabaseHelper {
     }
 
     // Convert the Map to a MenuItem
-    final MenuItem menuItem = await _createMenuItemFromMap(db!, maps[0]);
+    final MenuItem menuItem = await _createMenuItemFromMap(db, maps[0]);
 
     // If it's a simple variation, return the MenuItem without variations
     if (menuItem.isSimpleVariation == true) {
@@ -685,7 +685,7 @@ class DatabaseHelper {
     }
 
     // Fetch variations for the current menu item
-    final List<Map<String, Object?>> variationsMaps = await db!.query(
+    final List<Map<String, Object?>> variationsMaps = await db.query(
       menuItemVariationsTable,
       where: 'menuItemId = ?',
       whereArgs: [id],
@@ -1007,31 +1007,29 @@ class DatabaseHelper {
         conflictAlgorithm: ConflictAlgorithm.replace,
       );
 
-      if (orderId != null) {
-        // Iterate through order items and insert into orderItemsTable
-        for (final orderItem in order.orderItems) {
-          await db.insert(
-            orderItemsTable,
-            {
-              'orderId': orderId,
-              'itemId': orderItem!.itemId,
-              'quantity': orderItem.quantity,
-              'status': orderItem.status,
-              'isMenuItem':
-                  (orderItem.isMenuItem != null && orderItem.isMenuItem == true)
-                      ? 1
-                      : 0,
-              'menuItemId': orderItem.menuItem?.id,
-              'selectedVariationId': orderItem.selectedVariation?.id,
-              'sellingPrice': orderItem.sellingPrice, // Add selling price
-              'costPrice': orderItem.costPrice, // Add cost price
-            },
-            conflictAlgorithm: ConflictAlgorithm.replace,
-          );
-        }
-
-        return orderId;
+      // Iterate through order items and insert into orderItemsTable
+      for (final orderItem in order.orderItems) {
+        await db.insert(
+          orderItemsTable,
+          {
+            'orderId': orderId,
+            'itemId': orderItem!.itemId,
+            'quantity': orderItem.quantity,
+            'status': orderItem.status,
+            'isMenuItem':
+                (orderItem.isMenuItem != null && orderItem.isMenuItem == true)
+                    ? 1
+                    : 0,
+            'menuItemId': orderItem.menuItem?.id,
+            'selectedVariationId': orderItem.selectedVariation?.id,
+            'sellingPrice': orderItem.sellingPrice, // Add selling price
+            'costPrice': orderItem.costPrice, // Add cost price
+          },
+          conflictAlgorithm: ConflictAlgorithm.replace,
+        );
       }
+
+      return orderId;
 
       return null;
     } catch (e) {
@@ -1054,7 +1052,7 @@ class DatabaseHelper {
       );
 
       // Delete existing order items for the order
-      await db!.delete(
+      await db.delete(
         orderItemsTable,
         where: 'orderId = ?',
         whereArgs: [order.id],
@@ -1107,7 +1105,7 @@ class DatabaseHelper {
           whereArgs: [orderId],
         );
 
-        final List<OrderItem?>? orderItems = orderItemsResult
+        final List<OrderItem?> orderItems = orderItemsResult
             .map((orderItemData) => OrderItem.fromJson(orderItemData))
             .toList();
 
@@ -1212,10 +1210,6 @@ class DatabaseHelper {
     );
     final orderItemsData = await db.query(orderItemsTable);
 
-    if (ordersData == null || orderItemsData == null) {
-      return []; // Return an empty list if data is null
-    }
-
     // Create a map of order ID to a list of associated order items
     final Map<int, List<OrderItem>> orderItemsMap = {};
     for (final orderItemData in orderItemsData) {
@@ -1259,10 +1253,6 @@ class DatabaseHelper {
       orderBy: 'creationDate DESC',
     );
     final orderItemsData = await db.query(orderItemsTable);
-
-    if (ordersData == null || orderItemsData == null) {
-      return []; // Return an empty list if data is null
-    }
 
     // Create a map of order ID to a list of associated order items
     final Map<int, List<OrderItem>> orderItemsMap = {};
@@ -1311,10 +1301,6 @@ class DatabaseHelper {
     // Fetch all order items
     final orderItemsData = await db.query(orderItemsTable);
 
-    if (ordersData == null || orderItemsData == null) {
-      return []; // Return an empty list if data is null
-    }
-
     // Create a map of order ID to a list of associated order items
     final Map<int, List<OrderItem>> orderItemsMap = {};
     for (final orderItemData in orderItemsData) {
@@ -1360,10 +1346,6 @@ class DatabaseHelper {
     // Fetch all order items
     final orderItemsData = await db.query(orderItemsTable);
 
-    if (ordersData == null || orderItemsData == null) {
-      return []; // Return an empty list if data is null
-    }
-
     // Create a map of order ID to a list of associated order items
     final Map<int, List<OrderItem>> orderItemsMap = {};
     for (final orderItemData in orderItemsData) {
@@ -1403,7 +1385,7 @@ class DatabaseHelper {
     if (inProgressOrders != null && inProgressOrders.isNotEmpty) {
       allOrdersList.addAll(inProgressOrders);
     }
-    if (newOrders != null && newOrders.isNotEmpty) {
+    if (newOrders.isNotEmpty) {
       allOrdersList.addAll(newOrders);
     }
     return allOrdersList;
@@ -1783,7 +1765,7 @@ class DatabaseHelper {
 
       double? monthlyProfit = (monthlyTotal ?? 0.0) - (monthlyCost ?? 0.0);
       double? profitPercentage = (monthlyCost != null && monthlyCost != 0)
-          ? (monthlyProfit! / monthlyCost) * 100
+          ? (monthlyProfit / monthlyCost) * 100
           : null;
 
       monthlySalesReport.add(DailySalesReportEntry(
@@ -1838,7 +1820,7 @@ class DatabaseHelper {
       double? totalCost = result['totalCost'];
 
       double? totalProfit = (totalAmount ?? 0) - (totalCost ?? 0);
-      double? profitPercentage = null;
+      double? profitPercentage;
       try {
         profitPercentage = (totalProfit / totalAmount!) * 100;
       } catch (e) {
@@ -1898,7 +1880,7 @@ class DatabaseHelper {
       double? totalAmount = result['totalAmount'];
       double? totalCost = result['totalCost'];
       double? totalProfit = (totalAmount ?? 0) - (totalCost ?? 0);
-      double? profitPercentage = null;
+      double? profitPercentage;
       try {
         profitPercentage = (totalProfit / totalAmount!) * 100;
       } catch (e) {

@@ -5,13 +5,14 @@ import 'package:coozy_cafe/utlis/utlis.dart';
 import 'package:coozy_cafe/config/config.dart';
 
 class SplashScreenTabletLayout extends StatefulWidget {
-  const SplashScreenTabletLayout({Key? key}) : super(key: key);
+  const SplashScreenTabletLayout({super.key});
 
   @override
-  State<SplashScreenTabletLayout> createState() => _SplashScreenTabletLayoutState();
+  State<SplashScreenTabletLayout> createState() =>
+      _SplashScreenTabletLayoutState();
 }
 
-class _SplashScreenTabletLayoutState extends State<SplashScreenTabletLayout>  {
+class _SplashScreenTabletLayoutState extends State<SplashScreenTabletLayout> {
   List<Color> listParticleColor = <Color>[];
   late Image appLogoLight;
 
@@ -29,7 +30,7 @@ class _SplashScreenTabletLayoutState extends State<SplashScreenTabletLayout>  {
 
     for (int i = 0; i < 50; i++) {
       listParticleColor.add(
-        Color(new Random().nextInt(0xffffffff)).withAlpha(0xff),
+        Color(Random().nextInt(0xffffffff)).withAlpha(0xff),
       );
     }
   }
@@ -95,14 +96,15 @@ class _SplashScreenTabletLayoutState extends State<SplashScreenTabletLayout>  {
                         children: [
                           Card(
                             elevation: 2,
-                            margin:const EdgeInsets.only(left: 30,right: 30),
+                            margin: const EdgeInsets.only(left: 30, right: 30),
                             child: PulseAnimation(
                               maxScale: 1.0,
                               minScale: 0.8,
                               child: Padding(
                                 padding: const EdgeInsets.all(10.0),
                                 child: SizedBox(
-                                  width: MediaQuery.of(context).size.width * .40,
+                                  width:
+                                      MediaQuery.of(context).size.width * .40,
                                   child: appLogoLight,
                                 ),
                               ),
@@ -120,14 +122,15 @@ class _SplashScreenTabletLayoutState extends State<SplashScreenTabletLayout>  {
                         children: [
                           Card(
                             elevation: 2,
-                            margin:const EdgeInsets.only(left: 30,right: 30),
+                            margin: const EdgeInsets.only(left: 30, right: 30),
                             child: PulseAnimation(
                               maxScale: 1.0,
                               minScale: 0.8,
                               child: Padding(
                                 padding: const EdgeInsets.all(10.0),
                                 child: SizedBox(
-                                  width: MediaQuery.of(context).size.width * .60,
+                                  width:
+                                      MediaQuery.of(context).size.width * .60,
                                   child: appLogoLight,
                                 ),
                               ),
@@ -145,13 +148,12 @@ class _SplashScreenTabletLayoutState extends State<SplashScreenTabletLayout>  {
       ),
     );
   }
+
   @override
   void didChangeDependencies() {
     precacheImage(appLogoLight.image, context);
     super.didChangeDependencies();
   }
-
-
 
   @override
   void dispose() {

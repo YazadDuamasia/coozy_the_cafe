@@ -80,14 +80,14 @@ class Constants {
       required String? localizedCode,
       DateTime? dateTime,
       bool? allowFromNow}) {
-    Constants.debugLog(Constants, "date:${dateStr}");
-    Constants.debugLog(Constants, "dateTime:${dateTime}");
+    Constants.debugLog(Constants, "date:$dateStr");
+    Constants.debugLog(Constants, "dateTime:$dateTime");
     if (dateStr != null && dateStr.isNotEmpty) {
       DateTime? passingDate = DateTime.tryParse(dateStr)?.toLocal();
       DateTime? now = DateTime.now().toLocal();
       Duration? duration = now.difference(passingDate!);
       DateTime? result = now.subtract(duration).toLocal();
-    return  timeago.format(result,
+      return timeago.format(result,
           locale: localizedCode,
           allowFromNow: allowFromNow ?? true,
           clock: now);
@@ -95,11 +95,10 @@ class Constants {
       DateTime? now = DateTime.now().toLocal();
       Duration? duration = now.difference(dateTime);
       DateTime? result = now.subtract(duration).toLocal();
-      return  timeago.format(result,
+      return timeago.format(result,
           locale: localizedCode,
           allowFromNow: allowFromNow ?? true,
           clock: now);
-
     } else {
       return "";
     }
@@ -225,7 +224,7 @@ class Constants {
   }
 
   static int? randomNumberGenerator(int? min, int? max) {
-    int? randomise = min! + new math.Random().nextInt(max! - min);
+    int? randomise = min! + math.Random().nextInt(max! - min);
     Constants.debugLog(Constants, "randomNumberMinMax:$randomise");
     if (randomise >= min && randomise <= max) {
       return randomise;
@@ -284,7 +283,7 @@ class Constants {
                         textAlign: TextAlign.center,
                         style: Theme.of(context)
                             .textTheme
-                            .headline4!
+                            .headlineMedium!
                             .copyWith(color: colorTextTitle!),
                       ),
                     ),
@@ -301,7 +300,7 @@ class Constants {
                       textAlign: TextAlign.center,
                       style: Theme.of(context)
                           .textTheme
-                          .headline4!
+                          .headlineMedium!
                           .copyWith(color: colorTextBody),
                     ),
                   ),
@@ -456,7 +455,7 @@ class Constants {
     );
     Timer? counter;
 
-    counter = new Timer(
+    counter = Timer(
       showForHowDuration ?? const Duration(seconds: 3),
       () {
         print("Timer callback executed");
@@ -574,7 +573,7 @@ class Constants {
                     Expanded(
                       child: Text(
                         descriptions ?? "",
-                        style: Theme.of(context).textTheme.subtitle2!.copyWith(
+                        style: Theme.of(context).textTheme.titleSmall!.copyWith(
                               color: Theme.of(context).brightness ==
                                       Brightness.light
                                   ? Colors.white

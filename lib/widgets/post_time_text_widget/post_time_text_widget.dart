@@ -9,8 +9,7 @@ class PostTimeTextWidget extends StatefulWidget {
   final String localizedCode;
 
   const PostTimeTextWidget(
-      {Key? key, required this.creationDate, required this.localizedCode})
-      : super(key: key);
+      {super.key, required this.creationDate, required this.localizedCode});
 
   @override
   _PostTimeTextWidgetState createState() => _PostTimeTextWidgetState();
@@ -29,10 +28,12 @@ class _PostTimeTextWidgetState extends State<PostTimeTextWidget> {
 
     _timer = Timer(Duration(seconds: secondsUntilNextMinute), () {
       Constants.debugLog(PostTimeTextWidget, "_timer:First Initial Trigger.");
-      Constants.debugLog(PostTimeTextWidget, "_timer triggered at: ${DateTime.now()}");
+      Constants.debugLog(
+          PostTimeTextWidget, "_timer triggered at: ${DateTime.now()}");
       _timer = Timer.periodic(const Duration(seconds: 60), (timer) {
         Constants.debugLog(PostTimeTextWidget, "_timer:Started");
-        Constants.debugLog(PostTimeTextWidget, "_timer triggered at: ${DateTime.now()}");
+        Constants.debugLog(
+            PostTimeTextWidget, "_timer triggered at: ${DateTime.now()}");
         _updatePostTime();
       });
     });
@@ -69,7 +70,7 @@ class _PostTimeTextWidgetState extends State<PostTimeTextWidget> {
           mainAxisSize: MainAxisSize.min,
           children: [
             Expanded(
-              child: Text("${snapshot.data ?? ""}"),
+              child: Text(snapshot.data ?? ""),
             ),
           ],
         );
@@ -80,7 +81,7 @@ class _PostTimeTextWidgetState extends State<PostTimeTextWidget> {
   void _updatePostTime() {
     Constants.debugLog(
         PostTimeTextWidget, "localizedCode:${widget.localizedCode}");
-    if (widget.creationDate != null && widget.creationDate.isNotEmpty) {
+    if (widget.creationDate.isNotEmpty) {
       // String date =
       //     "${DateUtil.localFormat(widget.creationDate ?? "", DateUtil.DATE_FORMAT4)}";
       DateTime? dateTime = DateTime.tryParse(widget.creationDate)?.toLocal();

@@ -84,5 +84,6 @@ abstract class StringValue {
       "add_new_menu_sub_category_label_text";
   static String add_new_menu_sub_category_hint_text =
       "add_new_menu_sub_category_hint_text";
-  static String menu_sub_category_new_added_failed_successfully_text="menu_sub_category_new_added_failed_successfully_text";
+  static String menu_sub_category_new_added_failed_successfully_text =
+      "menu_sub_category_new_added_failed_successfully_text";
 }

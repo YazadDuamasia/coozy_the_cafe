@@ -4,13 +4,14 @@ import 'package:coozy_cafe/model/category.dart';
 import 'package:coozy_cafe/model/sub_category.dart';
 import 'package:coozy_cafe/pages/main_screen/menu_category_screen/menu_sub_category_expansion_child_listview_widget.dart';
 import 'package:coozy_cafe/utlis/utlis.dart';
+import 'package:coozy_cafe/widgets/empty_category_full_list_body.dart';
 import 'package:coozy_cafe/widgets/post_time_text_widget/post_time_text_widget.dart';
 import 'package:coozy_cafe/widgets/responsive_layout/responsive_layout.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
 class MenuCategoryFullListScreen extends StatefulWidget {
-  const MenuCategoryFullListScreen({Key? key}) : super(key: key);
+  const MenuCategoryFullListScreen({super.key});
 
   @override
   _MenuCategoryFullListScreenState createState() =>
@@ -194,7 +195,7 @@ class _MenuCategoryFullListScreenState
 
   // menuItemWidget(result!["categories"]) ,
   Widget menuItemWidget(LoadedState state) {
-    var map = state.data!["categories"];
+    var map = state.data?["categories"];
     if (map != null && map.isNotEmpty) {
       return CustomScrollView(
         shrinkWrap: true,
@@ -218,48 +219,7 @@ class _MenuCategoryFullListScreenState
         ],
       );
     } else {
-      return Center(
-        child: Padding(
-          padding:
-              const EdgeInsets.only(left: 20, right: 20, bottom: 0, top: 0),
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            mainAxisAlignment: MainAxisAlignment.center,
-            crossAxisAlignment: CrossAxisAlignment.center,
-            children: [
-              Row(
-                mainAxisSize: MainAxisSize.min,
-                mainAxisAlignment: MainAxisAlignment.center,
-                crossAxisAlignment: CrossAxisAlignment.center,
-                children: [
-                  Expanded(
-                    child: Text("No Category been inserted",
-                        textAlign: TextAlign.center,
-                        style: Theme.of(context).textTheme.bodyLarge),
-                  ),
-                ],
-              ),
-              Row(
-                mainAxisSize: MainAxisSize.min,
-                mainAxisAlignment: MainAxisAlignment.center,
-                crossAxisAlignment: CrossAxisAlignment.center,
-                children: [
-                  ElevatedButton(
-                    onPressed: () async {
-                      await handleNewCategory();
-                    },
-                    child: const Text('Add new category'),
-                    style: ElevatedButton.styleFrom(
-                        padding: const EdgeInsets.only(
-                            top: 10, bottom: 10, right: 25, left: 25),
-                        elevation: 5),
-                  ),
-                ],
-              ),
-            ],
-          ),
-        ),
-      );
+      return EmptyCategoryFullListBody(onAddNewCategory: handleNewCategory);
     }
   }
 
@@ -306,7 +266,7 @@ class _MenuCategoryFullListScreenState
               crossAxisAlignment: CrossAxisAlignment.start,
               mainAxisSize: MainAxisSize.min,
               children: [
-                Expanded(child: Text("${category.name ?? ""}")),
+                Expanded(child: Text(category.name ?? "")),
               ],
             ),
             controller: state.expandedTitleControllerList![index],
@@ -423,6 +383,7 @@ class _MenuCategoryFullListScreenState
   }
 
   Future<void> handleNewCategory() async {
-    navigationRoutes.navigateToAddNewMenuCategoryScreen().then((value) async => context.read<MenuCategoryFullListCubit>().loadData());
+    navigationRoutes.navigateToAddNewMenuCategoryScreen().then(
+        (value) async => context.read<MenuCategoryFullListCubit>().loadData());
   }
 }

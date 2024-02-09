@@ -4,7 +4,7 @@ class FadeAnimationWidget extends StatefulWidget {
   Duration delay;
   Widget child;
 
-  FadeAnimationWidget({required this.delay, required this.child});
+  FadeAnimationWidget({super.key, required this.delay, required this.child});
 
   @override
   _FadeAnimationWidgetState createState() => _FadeAnimationWidgetState();
@@ -22,10 +22,11 @@ class _FadeAnimationWidgetState extends State<FadeAnimationWidget>
     // Create an animation controller
     _animationController = AnimationController(
       vsync: this,
-      duration: Duration(milliseconds: 500),
+      duration: const Duration(milliseconds: 500),
     );
 
-    final curve = CurvedAnimation(parent: _animationController, curve: Curves.easeIn);
+    final curve =
+        CurvedAnimation(parent: _animationController, curve: Curves.easeIn);
 
     // Create a tween to define the opacity animation
     _animation = Tween<double>(begin: 0, end: 1).animate(curve);

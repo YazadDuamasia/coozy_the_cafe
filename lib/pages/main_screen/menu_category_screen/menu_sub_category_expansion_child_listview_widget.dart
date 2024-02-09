@@ -11,8 +11,7 @@ class MenuSubCategoryExpansionChildListViewWidget extends StatefulWidget {
   final int? itemsToShow;
 
   const MenuSubCategoryExpansionChildListViewWidget(
-      {Key? key, this.subCategoryList, this.itemsToShow})
-      : super(key: key);
+      {super.key, this.subCategoryList, this.itemsToShow});
 
   @override
   _MenuSubCategoryExpansionChildListViewWidgetState createState() =>

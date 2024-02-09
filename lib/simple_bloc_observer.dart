@@ -2,8 +2,6 @@ import 'package:coozy_cafe/utlis/components/constants.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
 class SimpleBlocObserver extends BlocObserver {
-
-
   @override
   void onEvent(Bloc bloc, Object? event) {
     super.onEvent(bloc, event);
@@ -38,6 +36,5 @@ class SimpleBlocObserver extends BlocObserver {
   void onCreate(BlocBase bloc) {
     Constants.debugLog(SimpleBlocObserver, "onCreate: ${bloc.runtimeType}");
     super.onCreate(bloc);
-
   }
 }

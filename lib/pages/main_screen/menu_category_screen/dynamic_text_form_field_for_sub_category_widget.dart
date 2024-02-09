@@ -5,14 +5,13 @@ import 'package:flutter/material.dart';
 class DynamicTextFormFieldForSubCategoryWidget extends StatefulWidget {
   final String? initialValue;
   final void Function(String) onChanged;
-  final VoidCallback  onDelete;
+  final VoidCallback onDelete;
 
-   DynamicTextFormFieldForSubCategoryWidget(
-      {Key? key,
+  const DynamicTextFormFieldForSubCategoryWidget(
+      {super.key,
       this.initialValue,
       required this.onChanged,
-      required this.onDelete})
-      : super(key: key);
+      required this.onDelete});
 
   @override
   _DynamicTextFormFieldForSubCategoryWidgetState createState() =>
@@ -27,9 +26,9 @@ class _DynamicTextFormFieldForSubCategoryWidgetState
   @override
   void initState() {
     super.initState();
-    _controller = new TextEditingController(text: "");
+    _controller = TextEditingController(text: "");
     _controller.text = widget.initialValue ?? "";
-    _focusNode = new FocusNode();
+    _focusNode = FocusNode()..requestFocus();
   }
 
   @override
@@ -55,10 +54,11 @@ class _DynamicTextFormFieldForSubCategoryWidgetState
         FocusScope.of(context).unfocus();
       },
       validator: (v) {
-        if (v == null || v.trim().isEmpty)
+        if (v == null || v.trim().isEmpty) {
           return AppLocalizations.of(context)?.translate(
                   StringValue.add_new_menu_sub_category_error_text) ??
               'Enter your sub-category name';
+        }
         return null;
       },
     );

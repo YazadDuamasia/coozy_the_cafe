@@ -1,4 +1,3 @@
-
 import 'dart:convert';
 
 //-------------------------------------------------------------------------------------------------------------------//
@@ -18,11 +17,11 @@ class CommonScreenArgument {
 
   factory CommonScreenArgument.fromMap(Map<String, dynamic> json) =>
       CommonScreenArgument(
-        memberId: json["memberId"] ?? null,
+        memberId: json["memberId"],
       );
 
   Map<String, dynamic> toMap() => {
-        "memberId": memberId ?? null,
+        "memberId": memberId,
       };
 
   static String addCommonArgument({memberId}) {
@@ -33,11 +32,10 @@ class CommonScreenArgument {
   }
 }
 
-
 //-------------------------------------------------------------------------------------------------------------------//
 
 OtpVerificationScreenArgument otpVerificationScreenArgumentFromMap(
-    String str) =>
+        String str) =>
     OtpVerificationScreenArgument.fromMap(json.decode(str));
 
 String otpVerificationScreenArgumentToMap(OtpVerificationScreenArgument data) =>
@@ -62,30 +60,30 @@ class OtpVerificationScreenArgument {
 
   factory OtpVerificationScreenArgument.fromMap(Map<String, dynamic> json) =>
       OtpVerificationScreenArgument(
-        phoneNumber: json["phoneNumber"] ?? null,
-        isForgetPassword: json["isForgetPassword"] ?? null,
-        otpNumber: json["otpNumber"] ?? null,
-        appSignature: json["appSignature"] ?? null,
-        isLoginScreen: json["isLoginScreen"] ?? null,
-        customerID: json["customerID"] ?? null,
+        phoneNumber: json["phoneNumber"],
+        isForgetPassword: json["isForgetPassword"],
+        otpNumber: json["otpNumber"],
+        appSignature: json["appSignature"],
+        isLoginScreen: json["isLoginScreen"],
+        customerID: json["customerID"],
       );
 
   Map<String, dynamic> toMap() => {
-    "phoneNumber": phoneNumber ?? null,
-    "isForgetPassword": isForgetPassword ?? null,
-    "otpNumber": otpNumber ?? null,
-    "appSignature": appSignature ?? null,
-    "isLoginScreen": isLoginScreen ?? null,
-    "customerID": customerID ?? null,
-  };
+        "phoneNumber": phoneNumber,
+        "isForgetPassword": isForgetPassword,
+        "otpNumber": otpNumber,
+        "appSignature": appSignature,
+        "isLoginScreen": isLoginScreen,
+        "customerID": customerID,
+      };
 
   static String addOtpVerfiy(
       {required phoneNumber,
-        required isForgetPassword,
-        required isLoginScreen,
-        customerID,
-        otpNumber,
-        appSignature}) {
+      required isForgetPassword,
+      required isLoginScreen,
+      customerID,
+      otpNumber,
+      appSignature}) {
     Map<String, dynamic> map = {
       'phoneNumber': phoneNumber.toString(),
       'otpNumber': otpNumber,

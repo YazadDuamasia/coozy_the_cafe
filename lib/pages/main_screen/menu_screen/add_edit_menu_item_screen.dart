@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 
 class AddEditMenuItemScreen extends StatefulWidget {
-  const AddEditMenuItemScreen({Key? key}) : super(key: key);
+  const AddEditMenuItemScreen({super.key});
 
   @override
   _AddEditMenuItemScreenState createState() => _AddEditMenuItemScreenState();
@@ -30,15 +30,14 @@ class _AddEditMenuItemScreenState extends State<AddEditMenuItemScreen> {
           resizeToAvoidBottomInset: true,
           backgroundColor: Colors.white,
           appBar: AppBar(
-            title: Text(
+            title: const Text(
               "Add New Menu category",
             ),
             leadingWidth: 35,
             centerTitle: false,
           ),
           body: SingleChildScrollView(
-            child:
-            Column(
+            child: Column(
               mainAxisAlignment: MainAxisAlignment.start,
               crossAxisAlignment: CrossAxisAlignment.start,
               mainAxisSize: MainAxisSize.min,

@@ -6,7 +6,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
 class AddNewMenuCategoryScreen extends StatefulWidget {
-  const AddNewMenuCategoryScreen({Key? key}) : super(key: key);
+  const AddNewMenuCategoryScreen({super.key});
 
   @override
   _AddNewMenuCategoryScreenState createState() =>
@@ -137,10 +137,7 @@ class _AddNewMenuCategoryScreenState extends State<AddNewMenuCategoryScreen> {
                                   return Container();
                                 } else if (state is AddMenuCategoryUpdated) {
                                   return ListView.separated(
-                                    itemCount: (state.subCategoryList == null ||
-                                            state.subCategoryList.isEmpty)
-                                        ? 0
-                                        : state.subCategoryList.length,
+                                    itemCount: state.subCategoryList.length,
                                     shrinkWrap: true,
                                     physics:
                                         const NeverScrollableScrollPhysics(),
@@ -162,21 +159,22 @@ class _AddNewMenuCategoryScreenState extends State<AddNewMenuCategoryScreen> {
                                                     : 0),
                                             child:
                                                 DynamicTextFormFieldForSubCategoryWidget(
-                                                    key: UniqueKey(),
-                                                    initialValue: state
-                                                        .subCategoryList[index],
-                                                    onChanged: (value) async {
-                                                      _menuCategoryCubit
-                                                          .onChangeSubCategory(
-                                                          value, index);
-                                                    },
-                                                    onDelete: () async {
-                                                      _menuCategoryCubit.removeSubCategory(index);
-                                                      FocusScope.of(context).unfocus();
-                                                      setState(() {});
-                                                    },
-
-                                                ),
+                                              key: UniqueKey(),
+                                              initialValue:
+                                                  state.subCategoryList[index],
+                                              onChanged: (value) async {
+                                                _menuCategoryCubit
+                                                    .onChangeSubCategory(
+                                                        value, index);
+                                              },
+                                              onDelete: () async {
+                                                _menuCategoryCubit
+                                                    .removeSubCategory(index);
+                                                FocusScope.of(context)
+                                                    .unfocus();
+                                                setState(() {});
+                                              },
+                                            ),
                                           ),
                                         ),
                                       ],
@@ -203,11 +201,11 @@ class _AddNewMenuCategoryScreenState extends State<AddNewMenuCategoryScreen> {
                               child: ElevatedButton(
                                 onPressed: () async {
                                   _menuCategoryCubit.addSubCategory('');
-                                  FocusScope.of(context).unfocus();
                                   setState(() {});
                                 },
                                 style: ElevatedButton.styleFrom(
-                                    padding: const EdgeInsets.all(10),elevation: 5),
+                                    padding: const EdgeInsets.all(10),
+                                    elevation: 5),
                                 child: Text(AppLocalizations.of(context)
                                         ?.translate(StringValue
                                             .add_menu_sub_category_btn_text) ??

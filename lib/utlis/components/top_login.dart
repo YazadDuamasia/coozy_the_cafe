@@ -100,13 +100,16 @@ class TopLoginCustomPainter extends CustomPainter {
         size.height * -0.1340000);
     path_0.close();
 
-    Paint paint_0_fill = Paint()..style = PaintingStyle.fill;
-    paint_0_fill.shader = ui.Gradient.linear(
-        Offset(0, size.height * 0.01000000),
-        Offset(size.width * 0.01000000, 0),
-        [const Color.fromRGBO(248, 117, 55, 1), const Color.fromRGBO(251, 168, 31, 1)],
-        [0, 1]);
-    canvas.drawPath(path_0, paint_0_fill);
+    Paint paint0Fill = Paint()..style = PaintingStyle.fill;
+    paint0Fill.shader = ui.Gradient.linear(Offset(0, size.height * 0.01000000),
+        Offset(size.width * 0.01000000, 0), [
+      const Color.fromRGBO(248, 117, 55, 1),
+      const Color.fromRGBO(251, 168, 31, 1)
+    ], [
+      0,
+      1
+    ]);
+    canvas.drawPath(path_0, paint0Fill);
   }
 
   @override

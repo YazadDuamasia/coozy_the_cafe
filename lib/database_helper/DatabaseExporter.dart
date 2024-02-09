@@ -23,19 +23,23 @@ class DatabaseExporter {
 
   static Future<List<String>> getTableNamesFromDatabase() async {
     final Database database = await openDatabase('path_to_your_database.db');
-    List<Map<String, dynamic>> result = await database.rawQuery('SELECT name FROM sqlite_master WHERE type="table"');
+    List<Map<String, dynamic>> result = await database
+        .rawQuery('SELECT name FROM sqlite_master WHERE type="table"');
     await database.close();
     return result.map((map) => map['name'].toString()).toList();
   }
 
-  static Future<List<Map<String, dynamic>>> fetchDataFromTable(String tableName) async {
+  static Future<List<Map<String, dynamic>>> fetchDataFromTable(
+      String tableName) async {
     final Database database = await openDatabase('path_to_your_database.db');
-    List<Map<String, dynamic>> result = await database.rawQuery('SELECT * FROM $tableName');
+    List<Map<String, dynamic>> result =
+        await database.rawQuery('SELECT * FROM $tableName');
     await database.close();
     return result;
   }
 
-  static void exportTableToSheet(Workbook workbook, String sheetName, List<Map<String, dynamic>> data) {
+  static void exportTableToSheet(
+      Workbook workbook, String sheetName, List<Map<String, dynamic>> data) {
     Worksheet sheet = workbook.worksheets.addWithName(sheetName);
 
     // Add headers
@@ -46,7 +50,9 @@ class DatabaseExporter {
     // Add data rows
     for (int row = 0; row < data.length; row++) {
       for (int col = 0; col < data[row].keys.length; col++) {
-        sheet.getRangeByIndex(row + 2, col + 1).setText(data[row].values.elementAt(col).toString());
+        sheet
+            .getRangeByIndex(row + 2, col + 1)
+            .setText(data[row].values.elementAt(col).toString());
       }
     }
   }
@@ -57,6 +63,7 @@ class DatabaseExporter {
 
     final File file = File(filePath);
     file.writeAsBytesSync(workbook.saveAsStream());
-    workbook.dispose(); // Don't forget to dispose of the engine to free resources.
+    workbook
+        .dispose(); // Don't forget to dispose of the engine to free resources.
   }
 }

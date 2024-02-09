@@ -3,7 +3,7 @@ import 'package:coozy_cafe/repositories/components/restaurant_repository.dart';
 import 'package:flutter/material.dart';
 
 class MenuFullListScreen extends StatefulWidget {
-  MenuFullListScreen({Key? key}) : super(key: key);
+  const MenuFullListScreen({super.key});
 
   @override
   _MenuFullListScreenState createState() => _MenuFullListScreenState();
@@ -88,10 +88,5 @@ class _MenuFullListScreenState extends State<MenuFullListScreen>
     await Future.delayed(
         const Duration(seconds: 1)); // Simulate a delay for demonstration.
     setState(() {});
-  }
-
-  @override
-  void dispose() {
-    super.dispose();
   }
 }

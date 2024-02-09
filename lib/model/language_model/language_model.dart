@@ -8,7 +8,8 @@ class LanguageModel {
 
   static List<LanguageModel> getLanguages() {
     return [
-      LanguageModel(name: 'English', code: 'en', file: 'locale_en.json', isRTL: false),
+      LanguageModel(
+          name: 'English', code: 'en', file: 'locale_en.json', isRTL: false),
       // LanguageModel(name: 'Arabic', code: 'ar', file: 'locale_ar.json', isRTL: true),
       // LanguageModel(name: 'Farsi/Persian', code: 'fa', file: 'locale_fa.json', isRTL: true),
       // LanguageModel(name: 'Hebrew', code: 'he', file: 'locale_he.json', isRTL: true),

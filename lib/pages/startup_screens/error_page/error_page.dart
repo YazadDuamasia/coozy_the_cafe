@@ -4,8 +4,7 @@ import 'package:lottie/lottie.dart';
 class ErrorPage extends StatefulWidget {
   final GestureTapCallback? onPressedRetryButton;
 
-  const ErrorPage({Key? key, required this.onPressedRetryButton})
-      : super(key: key);
+  const ErrorPage({super.key, required this.onPressedRetryButton});
 
   @override
   State<ErrorPage> createState() => _ErrorPageState();

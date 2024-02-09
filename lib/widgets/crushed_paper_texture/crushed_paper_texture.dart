@@ -1,4 +1,3 @@
-
 import 'package:flutter/material.dart';
 
 class CrushedPaperTexture extends CustomPainter {
@@ -13,7 +12,8 @@ class CrushedPaperTexture extends CustomPainter {
       ..lineTo(size.width, 0)
       ..lineTo(size.width, size.height)
       ..lineTo(size.width * 0.8, size.height)
-      ..quadraticBezierTo(size.width * 0.5, size.height * 0.8, size.width * 0.2, size.height)
+      ..quadraticBezierTo(
+          size.width * 0.5, size.height * 0.8, size.width * 0.2, size.height)
       ..lineTo(0, size.height)
       ..lineTo(0, 0)
       ..close();

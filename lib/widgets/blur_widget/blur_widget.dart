@@ -8,11 +8,11 @@ class BlurWidget extends StatefulWidget {
   final double? sigmaY;
 
   const BlurWidget({
-    Key? key,
+    super.key,
     this.child,
     this.sigmaX = 10,
     this.sigmaY = 10,
-  }) : super(key: key);
+  });
 
   @override
   _BlurWidgetState createState() => _BlurWidgetState();

@@ -14,7 +14,7 @@ class ButtonStaggerAnimation extends StatelessWidget {
   final Widget? child;
 
   ButtonStaggerAnimation({
-    Key? key,
+    super.key,
     required this.controller,
     this.color,
     this.progressIndicatorColor,
@@ -23,7 +23,7 @@ class ButtonStaggerAnimation extends StatelessWidget {
     this.onPressed,
     this.strokeWidth,
     this.child,
-  }) : super(key: key);
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -81,13 +81,13 @@ class ButtonStaggerAnimation extends StatelessWidget {
             child: ElevatedButton(
               style: ElevatedButton.styleFrom(
                 shape: RoundedRectangleBorder(
-                  borderRadius:BorderRadius.circular(30),
+                  borderRadius: BorderRadius.circular(30),
                 ),
                 backgroundColor: color,
                 padding: EdgeInsets.zero,
               ),
               child: _buttonChild(),
-              onPressed: () async{
+              onPressed: () async {
                 onPressed!(controller!);
               },
             ),

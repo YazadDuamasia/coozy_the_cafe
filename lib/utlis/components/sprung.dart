@@ -45,15 +45,15 @@ class Sprung extends Curve {
     double mass = 1.0,
     double velocity = 0.0,
   }) : _sim = SpringSimulation(
-    SpringDescription(
-      damping: damping,
-      mass: mass,
-      stiffness: stiffness,
-    ),
-    0.0,
-    1.0,
-    velocity,
-  );
+          SpringDescription(
+            damping: damping,
+            mass: mass,
+            stiffness: stiffness,
+          ),
+          0.0,
+          1.0,
+          velocity,
+        );
 
   /// The underlying physics simulation.
   final SpringSimulation _sim;

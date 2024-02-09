@@ -8,8 +8,7 @@ class MenuItemForm extends StatefulWidget {
   final MenuItem? menuItem;
   final void Function(MenuItem) onSubmit;
 
-  const MenuItemForm({Key? key, this.menuItem, required this.onSubmit})
-      : super(key: key);
+  const MenuItemForm({super.key, this.menuItem, required this.onSubmit});
 
   @override
   _MenuItemFormState createState() => _MenuItemFormState();
@@ -157,7 +156,7 @@ class _MenuItemFormState extends State<MenuItemForm> {
                               left: 10, right: 10, top: 15),
                           child: TextFormField(
                             readOnly: true,
-                            decoration: InputDecoration(
+                            decoration: const InputDecoration(
                               labelText: "Duration",
                               hintText: "cooking duration",
                             ),

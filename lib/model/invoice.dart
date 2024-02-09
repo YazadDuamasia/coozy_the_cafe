@@ -21,7 +21,7 @@ class PaymentMode {
       'id': id,
       'paymentMethodName': paymentMethodName,
       'uniqueHashId': uniqueHashId,
-    }..removeWhere((key, value) => value == null);;
+    }..removeWhere((key, value) => value == null);
   }
 }
 
@@ -125,9 +125,9 @@ class Invoice {
   }
 
   String generateInvoiceHashId(var orderId) {
-    DateTime now=DateTime.now();
+    DateTime now = DateTime.now();
 
-    return "INV-${DateUtil.localFormatDateTime(now,"ddMMyyyyHH:mm")}-${orderId}";
+    return "INV-${DateUtil.localFormatDateTime(now, "ddMMyyyyHH:mm")}-$orderId";
   }
 // Invoice newInvoice = Invoice(
 //   // other properties...

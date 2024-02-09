@@ -16,9 +16,10 @@ class OrderItem {
   String? status; //Status "New" ,"In Preparation", "Delivered"
   // OrderItemStatus? status; //Status "New" ,"In Preparation", "Delivered"
 
-  double? costPrice=0;
-  double? sellingPrice=0;
-  bool? isMenuItem; // Flag to determine if the order item is a menu item or a variation
+  double? costPrice = 0;
+  double? sellingPrice = 0;
+  bool?
+      isMenuItem; // Flag to determine if the order item is a menu item or a variation
   MenuItem? menuItem; // Reference to the menu item
   MenuItemVariation? selectedVariation;
 
@@ -34,11 +35,10 @@ class OrderItem {
       this.menuItem,
       this.selectedVariation}); // Reference to the selected variation
 
-
-
   factory OrderItem.fromJson(Map<String, dynamic> json) {
-    final statusIndex = json['status']==null?0:json['status'] as int?;
-    final status = statusIndex != null ? OrderItemStatus.values[statusIndex] : null;
+    final statusIndex = json['status'] == null ? 0 : json['status'] as int?;
+    final status =
+        statusIndex != null ? OrderItemStatus.values[statusIndex] : null;
 
     return OrderItem(
       id: json['id'],
@@ -51,8 +51,11 @@ class OrderItem {
       // status: status,
 
       isMenuItem: json['isMenuItem'],
-      menuItem: json['menuItem'] != null ? MenuItem.fromJson(json['menuItem']) : null,
-      selectedVariation: json['selectedVariation'] != null ? MenuItemVariation.fromJson(json['selectedVariation']) : null,
+      menuItem:
+          json['menuItem'] != null ? MenuItem.fromJson(json['menuItem']) : null,
+      selectedVariation: json['selectedVariation'] != null
+          ? MenuItemVariation.fromJson(json['selectedVariation'])
+          : null,
     );
   }
 

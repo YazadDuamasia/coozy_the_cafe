@@ -44,15 +44,17 @@ class NotificationApi {
       defaultPresentSound: true,
     );
 
-    var andriodSetting = const AndroidInitializationSettings("@mipmap/ic_launcher");
-    InitializationSettings settings = InitializationSettings(android: andriodSetting, iOS: IOSSetting);
+    var andriodSetting =
+        const AndroidInitializationSettings("@mipmap/ic_launcher");
+    InitializationSettings settings =
+        InitializationSettings(android: andriodSetting, iOS: IOSSetting);
     await _notifications.initialize(
       settings,
-      onDidReceiveNotificationResponse:(details) async{
-        onNotification.add( details.payload.toString());
+      onDidReceiveNotificationResponse: (details) async {
+        onNotification.add(details.payload.toString());
       },
-      onDidReceiveBackgroundNotificationResponse: (details) async{
-        onNotification.add( details.payload.toString());
+      onDidReceiveBackgroundNotificationResponse: (details) async {
+        onNotification.add(details.payload.toString());
       },
       // onSelectNotification: (payload) async {
       //   onNotification.add(payload);
@@ -72,9 +74,12 @@ class NotificationApi {
 
   static requestNotificationPermission() async {
     if (Constants.isAndroid()) {
-      await _notifications.resolvePlatformSpecificImplementation<
-          AndroidFlutterLocalNotificationsPlugin>()?.requestNotificationsPermission();
-    }if (Constants.isIOS()) {
+      await _notifications
+          .resolvePlatformSpecificImplementation<
+              AndroidFlutterLocalNotificationsPlugin>()
+          ?.requestNotificationsPermission();
+    }
+    if (Constants.isIOS()) {
       await _notifications
           .resolvePlatformSpecificImplementation<
               IOSFlutterLocalNotificationsPlugin>()

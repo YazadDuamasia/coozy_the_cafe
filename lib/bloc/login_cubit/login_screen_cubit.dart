@@ -7,12 +7,12 @@ import 'package:rxdart/rxdart.dart';
 part 'login_screen_state.dart';
 
 class LoginScreenCubit extends Cubit<LoginScreenState> {
-  LoginScreenCubit() : super(LoginScreenInitialState()){
+  LoginScreenCubit() : super(LoginScreenInitialState()) {
     fetchInitialInfo();
   }
   void fetchInitialInfo() async {
     InternetConnection().onStatusChange.listen(
-          (result) async {
+      (result) async {
         if (result == InternetStatus.connected) {
           emit(LoginScreenLoadingState());
 
@@ -52,7 +52,8 @@ class LoginScreenCubit extends Cubit<LoginScreenState> {
 
   //validation of UserName
   void updateUserName(String userName) {
-    Pattern emailPattern = r'^(([^<>()[\]\\.,;:\s@\"]+(\.[^<>()[\]\\.,;:\s@\"]+)*)|(\".+\"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$';
+    Pattern emailPattern =
+        r'^(([^<>()[\]\\.,;:\s@\"]+(\.[^<>()[\]\\.,;:\s@\"]+)*)|(\".+\"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$';
     RegExp regexEmail = RegExp(emailPattern.toString());
     if (userName.isNotEmpty) {
       if (regexEmail.hasMatch(userName)) {

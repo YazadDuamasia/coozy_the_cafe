@@ -30,17 +30,17 @@ class MenuCategoryFullListCubit extends Cubit<MenuCategoryFullListState> {
             expansionTileKeys: null,
             expandedTitleControllerList: null));
       } else {
-        List<GlobalKey?>? _expansionTileKeys = List.generate(
-            data == null ? 0 : data!['categories'].length ?? 0,
-            (index) => new GlobalKey());
-        List<ExpansionTileController>? _expandedTitleControllerList =
-            List.generate(data == null ? 0 : data!['categories'].length ?? 0,
-                (index) => new ExpansionTileController());
+        List<GlobalKey?>? expansionTileKeys = List.generate(
+            data == null ? 0 : data['categories'].length ?? 0,
+            (index) => GlobalKey());
+        List<ExpansionTileController>? expandedTitleControllerList =
+            List.generate(data == null ? 0 : data['categories'].length ?? 0,
+                (index) => ExpansionTileController());
 
         emit(LoadedState(
             data: data,
-            expansionTileKeys: _expansionTileKeys,
-            expandedTitleControllerList: _expandedTitleControllerList));
+            expansionTileKeys: expansionTileKeys,
+            expandedTitleControllerList: expandedTitleControllerList));
       }
       //   emit(NoInternetState());
     } catch (e) {
@@ -73,7 +73,7 @@ class MenuCategoryFullListCubit extends Cubit<MenuCategoryFullListState> {
             [],
       };
 
-      return result ?? null;
+      return result;
     } catch (e) {
       Constants.debugLog(
           MenuCategoryFullListCubit, "fetchDataFromApi:catchError:$e");
