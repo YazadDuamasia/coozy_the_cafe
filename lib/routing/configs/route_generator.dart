@@ -47,7 +47,7 @@ class RouteGenerator {
           type: PageTransitionType.rightToLeftWithFade,
           settings: settings,
           curve: Curves.easeInOut,
-          child: MenuFullListScreen(),
+          child: const MenuFullListScreen(),
         );
 
       case RouteName.menuCategoryFullListRoute:

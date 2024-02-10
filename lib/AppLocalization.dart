@@ -47,7 +47,8 @@ class AppLocalizations {
 
     if (appLocalizations != null) {
       String? currentLanguageCode = appLocalizations.locale?.languageCode;
-      return "${currentLanguageCode ?? "en"}"; // Default to "en" if the language code is not available
+      return currentLanguageCode ??
+          "en"; // Default to "en" if the language code is not available
     } else {
       return "en"; // Default to "en" if AppLocalizations instance is not available
     }

@@ -14,7 +14,7 @@ import 'package:lottie/lottie.dart';
 import 'package:reorderable_grid_view/reorderable_grid_view.dart';
 
 class TableScreen extends StatefulWidget {
-  const TableScreen({Key? key}) : super(key: key);
+  const TableScreen({super.key});
 
   @override
   _TableScreenState createState() => _TableScreenState();
@@ -65,12 +65,10 @@ class _TableScreenState extends State<TableScreen>
                       ? const Icon(
                           Icons.list,
                           key: ValueKey('list'),
-
                         )
                       : const Icon(
                           Icons.grid_view,
                           key: ValueKey('grid'),
-
                         ),
                 ),
                 tooltip: isGridView
@@ -90,7 +88,7 @@ class _TableScreenState extends State<TableScreen>
                         onCreate: (newTableInfoModel) async {
                           // Handle the creation of the new table here
                           Constants.debugLog(TableScreen,
-                              'Created new table: ${newTableInfoModel}');
+                              'Created new table: $newTableInfoModel');
                           int? result = await RestaurantRepository()
                               .addNewTableInfo(newTableInfoModel);
                           Constants.debugLog(
@@ -120,7 +118,6 @@ class _TableScreenState extends State<TableScreen>
                           } else {
                             Constants.customAutoDismissAlertDialog(
                                 classObject: TableScreen,
-
                                 context: context,
                                 descriptions: AppLocalizations.of(context)
                                         ?.translate(StringValue
@@ -156,9 +153,9 @@ class _TableScreenState extends State<TableScreen>
               : Padding(
                   padding: const EdgeInsets.fromLTRB(10, 10, 10, 10),
                   child: AnimatedSwitcher(
-                    duration: Duration(milliseconds: 500),
+                    duration: const Duration(milliseconds: 500),
                     child: isGridView
-                        ? Center(child: buildGridView())
+                        ? buildGridView()
                         : buildListView(),
                   )),
         ),
@@ -172,7 +169,8 @@ class _TableScreenState extends State<TableScreen>
       itemBuilder: (context, index) => buildGridItem(list![index], index),
       shrinkWrap: true,
       addAutomaticKeepAlives: false,
-      physics: const ClampingScrollPhysics(parent: AlwaysScrollableScrollPhysics()),
+      physics:
+          const ClampingScrollPhysics(parent: AlwaysScrollableScrollPhysics()),
       addRepaintBoundaries: true,
       onReorder: onReOrder,
       placeholderBuilder: (dragIndex, dropIndex, dragWidget) {
@@ -190,11 +188,11 @@ class _TableScreenState extends State<TableScreen>
         );
       },
       gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-          crossAxisCount: 2,
-          crossAxisSpacing: 10,
-          mainAxisSpacing: 10,
-          childAspectRatio: 1.0,
-          mainAxisExtent: 120),
+        crossAxisCount: 2,
+        crossAxisSpacing: 10,
+        mainAxisSpacing: 10,
+        childAspectRatio: 1.0,
+      ),
     );
   }
 
@@ -216,7 +214,8 @@ class _TableScreenState extends State<TableScreen>
               borderRadius: BorderRadius.circular(5.0),
               child: Center(
                 child: Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 10),
+                  padding: const EdgeInsets.only(
+                      left: 10, right: 10, top: 30, bottom: 10),
                   child: Column(
                     mainAxisAlignment: MainAxisAlignment.start,
                     crossAxisAlignment: CrossAxisAlignment.start,
@@ -253,8 +252,8 @@ class _TableScreenState extends State<TableScreen>
             ),
           ),
           Positioned(
-            top: 8.0, // Adjust the top position as needed
-            right: 8.0, // Adjust the right position as needed
+            top: 5.0, // Adjust the top position as needed
+            right: 5.0, // Adjust the right position as needed
             child: GestureDetector(
               onTap: () async => onDeletedAction(model, index),
               child: const Icon(
@@ -268,6 +267,7 @@ class _TableScreenState extends State<TableScreen>
       ),
     );
   }
+
 
   Widget buildListView() {
     return ReorderableListView.builder(
@@ -337,7 +337,7 @@ class _TableScreenState extends State<TableScreen>
                               ),
                             ],
                           ),
-                          SizedBox(
+                          const SizedBox(
                             height: 5,
                           ),
                           Row(
@@ -361,7 +361,7 @@ class _TableScreenState extends State<TableScreen>
                         onPressed: () async {
                           await onMoveItemUp(index);
                         },
-                        icon: Icon(Icons.arrow_upward_rounded),
+                        icon: const Icon(Icons.arrow_upward_rounded),
                       ),
                     ),
                     Visibility(
@@ -370,7 +370,7 @@ class _TableScreenState extends State<TableScreen>
                         onPressed: () async {
                           await onMoveItemDown(index);
                         },
-                        icon: Icon(Icons.arrow_downward_rounded),
+                        icon: const Icon(Icons.arrow_downward_rounded),
                       ),
                     ),
                     GestureDetector(
@@ -389,11 +389,6 @@ class _TableScreenState extends State<TableScreen>
         ],
       ),
     );
-  }
-
-  @override
-  void dispose() {
-    super.dispose();
   }
 
   Future<void> loadData() async {
@@ -454,7 +449,6 @@ class _TableScreenState extends State<TableScreen>
     } else {
       Constants.customAutoDismissAlertDialog(
           classObject: TableScreen,
-
           context: context,
           descriptions: AppLocalizations.of(context)
                   ?.translate(StringValue.table_failed_to_deleted_text) ??

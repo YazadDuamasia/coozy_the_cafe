@@ -10,11 +10,11 @@ class ProfileAvatar extends StatelessWidget {
   final bool hasBorder;
 
   const ProfileAvatar({
-    Key? key,
+    super.key,
     required this.imageUrl,
     this.isActive = false,
     this.hasBorder = false,
-  }) : super(key: key);
+  });
 
   @override
   Widget build(BuildContext context) {

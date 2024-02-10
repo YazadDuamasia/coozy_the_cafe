@@ -7,7 +7,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 
 class HomeScreen extends StatefulWidget {
-  const HomeScreen({Key? key}) : super(key: key);
+  const HomeScreen({super.key});
 
   @override
   State<HomeScreen> createState() => _HomeScreenState();
@@ -18,7 +18,7 @@ class _HomeScreenState extends State<HomeScreen>
   Size? size;
   Orientation? orientation;
   DateTime? currentBackPressTime;
-  final GlobalKey<ScaffoldState>? _scaffoldKey = GlobalKey<ScaffoldState>();
+  final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
   var key = UniqueKey();
   List<Widget>? mobileListView;
 
@@ -53,7 +53,7 @@ class _HomeScreenState extends State<HomeScreen>
                   Icons.menu,
                 ),
                 onPressed: () {
-                  if (_scaffoldKey!.currentState!.isDrawerOpen) {
+                  if (_scaffoldKey.currentState!.isDrawerOpen) {
                     _scaffoldKey.currentState!.closeDrawer();
                     //close drawer, if drawer is open
                   } else {
@@ -93,16 +93,16 @@ class _HomeScreenState extends State<HomeScreen>
                     itemBuilder: (BuildContext bc) {
                       return const [
                         PopupMenuItem(
-                          child: Text("Backup"),
                           value: 'backup',
+                          child: Text("Backup"),
                         ),
                         PopupMenuItem(
-                          child: Text("Export"),
                           value: 'export',
+                          child: Text("Export"),
                         ),
                         PopupMenuItem(
-                          child: Text("Restore"),
                           value: 'restore',
+                          child: Text("Restore"),
                         )
                       ];
                     },
@@ -130,11 +130,6 @@ class _HomeScreenState extends State<HomeScreen>
         ),
       ),
     );
-  }
-
-  @override
-  void dispose() {
-    super.dispose();
   }
 
   Widget buildPageTransitionSwitcher({var list, int? currentIndex}) {
@@ -192,7 +187,7 @@ class _HomeScreenState extends State<HomeScreen>
               style: Theme.of(context).textTheme.titleLarge,
             ),
             content: Text('Do you want to exit the app?',
-                style: Theme.of(context).textTheme.subtitle2),
+                style: Theme.of(context).textTheme.titleSmall),
             actions: [
               TextButton(
                 onPressed: () => Navigator.of(context).pop(false),

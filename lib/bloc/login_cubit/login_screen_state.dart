@@ -1,7 +1,7 @@
 part of 'login_screen_cubit.dart';
 
 @immutable
-abstract class LoginScreenState extends Equatable{}
+abstract class LoginScreenState extends Equatable {}
 
 class LoginScreenInitialState extends LoginScreenState {
   @override

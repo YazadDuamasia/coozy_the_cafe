@@ -5,4 +5,5 @@ final navigationRoutes = NavigationRoutes.getInstance();
 
 final bucketGlobal = PageStorageBucket();
 
-final GlobalKey<NavigatorState> navigatorKey = GlobalKey<NavigatorState>(debugLabel: "navigatorKey");
+final GlobalKey<NavigatorState> navigatorKey =
+    GlobalKey<NavigatorState>(debugLabel: "navigatorKey");

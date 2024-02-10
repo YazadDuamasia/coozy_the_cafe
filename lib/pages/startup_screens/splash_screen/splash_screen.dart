@@ -8,7 +8,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class SplashScreen extends StatefulWidget {
-  const SplashScreen({Key? key}) : super(key: key);
+  const SplashScreen({super.key});
 
   @override
   _SplashScreenState createState() => _SplashScreenState();
@@ -69,24 +69,30 @@ class _SplashScreenState extends State<SplashScreen> {
   checkFirstTime() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     bool isFirstTime = prefs.getBool('isFirstTime') ?? true;
-    print("isFirstTime: ${isFirstTime}");
+    print("isFirstTime: $isFirstTime");
     if (isFirstTime) {
       await prefs.setBool('isFirstTime', false);
       Future.delayed(const Duration(seconds: 5)).then(
         (value) => Navigator.pushNamedAndRemoveUntil(
-            context, RouteName.homeScreenRoute, arguments: true, (route) => false),
+            context,
+            RouteName.homeScreenRoute,
+            arguments: true,
+            (route) => false),
       );
     } else {
       Future.delayed(const Duration(seconds: 5)).then(
         (value) => Navigator.pushNamedAndRemoveUntil(
-            context, RouteName.homeScreenRoute, arguments: false, (route) => false),
+            context,
+            RouteName.homeScreenRoute,
+            arguments: false,
+            (route) => false),
       );
     }
   }
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
+    return const Scaffold(
       resizeToAvoidBottomInset: true,
       body: ResponsiveLayout(
         mobile: SplashScreenMobileLayout(),

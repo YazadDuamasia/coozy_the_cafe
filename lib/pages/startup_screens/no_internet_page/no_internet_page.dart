@@ -4,8 +4,7 @@ import 'package:lottie/lottie.dart';
 class NoInternetPage extends StatefulWidget {
   final GestureTapCallback? onPressedRetryButton;
 
-  const NoInternetPage({Key? key, required this.onPressedRetryButton})
-      : super(key: key);
+  const NoInternetPage({super.key, required this.onPressedRetryButton});
 
   @override
   State<NoInternetPage> createState() => _NoInternetPageState();
@@ -27,7 +26,7 @@ class _NoInternetPageState extends State<NoInternetPage>
   void _handleAnimationProgressChanged() {
     if (_controller.value >= _animationThreshold) {
       _isVisible.value = false;
-    }else{
+    } else {
       _isVisible.value = true;
     }
   }
@@ -50,7 +49,8 @@ class _NoInternetPageState extends State<NoInternetPage>
                     // Lottie file and start the animation.
                     _controller
                       ..duration = composition.duration
-                      ..forward() ..repeat();
+                      ..forward()
+                      ..repeat();
                   },
                   width: MediaQuery.of(context).size.width * .65,
                 ),

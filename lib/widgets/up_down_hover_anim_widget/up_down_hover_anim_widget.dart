@@ -5,10 +5,10 @@ class HoverUpDownWidget extends StatefulWidget {
   final Widget? childWidget;
 
   const HoverUpDownWidget({
-    Key? key,
+    super.key,
     required this.animationDuration,
     required this.childWidget,
-  }) : super(key: key);
+  });
 
   @override
   _HoverUpDownWidgetState createState() => _HoverUpDownWidgetState();

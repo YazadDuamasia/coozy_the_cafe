@@ -42,7 +42,6 @@ class DateUtil {
   // 'eeee'=>"Friday"
   static const DATE_FORMAT12 = 'eeee';
 
-
   // 'EEE'=>"Fri"
   static const DATE_FORMAT13 = 'EEE';
 
@@ -68,6 +67,7 @@ class DateUtil {
     }
     return updatedDt;
   }
+
   static String? localFormatDateTime(DateTime? utcTime, String dateFormat) {
     String? updatedDt;
     try {
@@ -81,14 +81,14 @@ class DateUtil {
     return updatedDt;
   }
 
-
   static DateTime? stringToLocalDate(String? utcTime, String dateFormat) {
     try {
       if (utcTime != null) {
         return DateFormat(dateFormat).parse(utcTime).toLocal();
       }
     } catch (e) {
-      Constants.debugLog(DateUtil, "StringToLocalDate: error - ${e.toString()}");
+      Constants.debugLog(
+          DateUtil, "StringToLocalDate: error - ${e.toString()}");
     }
     return null;
   }
@@ -133,7 +133,8 @@ class DateUtil {
       String? inputDate, String? dateFormat) {
     if (inputDate == null || dateFormat == null) return null;
     try {
-      return DateFormat(dateFormat).format(DateFormat(dateFormat).parse(inputDate));
+      return DateFormat(dateFormat)
+          .format(DateFormat(dateFormat).parse(inputDate));
     } catch (e) {
       return null;
     }
@@ -169,7 +170,8 @@ class DateUtil {
         return parsedDateTime.toLocal();
       }
     } catch (e) {
-      Constants.debugLog(DateUtil, "StringToLocalDateTime: error - ${e.toString()}");
+      Constants.debugLog(
+          DateUtil, "StringToLocalDateTime: error - ${e.toString()}");
     }
     return null;
   }

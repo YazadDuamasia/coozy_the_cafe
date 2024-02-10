@@ -3,8 +3,8 @@ import 'package:coozy_cafe/widgets/particles_flutter/component/painter.dart';
 import 'package:flutter/material.dart';
 
 class CircularParticle extends StatefulWidget {
-  CircularParticle({
-    Key? key,
+  const CircularParticle({
+    super.key,
     required this.height,
     required this.width,
     this.onTapAnimation = true,
@@ -28,7 +28,7 @@ class CircularParticle extends StatefulWidget {
     this.hoverColor = Colors.orangeAccent,
     this.hoverRadius = 80,
     this.connectDots = false,
-  }) : super(key: key);
+  });
   final double awayRadius;
   final double height;
   final double width;
@@ -47,6 +47,7 @@ class CircularParticle extends StatefulWidget {
   final double hoverRadius;
   final bool connectDots; //not recommended
 
+  @override
   _CircularParticleState createState() => _CircularParticleState();
 }
 
@@ -132,7 +133,7 @@ class _CircularParticleState extends State<CircularParticle>
   void changeDirection() async {
     Future.doWhile(
       () async {
-        await Future.delayed(Duration(milliseconds: 600));
+        await Future.delayed(const Duration(milliseconds: 600));
         for (int index = 0; index < widget.numberOfParticles; index++) {
           randDirection[index] = (rng.nextBool());
         }
@@ -190,8 +191,9 @@ class _CircularParticleState extends State<CircularParticle>
                   curve: widget.awayAnimationCurve))
             ..addListener(
               () {
-                if (distance[index] < widget.awayRadius)
+                if (distance[index] < widget.awayRadius) {
                   setState(() => offsets[index] = awayAnimation[index].value);
+                }
                 if (awayAnimationController.isCompleted &&
                     index == offsets.length - 1) {
                   awayAnimationController.dispose();

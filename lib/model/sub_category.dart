@@ -49,7 +49,8 @@ class SubCategory {
   }
 
   // Convert dynamic list to List<SubCategory>
-  static List<SubCategory>? convertDynamicListToSubCategoryList(List<dynamic>? dynamicList) {
+  static List<SubCategory>? convertDynamicListToSubCategoryList(
+      List<dynamic>? dynamicList) {
     if (dynamicList == null) {
       return null;
     }
@@ -58,7 +59,6 @@ class SubCategory {
       return SubCategory.fromJson(dynamicItem as Map<String, dynamic>);
     }).toList();
   }
-
 
   @override
   String toString() {

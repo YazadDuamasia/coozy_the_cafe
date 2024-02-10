@@ -20,11 +20,11 @@ class CommonScreenArgument {
 
   factory CommonScreenArgument.fromMap(Map<String, dynamic> json) =>
       CommonScreenArgument(
-        memberId: json["memberId"] ?? null,
+        memberId: json["memberId"],
       );
 
   Map<String, dynamic> toMap() => {
-        "memberId": memberId ?? null,
+        "memberId": memberId,
       };
 
   static String addCommonArgument({memberId}) {

@@ -18,9 +18,9 @@ class MenuItemReview {
   // Create a MenuItemReview instance from a map (e.g., from a database query result)
   factory MenuItemReview.fromJson(Map<String, dynamic> json) {
     return MenuItemReview(
-      id: json['id'] ?? null,
+      id: json['id'],
       itemId: json['itemId'] ?? "",
-      customerId: json['customerId'] ?? null,
+      customerId: json['customerId'],
       rating: json['rating'] ?? 0,
       reviewText: json['reviewText'] ?? "",
       reviewDate: json['reviewDate'] == null

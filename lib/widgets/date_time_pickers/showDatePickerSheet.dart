@@ -52,69 +52,64 @@ Future<DateTime?> showDatePickerSheet({
   DateTime? selectedDate = initialDate ?? DateTime.now();
   showModalBottomSheet(
     context: context!,
-    builder: (_) =>
-        Column(
+    builder: (_) => Column(
+      children: [
+        Row(
+          mainAxisAlignment: MainAxisAlignment.start,
+          crossAxisAlignment: CrossAxisAlignment.start,
+          mainAxisSize: MainAxisSize.min,
           children: [
-            Row(
-              mainAxisAlignment: MainAxisAlignment.start,
-              crossAxisAlignment: CrossAxisAlignment.start,
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                Expanded(
-                  child: TextButton(
-                    onPressed: () {
-                      // completer.complete(null); // User canceled, resolve with null
-                      Navigator.pop(context);
-                    },
-                    child: Text(
-                      AppLocalizations.of(context)
+            Expanded(
+              child: TextButton(
+                onPressed: () {
+                  // completer.complete(null); // User canceled, resolve with null
+                  Navigator.pop(context);
+                },
+                child: Text(
+                  AppLocalizations.of(context)
                           ?.translate(StringValue.common_cancel) ??
-                          "cancel",
-                      style: TextStyle(
-                        color: Theme
-                            .of(context)
-                            .colorScheme
-                            .error,
-                      ),
-                    ),
+                      "cancel",
+                  style: TextStyle(
+                    color: Theme.of(context).colorScheme.error,
                   ),
                 ),
-                Expanded(
-                  child: TextButton(
-                    onPressed: () {
-                      completer.complete(
-                          selectedDate); // Resolve with the selected date
-                      Navigator.pop(context);
-                    },
-                    child: Text(
-                      AppLocalizations.of(context)
-                          ?.translate(StringValue.common_ok) ??
-                          "Ok",
-                    ),
-                  ),
-                ),
-              ],
+              ),
             ),
             Expanded(
-              child: CupertinoDatePicker(
-                mode: pickerMode ?? CupertinoDatePickerMode.dateAndTime,
-                initialDateTime: initialDate ?? DateTime.now(),
-                minimumDate: minimumDate ?? null,
-                maximumDate: maximumDate ?? null,
-                backgroundColor: backgroundColor ?? null,
-                dateOrder: dateOrder,
-                onDateTimeChanged: (DateTime newDate) {
-                  selectedDate = newDate; // Update the selected date
+              child: TextButton(
+                onPressed: () {
+                  completer
+                      .complete(selectedDate); // Resolve with the selected date
+                  Navigator.pop(context);
                 },
+                child: Text(
+                  AppLocalizations.of(context)
+                          ?.translate(StringValue.common_ok) ??
+                      "Ok",
+                ),
               ),
             ),
           ],
         ),
+        Expanded(
+          child: CupertinoDatePicker(
+            mode: pickerMode ?? CupertinoDatePickerMode.dateAndTime,
+            initialDateTime: initialDate ?? DateTime.now(),
+            minimumDate: minimumDate,
+            maximumDate: maximumDate,
+            backgroundColor: backgroundColor,
+            dateOrder: dateOrder,
+            onDateTimeChanged: (DateTime newDate) {
+              selectedDate = newDate; // Update the selected date
+            },
+          ),
+        ),
+      ],
+    ),
   );
 
   return completer.future;
 }
-
 
 /**
     TimeOfDay selectedTime = TimeOfDay(hour: 2, minute: 30);
@@ -130,46 +125,47 @@ Future<TimeOfDay?> showTimePickerSheet({
   TimeOfDay selectedTime = initialTime ?? TimeOfDay.now();
   showModalBottomSheet(
     context: context!,
-    builder: (_) =>
-        Column(
+    builder: (_) => Column(
+      children: [
+        Row(
+          mainAxisAlignment: MainAxisAlignment.start,
+          crossAxisAlignment: CrossAxisAlignment.start,
+          mainAxisSize: MainAxisSize.min,
           children: [
-            Row(
-              mainAxisAlignment: MainAxisAlignment.start,
-              crossAxisAlignment: CrossAxisAlignment.start,
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                Expanded(
-                  child: TextButton(
-                    onPressed: () {
-                      completer.complete(null); // User canceled, resolve with null
-                      Navigator.pop(context);
-                    },
-                    child: Text("Cancel"),
-                  ),
-                ),
-                Expanded(
-                  child: TextButton(
-                    onPressed: () {
-                      completer.complete(selectedTime); // Resolve with the selected time
-                      Navigator.pop(context);
-                    },
-                    child: Text("Ok"),
-                  ),
-                ),
-              ],
+            Expanded(
+              child: TextButton(
+                onPressed: () {
+                  completer.complete(null); // User canceled, resolve with null
+                  Navigator.pop(context);
+                },
+                child: const Text("Cancel"),
+              ),
             ),
             Expanded(
-              child: CupertinoDatePicker(
-                mode: CupertinoDatePickerMode.time,
-                initialDateTime: DateTime.now(),
-                backgroundColor: backgroundColor ?? null,
-                onDateTimeChanged: (DateTime newTime) {
-                  selectedTime = TimeOfDay.fromDateTime(newTime); // Update the selected time
+              child: TextButton(
+                onPressed: () {
+                  completer
+                      .complete(selectedTime); // Resolve with the selected time
+                  Navigator.pop(context);
                 },
+                child: const Text("Ok"),
               ),
             ),
           ],
         ),
+        Expanded(
+          child: CupertinoDatePicker(
+            mode: CupertinoDatePickerMode.time,
+            initialDateTime: DateTime.now(),
+            backgroundColor: backgroundColor,
+            onDateTimeChanged: (DateTime newTime) {
+              selectedTime =
+                  TimeOfDay.fromDateTime(newTime); // Update the selected time
+            },
+          ),
+        ),
+      ],
+    ),
   );
 
   return completer.future;

@@ -9,7 +9,6 @@ abstract class AddMenuCategoryState extends Equatable {
 
 class AddMenuCategoryInitial extends AddMenuCategoryState {}
 
-
 class AddMenuCategoryUpdated extends AddMenuCategoryState {
   final String categoryName;
   final List<String> subCategoryList;

@@ -51,14 +51,12 @@ class ParticlePainter extends CustomPainter {
             hoverIndex.contains(index) ? hoverPaint : constColorPaint);
       }
     }
-    lineOffsets.forEach(
-          (item) {
-        randomColorPaint = Paint()
-          ..color = particleColor
-          ..strokeWidth = (4 * (1 - item[2] / 50)).toDouble();
-        canvas.drawLine(item[0], item[1], randomColorPaint!);
-      },
-    );
+    for (var item in lineOffsets) {
+      randomColorPaint = Paint()
+        ..color = particleColor
+        ..strokeWidth = (4 * (1 - item[2] / 50)).toDouble();
+      canvas.drawLine(item[0], item[1], randomColorPaint!);
+    }
   }
 
   @override
