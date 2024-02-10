@@ -5,11 +5,13 @@ import 'package:flutter/material.dart';
 class DynamicTextFormFieldForSubCategoryWidget extends StatefulWidget {
   final String? initialValue;
   final void Function(String) onChanged;
-  final VoidCallback  onDelete;
+  final VoidCallback onDelete;
+  final int index;
 
-   DynamicTextFormFieldForSubCategoryWidget(
+  DynamicTextFormFieldForSubCategoryWidget(
       {Key? key,
       this.initialValue,
+      required this.index,
       required this.onChanged,
       required this.onDelete})
       : super(key: key);
@@ -46,6 +48,7 @@ class _DynamicTextFormFieldForSubCategoryWidgetState
         hintText: AppLocalizations.of(context)
                 ?.translate(StringValue.add_new_menu_sub_category_hint_text) ??
             "Enter your subCategory name",
+
         suffixIcon: IconButton(
           onPressed: widget.onDelete,
           icon: const Icon(Icons.delete),

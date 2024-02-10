@@ -1,6 +1,7 @@
+import 'package:coozy_cafe/model/category.dart';
+import 'package:coozy_cafe/model/sub_category.dart';
 import 'package:coozy_cafe/routing/routs.dart';
-import 'package:coozy_cafe/utlis/components/global.dart';
-import 'package:flutter/material.dart';
+import 'package:coozy_cafe/utlis/utlis.dart';
 import 'package:flutter/services.dart';
 
 class NavigationRoutes {
@@ -41,5 +42,16 @@ class NavigationRoutes {
   Future navigateToAddNewMenuCategoryScreen() async {
     return await navigatorKey.currentState!
         .pushNamed(RouteName.addNewMenuCategoryScreenRoute);
+  }
+
+  Future navigateToUpdateMenuCategoryScreen(
+      {required Category? category, required List<SubCategory>? subCategoryList}) async {
+    String arg =
+        UpdateMenuCategoryScreenArgument.updateMenuCategoryScreenArgument(
+            category: category, subCategoryList: subCategoryList);
+    Constants.debugLog(NavigationRoutes,
+        "UpdateMenuCategoryScreen:arguments:${arg.toString()}");
+    return await navigatorKey.currentState!
+        .pushNamed(RouteName.updateMenuCategoryScreenRoute, arguments: arg);
   }
 }

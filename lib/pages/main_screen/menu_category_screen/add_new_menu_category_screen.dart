@@ -163,6 +163,7 @@ class _AddNewMenuCategoryScreenState extends State<AddNewMenuCategoryScreen> {
                                             child:
                                                 DynamicTextFormFieldForSubCategoryWidget(
                                                     key: UniqueKey(),
+                                                    index: index,
                                                     initialValue: state
                                                         .subCategoryList[index],
                                                     onChanged: (value) async {

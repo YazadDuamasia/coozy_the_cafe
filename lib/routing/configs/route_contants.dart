@@ -7,4 +7,5 @@ class RouteName {
   static const String menuFullListScreenRoute = '/menuFullListScreenRoute';
   static const String menuCategoryFullListRoute="/menuCategoryFullListScreen";
   static const String addNewMenuCategoryScreenRoute="/addNewMenuCategoryScreen";
+  static const String updateMenuCategoryScreenRoute="/updateMenuCategoryScreen";
 }

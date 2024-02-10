@@ -8,6 +8,7 @@ import 'package:coozy_cafe/widgets/post_time_text_widget/post_time_text_widget.d
 import 'package:coozy_cafe/widgets/responsive_layout/responsive_layout.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:material_design_icons_flutter/material_design_icons_flutter.dart';
 
 class MenuCategoryFullListScreen extends StatefulWidget {
   const MenuCategoryFullListScreen({Key? key}) : super(key: key);
@@ -296,11 +297,6 @@ class _MenuCategoryFullListScreenState
             collapsedBackgroundColor: theme.colorScheme.primaryContainer,
             backgroundColor: theme.colorScheme.primaryContainer,
             childrenPadding: const EdgeInsets.symmetric(horizontal: 10),
-            subtitle: PostTimeTextWidget(
-              key: UniqueKey(),
-              creationDate: category.createdDate ?? "",
-              localizedCode: AppLocalizations.getCurrentLanguageCode(context),
-            ),
             title: Row(
               mainAxisAlignment: MainAxisAlignment.start,
               crossAxisAlignment: CrossAxisAlignment.start,
@@ -308,6 +304,23 @@ class _MenuCategoryFullListScreenState
               children: [
                 Expanded(child: Text("${category.name ?? ""}")),
               ],
+            ),
+            subtitle: PostTimeTextWidget(
+              key: UniqueKey(),
+              creationDate: category.createdDate ?? "",
+              localizedCode: AppLocalizations.getCurrentLanguageCode(context),
+            ),
+            trailing: IconButton(
+              icon: Icon(MdiIcons.circleEditOutline),
+              onPressed: () async {
+                Constants.debugLog(MenuCategoryFullListScreen,
+                    "menuCategoryExpansionTileItem:IconButton:Index:${index}");
+                navigationRoutes
+                    .navigateToUpdateMenuCategoryScreen(
+                        category: category, subCategoryList: subCategoryList)
+                    .then((value) async =>
+                        context.read<MenuCategoryFullListCubit>().loadData());
+              },
             ),
             controller: state.expandedTitleControllerList![index],
             children: <Widget>[
@@ -423,6 +436,7 @@ class _MenuCategoryFullListScreenState
   }
 
   Future<void> handleNewCategory() async {
-    navigationRoutes.navigateToAddNewMenuCategoryScreen().then((value) async => context.read<MenuCategoryFullListCubit>().loadData());
+    navigationRoutes.navigateToAddNewMenuCategoryScreen().then(
+        (value) async => context.read<MenuCategoryFullListCubit>().loadData());
   }
 }

@@ -1,5 +1,7 @@
-
 import 'dart:convert';
+
+import 'package:coozy_cafe/model/category.dart';
+import 'package:coozy_cafe/model/sub_category.dart';
 
 //-------------------------------------------------------------------------------------------------------------------//
 
@@ -33,67 +35,61 @@ class CommonScreenArgument {
   }
 }
 
-
 //-------------------------------------------------------------------------------------------------------------------//
 
-OtpVerificationScreenArgument otpVerificationScreenArgumentFromMap(
-    String str) =>
-    OtpVerificationScreenArgument.fromMap(json.decode(str));
+UpdateMenuCategoryScreenArgument updateMenuCategoryScreenArgumentFromMap(String str) => UpdateMenuCategoryScreenArgument.fromMap(json.decode(str));
 
-String otpVerificationScreenArgumentToMap(OtpVerificationScreenArgument data) =>
-    json.encode(data.toMap());
+String updateMenuCategoryScreenArgumentToMap(UpdateMenuCategoryScreenArgument data) => json.encode(data.toMap());
 
-class OtpVerificationScreenArgument {
-  OtpVerificationScreenArgument({
-    required this.phoneNumber,
-    required this.isForgetPassword,
-    required this.isLoginScreen,
-    this.otpNumber,
-    this.customerID,
-    this.appSignature,
+class UpdateMenuCategoryScreenArgument {
+  final Category? category;
+  final List<SubCategory>? subCategoryList;
+
+  UpdateMenuCategoryScreenArgument({
+    required this.category,
+    required this.subCategoryList,
   });
 
-  String? phoneNumber;
-  bool? isForgetPassword;
-  bool? isLoginScreen;
-  String? otpNumber;
-  dynamic appSignature;
-  dynamic customerID;
-
-  factory OtpVerificationScreenArgument.fromMap(Map<String, dynamic> json) =>
-      OtpVerificationScreenArgument(
-        phoneNumber: json["phoneNumber"] ?? null,
-        isForgetPassword: json["isForgetPassword"] ?? null,
-        otpNumber: json["otpNumber"] ?? null,
-        appSignature: json["appSignature"] ?? null,
-        isLoginScreen: json["isLoginScreen"] ?? null,
-        customerID: json["customerID"] ?? null,
+  factory UpdateMenuCategoryScreenArgument.fromMap(Map<String, dynamic> json) =>
+      UpdateMenuCategoryScreenArgument(
+        category: json['category'] != null
+            ? Category.fromJson(json['category'])
+            : null,
+        subCategoryList:
+            _convertDynamicListToSubCategoryList(json['subCategoryList']),
       );
 
   Map<String, dynamic> toMap() => {
-    "phoneNumber": phoneNumber ?? null,
-    "isForgetPassword": isForgetPassword ?? null,
-    "otpNumber": otpNumber ?? null,
-    "appSignature": appSignature ?? null,
-    "isLoginScreen": isLoginScreen ?? null,
-    "customerID": customerID ?? null,
-  };
+        'category': category?.toJson(),
+        'subCategoryList':
+            _convertSubCategoryListToDynamicList(subCategoryList),
+      };
 
-  static String addOtpVerfiy(
-      {required phoneNumber,
-        required isForgetPassword,
-        required isLoginScreen,
-        customerID,
-        otpNumber,
-        appSignature}) {
+  static String updateMenuCategoryScreenArgument(
+      {Category? category, List<SubCategory>? subCategoryList}) {
     Map<String, dynamic> map = {
-      'phoneNumber': phoneNumber.toString(),
-      'otpNumber': otpNumber,
-      'customerID': customerID,
-      'appSignature': appSignature,
-      'isLoginScreen': isLoginScreen,
-      'isForgetPassword': isForgetPassword,
+      'category': category==null?null:category.toJson(),
+      'subCategoryList': _convertSubCategoryListToDynamicList(subCategoryList),
     };
     return json.encode(map);
+  }
+
+  // Private static methods visible only within the UpdateMenuCategoryScreenArgument class
+  static List<SubCategory>? _convertDynamicListToSubCategoryList(
+      List<dynamic>? dynamicList) {
+    if (dynamicList == null) {
+      return null;
+    }
+    return dynamicList.map((dynamicItem) {
+      return SubCategory.fromJson(dynamicItem as Map<String, dynamic>);
+    }).toList();
+  }
+
+  static List<dynamic>? _convertSubCategoryListToDynamicList(
+      List<SubCategory>? subcategories) {
+    if (subcategories == null) {
+      return null;
+    }
+    return subcategories.map((subCategory) => subCategory?.toJson()).toList();
   }
 }
