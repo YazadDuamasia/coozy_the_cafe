@@ -1,3 +1,5 @@
+import 'package:coozy_cafe/AppLocalization.dart';
+import 'package:coozy_cafe/utlis/components/string_value.dart';
 import 'package:flutter/material.dart';
 
 class EmptyCategoryFullListBody extends StatelessWidget {
@@ -22,13 +24,16 @@ class EmptyCategoryFullListBody extends StatelessWidget {
               children: [
                 Expanded(
                   child: Text(
-                    "No Category been inserted",
+                    AppLocalizations.of(context)?.translate(
+                            StringValue.menu_category_empty_title_text) ??
+                        "No Category been inserted",
                     textAlign: TextAlign.center,
                     style: Theme.of(context).textTheme.bodyLarge,
                   ),
                 ),
               ],
             ),
+            const SizedBox(height: 10),
             Row(
               mainAxisSize: MainAxisSize.min,
               mainAxisAlignment: MainAxisAlignment.center,
@@ -45,7 +50,10 @@ class EmptyCategoryFullListBody extends StatelessWidget {
                     ),
                     elevation: 5,
                   ),
-                  child: const Text('Add new category'),
+                  child: Text(
+                      AppLocalizations.of(context)?.translate(
+                          StringValue.menu_category_add_new_category) ??
+                      'Add new category'),
                 ),
               ],
             ),

@@ -2,6 +2,7 @@ import 'dart:math';
 
 import 'package:coozy_cafe/AppLocalization.dart';
 import 'package:coozy_cafe/model/sub_category.dart';
+import 'package:coozy_cafe/utlis/components/string_value.dart';
 import 'package:coozy_cafe/widgets/post_time_text_widget/post_time_text_widget.dart';
 import 'package:flutter/material.dart';
 import 'package:material_design_icons_flutter/material_design_icons_flutter.dart';
@@ -77,7 +78,9 @@ class _MenuSubCategoryExpansionChildListViewWidgetState
                     },
                   );
                 },
-                child: const Text("Load More"),
+                child: Text(AppLocalizations.of(context)
+                        ?.translate(StringValue.common_load_more) ??
+                    "Load More"),
               ),
             ),
           ),

@@ -4,6 +4,7 @@ import 'package:coozy_cafe/pages/main_screen/menu_category_screen/dynamic_text_f
 import 'package:coozy_cafe/utlis/utlis.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:material_design_icons_flutter/material_design_icons_flutter.dart';
 
 class AddNewMenuCategoryScreen extends StatefulWidget {
   const AddNewMenuCategoryScreen({super.key});
@@ -16,10 +17,12 @@ class AddNewMenuCategoryScreen extends StatefulWidget {
 class _AddNewMenuCategoryScreenState extends State<AddNewMenuCategoryScreen> {
   final _formKey = GlobalKey<FormState>();
   late AddMenuCategoryCubit _menuCategoryCubit;
+  ScrollController? primaryScrollController ;
 
   @override
   void initState() {
     super.initState();
+    primaryScrollController=ScrollController();
     _menuCategoryCubit = context.read<AddMenuCategoryCubit>();
     _menuCategoryCubit.resetData();
   }
@@ -27,11 +30,8 @@ class _AddNewMenuCategoryScreenState extends State<AddNewMenuCategoryScreen> {
   @override
   Widget build(BuildContext context) {
     return SafeArea(
-      child: WillPopScope(
-        onWillPop: () async {
-          Navigator.pop(context);
-          return true;
-        },
+      child: PopScope(
+        canPop: true,
         child: Scaffold(
           resizeToAvoidBottomInset: true,
           appBar: AppBar(
@@ -48,13 +48,10 @@ class _AddNewMenuCategoryScreenState extends State<AddNewMenuCategoryScreen> {
                     _menuCategoryCubit.saveCategory(context);
                   }
                 },
-                icon: const Icon(
-                  Icons.check,
-                  color: Colors.white,
-                ),
+                icon: Icon(MdiIcons.checkCircle),
                 tooltip: AppLocalizations.of(context)?.translate(
-                        StringValue.add_menu_category_appbar_text) ??
-                    "Add new menu category",
+                        StringValue.common_save) ??
+                    "Save",
               ),
             ],
           ),
@@ -64,6 +61,7 @@ class _AddNewMenuCategoryScreenState extends State<AddNewMenuCategoryScreen> {
             },
             builder: (context, state) {
               return SingleChildScrollView(
+                controller: primaryScrollController,
                 physics: const ClampingScrollPhysics(
                     parent: AlwaysScrollableScrollPhysics()),
                 child: Form(
@@ -202,7 +200,10 @@ class _AddNewMenuCategoryScreenState extends State<AddNewMenuCategoryScreen> {
                               child: ElevatedButton(
                                 onPressed: () async {
                                   _menuCategoryCubit.addSubCategory('');
-                                  setState(() {});
+                                  setState(() {
+                                    primaryScrollController?.animateTo(primaryScrollController!.position.maxScrollExtent,
+                                        duration: const Duration(milliseconds: 500), curve: Curves.ease);
+                                  });
                                 },
                                 style: ElevatedButton.styleFrom(
                                     padding: const EdgeInsets.all(10),

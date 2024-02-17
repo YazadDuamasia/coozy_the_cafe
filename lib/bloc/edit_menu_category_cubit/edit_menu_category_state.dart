@@ -1,14 +1,21 @@
 part of 'edit_menu_category_cubit.dart';
 
-class EditMenuCategoryState extends Equatable {
-  final List<String?>? subCategoryList;
 
-  const EditMenuCategoryState({required this.subCategoryList});
+abstract class EditMenuCategoryState extends Equatable {
+  final String categoryName;
+  final List<String> subCategories;
 
-  factory EditMenuCategoryState.initial() =>
-      EditMenuCategoryState(subCategoryList: []);
+  EditMenuCategoryState(this.categoryName, this.subCategories);
 
   @override
-  // TODO: implement props
-  List<Object?> get props => [subCategoryList];
+  List<Object?> get props => [categoryName, subCategories];
+}
+
+class EditMenuCategoryInitial extends EditMenuCategoryState {
+  EditMenuCategoryInitial() : super('', []);
+}
+
+class EditMenuCategoryUpdated extends EditMenuCategoryState {
+  EditMenuCategoryUpdated(String categoryName, List<String> subCategories)
+      : super(categoryName, subCategories);
 }

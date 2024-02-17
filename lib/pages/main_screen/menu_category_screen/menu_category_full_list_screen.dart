@@ -3,6 +3,7 @@ import 'package:coozy_cafe/bloc/menu_category_full_list_cubit/menu_category_full
 import 'package:coozy_cafe/model/category.dart';
 import 'package:coozy_cafe/model/sub_category.dart';
 import 'package:coozy_cafe/pages/main_screen/menu_category_screen/menu_sub_category_expansion_child_listview_widget.dart';
+import 'package:coozy_cafe/pages/pages.dart';
 import 'package:coozy_cafe/utlis/utlis.dart';
 import 'package:coozy_cafe/widgets/empty_category_full_list_body.dart';
 import 'package:coozy_cafe/widgets/post_time_text_widget/post_time_text_widget.dart';
@@ -22,13 +23,17 @@ class MenuCategoryFullListScreen extends StatefulWidget {
 class _MenuCategoryFullListScreenState
     extends State<MenuCategoryFullListScreen> {
   ScrollController? _controller = ScrollController();
+  FocusNode? searchAnchorFocusNode = FocusNode();
   String? searchQuery = '';
-  TextEditingController? searchController = TextEditingController(text: "");
+  SearchController? searchController = SearchController();
+
+  // TextEditingController? searchController = TextEditingController(text: "");
 
   @override
   void initState() {
     super.initState();
-    searchController = TextEditingController(text: "");
+    searchController = SearchController();
+    searchAnchorFocusNode = FocusNode();
     searchQuery = "";
     _controller = ScrollController();
     WidgetsBinding.instance.addPostFrameCallback((_) {
@@ -47,8 +52,10 @@ class _MenuCategoryFullListScreenState
         child: Scaffold(
           resizeToAvoidBottomInset: true,
           appBar: AppBar(
-            title: const Text(
-              "Menu Category",
+            title: Text(
+              AppLocalizations.of(context)
+                      ?.translate(StringValue.menu_category_appbar_title) ??
+                  "Menu Category",
             ),
             centerTitle: false,
             actions: [
@@ -72,124 +79,182 @@ class _MenuCategoryFullListScreenState
             },
             builder: (context, state) {
               if (state is InitialState) {
-                return Container();
+                return const LoadingPage();
               } else if (state is LoadingState) {
-                return Container();
+                return const LoadingPage();
               } else if (state is LoadedState) {
                 return Column(
                   mainAxisAlignment: MainAxisAlignment.start,
                   crossAxisAlignment: CrossAxisAlignment.start,
                   mainAxisSize: MainAxisSize.max,
                   children: [
-                    Padding(
-                      padding: const EdgeInsets.all(10.0),
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.start,
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        mainAxisSize: MainAxisSize.min,
-                        children: [
-                          Expanded(
-                            child: SearchAnchor(
-                              builder: (BuildContext context,
-                                  SearchController controller) {
-                                return SearchBar(
-                                  controller: controller,
-                                  padding: const MaterialStatePropertyAll<
-                                          EdgeInsets>(
-                                      EdgeInsets.symmetric(horizontal: 10.0)),
-                                  onTap: () {
-                                    controller.openView();
-                                  },
-                                  onChanged: (_) {
-                                    if (!controller.isOpen) {
-                                      scrollToItemAndExpand(controller.text);
-                                    } else {
-                                      controller.openView();
-                                    }
-                                  },
-                                  onSubmitted: (value) {
-                                    scrollToItemAndExpand(value);
-                                  },
-                                  leading: const Icon(Icons.search),
-                                );
-                              },
-                              isFullScreen: false,
-                              viewConstraints: BoxConstraints(
-                                maxHeight:
-                                    MediaQuery.of(context).size.height * .35,
-                              ),
-                              suggestionsBuilder: (BuildContext context,
-                                  SearchController controller) {
-                                List<String> suggestions = [];
-                                if (state.data != null &&
-                                    state.data!.isNotEmpty &&
-                                    state.data!.containsKey("categories") &&
-                                    state.data!['categories'] != null) {
-                                  state.data!['categories'].forEach((category) {
-                                    suggestions
-                                        .add(category['name'].toString());
-
-                                    if (category['subCategories'] != null) {
-                                      // Ensure that 'subCategories' is a List<Map<String, dynamic>>
-                                      suggestions.addAll((category[
-                                              'subCategories'] as List<dynamic>)
-                                          .map((subCategory) =>
-                                              subCategory['name'].toString()));
-                                    }
-                                  });
-                                } else {
-                                  suggestions = [];
-                                }
-                                List<Widget> suggestionWidgets = suggestions
-                                    .where((suggestion) => suggestion
-                                        .toLowerCase()
-                                        .contains(controller.value.text
-                                            .toLowerCase()))
-                                    .map((suggestion) => ListTile(
-                                          title: Text(suggestion),
-                                          onTap: () {
-                                            setState(() {
-                                              controller.closeView(suggestion);
-                                            });
-                                          },
-                                        ))
-                                    .toList();
-                                return suggestionWidgets.isEmpty
-                                    ? [
-                                        const Row(
-                                          mainAxisAlignment:
-                                              MainAxisAlignment.start,
-                                          crossAxisAlignment:
-                                              CrossAxisAlignment.start,
-                                          mainAxisSize: MainAxisSize.min,
-                                          children: [
-                                            Expanded(
-                                                child: Text("No suggestions")),
-                                          ],
-                                        )
-                                      ]
-                                    : suggestionWidgets;
-                              },
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
+                    searchBarWithSuggestionWidget(context, state),
                     Expanded(
                       child: menuItemWidget(state),
                     ),
                   ],
                 );
               } else if (state is ErrorState) {
-                return Container();
+                return ErrorPage(
+                  key: UniqueKey(),
+                  onPressedRetryButton: () async =>
+                      BlocProvider.of<MenuCategoryFullListCubit>(context)
+                          .loadData(),
+                );
               } else if (state is NoInternetState) {
-                return Container();
+                return NoInternetPage(
+                  key: UniqueKey(),
+                  onPressedRetryButton: () async =>
+                      BlocProvider.of<MenuCategoryFullListCubit>(context)
+                          .loadData(),
+                );
               } else {
                 return Container();
               }
             },
           ),
         ),
+      ),
+    );
+  }
+
+  Widget searchBarWithSuggestionWidget(
+      BuildContext context, LoadedState state) {
+    return Padding(
+      padding: const EdgeInsets.fromLTRB(20, 20, 20, 20),
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.start,
+        crossAxisAlignment: CrossAxisAlignment.start,
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Expanded(
+            child: SearchAnchor(
+              searchController: searchController,
+              builder: (BuildContext context, SearchController controller) {
+                return SearchBar(
+                  controller: controller,
+                  focusNode: searchAnchorFocusNode,
+                  padding: const MaterialStatePropertyAll<EdgeInsets>(
+                      EdgeInsets.symmetric(horizontal: 10.0)),
+                  onTap: () {
+                    controller.openView();
+                  },
+                  onChanged: (value) {
+                    Constants.debugLog(MenuCategoryFullListScreen,
+                        "SearchAnchor:onChanged:$value");
+                    if (!controller.isOpen) {
+                      scrollToItemAndExpand(value);
+                    } else {
+                      controller.openView();
+                    }
+                  },
+                  onSubmitted: (value) {
+                    Constants.debugLog(MenuCategoryFullListScreen,
+                        "SearchAnchor:onSubmitted:$value");
+                    scrollToItemAndExpand(value);
+                  },
+                  leading: const Icon(Icons.search),
+                );
+              },
+              isFullScreen: false,
+              viewConstraints: BoxConstraints(
+                maxHeight: MediaQuery.of(context).size.height * .35 < 220
+                    ? 220
+                    : MediaQuery.of(context).size.height * .35 > 220
+                        ? 250
+                        : MediaQuery.of(context).size.height * .35,
+              ),
+              suggestionsBuilder:
+                  (BuildContext context, SearchController controller) {
+                List<String> suggestions = [];
+                if (state.data != null &&
+                    state.data!.isNotEmpty &&
+                    state.data!.containsKey("categories") &&
+                    state.data!['categories'] != null) {
+                  state.data!['categories'].forEach((category) {
+                    suggestions.add(category['name'].toString());
+
+                    if (category['subCategories'] != null) {
+                      // Ensure that 'subCategories' is a List<Map<String, dynamic>>
+                      suggestions.addAll(
+                          (category['subCategories'] as List<dynamic>).map(
+                              (subCategory) => subCategory['name'].toString()));
+                    }
+                  });
+                } else {
+                  suggestions = [];
+                }
+                List<Widget> suggestionWidgets = suggestions
+                    .where((suggestion) => suggestion
+                        .toLowerCase()
+                        .contains(controller.value.text.toLowerCase()))
+                    .map((suggestion) => ListTile(
+                          title: Text(suggestion),
+                          onTap: () {
+                            setState(() {
+                              controller.closeView(suggestion);
+                            });
+                          },
+                        ))
+                    .toList();
+                return suggestionWidgets.isEmpty
+                    ? [
+                        Padding(
+                          padding: const EdgeInsets.all(10.0),
+                          child: Row(
+                            mainAxisAlignment: MainAxisAlignment.start,
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            mainAxisSize: MainAxisSize.min,
+                            children: [
+                              Expanded(
+                                child: Text(
+                                  AppLocalizations.of(context)?.translate(
+                                          StringValue
+                                              .menu_category_search_no_suggestions) ??
+                                      "No suggestions",
+                                  style: Theme.of(context).textTheme.titleSmall,
+                                ),
+                              ),
+                            ],
+                          ),
+                        )
+                      ]
+                    : suggestionWidgets;
+              },
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget searchBarWidget(BuildContext context, LoadedState state) {
+    return Padding(
+      padding: const EdgeInsets.fromLTRB(20, 20, 20, 20),
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.start,
+        crossAxisAlignment: CrossAxisAlignment.start,
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Expanded(
+            child: SearchBar(
+              focusNode: searchAnchorFocusNode,
+              padding: const MaterialStatePropertyAll<EdgeInsets>(
+                  EdgeInsets.symmetric(horizontal: 10.0)),
+              onChanged: (value) {
+                Constants.debugLog(MenuCategoryFullListScreen,
+                    "SearchAnchor:onChanged:$value");
+                scrollToItemAndExpand(value);
+              },
+              onSubmitted: (value) {
+                Constants.debugLog(MenuCategoryFullListScreen,
+                    "SearchAnchor:onSubmitted:$value");
+                scrollToItemAndExpand(value);
+              },
+              leading: const Icon(Icons.search),
+            ),
+          ),
+        ],
       ),
     );
   }
@@ -256,19 +321,26 @@ class _MenuCategoryFullListScreenState
             maintainState: true,
             collapsedBackgroundColor: theme.colorScheme.primaryContainer,
             backgroundColor: theme.colorScheme.primaryContainer,
+            tilePadding: EdgeInsets.zero,
             childrenPadding: const EdgeInsets.symmetric(horizontal: 10),
-            title: Row(
-              mainAxisAlignment: MainAxisAlignment.start,
-              crossAxisAlignment: CrossAxisAlignment.start,
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                Expanded(child: Text(category.name ?? "")),
-              ],
+            title: Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 20),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.start,
+                crossAxisAlignment: CrossAxisAlignment.start,
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Expanded(child: Text(category.name ?? "")),
+                ],
+              ),
             ),
-            subtitle: PostTimeTextWidget(
-              key: UniqueKey(),
-              creationDate: category.createdDate ?? "",
-              localizedCode: AppLocalizations.getCurrentLanguageCode(context),
+            subtitle: Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 20),
+              child: PostTimeTextWidget(
+                key: UniqueKey(),
+                creationDate: category.createdDate ?? "",
+                localizedCode: AppLocalizations.getCurrentLanguageCode(context),
+              ),
             ),
             trailing: IconButton(
               icon: Icon(MdiIcons.circleEditOutline),
@@ -318,74 +390,87 @@ class _MenuCategoryFullListScreenState
           BlocProvider.of<MenuCategoryFullListCubit>(context).state
               as LoadedState;
 
-      int index = -1;
-      /*
-      /*this also working Fine*/
-      for (int i = 0; i < loadedState.data!['categories'].length; i++) {
-        var category = loadedState.data!['categories'][i];
-        if (category['name'].toString().toLowerCase() ==
-            keyword.toLowerCase()) {
-          index = i;
-          break;
-        }
+      if (keyword != null &&
+          keyword.isNotEmpty &&
+          keyword != "menu_category_search_no_suggestions") {
+        int index = -1;
+        /*
+        /*this also working Fine*/
+        for (int i = 0; i < loadedState.data!['categories'].length; i++) {
+          var category = loadedState.data!['categories'][i];
+          if (category['name'].toString().toLowerCase() ==
+              keyword.toLowerCase()) {
+            index = i;
+            break;
+          }
 
-        if (category['subCategories'] != null) {
-          var subCategories = category['subCategories'];
-          for (int j = 0; j < subCategories.length; j++) {
-            if (subCategories[j]['name'].toString().toLowerCase() ==
-                keyword.toLowerCase()) {
-              index = i;
-              break;
+          if (category['subCategories'] != null) {
+            var subCategories = category['subCategories'];
+            for (int j = 0; j < subCategories.length; j++) {
+              if (subCategories[j]['name'].toString().toLowerCase() ==
+                  keyword.toLowerCase()) {
+                index = i;
+                break;
+              }
             }
           }
-        }
-      }*/
+        }*/
 
-      index = loadedState.data!['categories'].indexWhere((category) {
-        bool isCategoryMatch =
-            category['name'].toString().toLowerCase() == keyword.toLowerCase();
+        index = loadedState.data!['categories'].indexWhere((category) {
+          bool isCategoryMatch = category['name']
+              .toString()
+              .toLowerCase()
+              .contains(keyword.toLowerCase());
 
-        if (isCategoryMatch) {
-          return true;
-        }
-
-        if (category['subCategories'] != null) {
-          return (category['subCategories'] as List).any((subCategory) =>
-              subCategory['name'].toString().toLowerCase() ==
-              keyword.toLowerCase());
-        }
-
-        return false;
-      });
-
-      if (index != -1) {
-        // Obtain the RenderBox
-        RenderBox renderBox = loadedState
-            .expansionTileKeys![index]!.currentContext
-            ?.findRenderObject() as RenderBox;
-
-        // Get the size of the RenderBox
-        double itemHeight = renderBox.size.height;
-
-        // Calculate the position
-        double position = index * itemHeight;
-
-        setState(() {
-          // Toggle the isExpanded state
-          if ((loadedState.expandedTitleControllerList != null ||
-                  loadedState.expandedTitleControllerList!.isNotEmpty) &&
-              loadedState.expandedTitleControllerList![index].isExpanded ==
-                  false) {
-            loadedState.expandedTitleControllerList![index].expand();
+          if (isCategoryMatch) {
+            return true;
           }
+
+          if (category['subCategories'] != null) {
+            return (category['subCategories'] as List).any((subCategory) =>
+                subCategory['name'].toString().toLowerCase() .contains(
+                keyword.toLowerCase()));
+          }
+
+          return false;
         });
 
-        // Scroll and toggle the isExpanded state
-        _controller!.animateTo(
-          position,
-          duration: const Duration(milliseconds: 500),
-          curve: Curves.easeInOut,
-        );
+        if (index != -1) {
+          // Obtain the RenderBox
+          RenderBox renderBox = loadedState
+              .expansionTileKeys![index]!.currentContext
+              ?.findRenderObject() as RenderBox;
+
+          // Get the size of the RenderBox
+          double itemHeight = renderBox.size.height;
+
+          // Calculate the position
+          double position = index * itemHeight;
+
+          setState(() {
+            // Toggle the isExpanded state
+            if ((loadedState.expandedTitleControllerList != null ||
+                    loadedState.expandedTitleControllerList!.isNotEmpty) &&
+                loadedState.expandedTitleControllerList![index].isExpanded ==
+                    false) {
+              loadedState.expandedTitleControllerList![index].expand();
+            }
+          });
+
+          // Scroll and toggle the isExpanded state
+          _controller!.animateTo(
+            position,
+            duration: const Duration(milliseconds: 500),
+            curve: Curves.easeInOut,
+          );
+        }
+      } else {
+        if (searchController!.isOpen == true) {
+          Navigator.of(context).pop();
+        }
+        WidgetsBinding.instance.addPostFrameCallback((_) {
+          FocusScope.of(context).unfocus();
+        });
       }
     }
   }

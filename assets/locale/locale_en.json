@@ -1,5 +1,6 @@
 {
   "common_ok": "Ok",
+  "common_error_msg": "Something when wrong. Please try again.",
   "common_okay": "Okay",
   "common_yes": "Yes",
   "common_no": "No",
@@ -9,6 +10,10 @@
   "common_submit": "Submit",
   "common_delete": "Delete",
   "common_update": "Update",
+  "common_save": "Save",
+  "common_edit": "Edit",
+  "common_search_hint_text": "Search...",
+  "common_load_more": "Load More",
   "common_email_label": "Email",
   "common_email_hint": "Enter your Email address.",
   "common_password_label": "Password",
@@ -54,6 +59,7 @@
   "table_failed_to_added_text": "Fail to add new table info .",
   "table_deleted_successfully_text": "Select table has been deleted successfully.",
   "table_failed_to_deleted_text": "Failed to delete you select table.",
+  "menu_category_appbar_title": "Menu Category",
   "add_menu_category_icon_tooltip_text": "Add a new menu category",
   "add_menu_category_appbar_text": "Add new menu category",
   "menu_category_label_text": "Category Name",
@@ -65,5 +71,8 @@
   "add_new_menu_sub_category_error_text": "Enter your sub-category name",
   "menu_category_added_successfully_text": "New Menu Category has been added successfully.",
   "menu_category_added_failed_successfully_text": "Failed to add new menu category.Please Try again.",
-  "menu_sub_category_new_added_failed_successfully_text": "Error occurred during subcategory creation."
+  "menu_sub_category_new_added_failed_successfully_text": "Error occurred during subcategory creation.",
+  "menu_category_empty_title_text": "No Category been inserted",
+  "menu_category_add_new_category": "Add new category",
+  "menu_category_search_no_suggestions":  "No suggestions"
 }

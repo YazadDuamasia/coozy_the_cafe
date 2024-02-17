@@ -19,8 +19,7 @@ class AppLocalizations {
   Map<String, String>? _localizedStrings;
 
   Future<bool> load() async {
-    String jsonString =
-        await rootBundle.loadString('assets/locale/${language!.file}');
+    String jsonString = await rootBundle.loadString('assets/locale/${language!.file}');
     Map<String, dynamic> jsonMap = json.decode(jsonString);
 
     _localizedStrings = jsonMap.map((key, value) {
@@ -32,6 +31,7 @@ class AppLocalizations {
 
   String? translate(String key) {
     if (_localizedStrings == null) {
+      Constants.debugLog(AppLocalizations, "Please check json file path.");
       return null;
     }
     if (_localizedStrings!.containsKey(key)) {

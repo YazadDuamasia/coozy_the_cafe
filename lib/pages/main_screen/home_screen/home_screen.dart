@@ -34,6 +34,100 @@ class _HomeScreenState extends State<HomeScreen>
     super.initState();
   }
 
+  Widget buildPageTransitionSwitcher({var list, int? currentIndex}) {
+    return PageTransitionSwitcher(
+      duration: const Duration(milliseconds: 3000),
+      transitionBuilder: (child, primaryAnimation, secondaryAnimation) =>
+          FadeThroughTransition(
+            animation: primaryAnimation,
+            secondaryAnimation: secondaryAnimation,
+            child: child,
+          ),
+      child: list![currentIndex],
+    );
+  }
+
+  Future<bool> onWillPop() {
+    Constants.debugLog(HomeScreen, "WillPopScope");
+    if (context.read<HomePageBottomNavCubit>().state != 0) {
+      context.read<HomePageBottomNavCubit>().updateIndex(0);
+      return Future.value(false);
+    } else {
+      DateTime now = DateTime.now();
+      if (currentBackPressTime == null ||
+          now.difference(currentBackPressTime!) > const Duration(seconds: 2)) {
+        currentBackPressTime = now;
+        Fluttertoast.showToast(
+            msg: "Press back again to exit",
+            toastLength: Toast.LENGTH_SHORT,
+            timeInSecForIosWeb: 3);
+
+        return Future.value(false);
+      } else {
+        onBackPressDialog();
+        return Future.value(true);
+      }
+    }
+  }
+
+  onBackPressDialog() {
+    if (!Constants.isIOS() && !Constants.isMacOS()) {
+      return showDialog(
+        context: context,
+        builder: (context) => Theme(
+          data: Theme.of(context),
+          child: AlertDialog(
+            shape: const RoundedRectangleBorder(
+              borderRadius: BorderRadius.all(Radius.circular(10.0)),
+            ),
+            titlePadding: const EdgeInsets.all(10.0),
+            contentPadding:
+            const EdgeInsets.symmetric(horizontal: 10.0, vertical: 10.0),
+            buttonPadding: const EdgeInsets.symmetric(horizontal: 10.0),
+            title: Text(
+              'Are you sure?',
+              style: Theme.of(context).textTheme.titleLarge,
+            ),
+            content: Text('Do you want to exit the app?',
+                style: Theme.of(context).textTheme.titleSmall),
+            actions: [
+              TextButton(
+                onPressed: () => Navigator.of(context).pop(false),
+                child: const Text('No'),
+              ),
+              TextButton(
+                onPressed: () => navigationRoutes.goBackToExitApp(),
+                child: const Text('Yes'),
+              ),
+            ],
+          ),
+        ),
+      );
+    } else {
+      return showDialog(
+        context: context,
+        builder: (context) => AlertDialog(
+          shape: const RoundedRectangleBorder(
+            borderRadius: BorderRadius.all(Radius.circular(35.0)),
+          ),
+          contentPadding: const EdgeInsets.only(top: 10.0),
+          title: const Text('Are you sure?'),
+          content: const Text('Do you want to exit the app?'),
+          actions: [
+            TextButton(
+              onPressed: () => Navigator.of(context).pop(false),
+              child: const Text('No'),
+            ),
+            TextButton(
+              onPressed: () => Navigator.of(context).pop(true),
+              child: const Text('Yes'),
+            ),
+          ],
+        ),
+      );
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return DefaultTabController(
@@ -132,97 +226,5 @@ class _HomeScreenState extends State<HomeScreen>
     );
   }
 
-  Widget buildPageTransitionSwitcher({var list, int? currentIndex}) {
-    return PageTransitionSwitcher(
-      duration: const Duration(milliseconds: 3000),
-      transitionBuilder: (child, primaryAnimation, secondaryAnimation) =>
-          FadeThroughTransition(
-        animation: primaryAnimation,
-        secondaryAnimation: secondaryAnimation,
-        child: child,
-      ),
-      child: list![currentIndex],
-    );
-  }
 
-  Future<bool> onWillPop() {
-    Constants.debugLog(HomeScreen, "WillPopScope");
-    if (context.read<HomePageBottomNavCubit>().state != 0) {
-      context.read<HomePageBottomNavCubit>().updateIndex(0);
-      return Future.value(false);
-    } else {
-      DateTime now = DateTime.now();
-      if (currentBackPressTime == null ||
-          now.difference(currentBackPressTime!) > const Duration(seconds: 2)) {
-        currentBackPressTime = now;
-        Fluttertoast.showToast(
-            msg: "Press back again to exit",
-            toastLength: Toast.LENGTH_SHORT,
-            timeInSecForIosWeb: 3);
-
-        return Future.value(false);
-      } else {
-        onBackPressDialog();
-        return Future.value(true);
-      }
-    }
-  }
-
-  onBackPressDialog() {
-    if (!Constants.isIOS() && !Constants.isMacOS()) {
-      return showDialog(
-        context: context,
-        builder: (context) => Theme(
-          data: Theme.of(context),
-          child: AlertDialog(
-            shape: const RoundedRectangleBorder(
-              borderRadius: BorderRadius.all(Radius.circular(10.0)),
-            ),
-            titlePadding: const EdgeInsets.all(10.0),
-            contentPadding:
-                const EdgeInsets.symmetric(horizontal: 10.0, vertical: 10.0),
-            buttonPadding: const EdgeInsets.symmetric(horizontal: 10.0),
-            title: Text(
-              'Are you sure?',
-              style: Theme.of(context).textTheme.titleLarge,
-            ),
-            content: Text('Do you want to exit the app?',
-                style: Theme.of(context).textTheme.titleSmall),
-            actions: [
-              TextButton(
-                onPressed: () => Navigator.of(context).pop(false),
-                child: const Text('No'),
-              ),
-              TextButton(
-                onPressed: () => navigationRoutes.goBackToExitApp(),
-                child: const Text('Yes'),
-              ),
-            ],
-          ),
-        ),
-      );
-    } else {
-      return showDialog(
-        context: context,
-        builder: (context) => AlertDialog(
-          shape: const RoundedRectangleBorder(
-            borderRadius: BorderRadius.all(Radius.circular(35.0)),
-          ),
-          contentPadding: const EdgeInsets.only(top: 10.0),
-          title: const Text('Are you sure?'),
-          content: const Text('Do you want to exit the app?'),
-          actions: [
-            TextButton(
-              onPressed: () => Navigator.of(context).pop(false),
-              child: const Text('No'),
-            ),
-            TextButton(
-              onPressed: () => Navigator.of(context).pop(true),
-              child: const Text('Yes'),
-            ),
-          ],
-        ),
-      );
-    }
-  }
 }

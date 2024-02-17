@@ -4,7 +4,6 @@ import 'dart:math' as math;
 import 'package:app_settings/app_settings.dart';
 import 'package:flutter/foundation.dart' show kDebugMode;
 import 'package:flutter/material.dart';
-import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:permission_handler/permission_handler.dart';
@@ -19,18 +18,31 @@ class Constants {
   static Map<String, String> hashMap = <String, String>{};
 
   Future<bool> _requestPermission(Permission permission) async {
-    if (await permission.isGranted) {
-      return true;
-    } else {
-      var result = await permission.request();
-      if (result == PermissionStatus.granted) {
+    PermissionStatus status = await permission.status;
+    switch (status) {
+      case PermissionStatus.granted:
         return true;
-      }
+
+      case PermissionStatus.denied:
+        var result = await permission.request();
+        return result == PermissionStatus.granted;
+
+      case PermissionStatus.permanentlyDenied:
+        try {
+          openAppSettings().then((value) => _requestPermission(permission));
+          return false;
+        } catch (e) {
+         Constants.debugLog(Constants, "Constants:_requestPermission:permanentlyDenied:Error:${e}");
+          return false;
+        }
+
+      default:
+        return false;
     }
-    return false;
   }
 
-  static String? getValueFromKey(String? internetString,
+  static String? getValueFromKey(
+      String? internetString,
       String? startInternetString,
       String? appendInternetString,
       String? defaultString) {
@@ -75,10 +87,11 @@ class Constants {
     }*/
   }
 
-  static String getTextTimeAgo({String? dateStr,
-    required String? localizedCode,
-    DateTime? dateTime,
-    bool? allowFromNow}) {
+  static String getTextTimeAgo(
+      {String? dateStr,
+      required String? localizedCode,
+      DateTime? dateTime,
+      bool? allowFromNow}) {
     Constants.debugLog(Constants, "date:$dateStr");
     Constants.debugLog(Constants, "dateTime:$dateTime");
     if (dateStr != null && dateStr.isNotEmpty) {
@@ -234,12 +247,13 @@ class Constants {
     }
   }
 
-  static progressDialogCustomMessage({required bool? isLoading,
-    required BuildContext? context,
-    String? msgTitle,
-    required String? msgBody,
-    Color? colorTextTitle,
-    required Color? colorTextBody}) async {
+  static progressDialogCustomMessage(
+      {required bool? isLoading,
+      required BuildContext? context,
+      String? msgTitle,
+      required String? msgBody,
+      Color? colorTextTitle,
+      required Color? colorTextBody}) async {
     AlertDialog dialog = AlertDialog(
       backgroundColor: Colors.transparent,
       elevation: 0.0,
@@ -252,14 +266,9 @@ class Constants {
             mainAxisSize: MainAxisSize.min,
             children: [
               Container(
-                width: MediaQuery
-                    .of(context!)
-                    .size
-                    .width * 0.45,
+                width: MediaQuery.of(context!).size.width * 0.45,
                 height: 3,
-                color: Theme
-                    .of(context)
-                    .primaryColor,
+                color: Theme.of(context).primaryColor,
               ),
               const SizedBox(
                 height: 10,
@@ -268,9 +277,7 @@ class Constants {
                 mainAxisSize: MainAxisSize.min,
                 children: [
                   SpinKitFadingCircle(
-                    color: Theme
-                        .of(context)
-                        .primaryColor,
+                    color: Theme.of(context).primaryColor,
                     size: 60,
                   )
                 ],
@@ -288,8 +295,7 @@ class Constants {
                       child: Text(
                         msgTitle ?? "",
                         textAlign: TextAlign.center,
-                        style: Theme
-                            .of(context)
+                        style: Theme.of(context)
                             .textTheme
                             .headlineMedium!
                             .copyWith(color: colorTextTitle!),
@@ -306,8 +312,7 @@ class Constants {
                     child: Text(
                       msgBody ?? "",
                       textAlign: TextAlign.center,
-                      style: Theme
-                          .of(context)
+                      style: Theme.of(context)
                           .textTheme
                           .headlineMedium!
                           .copyWith(color: colorTextBody),
@@ -319,14 +324,9 @@ class Constants {
                 height: 10,
               ),
               Container(
-                width: MediaQuery
-                    .of(context)
-                    .size
-                    .width * 0.45,
+                width: MediaQuery.of(context).size.width * 0.45,
                 height: 3,
-                color: Theme
-                    .of(context)
-                    .primaryColor,
+                color: Theme.of(context).primaryColor,
               ),
             ],
           ),
@@ -370,10 +370,7 @@ class Constants {
             top: 0,
             right: 20,
             child: CircleAvatar(
-              backgroundColor: Theme
-                  .of(context!)
-                  .colorScheme
-                  .primary,
+              backgroundColor: Theme.of(context!).colorScheme.primary,
               radius: 47,
             ),
           ),
@@ -385,16 +382,10 @@ class Constants {
               shape: BoxShape.rectangle,
               border: Border.all(
                 width: 2,
-                color: Theme
-                    .of(context)
-                    .colorScheme
-                    .primary,
+                color: Theme.of(context).colorScheme.primary,
               ),
               borderRadius: BorderRadius.circular(10),
-              color: Theme
-                  .of(context)
-                  .colorScheme
-                  .primaryContainer,
+              color: Theme.of(context).colorScheme.primaryContainer,
             ),
             child: Column(
               mainAxisSize: MainAxisSize.min,
@@ -415,19 +406,16 @@ class Constants {
                           child: Text(
                             title ?? "",
                             textAlign: TextAlign.center,
-                            style: Theme
-                                .of(context)
+                            style: Theme.of(context)
                                 .textTheme
                                 .titleMedium!
                                 .copyWith(
-                              color: Theme
-                                  .of(context)
-                                  .brightness ==
-                                  Brightness.light
-                                  ? Colors.white
-                                  : null,
-                              fontWeight: FontWeight.w600,
-                            ),
+                                  color: Theme.of(context).brightness ==
+                                          Brightness.light
+                                      ? Colors.white
+                                      : null,
+                                  fontWeight: FontWeight.w600,
+                                ),
                           ),
                         ),
                       ),
@@ -447,19 +435,13 @@ class Constants {
                         child: Text(
                           descriptions ?? "",
                           style:
-                          Theme
-                              .of(context)
-                              .textTheme
-                              .titleMedium!
-                              .copyWith(
-                            color: Theme
-                                .of(context)
-                                .brightness ==
-                                Brightness.light
-                                ? Colors.white
-                                : null,
-                            fontWeight: FontWeight.w700,
-                          ),
+                              Theme.of(context).textTheme.titleMedium!.copyWith(
+                                    color: Theme.of(context).brightness ==
+                                            Brightness.light
+                                        ? Colors.white
+                                        : null,
+                                    fontWeight: FontWeight.w700,
+                                  ),
                           textAlign: TextAlign.center,
                         ),
                       ),
@@ -475,10 +457,7 @@ class Constants {
             top: 2,
             child: CircleAvatar(
               radius: 45,
-              backgroundColor: Theme
-                  .of(context)
-                  .colorScheme
-                  .primaryContainer,
+              backgroundColor: Theme.of(context).colorScheme.primaryContainer,
               child: ClipRRect(
                 borderRadius: const BorderRadius.all(Radius.circular(45)),
                 child: titleIcon ?? Container(),
@@ -492,7 +471,7 @@ class Constants {
 
     counter = Timer(
       showForHowDuration ?? const Duration(seconds: 3),
-          () {
+      () {
         print("Timer callback executed");
         counter?.cancel();
         navigatorKey.currentState?.pop();
@@ -518,13 +497,14 @@ class Constants {
     );
   }
 
-  static void customPopUpDialogMessage({required Type? classObject,
-    required BuildContext? context,
-    Widget? titleIcon,
-    String? title,
-    required String? descriptions,
-    required Color? textColorDescriptions,
-    required List<Widget>? actions}) async {
+  static void customPopUpDialogMessage(
+      {required Type? classObject,
+      required BuildContext? context,
+      Widget? titleIcon,
+      String? title,
+      required String? descriptions,
+      required Color? textColorDescriptions,
+      required List<Widget>? actions}) async {
     Constants.debugLog(classObject, "title:$title");
     Constants.debugLog(classObject, "descriptions:$descriptions");
     AlertDialog dialog = AlertDialog(
@@ -540,10 +520,7 @@ class Constants {
             top: 0,
             right: 20,
             child: CircleAvatar(
-              backgroundColor: Theme
-                  .of(context!)
-                  .colorScheme
-                  .primary,
+              backgroundColor: Theme.of(context!).colorScheme.primary,
               radius: 47,
             ),
           ),
@@ -555,16 +532,10 @@ class Constants {
               shape: BoxShape.rectangle,
               border: Border.all(
                 width: 2,
-                color: Theme
-                    .of(context)
-                    .colorScheme
-                    .primary,
+                color: Theme.of(context).colorScheme.primary,
               ),
               borderRadius: BorderRadius.circular(10),
-              color: Theme
-                  .of(context)
-                  .colorScheme
-                  .primary,
+              color: Theme.of(context).colorScheme.primary,
             ),
             child: Column(
               mainAxisSize: MainAxisSize.min,
@@ -590,19 +561,16 @@ class Constants {
                               child: Text(
                                 title ?? "",
                                 textAlign: TextAlign.center,
-                                style: Theme
-                                    .of(context)
+                                style: Theme.of(context)
                                     .textTheme
                                     .titleMedium!
                                     .copyWith(
-                                  color: Theme
-                                      .of(context)
-                                      .brightness ==
-                                      Brightness.light
-                                      ? Colors.white
-                                      : null,
-                                  fontWeight: FontWeight.w600,
-                                ),
+                                      color: Theme.of(context).brightness ==
+                                              Brightness.light
+                                          ? Colors.white
+                                          : null,
+                                      fontWeight: FontWeight.w600,
+                                    ),
                               ),
                             ),
                           ),
@@ -619,19 +587,13 @@ class Constants {
                     Expanded(
                       child: Text(
                         descriptions ?? "",
-                        style: Theme
-                            .of(context)
-                            .textTheme
-                            .titleSmall!
-                            .copyWith(
-                          color: Theme
-                              .of(context)
-                              .brightness ==
-                              Brightness.light
-                              ? Colors.white
-                              : null,
-                          fontWeight: FontWeight.w700,
-                        ),
+                        style: Theme.of(context).textTheme.titleSmall!.copyWith(
+                              color: Theme.of(context).brightness ==
+                                      Brightness.light
+                                  ? Colors.white
+                                  : null,
+                              fontWeight: FontWeight.w700,
+                            ),
                         textAlign: TextAlign.center,
                       ),
                     ),
@@ -646,10 +608,7 @@ class Constants {
             top: 2,
             child: CircleAvatar(
               radius: 45,
-              backgroundColor: Theme
-                  .of(context)
-                  .colorScheme
-                  .primaryContainer,
+              backgroundColor: Theme.of(context).colorScheme.primaryContainer,
               child: ClipRRect(
                 borderRadius: const BorderRadius.all(Radius.circular(45)),
                 child: titleIcon ?? Container(),

@@ -171,4 +171,5 @@ class AddMenuCategoryCubit extends Cubit<AddMenuCategoryState> {
       }
     });
   }
+  
 }

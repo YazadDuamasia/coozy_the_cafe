@@ -44,13 +44,16 @@ class _EditMenuCategoryScreenState extends State<EditMenuCategoryScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Dynamic TextFormFields'),
+        title: const Text('Edit Menu Category'),
         actions: [
           IconButton(
-              onPressed: () async {
-                handleSubmit();
-              },
-              icon: Icon(MdiIcons.checkCircle))
+            onPressed: () async {
+              handleSubmit();
+            },
+            icon: Icon(MdiIcons.checkCircle),
+            tooltip: AppLocalizations.of(context)!
+                .translate(StringValue.common_submit),
+          )
         ],
       ),
       body: Form(
@@ -112,6 +115,8 @@ class _EditMenuCategoryScreenState extends State<EditMenuCategoryScreen> {
                     visible:
                         _subCategoryList != null && _subCategoryList.isNotEmpty,
                     child: Flexible(
+                      flex: 1,
+                      fit: FlexFit.loose,
                       child: ListView.separated(
                         controller: _dynamicListViewScrollController,
                         itemCount: _subCategoryList.length,
@@ -120,7 +125,7 @@ class _EditMenuCategoryScreenState extends State<EditMenuCategoryScreen> {
                         itemBuilder: (context, index) => Row(
                           children: [
                             Expanded(
-                              child: DynamicTextfield(
+                              child: SubCategoryDynamicTextField(
                                 key: UniqueKey(),
                                 initialValue: _subCategoryList[index],
                                 onChanged: (v) => _subCategoryList[index] = v,
@@ -139,8 +144,6 @@ class _EditMenuCategoryScreenState extends State<EditMenuCategoryScreen> {
                           height: 20,
                         ),
                       ),
-                      flex: 1,
-                      fit: FlexFit.loose,
                     ),
                   ),
                   Padding(
@@ -157,13 +160,12 @@ class _EditMenuCategoryScreenState extends State<EditMenuCategoryScreen> {
                               setState(() {
                                 _dynamicListViewScrollController!.animateTo(
                                   _dynamicListViewScrollController!
-                                      .position.maxScrollExtent+200,
+                                          .position.maxScrollExtent +
+                                      200,
                                   duration: const Duration(seconds: 1),
                                   curve: Curves.fastOutSlowIn,
                                 );
                               });
-
-
                             },
                             style: ElevatedButton.styleFrom(
                                 padding: const EdgeInsets.all(10),
@@ -221,12 +223,13 @@ class _EditMenuCategoryScreenState extends State<EditMenuCategoryScreen> {
   }
 }
 
-class DynamicTextfield extends StatefulWidget {
+
+class SubCategoryDynamicTextField extends StatefulWidget {
   String? initialValue;
   final void Function(String)? onChanged;
   final void Function()? onDelete;
 
-  DynamicTextfield(
+  SubCategoryDynamicTextField(
       {Key? key,
       required this.initialValue,
       required this.onChanged,
@@ -234,10 +237,10 @@ class DynamicTextfield extends StatefulWidget {
       : super(key: key);
 
   @override
-  State createState() => _DynamicTextfieldState();
+  State createState() => _DynamicTextFieldState();
 }
 
-class _DynamicTextfieldState extends State<DynamicTextfield> {
+class _DynamicTextFieldState extends State<SubCategoryDynamicTextField> {
   late final TextEditingController _controller;
   late final FocusNode focusNode;
 

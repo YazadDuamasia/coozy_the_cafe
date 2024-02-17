@@ -416,6 +416,29 @@ class DatabaseHelper {
         .delete(subcategoriesTable, where: 'id = ?', whereArgs: [id]);
   }
 
+  // Delete a subcategories in batch
+  Future<int?> deleteBatchSubcategory({List<String>? list, int? categoryId}) async {
+    final db = await database;
+    // return await db!
+    //     .delete(subcategoriesTable, where: 'id = ?', whereArgs: [id]);
+
+    return await db!.transaction((txn) async {
+      // Create a batch
+      Batch batch = txn.batch();
+      for (int i = 0; i < list!.length; i++) {
+
+        // Add delete operation to the batch
+        batch.delete(
+          subcategoriesTable,
+          where: 'name = ? AND categoryId = ?',
+          whereArgs: [list[i], categoryId],
+        );
+      }
+      // Commit the batch
+      await batch.commit();
+    });
+  }
+
   /*Menu Items CRUD operations*/
   // Create a new menu item
   Future<int?> createMenuItem(MenuItem menuItem) async {
