@@ -74,5 +74,6 @@
   "menu_sub_category_new_added_failed_successfully_text": "Error occurred during subcategory creation.",
   "menu_category_empty_title_text": "No Category been inserted",
   "menu_category_add_new_category": "Add new category",
-  "menu_category_search_no_suggestions":  "No suggestions"
+  "menu_category_search_no_suggestions":  "No suggestions",
+  "edit_menu_category_appbar_text":  "Edit Menu Category"
 }

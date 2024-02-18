@@ -51,6 +51,7 @@ class _TableUpdateDialogState extends State<TableUpdateDialog> {
                     controller: _tableNameController,
                     focusNode: _tableNameFocusNode,
                     decoration: InputDecoration(
+                      floatingLabelBehavior: FloatingLabelBehavior.never,
                       labelText: AppLocalizations.of(context)
                               ?.translate(StringValue.table_name_label_text) ??
                           'Table Name',
@@ -90,6 +91,7 @@ class _TableUpdateDialogState extends State<TableUpdateDialog> {
                     keyboardType: TextInputType.number,
                     textInputAction: TextInputAction.done,
                     decoration: InputDecoration(
+                      floatingLabelBehavior: FloatingLabelBehavior.never,
                       labelText: AppLocalizations.of(context)?.translate(
                               StringValue.table_nos_of_chairs_label_text) ??
                           'Nos Of Chairs per Table',

@@ -13,7 +13,7 @@ abstract class StringValue {
   static String common_reject = "common_reject";
   static String common_submit = "common_submit";
   static String common_update = "common_update";
-  static String common_search_hint_text="common_search_hint_text";
+  static String common_search_hint_text = "common_search_hint_text";
 
   static String common_email_label = "common_email_label";
   static String common_email_hint = "common_email_hint";
@@ -69,13 +69,15 @@ abstract class StringValue {
   static String table_failed_to_deleted_text = "table_failed_to_deleted_text";
 
   //category screen
-  static String menu_category_appbar_title="menu_category_appbar_title";
-  static String add_menu_category_icon_tooltip_text = "add_menu_category_icon_tooltip_text";
-  static String menu_category_empty_title_text="menu_category_empty_title_text";
-  static String menu_category_add_new_category="menu_category_add_new_category";
-  static String menu_category_search_no_suggestions="menu_category_search_no_suggestions";
-
-
+  static String menu_category_appbar_title = "menu_category_appbar_title";
+  static String add_menu_category_icon_tooltip_text =
+      "add_menu_category_icon_tooltip_text";
+  static String menu_category_empty_title_text =
+      "menu_category_empty_title_text";
+  static String menu_category_add_new_category =
+      "menu_category_add_new_category";
+  static String menu_category_search_no_suggestions =
+      "menu_category_search_no_suggestions";
 
   //add_menu_category_screen
   static String add_menu_category_appbar_text = "add_menu_category_appbar_text";
@@ -97,9 +99,9 @@ abstract class StringValue {
   static String menu_sub_category_new_added_failed_successfully_text =
       "menu_sub_category_new_added_failed_successfully_text";
 
-
-  //
-
+  //edit_menu_category_screen
+  static String edit_menu_category_appbar_text =
+      "edit_menu_category_appbar_text";
 
 
 }

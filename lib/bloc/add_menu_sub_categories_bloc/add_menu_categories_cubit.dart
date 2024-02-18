@@ -6,9 +6,9 @@ import 'package:coozy_cafe/utlis/components/constants.dart';
 import 'package:coozy_cafe/utlis/components/global.dart';
 import 'package:coozy_cafe/utlis/components/string_image_path.dart';
 import 'package:coozy_cafe/utlis/components/string_value.dart';
-import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:equatable/equatable.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:lottie/lottie.dart';
 import 'package:rxdart/rxdart.dart';
 
@@ -16,8 +16,9 @@ part 'add_menu_category_state.dart';
 
 class AddMenuCategoryCubit extends Cubit<AddMenuCategoryState> {
   FocusNode menuCategoryNameFocusNode = FocusNode();
-  TextEditingController menuCategoryNameController =
-      TextEditingController(text: "");
+  TextEditingController menuCategoryNameController = TextEditingController(text: "");
+
+
   final BehaviorSubject<List<String>?> _subCategoryListController =
       BehaviorSubject<List<String>>.seeded([]);
 
@@ -171,5 +172,15 @@ class AddMenuCategoryCubit extends Cubit<AddMenuCategoryState> {
       }
     });
   }
-  
+
+  @override
+  Future<void> close() {
+    try {
+      menuCategoryNameController.dispose();
+      _subCategoryListController.close();
+    } catch (e) {
+      print(e);
+    }
+    return super.close();
+  }
 }

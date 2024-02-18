@@ -1,21 +1,36 @@
 part of 'edit_menu_category_cubit.dart';
 
-
 abstract class EditMenuCategoryState extends Equatable {
-  final String categoryName;
-  final List<String> subCategories;
-
-  EditMenuCategoryState(this.categoryName, this.subCategories);
+  const EditMenuCategoryState();
 
   @override
-  List<Object?> get props => [categoryName, subCategories];
+  List<Object?> get props => [];
 }
 
-class EditMenuCategoryInitial extends EditMenuCategoryState {
-  EditMenuCategoryInitial() : super('', []);
+class InitialEditMenuCategoryState extends EditMenuCategoryState {}
+
+class LoadingEditMenuCategoryState extends EditMenuCategoryState {}
+
+class LoadedEditMenuCategoryState extends EditMenuCategoryState {
+  final String categoryName;
+  final List<String> subCategoryList;
+
+  const LoadedEditMenuCategoryState({
+    required this.categoryName,
+    required this.subCategoryList,
+  });
+
+  @override
+  List<Object?> get props => [categoryName, subCategoryList];
 }
 
-class EditMenuCategoryUpdated extends EditMenuCategoryState {
-  EditMenuCategoryUpdated(String categoryName, List<String> subCategories)
-      : super(categoryName, subCategories);
+class ErrorEditMenuCategoryState extends EditMenuCategoryState {
+  final String? errorMessage;
+
+  ErrorEditMenuCategoryState(this.errorMessage);
+
+  @override
+  List<Object> get props => [errorMessage!];
 }
+
+class NoInternetEditMenuCategoryState extends EditMenuCategoryState {}

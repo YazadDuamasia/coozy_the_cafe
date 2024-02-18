@@ -41,6 +41,7 @@ class _DynamicTextFormFieldForSubCategoryWidgetState
       focusNode: _focusNode,
       onChanged: widget.onChanged,
       decoration: InputDecoration(
+        floatingLabelBehavior: FloatingLabelBehavior.never,
         labelText: AppLocalizations.of(context)
                 ?.translate(StringValue.add_new_menu_sub_category_label_text) ??
             "SubCategory Name",

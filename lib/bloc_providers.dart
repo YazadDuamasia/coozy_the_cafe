@@ -10,6 +10,6 @@ List<BlocProvider> blocProviders = [
   BlocProvider<AddMenuCategoryCubit>(
       create: (context) => AddMenuCategoryCubit()),
   BlocProvider<EditMenuCategoryCubit>(
-      create: (context) => EditMenuCategoryCubit(
-          initialCategory: null, initialSubCategories: null)),
+      create: (context) => EditMenuCategoryCubit(),
+  ),
 ];

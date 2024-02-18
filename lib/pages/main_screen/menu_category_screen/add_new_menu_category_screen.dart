@@ -30,8 +30,11 @@ class _AddNewMenuCategoryScreenState extends State<AddNewMenuCategoryScreen> {
   @override
   Widget build(BuildContext context) {
     return SafeArea(
-      child: PopScope(
-        canPop: true,
+      child: WillPopScope(
+        onWillPop: () async {
+          Navigator.pop(context);
+          return true;
+        },
         child: Scaffold(
           resizeToAvoidBottomInset: true,
           appBar: AppBar(
@@ -83,12 +86,14 @@ class _AddNewMenuCategoryScreenState extends State<AddNewMenuCategoryScreen> {
                             child: Padding(
                               padding: const EdgeInsets.all(10.0),
                               child: TextFormField(
+
                                 controller: _menuCategoryCubit
                                     .menuCategoryNameController,
                                 focusNode: _menuCategoryCubit
                                     .menuCategoryNameFocusNode,
                                 autofocus: false,
                                 decoration: InputDecoration(
+                                  floatingLabelBehavior: FloatingLabelBehavior.never,
                                   labelText: AppLocalizations.of(context)
                                           ?.translate(StringValue
                                               .menu_category_label_text) ??

@@ -106,7 +106,10 @@ class _MenuItemFormState extends State<MenuItemForm> {
           ),
           TextFormField(
             initialValue: name,
-            decoration: const InputDecoration(labelText: 'Name'),
+            decoration: const InputDecoration(
+              labelText: 'Name',
+              floatingLabelBehavior: FloatingLabelBehavior.never,
+            ),
             validator: (value) {
               if (value == null || value.isEmpty) {
                 return 'Please enter a name';
@@ -118,7 +121,10 @@ class _MenuItemFormState extends State<MenuItemForm> {
             },
           ),
           TextFormField(
-            decoration: const InputDecoration(labelText: 'Description'),
+            decoration: const InputDecoration(
+              labelText: 'Description',
+              floatingLabelBehavior: FloatingLabelBehavior.never,
+            ),
             maxLines: 3,
             onSaved: (value) {
               description = value;
