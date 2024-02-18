@@ -63,6 +63,12 @@ class RestaurantRepository {
     return await _databaseHelper.deleteSubcategory(id);
   }
 
+  // Deletes a subcategory with the specified ID from the database.
+  Future<int?> deleteAllSubcategoryBasedOnCategoryId({int? categoryId}) async {
+    return await _databaseHelper.deleteAllSubcategoryBasedOnCategoryId(
+        categoryId: categoryId);
+  }
+
   // TableInfo CRUD operations
   // Creates a new TableInfo in the database.
   Future<int?> addNewTableInfo(TableInfoModel tableInfoModel) async {

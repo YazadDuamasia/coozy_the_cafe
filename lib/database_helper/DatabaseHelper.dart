@@ -218,6 +218,7 @@ class DatabaseHelper {
     await database.close();
 
     final String databasePath = await getDatabasesPath();
+
     final String originalPath = join(databasePath, 'restaurant.db');
 
     // Get the current date to append to the backup file name
@@ -416,8 +417,8 @@ class DatabaseHelper {
         .delete(subcategoriesTable, where: 'id = ?', whereArgs: [id]);
   }
 
-  // Delete a subcategories in batch
-  Future<int?> deleteBatchSubcategory({List<String>? list, int? categoryId}) async {
+  // Delete all subcategories base on categoryId in batches
+  Future<int?> deleteAllSubcategoryBasedOnCategoryId({int? categoryId}) async {
     final db = await database;
     // return await db!
     //     .delete(subcategoriesTable, where: 'id = ?', whereArgs: [id]);
@@ -425,15 +426,12 @@ class DatabaseHelper {
     return await db!.transaction((txn) async {
       // Create a batch
       Batch batch = txn.batch();
-      for (int i = 0; i < list!.length; i++) {
-
-        // Add delete operation to the batch
-        batch.delete(
-          subcategoriesTable,
-          where: 'name = ? AND categoryId = ?',
-          whereArgs: [list[i], categoryId],
-        );
-      }
+      // Add delete operation to the batch
+      batch.delete(
+        subcategoriesTable,
+        where: 'categoryId = ?',
+        whereArgs: [categoryId],
+      );
       // Commit the batch
       await batch.commit();
     });

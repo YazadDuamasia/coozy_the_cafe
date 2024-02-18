@@ -5,6 +5,7 @@ import 'package:app_settings/app_settings.dart';
 import 'package:flutter/foundation.dart' show kDebugMode;
 import 'package:flutter/material.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:platform_info/platform_info.dart';
@@ -32,7 +33,8 @@ class Constants {
           openAppSettings().then((value) => _requestPermission(permission));
           return false;
         } catch (e) {
-         Constants.debugLog(Constants, "Constants:_requestPermission:permanentlyDenied:Error:${e}");
+          Constants.debugLog(Constants,
+              "Constants:_requestPermission:permanentlyDenied:Error:${e}");
           return false;
         }
 
@@ -673,5 +675,15 @@ class Constants {
     return await Geolocator.getCurrentPosition(
         forceAndroidLocationManager: true,
         desiredAccuracy: LocationAccuracy.medium);
+  }
+
+  static void showToastMsg({required String? msg, bool? isForShortDuration}) {
+    Fluttertoast.showToast(
+        msg: '${msg}',
+        timeInSecForIosWeb:
+            isForShortDuration == null || isForShortDuration == true ? 3 : 5,
+        toastLength: isForShortDuration == null || isForShortDuration == true
+            ? Toast.LENGTH_SHORT
+            : Toast.LENGTH_LONG);
   }
 }

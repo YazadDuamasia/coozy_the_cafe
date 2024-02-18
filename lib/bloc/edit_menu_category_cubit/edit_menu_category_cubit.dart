@@ -1,5 +1,6 @@
 import 'package:coozy_cafe/model/category.dart';
 import 'package:coozy_cafe/model/sub_category.dart';
+import 'package:coozy_cafe/repositories/components/restaurant_repository.dart';
 import 'package:coozy_cafe/utlis/components/constants.dart';
 import 'package:equatable/equatable.dart';
 import 'package:flutter/material.dart';
@@ -52,8 +53,6 @@ class EditMenuCategoryCubit extends Cubit<EditMenuCategoryState> {
       emit(LoadedEditMenuCategoryState(
           categoryName: menuCategoryNameController.text,
           subCategoryList: currentList));
-
-
     } catch (e) {
       Constants.debugLog(EditMenuCategoryCubit, "initialLoadData:Error:$e");
       emit(ErrorEditMenuCategoryState(e.toString()));
@@ -92,5 +91,47 @@ class EditMenuCategoryCubit extends Cubit<EditMenuCategoryState> {
         subCategoryList: currentList));
   }
 
-  void submit(BuildContext context) async {}
+
+  void submit(BuildContext context) async {
+    if (state is LoadingEditMenuCategoryState) {
+      final RestaurantRepository repository = RestaurantRepository();
+      if (menuCategoryNameController != null &&
+          menuCategoryNameController.text != null &&
+          menuCategoryNameController.text.isNotEmpty) {
+        // Update or add the category
+        final Category updatedCategory = Category(
+          id: initialCategory?.id,
+          name: menuCategoryNameController.text,
+          createdDate: DateTime.now().toUtc().toIso8601String(),
+        );
+        await repository.updateCategory(updatedCategory);
+
+        // Delete existing subcategories for the category
+        if (initialCategory?.id != null) {
+          await repository.deleteAllSubcategoryBasedOnCategoryId(
+              categoryId: initialCategory!.id!);
+        }
+
+        // Insert new subcategories
+        if (_subCategoryListController.value != null &&
+            _subCategoryListController.value!.isNotEmpty) {
+          for (var subCategoryName in _subCategoryListController.value!) {
+            final SubCategory newSubCategory = SubCategory(
+              name: subCategoryName,
+              createdDate: DateTime.now().toUtc().toIso8601String(),
+              categoryId: updatedCategory.id,
+            );
+            await repository.createSubcategory(newSubCategory);
+          }
+        }
+
+        ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(content: Text('Changes saved successfully')));
+      } else {
+        ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(content: Text('Please fill all fields')));
+        return;
+      }
+    }
+  }
 }
