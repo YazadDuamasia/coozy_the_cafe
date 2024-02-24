@@ -314,6 +314,23 @@ class DatabaseHelper {
     });
   }
 
+  Future<int?> updateCategory(Category category) async {
+    Constants.debugLog(DatabaseHelper, "updateCategory:${category.toJson()}");
+    final db = await database;
+    try {
+      int? rowsAffected = await db?.update(
+        categoriesTable,
+        category.toJson(),
+        where: 'id = ?',
+        whereArgs: [category.id],
+      );
+      return rowsAffected;
+    } catch (e) {
+      print('Error updating category: $e');
+      return null; // Or handle the error as needed
+    }
+  }
+
   Future<Category?> getCategoryBasedOnName({String? name}) async {
     final db = await database;
 
@@ -337,14 +354,26 @@ class DatabaseHelper {
     }
   }
 
-  Future<int?> updateCategory(Category category) async {
+  Future<Category?> getCategoryBasedOnCategoryId({categoryId}) async {
     final db = await database;
-    return await db?.update(
-      categoriesTable,
-      category.toJson(),
-      where: 'id = ?',
-      whereArgs: [category.id],
-    );
+
+    if (categoryId != null) {
+      final List<Map<String, dynamic>>? maps = await db?.query(
+        categoriesTable,
+        where: 'id = ?',
+        whereArgs: [categoryId],
+        limit: 1,
+      );
+
+      if (maps == null || maps.isEmpty) {
+        return null;
+      }
+
+      // Return the first (and only) record as a single object
+      return Category.fromJson(maps.first);
+    } else {
+      return null;
+    }
   }
 
   Future<int?> deleteCategory(int categoryId) async {
@@ -381,12 +410,13 @@ class DatabaseHelper {
   }
 
   // get Subcategory Base CategoryId
-  Future<List<SubCategory>?> getSubcategoryBaseCategoryId(int id) async {
+  Future<List<SubCategory>?> getSubcategoryBaseCategoryId(
+      int categoryId) async {
     final db = await database;
     final List<Map<String, dynamic>?>? maps = await db?.query(
       subcategoriesTable,
-      where: 'id = ?',
-      whereArgs: [id],
+      where: 'categoryId = ?',
+      whereArgs: [categoryId],
       orderBy: 'name ASC',
     );
 
@@ -435,6 +465,23 @@ class DatabaseHelper {
       // Commit the batch
       await batch.commit();
     });
+  }
+
+  // Insert a subcategories in batch with the specified ID from the database.
+  Future<void> insertSubCategoriesForCategoryId({
+    required int? categoryId,
+    required List<SubCategory> subCategories,
+  }) async {
+    final db = await database;
+    if (subCategories.isNotEmpty) {
+      await db!.transaction((txn) async {
+        Batch batch = txn.batch();
+        for (SubCategory subCategory in subCategories) {
+          batch.insert(subcategoriesTable, subCategory.toJson());
+        }
+        await batch.commit();
+      });
+    }
   }
 
   /*Menu Items CRUD operations*/

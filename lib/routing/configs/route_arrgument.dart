@@ -42,54 +42,28 @@ UpdateMenuCategoryScreenArgument updateMenuCategoryScreenArgumentFromMap(String 
 String updateMenuCategoryScreenArgumentToMap(UpdateMenuCategoryScreenArgument data) => json.encode(data.toMap());
 
 class UpdateMenuCategoryScreenArgument {
-  final Category? category;
-  final List<SubCategory>? subCategoryList;
+  var categoryId;
 
   UpdateMenuCategoryScreenArgument({
-    required this.category,
-    required this.subCategoryList,
+    required this.categoryId,
+
   });
 
   factory UpdateMenuCategoryScreenArgument.fromMap(Map<String, dynamic> json) =>
       UpdateMenuCategoryScreenArgument(
-        category: json['category'] != null
-            ? Category.fromJson(json['category'])
-            : null,
-        subCategoryList:
-            _convertDynamicListToSubCategoryList(json['subCategoryList']),
+        categoryId: json['categoryId'] != null?json['categoryId']:null
       );
 
   Map<String, dynamic> toMap() => {
-        'category': category?.toJson(),
-        'subCategoryList':
-            _convertSubCategoryListToDynamicList(subCategoryList),
+        'categoryId': categoryId??null,
+
       };
 
   static String updateMenuCategoryScreenArgument(
-      {Category? category, List<SubCategory>? subCategoryList}) {
+      {categoryId}) {
     Map<String, dynamic> map = {
-      'category': category==null?null:category.toJson(),
-      'subCategoryList': _convertSubCategoryListToDynamicList(subCategoryList),
+      'categoryId': categoryId,
     };
     return json.encode(map);
-  }
-
-  // Private static methods visible only within the UpdateMenuCategoryScreenArgument class
-  static List<SubCategory>? _convertDynamicListToSubCategoryList(
-      List<dynamic>? dynamicList) {
-    if (dynamicList == null) {
-      return null;
-    }
-    return dynamicList.map((dynamicItem) {
-      return SubCategory.fromJson(dynamicItem as Map<String, dynamic>);
-    }).toList();
-  }
-
-  static List<dynamic>? _convertSubCategoryListToDynamicList(
-      List<SubCategory>? subcategories) {
-    if (subcategories == null) {
-      return null;
-    }
-    return subcategories.map((subCategory) => subCategory?.toJson()).toList();
   }
 }

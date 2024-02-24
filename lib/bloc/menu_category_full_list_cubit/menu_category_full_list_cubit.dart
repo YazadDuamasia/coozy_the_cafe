@@ -50,8 +50,7 @@ class MenuCategoryFullListCubit extends Cubit<MenuCategoryFullListState> {
 
   Future<Map<String, dynamic>?> fetchDataFromApi() async {
     try {
-      List<Category>? categoryList =
-          await RestaurantRepository().getCategories();
+      List<Category>? categoryList = await RestaurantRepository().getCategories();
       List<SubCategory>? subCategoryList =
           await RestaurantRepository().getSubcategories();
 

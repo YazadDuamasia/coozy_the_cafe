@@ -1,6 +1,6 @@
 import 'package:coozy_cafe/AppLocalization.dart';
 import 'package:coozy_cafe/bloc/add_menu_sub_categories_bloc/add_menu_categories_cubit.dart';
-import 'package:coozy_cafe/pages/main_screen/menu_category_screen/dynamic_text_form_field_for_sub_category_widget.dart';
+import 'package:coozy_cafe/pages/main_screen/menu_category_screen/add_menu_category_screen/dynamic_text_form_field_for_sub_category_widget.dart';
 import 'package:coozy_cafe/utlis/utlis.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -142,10 +142,10 @@ class _AddNewMenuCategoryScreenState extends State<AddNewMenuCategoryScreen> {
                                   return ListView.separated(
                                     itemCount: state.subCategoryList.length,
                                     shrinkWrap: true,
-                                    physics:
-                                        const NeverScrollableScrollPhysics(),
+                                    physics: const NeverScrollableScrollPhysics(),
                                     primary: false,
                                     addAutomaticKeepAlives: false,
+                                    addRepaintBoundaries: true,
                                     itemBuilder: (context, index) => Row(
                                       children: [
                                         Expanded(

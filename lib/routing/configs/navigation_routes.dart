@@ -66,11 +66,10 @@ class NavigationRoutes {
   }
 
   Future navigateToUpdateMenuCategoryScreen(
-      {required Category? category, required List<
-          SubCategory>? subCategoryList}) async {
+      {required categoryId}) async {
     String arg =
     UpdateMenuCategoryScreenArgument.updateMenuCategoryScreenArgument(
-        category: category, subCategoryList: subCategoryList);
+        categoryId: categoryId);
     Constants.debugLog(NavigationRoutes,
         "UpdateMenuCategoryScreen:arguments:${arg.toString()}");
     return await navigatorKey.currentState!

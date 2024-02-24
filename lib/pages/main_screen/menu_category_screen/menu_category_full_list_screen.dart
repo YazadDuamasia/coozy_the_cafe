@@ -349,7 +349,7 @@ class _MenuCategoryFullListScreenState
                     "menuCategoryExpansionTileItem:IconButton:Index:${index}");
                 navigationRoutes
                     .navigateToUpdateMenuCategoryScreen(
-                        category: category, subCategoryList: subCategoryList)
+                        categoryId: category.id)
                     .then((value) async =>
                         context.read<MenuCategoryFullListCubit>().loadData());
               },

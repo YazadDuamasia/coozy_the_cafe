@@ -26,6 +26,12 @@ class RestaurantRepository {
     return await _databaseHelper.getCategoryBasedOnName(name: categoryName);
   }
 
+  // Retrieves category base on Id from the database.
+  Future<Category?> getCategoryBasedOnCategoryId({categoryId}) async {
+    return await _databaseHelper.getCategoryBasedOnCategoryId(
+        categoryId: categoryId);
+  }
+
 // Updates an existing category in the database.
   Future<int?> updateCategory(Category category) async {
     return await _databaseHelper.updateCategory(category);
@@ -67,6 +73,25 @@ class RestaurantRepository {
   Future<int?> deleteAllSubcategoryBasedOnCategoryId({int? categoryId}) async {
     return await _databaseHelper.deleteAllSubcategoryBasedOnCategoryId(
         categoryId: categoryId);
+  }
+
+  // Insert a subcategories in batch with the specified ID from the database.
+  Future<dynamic> insertSubCategoriesForCategoryId(
+      {required int? categoryId,
+      required List<String?>? subCategoriesList}) async {
+    // Create a list of SubCategory instances from the list of strings
+    List<SubCategory> subCategories = subCategoriesList?.map((name) {
+      return SubCategory(
+        name: name,
+        createdDate: DateTime.now().toUtc().toIso8601String(),
+        categoryId: categoryId,
+      );
+    }).toList() ?? [];
+
+    return await _databaseHelper.insertSubCategoriesForCategoryId(
+      categoryId: categoryId,
+        subCategories: subCategories
+    );
   }
 
   // TableInfo CRUD operations

@@ -77,7 +77,6 @@ dependencies:
 
   #  rate_my_app:
   store_redirect: ^2.0.1
-  video_player: ^2.8.1
 
   #  Range Slider
   syncfusion_flutter_core: ^24.1.47

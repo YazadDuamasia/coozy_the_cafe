@@ -1,5 +1,5 @@
-import 'package:coozy_cafe/pages/main_screen/menu_category_screen/add_new_menu_category_screen.dart';
-import 'package:coozy_cafe/pages/main_screen/menu_category_screen/edit_menu_category_screen.dart';
+import 'package:coozy_cafe/pages/main_screen/menu_category_screen/add_menu_category_screen/add_new_menu_category_screen.dart';
+import 'package:coozy_cafe/pages/main_screen/menu_category_screen/edit_menu_category/edit_menu_category_screen.dart';
 import 'package:coozy_cafe/pages/main_screen/menu_category_screen/menu_category_full_list_screen.dart';
 import 'package:coozy_cafe/pages/main_screen/menu_screen/menu_full_list_screen.dart';
 import 'package:coozy_cafe/pages/main_screen/table_screen/table_screen.dart';
@@ -72,8 +72,7 @@ class RouteGenerator {
           settings: settings,
           curve: Curves.easeInOut,
           child: EditMenuCategoryScreen(
-            category: argument.category!,
-            subCategoryList: argument.subCategoryList ?? [],
+            categoryId: argument.categoryId,
           ),
         );
 
