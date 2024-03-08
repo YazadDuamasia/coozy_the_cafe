@@ -1,5 +1,6 @@
 import 'package:coozy_cafe/AppLocalization.dart';
 import 'package:coozy_cafe/utlis/components/string_value.dart';
+import 'package:coozy_cafe/utlis/utlis.dart';
 import 'package:flutter/material.dart';
 
 class EmptyCategoryFullListBody extends StatelessWidget {
@@ -17,6 +18,11 @@ class EmptyCategoryFullListBody extends StatelessWidget {
           mainAxisAlignment: MainAxisAlignment.center,
           crossAxisAlignment: CrossAxisAlignment.center,
           children: [
+            Icon(MenuIcons.check_list,
+                color: Theme.of(context).primaryColor, size: 100),
+            const SizedBox(
+              height: 10,
+            ),
             Row(
               mainAxisSize: MainAxisSize.min,
               mainAxisAlignment: MainAxisAlignment.center,

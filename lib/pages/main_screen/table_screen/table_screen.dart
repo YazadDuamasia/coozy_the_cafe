@@ -1,15 +1,14 @@
-import 'dart:math';
 import 'dart:ui';
 
 import 'package:coozy_cafe/AppLocalization.dart';
-import 'package:coozy_cafe/database_helper/DatabaseHelper.dart';
+import 'package:coozy_cafe/bloc/bloc.dart';
 import 'package:coozy_cafe/model/table_info_model.dart';
 import 'package:coozy_cafe/pages/main_screen/table_screen/new_table_info_dialog.dart';
-import 'package:coozy_cafe/pages/main_screen/table_screen/table_update_dialog.dart';
-import 'package:coozy_cafe/pages/startup_screens/loading_page/loading_page.dart';
-import 'package:coozy_cafe/repositories/repositories.dart';
+import 'package:coozy_cafe/pages/pages.dart';
+import 'package:coozy_cafe/repositories/components/restaurant_repository.dart';
 import 'package:coozy_cafe/utlis/utlis.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:lottie/lottie.dart';
 import 'package:reorderable_grid_view/reorderable_grid_view.dart';
 
@@ -22,16 +21,11 @@ class TableScreen extends StatefulWidget {
 
 class _TableScreenState extends State<TableScreen>
     with TickerProviderStateMixin {
-  List<TableInfoModel>? list = [];
-  bool isLoading = true;
-  bool isGridView = true; // Added to track the current view type
-  final DatabaseHelper _databaseHelper = DatabaseHelper();
-
   @override
   void initState() {
     super.initState();
     WidgetsBinding.instance.addPostFrameCallback((_) {
-      loadData();
+      BlocProvider.of<TableScreenBloc>(context).add(LoadTableScreenDataEvent());
     });
   }
 
@@ -52,151 +46,146 @@ class _TableScreenState extends State<TableScreen>
                   "Table Info",
             ),
             actions: [
-              IconButton(
-                onPressed: () {
-                  // Toggle between list and grid view
-                  setState(() {
-                    isGridView = !isGridView;
-                  });
+              BlocConsumer<TableScreenBloc, TableScreenState>(
+                listener: (context, state) {},
+                builder: (context, state) {
+                  if (state is TableScreenLoadedState) {
+                    return IconButton(
+                      onPressed: () async {
+                        context
+                            .read<TableScreenBloc>()
+                            .add(SwitchViewTableInfoEvent());
+                      },
+                      icon: AnimatedSwitcher(
+                        duration: const Duration(milliseconds: 500),
+                        child: (state.isGridView ?? false)
+                            ? const Icon(
+                                Icons.list,
+                                key: ValueKey('list'),
+                              )
+                            : const Icon(
+                                Icons.grid_view,
+                                key: ValueKey('grid'),
+                              ),
+                      ),
+                      tooltip: (state.isGridView ?? false)
+                          ? (AppLocalizations.of(context)?.translate(
+                                  StringValue.common_list_view_tooltip) ??
+                              "Switch to List View")
+                          : (AppLocalizations.of(context)?.translate(
+                                  StringValue.common_grid_view_tooltip) ??
+                              "Switch to Grid View"),
+                    );
+                  } else {
+                    return const SizedBox.shrink();
+                  }
                 },
-                icon: AnimatedSwitcher(
-                  duration: const Duration(milliseconds: 500),
-                  child: isGridView
-                      ? const Icon(
-                          Icons.list,
-                          key: ValueKey('list'),
-                        )
-                      : const Icon(
-                          Icons.grid_view,
-                          key: ValueKey('grid'),
-                        ),
-                ),
-                tooltip: isGridView
-                    ? (AppLocalizations.of(context)
-                            ?.translate(StringValue.common_list_view_tooltip) ??
-                        "Switch to List View")
-                    : (AppLocalizations.of(context)
-                            ?.translate(StringValue.common_grid_view_tooltip) ??
-                        "Switch to Grid View"),
               ),
-              IconButton(
-                onPressed: () async {
-                  showDialog(
-                    context: context,
-                    builder: (context) {
-                      return NewTableDialog(
-                        onCreate: (newTableInfoModel) async {
-                          // Handle the creation of the new table here
-                          Constants.debugLog(TableScreen,
-                              'Created new table: $newTableInfoModel');
-                          int? result = await RestaurantRepository()
-                              .addNewTableInfo(newTableInfoModel);
-                          Constants.debugLog(
-                              TableScreen, "Created new:$result");
-                          setState(() {
-                            loadData();
-                          });
-                          Navigator.of(context).pop();
-                          if (result != null && result > 0) {
-                            Constants.customAutoDismissAlertDialog(
-                                classObject: TableScreen,
-                                context: context,
-                                descriptions: AppLocalizations.of(context)
-                                        ?.translate(StringValue
-                                            .table_added_successfully_text) ??
-                                    "New table has been added successfully.",
-                                title: "",
-                                titleIcon: Lottie.asset(
-                                  MediaQuery.of(context).platformBrightness ==
-                                          Brightness.light
-                                      ? StringImagePath
-                                          .done_light_brown_color_lottie
-                                      : StringImagePath.done_brown_color_lottie,
-                                  repeat: false,
-                                ),
-                                navigatorKey: navigatorKey);
-                          } else {
-                            Constants.customAutoDismissAlertDialog(
-                                classObject: TableScreen,
-                                context: context,
-                                descriptions: AppLocalizations.of(context)
-                                        ?.translate(StringValue
-                                            .table_failed_to_added_text) ??
-                                    "Fail to add new table info.",
-                                title: "",
-                                titleIcon: Lottie.asset(
-                                  MediaQuery.of(context).platformBrightness ==
-                                          Brightness.light
-                                      ? StringImagePath
-                                          .done_light_brown_color_lottie
-                                      : StringImagePath.done_brown_color_lottie,
-                                  repeat: false,
-                                ),
-                                navigatorKey: navigatorKey);
-                          }
-                        },
-                      );
-                    },
-                  );
+              BlocConsumer<TableScreenBloc, TableScreenState>(
+                listener: (context, state) {},
+                builder: (context, state) {
+                  if (state is TableScreenLoadedState) {
+                    return IconButton(
+                      onPressed: () async {
+                        addNewTableInfo();
+                      },
+                      icon: const Icon(
+                        Icons.add,
+                      ),
+                      tooltip: AppLocalizations.of(context)?.translate(
+                              StringValue.add_table_icon_tooltip_text) ??
+                          "Add a new Table",
+                    );
+                  } else {
+                    return const SizedBox.shrink();
+                  }
                 },
-                icon: const Icon(
-                  Icons.add,
-                ),
-                tooltip: AppLocalizations.of(context)
-                        ?.translate(StringValue.add_table_icon_tooltip_text) ??
-                    "Add a new Table",
               ),
             ],
           ),
-          body: isLoading == true
-              ? const LoadingPage()
-              : Padding(
-                  padding: const EdgeInsets.fromLTRB(10, 10, 10, 10),
-                  child: AnimatedSwitcher(
-                    duration: const Duration(milliseconds: 500),
-                    child: isGridView
-                        ? buildGridView()
-                        : buildListView(),
-                  )),
+          body: BlocConsumer<TableScreenBloc, TableScreenState>(
+            listener: (context, state) {},
+            builder: (context, state) {
+              if (state is TableScreenInitialState ||
+                  state is TableScreenLoadingState) {
+                return const LoadingPage();
+              } else if (state is TableScreenLoadedState) {
+                return AnimatedSwitcher(
+                  duration: const Duration(milliseconds: 500),
+                  child: Visibility(
+                    visible: (state.isGridView == true) ? true : false,
+                    replacement: buildListView(state.list),
+                    child: buildGridView(state.list),
+                  ),
+                );
+              } else if (state is TableScreenErrorState) {
+                return ErrorPage(onPressedRetryButton: () async {
+                  BlocProvider.of<TableScreenBloc>(context)
+                      .add(LoadTableScreenDataEvent());
+                });
+              } else if (state is TableScreenNoInternetState) {
+                return NoInternetPage(
+                  onPressedRetryButton: () async {
+                    BlocProvider.of<TableScreenBloc>(context)
+                        .add(LoadTableScreenDataEvent());
+                  },
+                );
+              } else {
+                return Container();
+              }
+            },
+          ),
         ),
       ),
     );
   }
 
-  Widget buildGridView() {
-    return ReorderableGridView.builder(
-      itemCount: list == null ? 0 : list!.length,
-      itemBuilder: (context, index) => buildGridItem(list![index], index),
-      shrinkWrap: true,
-      addAutomaticKeepAlives: false,
-      physics:
-          const ClampingScrollPhysics(parent: AlwaysScrollableScrollPhysics()),
-      addRepaintBoundaries: true,
-      onReorder: onReOrder,
-      placeholderBuilder: (dragIndex, dropIndex, dragWidget) {
-        return Container(
-          decoration: BoxDecoration(
-            border: Border.all(color: Theme.of(context).colorScheme.tertiary),
-            borderRadius: BorderRadius.circular(10.0),
-          ),
-          child: ClipRRect(
-            borderRadius: BorderRadius.circular(10.0),
-            child: const FrostedGlassWidget(
-              child: SizedBox(),
+  Widget buildGridView(List<TableInfoModel>? list) {
+    if (list != null && list.isNotEmpty) {
+      return ReorderableGridView.builder(
+        itemCount: list == null ? 0 : list!.length ?? 0,
+        padding: const EdgeInsets.fromLTRB(10, 10, 10, 10),
+        itemBuilder: (context, index) =>
+            buildGridItem(list![index], index, list),
+        shrinkWrap: true,
+        physics: const ClampingScrollPhysics(
+            parent: AlwaysScrollableScrollPhysics()),
+        addAutomaticKeepAlives: false,
+        addRepaintBoundaries: true,
+        onReorder: (oldIndex, newIndex) async {
+          BlocProvider.of<TableScreenBloc>(context).add(
+            onReOrderTableInfoEvent(
+                oldIndex: oldIndex, newIndex: newIndex, context: context),
+          );
+        },
+        placeholderBuilder: (dragIndex, dropIndex, dragWidget) {
+          return Container(
+            decoration: BoxDecoration(
+              border: Border.all(color: Theme.of(context).colorScheme.tertiary),
+              borderRadius: BorderRadius.circular(10.0),
             ),
-          ),
-        );
-      },
-      gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-        crossAxisCount: 2,
-        crossAxisSpacing: 10,
-        mainAxisSpacing: 10,
-        childAspectRatio: 1.0,
-      ),
-    );
+            child: ClipRRect(
+              borderRadius: BorderRadius.circular(10.0),
+              child: const FrostedGlassWidget(
+                child: SizedBox(),
+              ),
+            ),
+          );
+        },
+        gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+          crossAxisCount: 2,
+          crossAxisSpacing: 10,
+          mainAxisSpacing: 10,
+          childAspectRatio: 1.0,
+        ),
+      );
+    } else {
+      return emptyDataWidget();
+    }
   }
 
-  Widget buildGridItem(TableInfoModel model, var index) {
+  Widget buildGridItem(
+      TableInfoModel model, var index, List<TableInfoModel>? list) {
     return Card(
       key: ValueKey("$index"),
       shape: RoundedRectangleBorder(
@@ -207,9 +196,10 @@ class _TableScreenState extends State<TableScreen>
         children: [
           Material(
             color: Colors.transparent,
+            type: MaterialType.card,
             child: InkWell(
               onTap: () async {
-                await updateTableInfo(model, index);
+                onUpdateModel(model);
               },
               borderRadius: BorderRadius.circular(5.0),
               child: Center(
@@ -245,6 +235,23 @@ class _TableScreenState extends State<TableScreen>
                           ),
                         ],
                       ),
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.start,
+                        crossAxisAlignment: CrossAxisAlignment.center,
+                        mainAxisSize: MainAxisSize.min,
+                        children: <Widget>[
+                          Text(
+                              "${AppLocalizations.of(context)?.translate(StringValue.table_color_indicator_label_text) ?? "Color Indicator"} : ",
+                              textAlign: TextAlign.start),
+                          CircleAvatar(
+                            backgroundColor: Color(int.parse(
+                                    model.colorValue ?? "000000",
+                                    radix: 16) |
+                                0xFF000000),
+                            radius: 10,
+                          )
+                        ],
+                      ),
                     ],
                   ),
                 ),
@@ -255,7 +262,9 @@ class _TableScreenState extends State<TableScreen>
             top: 5.0, // Adjust the top position as needed
             right: 5.0, // Adjust the right position as needed
             child: GestureDetector(
-              onTap: () async => onDeletedAction(model, index),
+              onTap: () async {
+                ondDelete(model, index);
+              },
               child: const Icon(
                 Icons.delete,
                 color: Colors.red,
@@ -268,32 +277,43 @@ class _TableScreenState extends State<TableScreen>
     );
   }
 
-
-  Widget buildListView() {
-    return ReorderableListView.builder(
-      itemCount: list == null ? 0 : list!.length,
-      itemBuilder: (context, index) => buildListItem(list![index], index),
-      onReorder: onReOrder,
-      proxyDecorator: (child, index, animation) {
-        return AnimatedBuilder(
-          animation: animation,
-          builder: (BuildContext context, Widget? child) {
-            final double animValue =
-                Curves.easeInOut.transform(animation.value);
-            final double elevation = lerpDouble(1, 6, animValue)!;
-            final double scale = lerpDouble(1, 1.02, animValue)!;
-            return Transform.scale(
-              scale: scale,
-              child: buildListItem(list![index], index),
-            );
-          },
-          child: child,
-        );
-      },
-    );
+  Widget buildListView(List<TableInfoModel>? list) {
+    if (list != null && list.isNotEmpty) {
+      return ReorderableListView.builder(
+        itemCount: list == null ? 0 : list!.length ?? 0,
+        padding: const EdgeInsets.fromLTRB(10, 10, 10, 10),
+        itemBuilder: (context, index) =>
+            buildListItem(list![index], index, list),
+        onReorder: (oldIndex, newIndex) async {
+          BlocProvider.of<TableScreenBloc>(context).add(
+            onReOrderTableInfoEvent(
+                oldIndex: oldIndex, newIndex: newIndex, context: context),
+          );
+        },
+        proxyDecorator: (child, index, animation) {
+          return AnimatedBuilder(
+            animation: animation,
+            builder: (BuildContext context, Widget? child) {
+              final double animValue =
+                  Curves.easeInOut.transform(animation.value);
+              final double elevation = lerpDouble(1, 6, animValue)!;
+              final double scale = lerpDouble(1, 1.02, animValue)!;
+              return Transform.scale(
+                scale: scale,
+                child: buildListItem(list![index], index, list),
+              );
+            },
+            child: child,
+          );
+        },
+      );
+    } else {
+      return emptyDataWidget();
+    }
   }
 
-  Widget buildListItem(TableInfoModel model, var index) {
+  Widget buildListItem(
+      TableInfoModel model, var index, List<TableInfoModel>? list) {
     return Card(
       key: ValueKey("$index"),
       shape: RoundedRectangleBorder(
@@ -307,9 +327,10 @@ class _TableScreenState extends State<TableScreen>
         children: [
           Material(
             color: Colors.transparent,
+            type: MaterialType.card,
             child: InkWell(
               onTap: () async {
-                await updateTableInfo(model, index);
+                onUpdateModel(model);
               },
               borderRadius: BorderRadius.circular(5.0),
               child: Padding(
@@ -318,67 +339,101 @@ class _TableScreenState extends State<TableScreen>
                   mainAxisAlignment: MainAxisAlignment.start,
                   crossAxisAlignment: CrossAxisAlignment.center,
                   mainAxisSize: MainAxisSize.min,
-                  children: <Widget>[
+                  children: [
+                    Container(
+                      width: 40,
+                      height: 40,
+                      decoration: BoxDecoration(
+                        color: Color(
+                            int.parse(model.colorValue ?? "000000", radix: 16) |
+                                0xFF000000),
+                        borderRadius: BorderRadius.circular(10),
+                      ),
+                    ),
+                    const SizedBox(
+                      width: 5,
+                    ),
                     Expanded(
-                      child: Column(
+                      child: Row(
                         mainAxisAlignment: MainAxisAlignment.start,
-                        crossAxisAlignment: CrossAxisAlignment.start,
+                        crossAxisAlignment: CrossAxisAlignment.center,
                         mainAxisSize: MainAxisSize.min,
-                        children: [
-                          Row(
-                            mainAxisAlignment: MainAxisAlignment.start,
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            mainAxisSize: MainAxisSize.min,
-                            children: <Widget>[
-                              Expanded(
-                                child: Text(
-                                    "${AppLocalizations.of(context)?.translate(StringValue.table_name_label_text) ?? "Table Name"}: ${model.name}",
-                                    textAlign: TextAlign.start),
-                              ),
-                            ],
+                        children: <Widget>[
+                          Expanded(
+                            child: Column(
+                              mainAxisAlignment: MainAxisAlignment.start,
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              mainAxisSize: MainAxisSize.min,
+                              children: [
+                                Row(
+                                  mainAxisAlignment: MainAxisAlignment.start,
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  mainAxisSize: MainAxisSize.min,
+                                  children: <Widget>[
+                                    Expanded(
+                                      child: Text(
+                                          "${AppLocalizations.of(context)?.translate(StringValue.table_name_label_text) ?? "Table Name"}: ${model.name}",
+                                          textAlign: TextAlign.start),
+                                    ),
+                                  ],
+                                ),
+                                const SizedBox(
+                                  height: 5,
+                                ),
+                                Row(
+                                  mainAxisAlignment: MainAxisAlignment.start,
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  mainAxisSize: MainAxisSize.min,
+                                  children: <Widget>[
+                                    Expanded(
+                                      child: Text(
+                                          "${AppLocalizations.of(context)?.translate(StringValue.table_nos_of_chairs_label_text) ?? "Nos Of Chairs per Table"}: ${model.nosOfChairs}",
+                                          textAlign: TextAlign.start),
+                                    ),
+                                  ],
+                                ),
+                              ],
+                            ),
                           ),
-                          const SizedBox(
-                            height: 5,
+                          Visibility(
+                            visible: index == 0 ? false : true,
+                            child: IconButton(
+                              onPressed: () async {
+                                BlocProvider.of<TableScreenBloc>(context).add(
+                                  onMoveItemUpTableInfoEvent(
+                                    currentIndex: index,
+                                    context: context,
+                                  ),
+                                );
+                              },
+                              icon: const Icon(Icons.arrow_upward_rounded),
+                            ),
                           ),
-                          Row(
-                            mainAxisAlignment: MainAxisAlignment.start,
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            mainAxisSize: MainAxisSize.min,
-                            children: <Widget>[
-                              Expanded(
-                                child: Text(
-                                    "${AppLocalizations.of(context)?.translate(StringValue.table_nos_of_chairs_label_text) ?? "Nos Of Chairs per Table"}: ${model.nosOfChairs}",
-                                    textAlign: TextAlign.start),
-                              ),
-                            ],
+                          Visibility(
+                            visible: index < (list!.length - 1),
+                            child: IconButton(
+                              onPressed: () async {
+                                BlocProvider.of<TableScreenBloc>(context).add(
+                                  onMoveItemDownTableInfoEvent(
+                                    currentIndex: index,
+                                    context: context,
+                                  ),
+                                );
+                              },
+                              icon: const Icon(Icons.arrow_downward_rounded),
+                            ),
+                          ),
+                          GestureDetector(
+                            onTap: () async {
+                              ondDelete(model, index);
+                            },
+                            child: const Icon(
+                              Icons.delete,
+                              color: Colors.red,
+                              size: 24.0,
+                            ),
                           ),
                         ],
-                      ),
-                    ),
-                    Visibility(
-                      visible: index == 0 ? false : true,
-                      child: IconButton(
-                        onPressed: () async {
-                          await onMoveItemUp(index);
-                        },
-                        icon: const Icon(Icons.arrow_upward_rounded),
-                      ),
-                    ),
-                    Visibility(
-                      visible: index < (list!.length - 1),
-                      child: IconButton(
-                        onPressed: () async {
-                          await onMoveItemDown(index);
-                        },
-                        icon: const Icon(Icons.arrow_downward_rounded),
-                      ),
-                    ),
-                    GestureDetector(
-                      onTap: () async => onDeletedAction(model, index),
-                      child: const Icon(
-                        Icons.delete,
-                        color: Colors.red,
-                        size: 24.0,
                       ),
                     ),
                   ],
@@ -391,161 +446,182 @@ class _TableScreenState extends State<TableScreen>
     );
   }
 
-  Future<void> loadData() async {
-    setState(() {
-      isLoading = true;
-    });
-    list = await RestaurantRepository().getTableInfoList();
-    setState(() {
-      isLoading = false;
-    });
+  Widget emptyDataWidget() {
+    return Column(
+      mainAxisSize: MainAxisSize.max,
+      mainAxisAlignment: MainAxisAlignment.center,
+      crossAxisAlignment: CrossAxisAlignment.center,
+      children: [
+        Row(
+          mainAxisSize: MainAxisSize.min,
+          mainAxisAlignment: MainAxisAlignment.center,
+          crossAxisAlignment: CrossAxisAlignment.center,
+          children: [
+            Icon(MenuIcons.round_table,
+                color: Theme.of(context).primaryColor, size: 100),
+          ],
+        ),
+        const SizedBox(
+          height: 10,
+        ),
+        Row(
+          mainAxisSize: MainAxisSize.min,
+          mainAxisAlignment: MainAxisAlignment.center,
+          crossAxisAlignment: CrossAxisAlignment.center,
+          children: [
+            Expanded(
+              child: Text("No data Found.",
+                  textAlign: TextAlign.center,
+                  style: Theme.of(context).textTheme.titleLarge),
+            ),
+          ],
+        ),
+        const SizedBox(height: 10),
+        Row(
+          mainAxisSize: MainAxisSize.min,
+          mainAxisAlignment: MainAxisAlignment.center,
+          crossAxisAlignment: CrossAxisAlignment.center,
+          children: [
+            ElevatedButton(
+              onPressed: () async {
+                addNewTableInfo();
+              },
+              style: ElevatedButton.styleFrom(
+                padding: const EdgeInsets.only(
+                  top: 10,
+                  bottom: 10,
+                  right: 25,
+                  left: 25,
+                ),
+                elevation: 5,
+              ),
+              child: Text(AppLocalizations.of(context)
+                      ?.translate(StringValue.table_btn_add_new_table_text) ??
+                  'Add new table info'),
+            ),
+          ],
+        ),
+      ],
+    );
   }
 
-  Future<void> updateTableInfo(TableInfoModel model, index) async {
+  void ondDelete(model, index) {
+    Constants.customPopUpDialogMessage(
+        classObject: TableScreen,
+        context: context,
+        titleIcon: Icon(
+          Icons.info_outline,
+          size: 40,
+          color: Theme.of(context).primaryColor,
+        ),
+        title:
+            "${AppLocalizations.of(context)?.translate(StringValue.table_screen_delete_title_txt) ?? "Are you sure ?"}",
+        descriptions:
+            "${AppLocalizations.of(context)?.translate(StringValue.table_screen_delete_subTitle_txt) ?? "Do you really want to delete this table information? You will not be able to undo this action."}",
+        actions: Row(
+          mainAxisAlignment: MainAxisAlignment.center,
+          crossAxisAlignment: CrossAxisAlignment.center,
+          mainAxisSize: MainAxisSize.max,
+          children: [
+            TextButton(
+              child: Text(
+                "${AppLocalizations.of(context)!.translate(StringValue.common_cancel)}",
+                style: Theme.of(context).textTheme.titleSmall!.copyWith(
+                      color: Theme.of(context).brightness == Brightness.light
+                          ? Colors.white
+                          : null,
+                      fontWeight: FontWeight.w700,
+                    ),
+              ),
+              onPressed: () => Navigator.pop(context),
+            ),
+            TextButton(
+              child: Text(
+                "${AppLocalizations.of(context)!.translate(StringValue.common_okay)}",
+                style: Theme.of(context).textTheme.titleSmall!.copyWith(
+                      color: Theme.of(context).brightness == Brightness.light
+                          ? Colors.white
+                          : null,
+                      fontWeight: FontWeight.w700,
+                    ),
+              ),
+              onPressed: () {
+                Navigator.pop(context);
+                BlocProvider.of<TableScreenBloc>(context).add(
+                  DeleteTableInfoEvent(
+                    tableInfoModel: model,
+                    index: index,
+                    context: context,
+                  ),
+                );
+              },
+            )
+          ],
+        ));
+  }
+
+  void onUpdateModel(TableInfoModel model) async {
     Constants.debugLog(
         TableScreen, "updateTableInfo:model:${model.toString()}");
-    showDialog(
+    BlocProvider.of<TableScreenBloc>(context).add(
+      UpdateTableInfoEvent(
+        context: context,
+        updatedTableInfo: model,
+      ),
+    );
+  }
+
+  void addNewTableInfo() async {
+    await showDialog(
       context: context,
       builder: (context) {
-        return TableUpdateDialog(
-          currentTableName: model, // Pass the current table name
-          onUpdate: (newName) async {
-            // Updated table name
-            Constants.debugLog(TableScreen, 'Updated table name: $newName');
+        return NewTableDialog(
+          onCreate: (newTableInfoModel) async {
+            // Handle the creation of the new table here
+            Constants.debugLog(
+                TableScreen, 'Created new table: $newTableInfoModel');
+            int? result =
+                await RestaurantRepository().addNewTableInfo(newTableInfoModel);
+            Constants.debugLog(TableScreen, "Created new:$result");
+            BlocProvider.of<TableScreenBloc>(context)
+                .add(AddNewTableInfoEvent());
+            Navigator.of(context).pop();
+            if (result != null && result > 0) {
+              Constants.customAutoDismissAlertDialog(
+                  classObject: TableScreen,
+                  context: context,
+                  descriptions: AppLocalizations.of(context)?.translate(
+                          StringValue.table_added_successfully_text) ??
+                      "New table has been added successfully.",
+                  title: "",
+                  titleIcon: Lottie.asset(
+                    MediaQuery.of(context).platformBrightness ==
+                            Brightness.light
+                        ? StringImagePath.done_light_brown_color_lottie
+                        : StringImagePath.done_brown_color_lottie,
+                    repeat: false,
+                  ),
+                  navigatorKey: navigatorKey);
+            } else {
+              Constants.customAutoDismissAlertDialog(
+                  classObject: TableScreen,
+                  context: context,
+                  descriptions: AppLocalizations.of(context)
+                          ?.translate(StringValue.table_failed_to_added_text) ??
+                      "Fail to add new table info.",
+                  title: "",
+                  titleIcon: Lottie.asset(
+                    MediaQuery.of(context).platformBrightness ==
+                            Brightness.light
+                        ? StringImagePath.done_light_brown_color_lottie
+                        : StringImagePath.done_brown_color_lottie,
+                    repeat: false,
+                  ),
+                  navigatorKey: navigatorKey);
+            }
           },
         );
       },
     );
-  }
-
-  onDeletedAction(TableInfoModel model, index) async {
-    // Handle the delete action here
-    Constants.debugLog(TableScreen, 'Delete table with ID: ${model.id}');
-    int? result = await RestaurantRepository()
-        .deleteTableInfo(tableInfoModelToDelete: model);
-    Constants.debugLog(
-        TableScreen, "Delete RestaurantRepository result:$result");
-    if (result != null && result > 0) {
-      list?.removeAt(index);
-      setState(() {});
-      Constants.customAutoDismissAlertDialog(
-          classObject: TableScreen,
-          context: context,
-          descriptions: AppLocalizations.of(context)
-                  ?.translate(StringValue.table_deleted_successfully_text) ??
-              "Select table has been deleted successfully.",
-          title: "",
-          titleIcon: Lottie.asset(
-            MediaQuery.of(context).platformBrightness == Brightness.light
-                ? StringImagePath.done_light_brown_color_lottie
-                : StringImagePath.done_brown_color_lottie,
-            repeat: false,
-          ),
-          navigatorKey: navigatorKey);
-      // Fluttertoast.showToast(
-      //     msg: "Select table has been remove successfully.",
-      //     timeInSecForIosWeb: 3,
-      //     toastLength: Toast.LENGTH_SHORT);
-    } else {
-      Constants.customAutoDismissAlertDialog(
-          classObject: TableScreen,
-          context: context,
-          descriptions: AppLocalizations.of(context)
-                  ?.translate(StringValue.table_failed_to_deleted_text) ??
-              "Failed to delete you select table.",
-          title: null,
-          titleIcon: Lottie.asset(
-            MediaQuery.of(context).platformBrightness == Brightness.light
-                ? StringImagePath.done_light_brown_color_lottie
-                : StringImagePath.done_brown_color_lottie,
-            repeat: false,
-          ),
-          navigatorKey: navigatorKey);
-      // Fluttertoast.showToast(
-      //     msg: "Failed to delete you select table.",
-      //     timeInSecForIosWeb: 3,
-      //     toastLength: Toast.LENGTH_SHORT);
-      setState(() {});
-    }
-  }
-
-  void onReOrder(int oldIndex, int newIndex) async {
-    Constants.debugLog(TableScreen, "reorder: $oldIndex -> $newIndex");
-    var db = await _databaseHelper.database;
-    setState(() {
-      if (newIndex > oldIndex) {
-        // Adjust the index if the item is moved down in the list
-        newIndex -= 1;
-      }
-
-      final TableInfoModel movingItem = list!.removeAt(oldIndex);
-      list!.insert(newIndex, movingItem);
-    });
-
-    await db!.transaction((txn) async {
-      // Update sortOrderIndex for affected items
-      for (int i = min(oldIndex, newIndex); i <= max(oldIndex, newIndex); i++) {
-        final TableInfoModel currentItem = list![i];
-        currentItem.sortOrderIndex = i;
-        await txn.update(
-          _databaseHelper.tableInfoTable,
-          currentItem.toJson(),
-          where: 'id = ?',
-          whereArgs: [currentItem.id],
-        );
-      }
-    });
-  }
-
-  Future<void> onMoveItemUp(int currentIndex) async {
-    if (currentIndex > 0) {
-      Constants.debugLog(TableScreen, "move item up from $currentIndex index");
-      var db = await _databaseHelper.database;
-
-      setState(() {
-        final TableInfoModel movingItem = list!.removeAt(currentIndex);
-        list!.insert(currentIndex - 1, movingItem);
-      });
-      await db!.transaction((txn) async {
-        for (int i = currentIndex - 1; i <= currentIndex; i++) {
-          final TableInfoModel currentItem = list![i];
-          currentItem.sortOrderIndex = i;
-
-          await txn.update(
-            _databaseHelper.tableInfoTable,
-            currentItem.toJson(),
-            where: 'id = ?',
-            whereArgs: [currentItem.id],
-          );
-        }
-      });
-    }
-  }
-
-  Future<void> onMoveItemDown(int currentIndex) async {
-    if (currentIndex < (list!.length - 1)) {
-      Constants.debugLog(
-          TableScreen, "move item down from $currentIndex index");
-      var db = await _databaseHelper.database;
-
-      setState(() {
-        final TableInfoModel movingItem = list!.removeAt(currentIndex);
-        list!.insert(currentIndex + 1, movingItem);
-      });
-
-      await db!.transaction((txn) async {
-        for (int i = currentIndex; i <= currentIndex + 1; i++) {
-          final TableInfoModel currentItem = list![i];
-          currentItem.sortOrderIndex = i;
-
-          await txn.update(
-            _databaseHelper.tableInfoTable,
-            currentItem.toJson(),
-            where: 'id = ?',
-            whereArgs: [currentItem.id],
-          );
-        }
-      });
-    }
   }
 }

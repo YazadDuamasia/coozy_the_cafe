@@ -16,3 +16,4 @@ export 'package:coozy_cafe/utlis/components/upper_case_text_formatter.dart';
 export 'package:coozy_cafe/utlis/components/string_image_path.dart';
 export 'package:coozy_cafe/utlis/components/wobble_animation_widget.dart';
 export 'package:coozy_cafe/utlis/components/frosted_glass_widget.dart';
+export 'package:coozy_cafe/utlis/components/menu_icons_icons.dart';

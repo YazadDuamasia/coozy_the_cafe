@@ -20,6 +20,7 @@
   "common_password_hint": "Enter your password.",
   "common_list_view_tooltip": "Switch to List View",
   "common_grid_view_tooltip": "Switch to Grid View",
+  "common_alert_title_text": "Are you sure ?",
   "login_welcome": "Welcome",
   "login_welcome_back": "Welcome Back",
   "login_did_account": "Don't have an account ?",
@@ -59,6 +60,8 @@
   "table_failed_to_added_text": "Fail to add new table info .",
   "table_deleted_successfully_text": "Select table has been deleted successfully.",
   "table_failed_to_deleted_text": "Failed to delete you select table.",
+  "color_indicator_table_label_text": "Color Indicator for Table",
+  "color_indicator_table_hint_text": "Select an unique color",
   "menu_category_appbar_title": "Menu Category",
   "add_menu_category_icon_tooltip_text": "Add a new menu category",
   "add_menu_category_appbar_text": "Add new menu category",
@@ -74,6 +77,13 @@
   "menu_sub_category_new_added_failed_successfully_text": "Error occurred during subcategory creation.",
   "menu_category_empty_title_text": "No Category been inserted",
   "menu_category_add_new_category": "Add new category",
-  "menu_category_search_no_suggestions":  "No suggestions",
-  "edit_menu_category_appbar_text":  "Edit Menu Category"
+  "menu_category_search_no_suggestions": "No suggestions",
+  "edit_menu_category_appbar_text": "Edit Menu Category",
+  "menu_sub_category_appbar_title": "All Menu Sub-Categories",
+  "menu_sub_category_under_category": "From Category:",
+  "table_color_indicator_label_text": "Color Indicator",
+  "table_screen_delete_title_txt": "Are you sure ?",
+  "table_screen_delete_subTitle_txt": "Do you really want to delete this table information? You will not be able to undo this action.",
+  "table_toast_updated_successfully": "The table's information has been alter successfully.",
+  "table_btn_add_new_table_text": "Add new table info"
 }

@@ -2,11 +2,13 @@ import 'dart:async';
 import 'dart:math' as math;
 
 import 'package:app_settings/app_settings.dart';
+import 'package:coozy_cafe/utlis/utlis.dart';
 import 'package:flutter/foundation.dart' show kDebugMode;
 import 'package:flutter/material.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:geolocator/geolocator.dart';
+import 'package:lottie/lottie.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:platform_info/platform_info.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -17,6 +19,7 @@ class Constants {
   static const String appName = "Coozy Cafe";
   static const String prefFirstTimeVistedKey = "user_first_time_app";
   static Map<String, String> hashMap = <String, String>{};
+  static String kValidHexPattern = r'^#?[0-9a-fA-F]{1,8}';
 
   Future<bool> _requestPermission(Permission permission) async {
     PermissionStatus status = await permission.status;
@@ -30,8 +33,8 @@ class Constants {
 
       case PermissionStatus.permanentlyDenied:
         try {
-          openAppSettings().then((value) => _requestPermission(permission));
-          return false;
+          return openAppSettings()
+              .then((value) async => await _requestPermission(permission));
         } catch (e) {
           Constants.debugLog(Constants,
               "Constants:_requestPermission:permanentlyDenied:Error:${e}");
@@ -40,6 +43,29 @@ class Constants {
 
       default:
         return false;
+    }
+  }
+
+  bool isFutureDate(String dateString) {
+    try {
+      DateTime? bookingDate = DateTime.tryParse(dateString)?.toUtc();
+      DateTime today = DateTime.now().toUtc();
+      return (bookingDate?.isAfter(today) ?? false) ||
+          (bookingDate?.isAtSameMomentAs(today) ?? false);
+    } catch (e) {
+      print(e);
+      return false;
+    }
+  }
+
+  bool isPastDate(String dateString) {
+    try {
+      DateTime? bookingDate = DateTime.tryParse(dateString)?.toUtc();
+      DateTime today = DateTime.now().toUtc();
+      return (bookingDate?.isAfter(today) ?? false);
+    } catch (e) {
+      print(e);
+      return false;
     }
   }
 
@@ -247,6 +273,34 @@ class Constants {
     } else {
       return randomNumberGenerator(min, max);
     }
+  }
+
+  static Future<void> showTransparentLoader(BuildContext context) async {
+    await showGeneralDialog(
+      context: context,
+      barrierDismissible: false,
+      barrierLabel: '',
+      barrierColor: Colors.transparent,
+      transitionDuration: Duration(milliseconds: 200),
+      pageBuilder: (BuildContext buildContext, Animation<double> animation,
+          Animation<double> secondaryAnimation) {
+        return Center(
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Container(
+                child: Lottie.asset(
+                  StringImagePath.loading_lottie,
+                  fit: BoxFit.scaleDown,
+                  width: MediaQuery.of(context).size.width * .65,
+                  height: MediaQuery.of(context).size.height * .5,
+                ),
+              ),
+            ],
+          ),
+        );
+      },
+    );
   }
 
   static progressDialogCustomMessage(
@@ -505,8 +559,7 @@ class Constants {
       Widget? titleIcon,
       String? title,
       required String? descriptions,
-      required Color? textColorDescriptions,
-      required List<Widget>? actions}) async {
+      required Widget? actions}) async {
     Constants.debugLog(classObject, "title:$title");
     Constants.debugLog(classObject, "descriptions:$descriptions");
     AlertDialog dialog = AlertDialog(
@@ -583,7 +636,7 @@ class Constants {
                 ),
                 Row(
                   mainAxisSize: MainAxisSize.min,
-                  mainAxisAlignment: MainAxisAlignment.center,
+                  mainAxisAlignment: MainAxisAlignment.end,
                   crossAxisAlignment: CrossAxisAlignment.center,
                   children: [
                     Expanded(
@@ -601,6 +654,7 @@ class Constants {
                     ),
                   ],
                 ),
+                actions ?? Container()
               ],
             ),
           ),
@@ -619,7 +673,6 @@ class Constants {
           ),
         ],
       ),
-      actions: actions,
     );
 
     await showDialog(
@@ -679,11 +732,16 @@ class Constants {
 
   static void showToastMsg({required String? msg, bool? isForShortDuration}) {
     Fluttertoast.showToast(
-        msg: '${msg}',
-        timeInSecForIosWeb:
-            isForShortDuration == null || isForShortDuration == true ? 3 : 5,
-        toastLength: isForShortDuration == null || isForShortDuration == true
-            ? Toast.LENGTH_SHORT
-            : Toast.LENGTH_LONG);
+      msg: '${msg}',
+      timeInSecForIosWeb:
+          isForShortDuration == null || isForShortDuration == true ? 3 : 5,
+      toastLength: isForShortDuration == null || isForShortDuration == true
+          ? Toast.LENGTH_SHORT
+          : Toast.LENGTH_LONG,
+      fontSize: 16,
+      textColor: Colors.white,
+      backgroundColor:
+          Theme.of(navigatorKey.currentContext!).colorScheme.primaryContainer,
+    );
   }
 }

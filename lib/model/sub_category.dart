@@ -1,4 +1,6 @@
-class SubCategory {
+import 'package:coozy_cafe/widgets/widgets.dart';
+
+class SubCategory extends ISuspensionBean{
   int? id;
   String? name;
   String? createdDate;
@@ -63,5 +65,10 @@ class SubCategory {
   @override
   String toString() {
     return 'SubCategory(id: $id, name: $name,  createdDate: $createdDate, categoryId: $categoryId)';
+  }
+
+  @override
+  String getSuspensionTag() {
+    return name != null && name!.isNotEmpty ? name![0].toUpperCase() : '';
   }
 }

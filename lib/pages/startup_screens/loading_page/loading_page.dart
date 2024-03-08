@@ -1,3 +1,4 @@
+import 'package:coozy_cafe/utlis/utlis.dart';
 import 'package:flutter/material.dart';
 import 'package:lottie/lottie.dart';
 
@@ -25,7 +26,7 @@ class _LoadingPageState extends State<LoadingPage> {
             children: [
               Container(
                 child: Lottie.asset(
-                  'assets/lottie/loading.json',
+                  StringImagePath.loading_lottie,
                   fit: BoxFit.scaleDown,
                   width: MediaQuery.of(context).size.width * .65,
                   height: MediaQuery.of(context).size.height * .5,

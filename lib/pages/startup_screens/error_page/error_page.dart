@@ -1,3 +1,4 @@
+import 'package:coozy_cafe/utlis/utlis.dart';
 import 'package:flutter/material.dart';
 import 'package:lottie/lottie.dart';
 
@@ -27,7 +28,7 @@ class _ErrorPageState extends State<ErrorPage> {
             children: [
               Container(
                 child: Lottie.asset(
-                  'assets/lottie/error_loader.json',
+                  StringImagePath.error_loader_lottie,
                   width: MediaQuery.of(context).size.width * .65,
                   height: MediaQuery.of(context).size.height * .55,
                   fit: BoxFit.scaleDown,

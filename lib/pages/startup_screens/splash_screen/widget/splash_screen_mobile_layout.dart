@@ -21,7 +21,7 @@ class _SplashScreenMobileLayoutState extends State<SplashScreenMobileLayout> {
   @override
   void initState() {
     appLogoLight = Image.asset(
-      AppImagesPath.appLogo,
+      AppAssetPaths.appLogo,
       fit: BoxFit.scaleDown,
       color: Colors.black,
     );

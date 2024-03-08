@@ -22,7 +22,7 @@ class _SplashScreenDesktopLayoutState extends State<SplashScreenDesktopLayout> {
   @override
   void initState() {
     appLogoLight = Image.asset(
-      AppImagesPath.appLogo,
+      AppAssetPaths.appLogo,
       fit: BoxFit.scaleDown,
       color: Colors.black,
     );

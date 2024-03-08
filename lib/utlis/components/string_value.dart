@@ -14,6 +14,7 @@ abstract class StringValue {
   static String common_submit = "common_submit";
   static String common_update = "common_update";
   static String common_search_hint_text = "common_search_hint_text";
+  static String common_alert_title_text = "common_alert_title_text";
 
   static String common_email_label = "common_email_label";
   static String common_email_hint = "common_email_hint";
@@ -67,6 +68,13 @@ abstract class StringValue {
   static String table_deleted_successfully_text =
       "table_deleted_successfully_text";
   static String table_failed_to_deleted_text = "table_failed_to_deleted_text";
+  static String color_indicator_table_label_text="color_indicator_table_label_text";
+  static String color_indicator_table_hint_text="color_indicator_table_hint_text";
+  static String table_color_indicator_label_text="table_color_indicator_label_text";
+  static String table_screen_delete_title_txt="table_screen_delete_title_txt";
+  static String table_screen_delete_subTitle_txt="table_screen_delete_subTitle_txt";
+  static String table_toast_updated_successfully="table_toast_updated_successfully";
+  static String table_btn_add_new_table_text="table_btn_add_new_table_text";
 
   //category screen
   static String menu_category_appbar_title = "menu_category_appbar_title";
@@ -102,6 +110,15 @@ abstract class StringValue {
   //edit_menu_category_screen
   static String edit_menu_category_appbar_text =
       "edit_menu_category_appbar_text";
+
+  static String menu_sub_category_appbar_title="menu_sub_category_appbar_title";
+
+  static String menu_sub_category_under_category="menu_sub_category_under_category";
+
+
+
+
+
 
 
 }

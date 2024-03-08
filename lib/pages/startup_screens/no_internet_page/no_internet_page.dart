@@ -1,3 +1,4 @@
+import 'package:coozy_cafe/utlis/utlis.dart';
 import 'package:flutter/material.dart';
 import 'package:lottie/lottie.dart';
 
@@ -42,7 +43,7 @@ class _NoInternetPageState extends State<NoInternetPage>
             children: [
               Container(
                 child: Lottie.asset(
-                  'assets/lottie/lost_connection.json',
+                  StringImagePath.lost_connection_lottie,
                   controller: _controller,
                   onLoaded: (composition) {
                     // Configure the AnimationController with the duration of the

@@ -1,10 +1,12 @@
-abstract class StringImagePath {
-  static String done_brown_color_lottie =
-      "assets/lottie/done_brown_color_lottie.json";
-  static String done_light_brown_color_lottie =
-      "assets/lottie/done_light_brown_color.json";
-  static String warming_cricle_blink_icon_lottie =
-      "assets/lottie/warming_cricle_blink_icon.json";
+ class StringImagePath {
+  static String loading_lottie = "assets/lottie/loading.json";
+  static String error_loader_lottie = "assets/lottie/error_loader.json";
+  static String lost_connection_lottie = "assets/lottie/lost_connection.json";
+
+  static String done_brown_color_lottie = "assets/lottie/done_brown_color_lottie.json";
+  static String done_light_brown_color_lottie = "assets/lottie/done_light_brown_color.json";
+  static String warming_cricle_blink_icon_lottie = "assets/lottie/warming_cricle_blink_icon.json";
+
 
   static String login_large_left_size_image = "assets/images/welcome2.jpg";
   static String sign_up_large_left_size_image1 = "assets/images/sign_up.jpg";

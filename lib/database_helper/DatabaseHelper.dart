@@ -17,13 +17,14 @@ import 'package:sqflite/sqflite.dart';
 
 class DatabaseHelper {
   static final DatabaseHelper _instance = DatabaseHelper._internal();
+  final String tableInfoTable = 'table_info';
   final String categoriesTable = 'categories';
   final String subcategoriesTable = 'subcategories';
   final String menuItemsTable = 'menu_items';
   final String menuItemVariationsTable = 'menu_item_variations';
   final String menuItemReviewsTable = 'menu_item_reviews';
   final String customersTable = 'customers';
-  final String tableInfoTable = 'table_info';
+
   final String ordersTable = 'orders';
   final String orderItemsTable = 'order_items';
   final String invoicesTable = 'invoices';
@@ -118,8 +119,7 @@ class DatabaseHelper {
   )
 ''');
     // Create the 'TableInfo' table
-    await db.execute(
-        '''CREATE TABLE $tableInfoTable ( id INTEGER PRIMARY KEY AUTOINCREMENT,  name TEXT,  sortOrderIndex INTEGER,  nosOfChairs INTEGER ) ''');
+    await db.execute('''CREATE TABLE $tableInfoTable ( id INTEGER PRIMARY KEY AUTOINCREMENT,  name TEXT, colorValue TEXT,  sortOrderIndex INTEGER,  nosOfChairs INTEGER ) ''');
     // Create the 'orders' table
     await db.execute('''
       CREATE TABLE $ordersTable (
@@ -979,12 +979,13 @@ class DatabaseHelper {
 
     // Use the INSERT statement with a subquery to automatically set sortOrderIndex
     return await db.rawInsert('''
-    INSERT INTO $tableInfoTable (name, sortOrderIndex, nosOfChairs)
-    VALUES (?, ?, ?)
+    INSERT INTO $tableInfoTable (name, sortOrderIndex, nosOfChairs, colorValue)
+    VALUES (?, ?, ?, ?)
   ''', [
       newTableInfo.name,
       newTableInfo.sortOrderIndex,
-      newTableInfo.nosOfChairs
+      newTableInfo.nosOfChairs,
+      newTableInfo.colorValue
     ]);
   }
 

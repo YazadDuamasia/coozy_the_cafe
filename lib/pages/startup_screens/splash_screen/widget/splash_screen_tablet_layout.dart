@@ -22,7 +22,7 @@ class _SplashScreenTabletLayoutState extends State<SplashScreenTabletLayout> {
   @override
   void initState() {
     appLogoLight = Image.asset(
-      AppImagesPath.appLogo,
+      AppAssetPaths.appLogo,
       fit: BoxFit.scaleDown,
       color: Colors.black,
     );

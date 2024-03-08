@@ -1,6 +1,7 @@
 class TableInfoModel {
   int? id;
   String? name;
+  String? colorValue;
   int? sortOrderIndex;
   int? nosOfChairs;
 
@@ -9,6 +10,7 @@ class TableInfoModel {
     this.name,
     this.sortOrderIndex,
     this.nosOfChairs,
+    this.colorValue,
   });
 
   factory TableInfoModel.fromJson(Map<String, dynamic> json) {
@@ -17,6 +19,7 @@ class TableInfoModel {
       name: json['name'],
       sortOrderIndex: json['sortOrderIndex'],
       nosOfChairs: json['nosOfChairs'],
+      colorValue: json['colorValue'],
     );
   }
 
@@ -26,11 +29,12 @@ class TableInfoModel {
       'name': name,
       'sortOrderIndex': sortOrderIndex,
       'nosOfChairs': nosOfChairs,
+      'colorValue': colorValue,
     }..removeWhere((key, value) => value == null);
   }
 
   @override
   String toString() {
-    return 'TableInfoModel{id: $id, name: $name, sortOrderIndex: $sortOrderIndex, nosOfChairs: $nosOfChairs}';
+    return 'TableInfoModel{id: $id, name: $name, sortOrderIndex: $sortOrderIndex, nosOfChairs: $nosOfChairs, colorValue: $colorValue}';
   }
 }

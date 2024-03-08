@@ -1,3 +1,4 @@
+import 'package:coozy_cafe/pages/main_screen/menu_all_sub_category_screen/menu_all_sub_category_screen.dart';
 import 'package:coozy_cafe/pages/main_screen/menu_category_screen/add_menu_category_screen/add_new_menu_category_screen.dart';
 import 'package:coozy_cafe/pages/main_screen/menu_category_screen/edit_menu_category/edit_menu_category_screen.dart';
 import 'package:coozy_cafe/pages/main_screen/menu_category_screen/menu_category_full_list_screen.dart';
@@ -74,6 +75,14 @@ class RouteGenerator {
           child: EditMenuCategoryScreen(
             categoryId: argument.categoryId,
           ),
+        );
+
+      case RouteName.menuAllSubCategoryScreenRoute:
+        return PageTransition(
+          type: PageTransitionType.rightToLeftWithFade,
+          settings: settings,
+          curve: Curves.easeInOut,
+          child: MenuAllSubCategoryScreen(),
         );
 
       default:
