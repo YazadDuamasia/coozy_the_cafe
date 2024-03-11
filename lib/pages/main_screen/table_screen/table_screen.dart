@@ -143,7 +143,7 @@ class _TableScreenState extends State<TableScreen>
   Widget buildGridView(List<TableInfoModel>? list) {
     if (list != null && list.isNotEmpty) {
       return ReorderableGridView.builder(
-        itemCount: list == null ? 0 : list!.length ?? 0,
+        itemCount: list == null ? 0 : list.length ?? 0,
         padding: const EdgeInsets.fromLTRB(10, 10, 10, 10),
         itemBuilder: (context, index) =>
             buildGridItem(list![index], index, list),

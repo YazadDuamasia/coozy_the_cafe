@@ -85,5 +85,8 @@
   "table_screen_delete_title_txt": "Are you sure ?",
   "table_screen_delete_subTitle_txt": "Do you really want to delete this table information? You will not be able to undo this action.",
   "table_toast_updated_successfully": "The table's information has been alter successfully.",
-  "table_btn_add_new_table_text": "Add new table info"
+  "table_btn_add_new_table_text": "Add new table info",
+  "edit_menu_category_failed_to_update_category_msg": "Failed to update the category record! We ask that you try again.",
+  "edit_menu_category_failed_to_update_sub_category_msg": "Failed to update the sub-category record! We ask that you try again.",
+  "menu_category_updated_successfully_text":  "The selected menu category has been updated successfully."
 }
