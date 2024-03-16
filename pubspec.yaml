@@ -89,6 +89,7 @@ dependencies:
   geolocator: ^11.0.0
   app_settings: ^5.1.1
   lottie: ^3.1.0
+  animated_toggle_switch: ^0.8.2
 
   sqflite: ^2.3.1
 
@@ -98,7 +99,6 @@ dependencies:
   duration_picker: ^1.1.1
   reorderable_grid_view: ^2.2.8
   scrollable_positioned_list: ^0.3.8
-
   uuid: ^4.3.3
 
   url_strategy: ^0.2.0

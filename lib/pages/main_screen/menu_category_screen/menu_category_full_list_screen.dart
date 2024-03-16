@@ -27,6 +27,17 @@ class _MenuCategoryFullListScreenState
   String? searchQuery = '';
   SearchController? searchController = SearchController();
 
+  bool positive = false;
+  final MaterialStateProperty<Icon?> thumbIcon =
+      MaterialStateProperty.resolveWith<Icon?>(
+    (Set<MaterialState> states) {
+      if (states.contains(MaterialState.selected)) {
+        return const Icon(Icons.check);
+      }
+      return const Icon(Icons.close);
+    },
+  );
+
   // TextEditingController? searchController = TextEditingController(text: "");
 
   @override
@@ -297,6 +308,7 @@ class _MenuCategoryFullListScreenState
     Category category = Category(
         id: model["id"],
         createdDate: model["createdDate"],
+        isActive: model["isActive"],
         name: model["name"]);
 
     List<dynamic>? dynamicSubCategories =
@@ -336,23 +348,97 @@ class _MenuCategoryFullListScreenState
             ),
             subtitle: Padding(
               padding: const EdgeInsets.symmetric(horizontal: 20),
-              child: PostTimeTextWidget(
-                key: UniqueKey(),
-                creationDate: category.createdDate ?? "",
-                localizedCode: AppLocalizations.getCurrentLanguageCode(context),
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                mainAxisAlignment: MainAxisAlignment.start,
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.start,
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    mainAxisSize: MainAxisSize.min,
+                    children: <Widget>[
+                      RichText(
+                        text: TextSpan(
+                          text: 'Enable Status: ',
+                          style: Theme.of(context).textTheme.bodyMedium,
+                          children: [
+                            TextSpan(
+                              text: category.isActive == 1
+                                  ? AppLocalizations.of(context)?.translate(
+                                          StringValue.common_active) ??
+                                      "Active"
+                                  : AppLocalizations.of(context)?.translate(
+                                          StringValue.common_inactive) ??
+                                      "inactive",
+                              style: Theme.of(context)
+                                  .textTheme
+                                  .bodyMedium!
+                                  .copyWith(
+                                    color: category.isActive == 1
+                                        ? Colors.green
+                                        : Colors.red,
+                                  ),
+                            ),
+                          ],
+                        ),
+                      ),
+                    ],
+                  ),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.start,
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      Expanded(
+                        child: PostTimeTextWidget(
+                          key: UniqueKey(),
+                          creationDate: category.createdDate ?? "",
+                          localizedCode:
+                              AppLocalizations.getCurrentLanguageCode(context),
+                        ),
+                      ),
+                    ],
+                  ),
+                ],
               ),
             ),
-            trailing: IconButton(
-              icon: Icon(MdiIcons.circleEditOutline),
-              onPressed: () async {
-                Constants.debugLog(MenuCategoryFullListScreen,
-                    "menuCategoryExpansionTileItem:IconButton:Index:${index}");
-                navigationRoutes
-                    .navigateToUpdateMenuCategoryScreen(
-                        categoryId: category.id)
-                    .then((value) async =>
-                        context.read<MenuCategoryFullListCubit>().loadData());
-              },
+            trailing: Row(
+              crossAxisAlignment: CrossAxisAlignment.center,
+              mainAxisAlignment: MainAxisAlignment.start,
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                SizedBox(
+                  height: 30,
+                  child: FittedBox(
+                    fit: BoxFit.fill,
+                    child: Switch.adaptive(
+                      value: category.isActive == 1 ? true : false,
+                      onChanged: (bool isEnable) async {
+                        BlocProvider.of<MenuCategoryFullListCubit>(context)
+                            .handleIsEnableCategory(
+                                context, category, isEnable);
+
+                      },
+                      materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
+                      thumbIcon: thumbIcon,
+                    ),
+                  ),
+                ),
+                IconButton(
+                  icon: Icon(MdiIcons.circleEditOutline),
+                  onPressed: () async {
+                    Constants.debugLog(MenuCategoryFullListScreen,
+                        "menuCategoryExpansionTileItem:IconButton:Index:${index}");
+                    navigationRoutes
+                        .navigateToUpdateMenuCategoryScreen(
+                            categoryId: category.id)
+                        .then((value) async => context
+                            .read<MenuCategoryFullListCubit>()
+                            .loadData());
+                  },
+                ),
+              ],
             ),
             controller: state.expandedTitleControllerList![index],
             children: <Widget>[
@@ -428,8 +514,10 @@ class _MenuCategoryFullListScreenState
 
           if (category['subCategories'] != null) {
             return (category['subCategories'] as List).any((subCategory) =>
-                subCategory['name'].toString().toLowerCase() .contains(
-                keyword.toLowerCase()));
+                subCategory['name']
+                    .toString()
+                    .toLowerCase()
+                    .contains(keyword.toLowerCase()));
           }
 
           return false;

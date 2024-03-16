@@ -133,9 +133,11 @@ class EditMenuCategoryBloc
         "_handleSubmitSubCategoryData:SubCategory:${listController!.isEmpty ? null : json.encode(list)}");
 
     Category category = Category(
-        id: initialCategory!.id,
-        name: categoryName,
-        createdDate: DateTime.now().toUtc().toIso8601String());
+      id: initialCategory!.id,
+      name: categoryName,
+      isActive: initialCategory!.isActive,
+      createdDate: DateTime.now().toUtc().toIso8601String(),
+    );
 
     Constants.debugLog(EditMenuCategoryBloc,
         "_handleSubmitSubCategoryData:initialCategory:${category.toJson()}");
@@ -148,9 +150,10 @@ class EditMenuCategoryBloc
       Constants.debugLog(EditMenuCategoryBloc,
           "_handleSubmitSubCategoryData:updateCategory:Error:${error}");
       Constants.showToastMsg(
-          msg: AppLocalizations.of(event.context)?.translate(StringValue
-                  .edit_menu_category_failed_to_update_category_msg) ??
-              "Failed to update the category record! We ask that you try again.");
+        msg: AppLocalizations.of(event.context)?.translate(
+                StringValue.edit_menu_category_failed_to_update_category_msg) ??
+            "Failed to update the category record! Please try again.",
+      );
       return;
     }
 
@@ -172,7 +175,7 @@ class EditMenuCategoryBloc
       Constants.showToastMsg(
           msg: AppLocalizations.of(event.context)?.translate(StringValue
                   .edit_menu_category_failed_to_update_sub_category_msg) ??
-              "Failed to update the sub-category record! We ask that you try again.");
+              "Failed to update the sub-category record! Please try again.");
       return;
     }
     Navigator.pop(event.context);

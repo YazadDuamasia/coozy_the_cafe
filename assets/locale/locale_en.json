@@ -12,6 +12,8 @@
   "common_update": "Update",
   "common_save": "Save",
   "common_edit": "Edit",
+  "common_active": "Active",
+  "common_inactive": "Inactive",
   "common_search_hint_text": "Search...",
   "common_load_more": "Load More",
   "common_email_label": "Email",
@@ -86,7 +88,16 @@
   "table_screen_delete_subTitle_txt": "Do you really want to delete this table information? You will not be able to undo this action.",
   "table_toast_updated_successfully": "The table's information has been alter successfully.",
   "table_btn_add_new_table_text": "Add new table info",
-  "edit_menu_category_failed_to_update_category_msg": "Failed to update the category record! We ask that you try again.",
-  "edit_menu_category_failed_to_update_sub_category_msg": "Failed to update the sub-category record! We ask that you try again.",
-  "menu_category_updated_successfully_text":  "The selected menu category has been updated successfully."
+  "edit_menu_category_failed_to_update_category_msg": "Failed to update the category record! Please try again.",
+  "edit_menu_category_failed_to_update_sub_category_msg": "Failed to update the sub-category record! Please try again.",
+  "menu_category_updated_successfully_text": "The selected menu category has been updated successfully.",
+  "menu_subCategory_update_successfully": "The selected sub-category has been updated successfully.",
+  "menu_subCategory_update_failed": "Failed to updated the selected sub-category.Please Try again.",
+  "menu_category_full_list_enable_to_update_category_msg": "Your selected Category has been activated, and you are able to accept orders for it.",
+  "menu_category_full_list_unable_to_update_category_msg": "Your selected Category has been deactivated, and you will no longer receive orders for it.",
+  "menu_category_full_list_failed_to_update_category_msg": "Failed to enable your selected category! Please try again.",
+
+  "menu_category_full_list_enable_to_update_sub_category_msg": "Your selected Category has been activated, and you are able to accept orders for it.",
+  "menu_category_full_list_unable_to_update_sub_category_msg": "Your selected Category has been deactivated, and you will no longer receive orders for it.",
+  "menu_category_full_list_failed_to_update_sub_category_msg": "Failed to enable your selected category! Please try again."
 }

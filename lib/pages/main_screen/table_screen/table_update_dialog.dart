@@ -112,7 +112,7 @@ class _TableUpdateDialogState extends State<TableUpdateDialog> {
                     ),
                     inputFormatters: [FilteringTextInputFormatter.digitsOnly],
                     onFieldSubmitted: (String value) {
-                      FocusScope.of(context).requestFocus(FocusNode());
+                      FocusScope.of(context).unfocus();
                     },
                   ),
                 ),
@@ -181,7 +181,7 @@ class _TableUpdateDialogState extends State<TableUpdateDialog> {
                     ],
                     maxLength: 9,
                     onFieldSubmitted: (String value) {
-                      FocusScope.of(context).requestFocus(FocusNode());
+                      FocusScope.of(context).unfocus();
                     },
                   ),
                 ),

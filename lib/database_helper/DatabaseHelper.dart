@@ -59,6 +59,7 @@ class DatabaseHelper {
       CREATE TABLE $categoriesTable(
         id INTEGER PRIMARY KEY AUTOINCREMENT,
         name TEXT,
+        isActive INTEGER,
         createdDate TEXT
       )
     ''');
@@ -70,6 +71,7 @@ class DatabaseHelper {
     name TEXT,
     createdDate TEXT,
     categoryId INTEGER,
+    isActive INTEGER,
     FOREIGN KEY(categoryId) REFERENCES $categoriesTable(id)
     )
     ''');

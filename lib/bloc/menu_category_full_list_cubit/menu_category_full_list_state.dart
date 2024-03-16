@@ -21,6 +21,17 @@ class LoadedState extends MenuCategoryFullListState {
       required this.expansionTileKeys,
       this.expandedTitleControllerList});
 
+  LoadedState copyWith({
+    Map<String, dynamic>? data,
+    List<GlobalKey?>? expansionTileKeys,
+    List<ExpansionTileController>? expandedTitleControllerList,
+  }) {
+    return LoadedState(
+      data: data ?? this.data,
+      expansionTileKeys: expansionTileKeys ?? this.expansionTileKeys,
+      expandedTitleControllerList: expandedTitleControllerList ?? this.expandedTitleControllerList,
+    );
+  }
   @override
   List<Object> get props => [data!];
 }

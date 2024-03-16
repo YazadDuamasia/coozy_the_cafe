@@ -12,8 +12,9 @@ class InitialLoadingDataEvent extends MenuSubCategoryEvent {}
 class EditSubCategoryEvent extends MenuSubCategoryEvent {
   final SubCategory editedSubCategory;
   final int? index;
+  BuildContext context;
 
-  const EditSubCategoryEvent(this.editedSubCategory, this.index);
+  EditSubCategoryEvent(this.editedSubCategory, this.index, this.context);
 
   @override
   List<Object> get props => [editedSubCategory, index!];

@@ -1,12 +1,14 @@
 import 'package:coozy_cafe/widgets/widgets.dart';
 
-class SubCategory extends ISuspensionBean{
+class SubCategory extends ISuspensionBean {
   int? id;
   String? name;
   String? createdDate;
   int? categoryId;
+  int? isActive;
 
-  SubCategory({this.id, this.name, this.createdDate, this.categoryId});
+  SubCategory(
+      {this.id, this.name, this.createdDate, this.categoryId, this.isActive});
 
   factory SubCategory.fromJson(Map<String, dynamic> json) {
     return SubCategory(
@@ -14,6 +16,7 @@ class SubCategory extends ISuspensionBean{
       name: json['name'],
       createdDate: json['createdDate'],
       categoryId: json['categoryId'],
+      isActive: json['isActive'],
     );
   }
 
@@ -22,7 +25,8 @@ class SubCategory extends ISuspensionBean{
       'id': id,
       'name': name,
       'createdDate': createdDate,
-      'categoryId': categoryId
+      'categoryId': categoryId,
+      'isActive': isActive ?? 1
     }..removeWhere((key, value) => value == null);
   }
 
@@ -31,12 +35,14 @@ class SubCategory extends ISuspensionBean{
     String? name,
     String? createdDate,
     int? categoryId,
+    int? isActive,
   }) {
     return SubCategory(
       id: id ?? this.id,
       name: name ?? this.name,
       createdDate: createdDate ?? this.createdDate,
       categoryId: categoryId ?? this.categoryId,
+      isActive: isActive ?? this.isActive ?? 1,
     );
   }
 
@@ -63,12 +69,12 @@ class SubCategory extends ISuspensionBean{
   }
 
   @override
-  String toString() {
-    return 'SubCategory(id: $id, name: $name,  createdDate: $createdDate, categoryId: $categoryId)';
+  String getSuspensionTag() {
+    return name != null && name!.isNotEmpty ? name![0].toUpperCase() : '';
   }
 
   @override
-  String getSuspensionTag() {
-    return name != null && name!.isNotEmpty ? name![0].toUpperCase() : '';
+  String toString() {
+    return 'SubCategory{id: $id, name: $name, createdDate: $createdDate, categoryId: $categoryId, isActive: $isActive}';
   }
 }

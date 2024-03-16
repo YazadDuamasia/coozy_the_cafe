@@ -75,6 +75,7 @@ class AddMenuCategoryCubit extends Cubit<AddMenuCategoryState> {
     RestaurantRepository repository = RestaurantRepository();
     final Category newCategory = Category(
       name: menuCategoryNameController.text ?? "",
+      isActive: 1,
       createdDate: DateTime.now().toUtc().toIso8601String(),
     );
     Constants.debugLog(

@@ -180,7 +180,7 @@ class _NewTableDialogState extends State<NewTableDialog> {
                       ],
                       maxLength: 9,
                       onFieldSubmitted: (String value) {
-                        FocusScope.of(context).requestFocus(FocusNode());
+                        FocusScope.of(context).unfocus();
                       },
                     ),
                   ),

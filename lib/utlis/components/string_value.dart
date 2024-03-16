@@ -129,4 +129,17 @@ abstract class StringValue {
       "edit_menu_category_failed_to_update_sub_category_msg";
 
   static String menu_category_updated_successfully_text="menu_category_updated_successfully_text";
+
+  static String menu_subCategory_update_successfully="menu_subCategory_update_successfully";
+  static String menu_subCategory_update_failed="menu_subCategory_update_failed";
+  static String menu_category_full_list_enable_to_update_category_msg="menu_category_full_list_enable_to_update_category_msg";
+  static String menu_category_full_list_unable_to_update_category_msg="menu_category_full_list_unable_to_update_category_msg";
+  static String menu_category_full_list_failed_to_update_category_msg="menu_category_full_list_failed_to_update_category_msg";
+  static String menu_category_full_list_enable_to_update_sub_category_msg="menu_category_full_list_enable_to_update_sub_category_msg";
+  static String menu_category_full_list_unable_to_update_sub_category_msg="menu_category_full_list_unable_to_update_sub_category_msg";
+  static String menu_category_full_list_failed_to_update_sub_category_msg="menu_category_full_list_failed_to_update_sub_category_msg";
+
+
+  static String common_active="common_active";
+  static String common_inactive="common_inactive";
 }

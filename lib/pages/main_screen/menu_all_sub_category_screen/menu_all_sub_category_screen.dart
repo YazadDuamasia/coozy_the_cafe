@@ -2,6 +2,7 @@ import 'package:coozy_cafe/AppLocalization.dart';
 import 'package:coozy_cafe/bloc/bloc.dart';
 import 'package:coozy_cafe/model/category.dart';
 import 'package:coozy_cafe/model/sub_category.dart';
+import 'package:coozy_cafe/pages/main_screen/menu_all_sub_category_screen/menu_all_sub_category_update_dialog.dart';
 import 'package:coozy_cafe/pages/pages.dart';
 import 'package:coozy_cafe/utlis/utlis.dart';
 import 'package:coozy_cafe/widgets/widgets.dart';
@@ -16,18 +17,18 @@ class MenuAllSubCategoryScreen extends StatefulWidget {
 }
 
 class _MenuAllSubCategoryScreenState extends State<MenuAllSubCategoryScreen> {
-  late MenuSubCategoryBloc _menuSubCategoryBloc;
-
   @override
   void initState() {
     super.initState();
-    _menuSubCategoryBloc = MenuSubCategoryBloc();
-    _menuSubCategoryBloc.add(InitialLoadingDataEvent());
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      BlocProvider.of<MenuSubCategoryBloc>(context)
+          .add(InitialLoadingDataEvent());
+    });
   }
 
   @override
   void dispose() {
-    _menuSubCategoryBloc.close();
+    context.read<MenuSubCategoryBloc>().close();
     super.dispose();
   }
 
@@ -37,8 +38,8 @@ class _MenuAllSubCategoryScreenState extends State<MenuAllSubCategoryScreen> {
       appBar: AppBar(
         title: const Text('All Subcategories'),
       ),
-      body: BlocBuilder<MenuSubCategoryBloc, MenuSubCategoryState>(
-        bloc: _menuSubCategoryBloc,
+      body: BlocConsumer<MenuSubCategoryBloc, MenuSubCategoryState>(
+        listener: (context, state) {},
         builder: (context, state) {
           if (state is MenuSubCategoryLoadingState) {
             return const LoadingPage();
@@ -59,7 +60,9 @@ class _MenuAllSubCategoryScreenState extends State<MenuAllSubCategoryScreen> {
                 "MenuSubCategoryErrorState:error:${state.errorMessage}");
             return ErrorPage(
               onPressedRetryButton: () async {
-                _menuSubCategoryBloc.add(InitialLoadingDataEvent());
+                context
+                    .read<MenuSubCategoryBloc>()
+                    .add(InitialLoadingDataEvent());
               },
             );
           } else {
@@ -81,7 +84,9 @@ class _MenuAllSubCategoryScreenState extends State<MenuAllSubCategoryScreen> {
               padding: const EdgeInsets.all(10.0),
               child: TextField(
                 onChanged: (query) async {
-                  _menuSubCategoryBloc.add(SearchSubCategoryEvent(query));
+                  context
+                      .read<MenuSubCategoryBloc>()
+                      .add(SearchSubCategoryEvent(query));
                 },
                 decoration: const InputDecoration(
                   hintText: 'Search Subcategories',
@@ -314,14 +319,14 @@ class _MenuAllSubCategoryScreenState extends State<MenuAllSubCategoryScreen> {
                             style: Theme.of(context).textTheme.bodyMedium,
                             children: [
                               TextSpan(
-                                text: subCategory.isShowSuspension
+                                text: subCategory.isActive==0
                                     ? 'Inactive'
                                     : 'Active',
                                 style: Theme.of(context)
                                     .textTheme
                                     .bodyMedium!
                                     .copyWith(
-                                      color: subCategory.isShowSuspension
+                                      color: subCategory.isActive==0
                                           ? Colors.red
                                           : Colors.green,
                                     ),
@@ -362,7 +367,21 @@ class _MenuAllSubCategoryScreenState extends State<MenuAllSubCategoryScreen> {
                   color: Colors.white,
                   size: 20,
                 ),
-                onPressed: () {},
+                onPressed: () async {
+                  await showDialog(
+                    context: context,
+                    barrierDismissible: false,
+                    builder: (context) {
+                      return MenuAllSubCategoryUpdateDialog(
+                        currentSubCategory: subCategory,
+                        onUpdate: (newModel) async {
+                          context.read<MenuSubCategoryBloc>().add(
+                              EditSubCategoryEvent(newModel, index, context));
+                        },
+                      );
+                    },
+                  );
+                },
               ),
             )
           ],
@@ -373,6 +392,6 @@ class _MenuAllSubCategoryScreenState extends State<MenuAllSubCategoryScreen> {
 
   Future<void> handleNewCategory() async {
     var res = await navigationRoutes.navigateToAddNewMenuCategoryScreen();
-    _menuSubCategoryBloc.add(InitialLoadingDataEvent());
+    context.read<MenuSubCategoryBloc>().add(InitialLoadingDataEvent());
   }
 }

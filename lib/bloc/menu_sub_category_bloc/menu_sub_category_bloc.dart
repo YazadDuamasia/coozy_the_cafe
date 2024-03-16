@@ -1,10 +1,14 @@
 import 'dart:async';
 
 import 'package:collection/collection.dart';
+import 'package:coozy_cafe/AppLocalization.dart';
 import 'package:coozy_cafe/model/category.dart';
 import 'package:coozy_cafe/model/sub_category.dart';
 import 'package:coozy_cafe/repositories/components/restaurant_repository.dart';
+import 'package:coozy_cafe/utlis/components/constants.dart';
+import 'package:coozy_cafe/utlis/components/string_value.dart';
 import 'package:equatable/equatable.dart';
+import 'package:flutter/src/widgets/framework.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:rxdart/rxdart.dart';
 
@@ -69,12 +73,6 @@ class MenuSubCategoryBloc
           indexBarData: indexBarData ?? [],
           isSearchActive: false,
           allCategory: allCategory ?? []));
-      //
-      // emit(MenuSubCategoryLoadedState(
-      //     subCategories: [],
-      //     indexBarData: [],
-      //     isSearchActive: false,
-      //     allCategory: []));
     } catch (e) {
       emit(MenuSubCategoryErrorState('An error occurred: $e'));
     }
@@ -84,20 +82,39 @@ class MenuSubCategoryBloc
     EditSubCategoryEvent event,
     Emitter<MenuSubCategoryState> emit,
   ) async {
+    var currentState = state as MenuSubCategoryLoadedState;
+    bool? isSearchActive = currentState.isSearchActive;
     try {
-      allSubCategories!
-          .firstWhere(
-              (subCategory) => subCategory.id == event.editedSubCategory.id)
-          .name = event.editedSubCategory.name;
-      var currentState = state as MenuSubCategoryLoadedState;
-      bool? isSearchActive = currentState.isSearchActive;
+      int? result = await RestaurantRepository()
+          .updateSubcategory(event.editedSubCategory);
+      if (result != null && result > 0) {
+        Constants.showToastMsg(
+            msg: AppLocalizations.of(event.context)?.translate(
+                    StringValue.menu_subCategory_update_successfully) ??
+                "The selected sub-category has been updated successfully.");
+
+        int? index = allSubCategories!.indexWhere((subCategory) => subCategory.id == event.editedSubCategory.id);
+        // Update the element at the found index
+        allSubCategories![index] = event.editedSubCategory;
+
+        emit(MenuSubCategoryLoadedState(
+            subCategories: allSubCategories ?? [],
+            indexBarData: indexBarData ?? [],
+            isSearchActive: isSearchActive,
+            allCategory: allCategory ?? []));
+      } else {
+        Constants.showToastMsg(
+            msg: AppLocalizations.of(event.context)
+                    ?.translate(StringValue.menu_subCategory_update_failed) ??
+                "Failed to updated the selected sub-category. Please Try again.");
+      }
+    } catch (e) {
+      Constants.showToastMsg(msg: AppLocalizations.of(event.context)?.translate(StringValue.common_error_msg) ?? "Something when wrong. Please try again.");
       emit(MenuSubCategoryLoadedState(
           subCategories: allSubCategories ?? [],
           indexBarData: indexBarData ?? [],
           isSearchActive: isSearchActive,
           allCategory: allCategory ?? []));
-    } catch (e) {
-      emit(MenuSubCategoryErrorState('Failed to edit sub-category: $e'));
     }
   }
 
