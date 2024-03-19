@@ -1994,4 +1994,6 @@ class DatabaseHelper {
         0, (sum, review) => sum + (review.rating == null ? 0 : review.rating!));
     return totalRating / reviews.length;
   }
+
+
 }
