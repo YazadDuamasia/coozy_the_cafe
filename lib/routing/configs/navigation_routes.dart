@@ -41,10 +41,17 @@ class NavigationRoutes {
     }
   }
 
+  navigateToLoginRoute() {
+    navigatorKey.currentState!
+        .pushNamedAndRemoveUntil(RouteName.loginRoute, (route) => false);
+  }
+
   navigateToHomePage() {
     navigatorKey.currentState!
         .pushNamedAndRemoveUntil(RouteName.homeScreenRoute, (route) => false);
   }
+
+
 
   navigateToTableInfoScreen() {
     navigatorKey.currentState!.pushNamed(RouteName.tableInfoScreenRoute);
@@ -77,4 +84,27 @@ class NavigationRoutes {
     return await navigatorKey.currentState!
         .pushNamed(RouteName.menuAllSubCategoryScreenRoute);
   }
+
+  navigateToLoginPage({isFirstTime}) {
+    navigatorKey.currentState!.pushNamedAndRemoveUntil(
+      RouteName.loginRoute,
+      arguments: isFirstTime,
+          (route) => false,
+    );
+  }
+
+  navigateToSignUpPage() {
+    navigatorKey.currentState!.pushNamed(RouteName.registrationRoute);
+  }
+  navigateToOtpVerificationPage({String? arguments}) {
+    navigatorKey.currentState!.pushNamed(RouteName.otpVerificationRoute,arguments: arguments);
+  }
+  navigateToSignInViaPhoneNumberPage({bool? isForLogin}) {
+    navigatorKey.currentState!.pushNamed(RouteName.loginViaPhoneNumberRoute,arguments: isForLogin??false);
+  }
+
+  void navigateToRecipesScreen() {
+    navigatorKey.currentState!.pushNamed(RouteName.recipesListScreenRoute);
+  }
+
 }

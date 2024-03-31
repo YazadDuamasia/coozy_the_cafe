@@ -3,8 +3,12 @@ import 'package:coozy_cafe/pages/main_screen/menu_category_screen/add_menu_categ
 import 'package:coozy_cafe/pages/main_screen/menu_category_screen/edit_menu_category/edit_menu_category_screen.dart';
 import 'package:coozy_cafe/pages/main_screen/menu_category_screen/menu_category_full_list_screen.dart';
 import 'package:coozy_cafe/pages/main_screen/menu_screen/menu_full_list_screen.dart';
+import 'package:coozy_cafe/pages/main_screen/recipes_list_screen/recipes_list_screen.dart';
 import 'package:coozy_cafe/pages/main_screen/table_screen/table_screen.dart';
 import 'package:coozy_cafe/pages/pages.dart';
+import 'package:coozy_cafe/pages/startup_screens/login_screen/login_screen.dart';
+import 'package:coozy_cafe/pages/startup_screens/login_via_phone_number_page/login_via_phone_number_page.dart';
+import 'package:coozy_cafe/pages/startup_screens/otp_verification_page/otp_verification_page.dart';
 import 'package:coozy_cafe/routing/routs.dart';
 import 'package:coozy_cafe/utlis/utlis.dart';
 import 'package:flutter/material.dart';
@@ -20,6 +24,7 @@ class RouteGenerator {
   static Route<dynamic> generateRoute(RouteSettings settings) {
     var args = settings.arguments;
     Constants.debugLog(RouteGenerator, "Route Name:${settings.name}");
+
     Constants.debugLog(RouteGenerator, "Route arguments:$args");
     switch (settings.name) {
       case '/':
@@ -27,6 +32,67 @@ class RouteGenerator {
 
       case RouteName.splashRoute:
         return MaterialPageRoute<dynamic>(builder: (_) => const SplashScreen());
+
+      case RouteName.loginViaPhoneNumberRoute:
+        bool? isForLogin = args as bool;
+        return PageTransition(
+          type: PageTransitionType.rightToLeftWithFade,
+          settings: settings,
+          curve: Curves.easeInOut,
+          child: LoginViaPhoneNumberPage(
+            isUseForLogin: isForLogin,
+          ),
+        );
+
+      case RouteName.otpScreenRoute:
+        bool? isForLogin = args as bool;
+        return PageTransition(
+          type: PageTransitionType.rightToLeftWithFade,
+          settings: settings,
+          curve: Curves.easeInOut,
+          child: LoginViaPhoneNumberPage(
+            isUseForLogin: isForLogin,
+          ),
+        );
+
+      case RouteName.otpScreenRoute:
+        bool? isForLogin = args as bool;
+        return PageTransition(
+          type: PageTransitionType.rightToLeftWithFade,
+          settings: settings,
+          curve: Curves.easeInOut,
+          child: LoginViaPhoneNumberPage(
+            isUseForLogin: isForLogin,
+          ),
+        );
+
+      case RouteName.otpVerificationRoute:
+        OtpVerificationScreenArgument otpVerificationScreenArgument =
+            otpVerificationScreenArgumentFromMap(args.toString());
+        return PageTransition(
+          type: PageTransitionType.rightToLeftWithFade,
+          settings: settings,
+          curve: Curves.easeInOut,
+          child: OtpVerificationPage(
+            phoneNumber: otpVerificationScreenArgument.phoneNumber,
+            otpNumber: otpVerificationScreenArgument.otpNumber,
+            appSignature: otpVerificationScreenArgument.appSignature,
+            customerID: otpVerificationScreenArgument.customerID,
+            isForgetPassword: otpVerificationScreenArgument.isForgetPassword,
+            isLoginScreen: otpVerificationScreenArgument.isLoginScreen,
+          ),
+        );
+
+      case RouteName.loginRoute:
+        return PageTransition(
+          type: PageTransitionType.rightToLeftWithFade,
+          settings: settings,
+          curve: Curves.easeInOut,
+          child: LoginScreen(
+            isFirstTime: args as bool?,
+          ),
+        );
+
 
       case RouteName.homeScreenRoute:
         return PageTransition(
@@ -83,6 +149,13 @@ class RouteGenerator {
           settings: settings,
           curve: Curves.easeInOut,
           child: MenuAllSubCategoryScreen(),
+        );
+        case RouteName.recipesListScreenRoute:
+        return PageTransition(
+          type: PageTransitionType.rightToLeftWithFade,
+          settings: settings,
+          curve: Curves.easeInOut,
+          child: RecipesListScreen(),
         );
 
       default:

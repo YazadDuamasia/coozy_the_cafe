@@ -458,7 +458,7 @@ class _TableScreenState extends State<TableScreen>
           crossAxisAlignment: CrossAxisAlignment.center,
           children: [
             Icon(MenuIcons.round_table,
-                color: Theme.of(context).primaryColor, size: 100),
+                color: Theme.of(context).primaryColor, size: 110),
           ],
         ),
         const SizedBox(
@@ -487,6 +487,7 @@ class _TableScreenState extends State<TableScreen>
                 addNewTableInfo();
               },
               style: ElevatedButton.styleFrom(
+                textStyle: Theme.of(context).textTheme.bodyLarge,
                 padding: const EdgeInsets.only(
                   top: 10,
                   bottom: 10,

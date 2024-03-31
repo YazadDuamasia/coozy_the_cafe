@@ -24,7 +24,7 @@ if (flutterVersionName == null) {
 
 android {
     namespace "com.dumasia.coozy_cafe"
-    compileSdk 33
+    compileSdk 34
     ndkVersion flutter.ndkVersion
 
     compileOptions {
@@ -45,8 +45,8 @@ android {
     defaultConfig {
         // TODO: Specify your own unique Application ID (https://developer.android.com/studio/build/application-id.html).
         applicationId "com.dumasia.coozy_cafe"
-        minSdk 23
-        targetSdk 33
+        minSdk 24
+        targetSdk 34
         // You can update the following values to match your application needs.
         // For more information, see: https://docs.flutter.dev/deployment/android#reviewing-the-gradle-build-configuration.
         multiDexEnabled true
@@ -56,12 +56,14 @@ android {
 
     buildTypes {
         release {
+            minifyEnabled true
+            shrinkResources true
             // TODO: Add your own signing config for the release build.
             // Signing with the debug keys for now, so `flutter run --release` works.
             signingConfig signingConfigs.debug
         }
     }
-    buildToolsVersion '33.0.0'
+    buildToolsVersion '34.0.0'
 }
 
 flutter {
@@ -69,7 +71,7 @@ flutter {
 }
 
 dependencies {
-    coreLibraryDesugaring 'com.android.tools:desugar_jdk_libs:1.2.2'
-    implementation 'androidx.window:window:1.0.0'
-    implementation 'androidx.window:window-java:1.0.0'
+    coreLibraryDesugaring 'com.android.tools:desugar_jdk_libs:2.0.4'
+    implementation 'androidx.window:window:1.2.0'
+    implementation 'androidx.window:window-java:1.2.0'
 }

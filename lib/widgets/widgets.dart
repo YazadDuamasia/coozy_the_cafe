@@ -24,6 +24,8 @@ export 'package:coozy_cafe/widgets/azlistview/src/suspension_view.dart';
 export 'package:coozy_cafe/widgets/azlistview/src/az_listview.dart';
 
 
+export 'package:coozy_cafe/widgets/pager/pager.dart';
+
 
 
 

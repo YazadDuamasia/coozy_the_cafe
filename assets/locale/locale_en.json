@@ -96,8 +96,16 @@
   "menu_category_full_list_enable_to_update_category_msg": "Your selected Category has been activated, and you are able to accept orders for it.",
   "menu_category_full_list_unable_to_update_category_msg": "Your selected Category has been deactivated, and you will no longer receive orders for it.",
   "menu_category_full_list_failed_to_update_category_msg": "Failed to enable your selected category! Please try again.",
-
   "menu_category_full_list_enable_to_update_sub_category_msg": "Your selected Category has been activated, and you are able to accept orders for it.",
   "menu_category_full_list_unable_to_update_sub_category_msg": "Your selected Category has been deactivated, and you will no longer receive orders for it.",
-  "menu_category_full_list_failed_to_update_sub_category_msg": "Failed to enable your selected category! Please try again."
+  "menu_category_full_list_failed_to_update_sub_category_msg": "Failed to enable your selected category! Please try again.",
+  "common_email_validator_error_msg": "Please enter a valid email.",
+  "common_password_validator_error_empty_msg": "Please enter password.",
+  "common_password_validator_error_msg": "Enter valid password",
+  "common_phoneNumber_label": "Phone number",
+  "common_common_phoneNumber_hint": "Enter your phone number.",
+  "common_common_phoneNumber_validator_error_empty_msg": "Please enter your phone number.",
+  "common_common_phoneNumber_validator_error_msg": "Please enter a valid phone number.",
+  "recipes_list_screen_no_data_title_msg": "No data founded",
+  "recipes_list_screen_no_data_sub_title_msg": "Please try again with different filter choices to pick from."
 }

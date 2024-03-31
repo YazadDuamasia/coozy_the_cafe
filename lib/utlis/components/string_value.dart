@@ -15,11 +15,25 @@ abstract class StringValue {
   static String common_update = "common_update";
   static String common_search_hint_text = "common_search_hint_text";
   static String common_alert_title_text = "common_alert_title_text";
-
+  static String common_active = "common_active";
+  static String common_inactive = "common_inactive";
+  static String common_common_phoneNumber_validator_error_msg =
+      "common_common_phoneNumber_validator_error_msg";
   static String common_email_label = "common_email_label";
   static String common_email_hint = "common_email_hint";
   static String common_password_label = "common_password_label";
   static String common_password_hint = "common_password_hint";
+  static String common_email_validator_error_msg =
+      "common_email_validator_error_msg";
+  static String common_password_validator_error_empty_msg =
+      "common_password_validator_error_empty_msg";
+  static String common_password_validator_error_msg =
+      "common_password_validator_error_msg";
+  static String common_phoneNumber_label = "common_phoneNumber_label";
+  static String common_common_phoneNumber_hint =
+      "common_common_phoneNumber_hint";
+  static String common_common_phoneNumber_validator_error_empty_msg =
+      "common_common_phoneNumber_validator_error_empty_msg";
 
   //LoginScreen
   static String login_welcome = "login_welcome";
@@ -41,7 +55,6 @@ abstract class StringValue {
       "login_password_validator_error_msg";
   static String login_captcha_label = "login_captcha_label";
   static String login_captcha_hint = "login_captcha_hint";
-
   static String login_inactive_btn = "login_inactive_btn";
   static String login_loading_inactive_btn = "login_loading_inactive_btn";
   static String login_via_facebook_tooltip = "login_via_facebook_tooltip";
@@ -115,31 +128,35 @@ abstract class StringValue {
   //edit_menu_category_screen
   static String edit_menu_category_appbar_text =
       "edit_menu_category_appbar_text";
-
   static String menu_sub_category_appbar_title =
       "menu_sub_category_appbar_title";
-
   static String menu_sub_category_under_category =
       "menu_sub_category_under_category";
-
   static String edit_menu_category_failed_to_update_category_msg =
       "edit_menu_category_failed_to_update_category_msg";
-
   static String edit_menu_category_failed_to_update_sub_category_msg =
       "edit_menu_category_failed_to_update_sub_category_msg";
+  static String menu_category_updated_successfully_text =
+      "menu_category_updated_successfully_text";
+  static String menu_subCategory_update_successfully =
+      "menu_subCategory_update_successfully";
+  static String menu_subCategory_update_failed =
+      "menu_subCategory_update_failed";
+  static String menu_category_full_list_enable_to_update_category_msg =
+      "menu_category_full_list_enable_to_update_category_msg";
+  static String menu_category_full_list_unable_to_update_category_msg =
+      "menu_category_full_list_unable_to_update_category_msg";
+  static String menu_category_full_list_failed_to_update_category_msg =
+      "menu_category_full_list_failed_to_update_category_msg";
+  static String menu_category_full_list_enable_to_update_sub_category_msg =
+      "menu_category_full_list_enable_to_update_sub_category_msg";
+  static String menu_category_full_list_unable_to_update_sub_category_msg =
+      "menu_category_full_list_unable_to_update_sub_category_msg";
+  static String menu_category_full_list_failed_to_update_sub_category_msg =
+      "menu_category_full_list_failed_to_update_sub_category_msg";
 
-  static String menu_category_updated_successfully_text="menu_category_updated_successfully_text";
+  static String recipes_list_screen_no_data_title_msg =
+      "recipes_list_screen_no_data_title_msg";
 
-  static String menu_subCategory_update_successfully="menu_subCategory_update_successfully";
-  static String menu_subCategory_update_failed="menu_subCategory_update_failed";
-  static String menu_category_full_list_enable_to_update_category_msg="menu_category_full_list_enable_to_update_category_msg";
-  static String menu_category_full_list_unable_to_update_category_msg="menu_category_full_list_unable_to_update_category_msg";
-  static String menu_category_full_list_failed_to_update_category_msg="menu_category_full_list_failed_to_update_category_msg";
-  static String menu_category_full_list_enable_to_update_sub_category_msg="menu_category_full_list_enable_to_update_sub_category_msg";
-  static String menu_category_full_list_unable_to_update_sub_category_msg="menu_category_full_list_unable_to_update_sub_category_msg";
-  static String menu_category_full_list_failed_to_update_sub_category_msg="menu_category_full_list_failed_to_update_sub_category_msg";
-
-
-  static String common_active="common_active";
-  static String common_inactive="common_inactive";
+  static String recipes_list_screen_no_data_sub_title_msg="recipes_list_screen_no_data_sub_title_msg";
 }

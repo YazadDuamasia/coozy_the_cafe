@@ -80,6 +80,16 @@ class HomeScreenDrawer extends StatelessWidget {
             },
           ),
           ListTile(
+            leading: Icon(
+              MenuIcons.recipe_cooking_book,
+            ),
+            title: const Text('Recipes'),
+            onTap: () {
+              Navigator.pop(context);
+              navigationRoutes.navigateToRecipesScreen();
+            },
+          ),
+          ListTile(
             leading: const Icon(Icons.settings),
             title: const Text('Settings'),
             onTap: () {

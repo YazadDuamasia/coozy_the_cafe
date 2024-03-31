@@ -18,8 +18,8 @@ class EmptyCategoryFullListBody extends StatelessWidget {
           mainAxisAlignment: MainAxisAlignment.center,
           crossAxisAlignment: CrossAxisAlignment.center,
           children: [
-            Icon(MenuIcons.check_list,
-                color: Theme.of(context).primaryColor, size: 100),
+            Icon(MenuIcons.menu_placeholder,
+                color: Theme.of(context).primaryColor, size: 110),
             const SizedBox(
               height: 10,
             ),
@@ -48,6 +48,7 @@ class EmptyCategoryFullListBody extends StatelessWidget {
                 ElevatedButton(
                   onPressed: onAddNewCategory,
                   style: ElevatedButton.styleFrom(
+                    textStyle: Theme.of(context).textTheme.bodyLarge,
                     padding: const EdgeInsets.only(
                       top: 10,
                       bottom: 10,
@@ -56,6 +57,7 @@ class EmptyCategoryFullListBody extends StatelessWidget {
                     ),
                     elevation: 5,
                   ),
+
                   child: Text(
                       AppLocalizations.of(context)?.translate(
                           StringValue.menu_category_add_new_category) ??

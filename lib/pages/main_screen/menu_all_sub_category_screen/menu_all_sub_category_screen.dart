@@ -119,8 +119,8 @@ class _MenuAllSubCategoryScreenState extends State<MenuAllSubCategoryScreen> {
                     mainAxisAlignment: MainAxisAlignment.center,
                     crossAxisAlignment: CrossAxisAlignment.center,
                     children: [
-                      Icon(MenuIcons.check_list,
-                          color: Theme.of(context).primaryColor, size: 100),
+                      Icon(MenuIcons.menu_empty_paceholder,
+                          color: Theme.of(context).primaryColor, size: 110),
                     ],
                   ),
                   const SizedBox(
@@ -134,7 +134,7 @@ class _MenuAllSubCategoryScreenState extends State<MenuAllSubCategoryScreen> {
                       Expanded(
                         child: Text("No data has been inserted.",
                             textAlign: TextAlign.center,
-                            style: Theme.of(context).textTheme.titleLarge),
+                            style: Theme.of(context).textTheme.bodyLarge),
                       ),
                     ],
                   ),
@@ -152,7 +152,7 @@ class _MenuAllSubCategoryScreenState extends State<MenuAllSubCategoryScreen> {
                           child: Text(
                               "Please insert sub-category from menu category screen or you can add it from below button.",
                               textAlign: TextAlign.center,
-                              style: Theme.of(context).textTheme.titleMedium),
+                              style: Theme.of(context).textTheme.bodyMedium),
                         ),
                       ),
                     ],
@@ -168,6 +168,7 @@ class _MenuAllSubCategoryScreenState extends State<MenuAllSubCategoryScreen> {
                           await handleNewCategory();
                         },
                         style: ElevatedButton.styleFrom(
+                          textStyle: Theme.of(context).textTheme.bodyLarge,
                           padding: const EdgeInsets.only(
                             top: 10,
                             bottom: 10,

@@ -3,6 +3,9 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 
 List<BlocProvider> blocProviders = [
   BlocProvider<ThemeCubit>(create: (context) => ThemeCubit()..loadTheme()),
+  BlocProvider<LoginScreenCubit>(create: (context) => LoginScreenCubit()),
+  BlocProvider<LoginWithPhoneCubit>(create: (context) => LoginWithPhoneCubit()),
+  BlocProvider<SignUpCubit>(create: (context) => SignUpCubit()),
   BlocProvider<HomePageBottomNavCubit>(
       create: (context) => HomePageBottomNavCubit()),
   BlocProvider<TableScreenBloc>(create: (context) => TableScreenBloc()),
@@ -18,5 +21,7 @@ List<BlocProvider> blocProviders = [
   ),
   BlocProvider<EditMenuCategoryBloc>(
     create: (context) => EditMenuCategoryBloc(),
+  ),  BlocProvider<RecipesFullListCubit>(
+    create: (context) => RecipesFullListCubit(),
   ),
 ];

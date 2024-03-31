@@ -3,8 +3,11 @@ import 'package:coozy_cafe/model/category.dart';
 import 'package:coozy_cafe/model/customer.dart';
 import 'package:coozy_cafe/model/menu_item.dart';
 import 'package:coozy_cafe/model/order_model.dart';
+import 'package:coozy_cafe/model/recipe_model.dart';
 import 'package:coozy_cafe/model/sub_category.dart';
 import 'package:coozy_cafe/model/table_info_model.dart';
+import 'package:coozy_cafe/utlis/components/constants.dart';
+import 'package:flutter/services.dart';
 
 class RestaurantRepository {
   final DatabaseHelper _databaseHelper = DatabaseHelper();
@@ -12,6 +15,16 @@ class RestaurantRepository {
 // Category CRUD operations
 
 // Adds a new category to the database.
+  Future<List<RecipeModel>?> recipeList() async {
+    final jsonContent = await rootBundle
+        .loadString("assets/data/recipes_for_indian_food_dataset.json");
+    final recipeModel = recipeModelFromJson(jsonContent);
+    Constants.debugLog(RestaurantRepository,"recipeModel:length:${recipeModel.length}");
+    return recipeModel;
+
+
+  }
+
   Future<int?> addCategory(Category category) async {
     return await _databaseHelper.addCategory(category);
   }
@@ -81,17 +94,16 @@ class RestaurantRepository {
       required List<String?>? subCategoriesList}) async {
     // Create a list of SubCategory instances from the list of strings
     List<SubCategory> subCategories = subCategoriesList?.map((name) {
-      return SubCategory(
-        name: name,
-        createdDate: DateTime.now().toUtc().toIso8601String(),
-        categoryId: categoryId,
-      );
-    }).toList() ?? [];
+          return SubCategory(
+            name: name,
+            createdDate: DateTime.now().toUtc().toIso8601String(),
+            categoryId: categoryId,
+          );
+        }).toList() ??
+        [];
 
     return await _databaseHelper.insertSubCategoriesForCategoryId(
-      categoryId: categoryId,
-        subCategories: subCategories
-    );
+        categoryId: categoryId, subCategories: subCategories);
   }
 
   // TableInfo CRUD operations
