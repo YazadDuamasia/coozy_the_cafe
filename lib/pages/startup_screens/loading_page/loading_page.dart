@@ -29,7 +29,7 @@ class _LoadingPageState extends State<LoadingPage> {
                   StringImagePath.loading_lottie,
                   fit: BoxFit.scaleDown,
                   width: MediaQuery.of(context).size.width * .65,
-                  height: MediaQuery.of(context).size.height * .5,
+                  // height: MediaQuery.of(context).size.height * .5,
                 ),
               ),
             ],

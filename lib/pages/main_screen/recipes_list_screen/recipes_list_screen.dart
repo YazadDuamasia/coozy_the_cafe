@@ -17,9 +17,12 @@ class RecipesListScreen extends StatefulWidget {
 }
 
 class _RecipesListScreenState extends State<RecipesListScreen> {
+  TextEditingController _searchController = TextEditingController(text: "");
+
   @override
   void initState() {
     super.initState();
+    _searchController = TextEditingController(text: "");
     WidgetsBinding.instance.addPostFrameCallback((_) {
       BlocProvider.of<RecipesFullListCubit>(context).loadData();
     });
@@ -81,9 +84,40 @@ class _RecipesListScreenState extends State<RecipesListScreen> {
                       width: MediaQuery.of(context).size.width,
                       child: Row(
                         mainAxisAlignment: MainAxisAlignment.end,
-                        crossAxisAlignment: CrossAxisAlignment.start,
+                        crossAxisAlignment: CrossAxisAlignment.center,
                         mainAxisSize: MainAxisSize.min,
                         children: <Widget>[
+                          Expanded(
+                            child: Padding(
+                              padding: const EdgeInsets.only(
+                                  left: 5.0, right: 10, top: 5, bottom: 5),
+                              child: TextField(
+                                controller: _searchController,
+                                decoration: InputDecoration(
+                                  hintText: 'Recipe name',
+                                  contentPadding: EdgeInsets.zero,
+                                  prefixIcon: const Icon(Icons.search),
+                                  suffixIcon: _searchController.text.isNotEmpty
+                                      ? IconButton(
+                                          icon: const Icon(Icons.clear),
+                                          onPressed: () {
+                                            _searchController.clear();
+                                            BlocProvider.of<
+                                                        RecipesFullListCubit>(
+                                                    context)
+                                                .searchRecipes('');
+                                          },
+                                        )
+                                      : null,
+                                ),
+                                onChanged: (value) => setState(() {}),
+                                onSubmitted: (value) async =>
+                                    BlocProvider.of<RecipesFullListCubit>(
+                                            context)
+                                        .searchRecipes(value),
+                              ),
+                            ),
+                          ),
                           ElevatedButton.icon(
                             onPressed: () async {
                               await showFilterView();
@@ -105,21 +139,97 @@ class _RecipesListScreenState extends State<RecipesListScreen> {
                     ),
                     Expanded(
                       child: Visibility(
-                        visible:
-                            (state.totalPages == null || state.totalPages == 0)
-                                ? false
-                                : true,
-                        child: Scrollbar(
-                          thumbVisibility: true,
-                          child: CustomScrollView(
-                            physics: const ClampingScrollPhysics(
-                              parent: AlwaysScrollableScrollPhysics(),
+                        visible: state.isInternalLoading == null ||
+                                state.isInternalLoading == false
+                            ? true
+                            : false,
+                        replacement: const Column(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          crossAxisAlignment: CrossAxisAlignment.center,
+                          mainAxisSize: MainAxisSize.max,
+                          children: [
+                            Expanded(child: LoadingPage()),
+                          ],
+                        ),
+                        child: Visibility(
+                          visible: (state.totalPages == null ||
+                                  state.totalPages == 0)
+                              ? false
+                              : true,
+                          replacement: Center(
+                            child: Column(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              crossAxisAlignment: CrossAxisAlignment.center,
+                              mainAxisSize: MainAxisSize.min,
+                              children: [
+                                Icon(
+                                  MenuIcons.recipe,
+                                  size: 100,
+                                  color: Theme.of(context).colorScheme.primary,
+                                ),
+                                const SizedBox(height: 20),
+                                Padding(
+                                  padding: const EdgeInsets.symmetric(
+                                      horizontal: 20),
+                                  child: Row(
+                                    mainAxisAlignment: MainAxisAlignment.center,
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.center,
+                                    mainAxisSize: MainAxisSize.min,
+                                    children: <Widget>[
+                                      Expanded(
+                                        child: Text(
+                                          AppLocalizations.of(context)
+                                                  ?.translate(StringValue
+                                                      .recipes_list_screen_no_data_title_msg) ??
+                                              "No data founded",
+                                          textAlign: TextAlign.center,
+                                          style: Theme.of(context)
+                                              .textTheme
+                                              .titleMedium,
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                ),
+                                const SizedBox(height: 5),
+                                Padding(
+                                  padding: const EdgeInsets.symmetric(
+                                      horizontal: 20),
+                                  child: Row(
+                                    mainAxisAlignment: MainAxisAlignment.start,
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.start,
+                                    mainAxisSize: MainAxisSize.min,
+                                    children: <Widget>[
+                                      Expanded(
+                                        child: Text(
+                                          AppLocalizations.of(context)
+                                                  ?.translate(StringValue
+                                                      .recipes_list_screen_no_data_sub_title_msg) ??
+                                              "Please try again with different filter choices to pick from.",
+                                          textAlign: TextAlign.center,
+                                          style: Theme.of(context)
+                                              .textTheme
+                                              .titleSmall,
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                ),
+                              ],
                             ),
-                            shrinkWrap: true,
-                            slivers: [
-                              SliverPadding(
-                                padding: const EdgeInsets.only(top: 5),
-                                sliver: SliverList(
+                          ),
+                          child: Scrollbar(
+                            thumbVisibility: true,
+                            radius: const Radius.circular(10.0),
+                            child: CustomScrollView(
+                              physics: const ClampingScrollPhysics(
+                                parent: AlwaysScrollableScrollPhysics(),
+                              ),
+                              shrinkWrap: true,
+                              slivers: [
+                                SliverList(
                                   delegate: SliverChildBuilderDelegate(
                                       (context, index) {
                                     RecipeModel model =
@@ -136,64 +246,8 @@ class _RecipesListScreenState extends State<RecipesListScreen> {
                                       childCount:
                                           state.paginatedData?.length ?? 0),
                                 ),
-                              ),
-                            ],
-                          ),
-                        ),
-                        replacement: Center(
-                          child: Column(
-                            mainAxisAlignment: MainAxisAlignment.center,
-                            crossAxisAlignment: CrossAxisAlignment.center,
-                            mainAxisSize: MainAxisSize.min,
-                            children: [
-                              Icon(
-                                MenuIcons.recipe,
-                                size: 100,
-                                color: Theme.of(context).colorScheme.primary,
-                              ),
-                              const SizedBox(height: 20),
-                              Padding(
-                                padding: const EdgeInsets.symmetric(horizontal: 20),
-                                child: Row(
-                                  mainAxisAlignment: MainAxisAlignment.center,
-                                  crossAxisAlignment: CrossAxisAlignment.center,
-                                  mainAxisSize: MainAxisSize.min,
-                                  children: <Widget>[
-                                    Expanded(
-                                      child: Text(
-                                        AppLocalizations.of(context)?.translate(
-                                                StringValue
-                                                    .recipes_list_screen_no_data_title_msg) ??
-                                            "No data founded",
-                                        textAlign: TextAlign.center,
-                                        style: Theme.of(context).textTheme.titleMedium,
-                                      ),
-                                    ),
-                                  ],
-                                ),
-                              ),
-                              const SizedBox(height: 5),
-                               Padding(
-                                 padding: const EdgeInsets.symmetric(horizontal: 20),
-                                 child: Row(
-                                  mainAxisAlignment: MainAxisAlignment.start,
-                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                  mainAxisSize: MainAxisSize.min,
-                                  children: <Widget>[
-                                    Expanded(
-                                      child: Text(
-                                        AppLocalizations.of(context)?.translate(
-                                            StringValue
-                                                .recipes_list_screen_no_data_sub_title_msg) ??
-                                            "Please try again with different filter choices to pick from.",
-                                        textAlign: TextAlign.center,
-                                        style: Theme.of(context).textTheme.titleSmall,
-                                      ),
-                                    ),
-                                  ],
-                                                               ),
-                               ),
-                            ],
+                              ],
+                            ),
                           ),
                         ),
                       ),
@@ -210,10 +264,10 @@ class _RecipesListScreenState extends State<RecipesListScreen> {
                               currentItemsPerPage: state.itemsPerPage ?? 1,
                               currentPage: state.currentPage == null
                                   ? 1
-                                  : state.currentPage,
+                                  : state.currentPage!,
                               totalPages: state.totalPages == null
                                   ? 1
-                                  : state.totalPages,
+                                  : state.totalPages!,
                               numberButtonSelectedColor:
                                   Theme.of(context).colorScheme.primary,
                               numberTextSelectedColor: Colors.white,
@@ -336,6 +390,32 @@ class _RecipesListScreenState extends State<RecipesListScreen> {
                     )
                   ],
                 ),
+              ),
+            ),
+            Padding(
+              padding: const EdgeInsets.only(top: 5),
+              child: Row(
+                mainAxisSize: MainAxisSize.min,
+                mainAxisAlignment: MainAxisAlignment.start,
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Expanded(
+                    child: RichText(
+                      text: TextSpan(
+                        text: 'Servings: ',
+                        style: Theme.of(context)
+                            .textTheme
+                            .bodyMedium!
+                            .copyWith(fontWeight: FontWeight.w700),
+                        children: [
+                          TextSpan(
+                              text: model.recipeServings.toString() ?? "",
+                              style: Theme.of(context).textTheme.bodyMedium!),
+                        ],
+                      ),
+                    ),
+                  ),
+                ],
               ),
             ),
             Padding(
@@ -535,6 +615,28 @@ class _RecipesListScreenState extends State<RecipesListScreen> {
                     'diet'),
                 title: 'Diet',
                 filterKey: 'diet',
+              ),
+              FilterListModel(
+                filterOptions: context
+                        .read<RecipesFullListCubit>()
+                        .cookingTimeFilterOptionsList ??
+                    [],
+                previousApplied: _getPreviousAppliedFilters(
+                    context.read<RecipesFullListCubit>().appliedFilterList,
+                    'cooking_time'),
+                title: 'Cooking Time',
+                filterKey: 'cooking_time',
+              ),
+              FilterListModel(
+                filterOptions: context
+                        .read<RecipesFullListCubit>()
+                        .totalCookingTimeFilterOptionsList ??
+                    [],
+                previousApplied: _getPreviousAppliedFilters(
+                    context.read<RecipesFullListCubit>().appliedFilterList,
+                    'total_cooking_time'),
+                title: 'Total cooking time',
+                filterKey: 'total_cooking_time',
               ),
             ],
           ),

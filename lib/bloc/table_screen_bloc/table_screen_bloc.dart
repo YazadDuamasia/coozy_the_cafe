@@ -184,7 +184,7 @@ class TableScreenBloc extends Bloc<TableScreenEvent, TableScreenState> {
         tableList!.removeAt(event.oldIndex); // Assign the value of movingItem
     tableList!.insert(event.newIndex, movingItem);
 
-    emit(TableScreenLoadedState(isGridView: isGridView, list: tableList));
+
     try {
       await db!.transaction((txn) async {
         // Update sortOrderIndex for affected items
@@ -201,6 +201,7 @@ class TableScreenBloc extends Bloc<TableScreenEvent, TableScreenState> {
           );
         }
       });
+      emit(TableScreenLoadedState(isGridView: isGridView, list: tableList));
     } catch (error) {
       Constants.debugLog(
           TableScreenBloc, "_handleOnReOrderTableInfo:Error occurred: $error");

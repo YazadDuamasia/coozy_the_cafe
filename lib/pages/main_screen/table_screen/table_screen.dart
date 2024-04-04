@@ -143,6 +143,7 @@ class _TableScreenState extends State<TableScreen>
   Widget buildGridView(List<TableInfoModel>? list) {
     if (list != null && list.isNotEmpty) {
       return ReorderableGridView.builder(
+        key: UniqueKey(),
         itemCount: list == null ? 0 : list.length ?? 0,
         padding: const EdgeInsets.fromLTRB(10, 10, 10, 10),
         itemBuilder: (context, index) =>
@@ -153,10 +154,13 @@ class _TableScreenState extends State<TableScreen>
         addAutomaticKeepAlives: false,
         addRepaintBoundaries: true,
         onReorder: (oldIndex, newIndex) async {
-          BlocProvider.of<TableScreenBloc>(context).add(
-            onReOrderTableInfoEvent(
-                oldIndex: oldIndex, newIndex: newIndex, context: context),
-          );
+          setState(() {
+            BlocProvider.of<TableScreenBloc>(context).add(
+              onReOrderTableInfoEvent(
+                  oldIndex: oldIndex, newIndex: newIndex, context: context),
+            );
+          });
+
         },
         placeholderBuilder: (dragIndex, dropIndex, dragWidget) {
           return Container(
@@ -280,15 +284,19 @@ class _TableScreenState extends State<TableScreen>
   Widget buildListView(List<TableInfoModel>? list) {
     if (list != null && list.isNotEmpty) {
       return ReorderableListView.builder(
+        key: UniqueKey(),
         itemCount: list == null ? 0 : list!.length ?? 0,
         padding: const EdgeInsets.fromLTRB(10, 10, 10, 10),
         itemBuilder: (context, index) =>
             buildListItem(list![index], index, list),
         onReorder: (oldIndex, newIndex) async {
-          BlocProvider.of<TableScreenBloc>(context).add(
-            onReOrderTableInfoEvent(
-                oldIndex: oldIndex, newIndex: newIndex, context: context),
-          );
+          setState(() {
+            BlocProvider.of<TableScreenBloc>(context).add(
+              onReOrderTableInfoEvent(
+                  oldIndex: oldIndex, newIndex: newIndex, context: context),
+            );
+          });
+
         },
         proxyDecorator: (child, index, animation) {
           return AnimatedBuilder(
@@ -564,7 +572,7 @@ class _TableScreenState extends State<TableScreen>
   void onUpdateModel(TableInfoModel model) async {
     Constants.debugLog(
         TableScreen, "updateTableInfo:model:${model.toString()}");
-    BlocProvider.of<TableScreenBloc>(context).add(
+   BlocProvider.of<TableScreenBloc>(context).add(
       UpdateTableInfoEvent(
         context: context,
         updatedTableInfo: model,

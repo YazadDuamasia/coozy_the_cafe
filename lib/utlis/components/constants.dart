@@ -2,6 +2,7 @@ import 'dart:async';
 import 'dart:math' as math;
 
 import 'package:app_settings/app_settings.dart';
+import 'package:coozy_cafe/model/translator_language/translator_language.dart';
 import 'package:coozy_cafe/utlis/utlis.dart';
 import 'package:flutter/foundation.dart' show kDebugMode;
 import 'package:flutter/material.dart';
@@ -553,7 +554,6 @@ class Constants {
     );
   }
 
-
   static void customTimerPopUpDialogMessage({
     required Type? classObject,
     required bool? isLoading,
@@ -624,12 +624,12 @@ class Constants {
                                     .textTheme
                                     .titleMedium!
                                     .copyWith(
-                                  color: Theme.of(context).brightness ==
-                                      Brightness.light
-                                      ? Colors.white
-                                      : null,
-                                  fontWeight: FontWeight.w600,
-                                ),
+                                      color: Theme.of(context).brightness ==
+                                              Brightness.light
+                                          ? Colors.white
+                                          : null,
+                                      fontWeight: FontWeight.w600,
+                                    ),
                               ),
                             ),
                           ),
@@ -647,12 +647,12 @@ class Constants {
                       child: Text(
                         descriptions ?? "",
                         style: Theme.of(context).textTheme.subtitle2!.copyWith(
-                          color: Theme.of(context).brightness ==
-                              Brightness.light
-                              ? Colors.white
-                              : null,
-                          fontWeight: FontWeight.w700,
-                        ),
+                              color: Theme.of(context).brightness ==
+                                      Brightness.light
+                                  ? Colors.white
+                                  : null,
+                              fontWeight: FontWeight.w700,
+                            ),
                         textAlign: TextAlign.center,
                       ),
                     ),
@@ -691,7 +691,7 @@ class Constants {
         builder: (BuildContext context) {
           couter = Timer(
             showForHowDuration ?? const Duration(seconds: 40),
-                () async {
+            () async {
               if ((couter?.isActive ?? false) == true) {
                 couter?.cancel();
               }
@@ -895,4 +895,8 @@ class Constants {
           Theme.of(navigatorKey.currentContext!).colorScheme.primaryContainer,
     );
   }
+
+  static List<TranslatorLanguageModel> languages = jsonLanguagesData
+      .map((data) => TranslatorLanguageModel.fromJson(data))
+      .toList();
 }

@@ -108,6 +108,7 @@ dependencies:
 
   url_strategy: ^0.2.0
   timeago: ^3.6.1
+  translator : ^1.0.0
 
 dependency_overrides:
   web: ^0.5.1
