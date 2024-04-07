@@ -1,8 +1,10 @@
+import 'package:coozy_cafe/model/recipe_model.dart';
 import 'package:coozy_cafe/pages/main_screen/menu_all_sub_category_screen/menu_all_sub_category_screen.dart';
 import 'package:coozy_cafe/pages/main_screen/menu_category_screen/add_menu_category_screen/add_new_menu_category_screen.dart';
 import 'package:coozy_cafe/pages/main_screen/menu_category_screen/edit_menu_category/edit_menu_category_screen.dart';
 import 'package:coozy_cafe/pages/main_screen/menu_category_screen/menu_category_full_list_screen.dart';
 import 'package:coozy_cafe/pages/main_screen/menu_screen/menu_full_list_screen.dart';
+import 'package:coozy_cafe/pages/main_screen/recipes_info_screen/recipes_info_screen.dart';
 import 'package:coozy_cafe/pages/main_screen/recipes_list_screen/recipes_list_screen.dart';
 import 'package:coozy_cafe/pages/main_screen/table_screen/table_screen.dart';
 import 'package:coozy_cafe/pages/pages.dart';
@@ -93,7 +95,6 @@ class RouteGenerator {
           ),
         );
 
-
       case RouteName.homeScreenRoute:
         return PageTransition(
           type: PageTransitionType.rightToLeftWithFade,
@@ -150,12 +151,19 @@ class RouteGenerator {
           curve: Curves.easeInOut,
           child: MenuAllSubCategoryScreen(),
         );
-        case RouteName.recipesListScreenRoute:
+      case RouteName.recipesListScreenRoute:
         return PageTransition(
           type: PageTransitionType.rightToLeftWithFade,
           settings: settings,
           curve: Curves.easeInOut,
           child: RecipesListScreen(),
+        );
+      case RouteName.recipesInfoScreenRoute:
+        return PageTransition(
+          type: PageTransitionType.rightToLeftWithFade,
+          settings: settings,
+          curve: Curves.easeInOut,
+          child: RecipesInfoScreen(model: args as RecipeModel),
         );
 
       default:

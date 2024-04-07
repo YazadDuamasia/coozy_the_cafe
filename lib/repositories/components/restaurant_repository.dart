@@ -16,17 +16,32 @@ class RestaurantRepository {
 
 // Adds a new category to the database.
   Future<List<RecipeModel>?> recipeList() async {
-    final jsonContent = await rootBundle
-        .loadString("assets/data/recipes_for_indian_food_dataset.json");
-    final recipeModel = recipeModelFromJson(jsonContent);
-    Constants.debugLog(RestaurantRepository,"recipeModel:length:${recipeModel.length}");
-    return recipeModel;
+    bool? isFirstTime = await Constants.isFirstTime("recipeList");
 
+    if (isFirstTime == true) {
+      final jsonContent = await rootBundle
+          .loadString("assets/data/recipes_for_indian_food_dataset.json");
+      final recipeModel = recipeModelFromJson(jsonContent);
+      Constants.debugLog(
+          RestaurantRepository, "recipeModel:length:${recipeModel.length}");
+      await _databaseHelper.insertRecipes(recipeModel);
+      Constants.debugLog(RestaurantRepository, "insertRecipes:Done");
+      return recipeModel;
+    } else {
+      return await _databaseHelper.getRecipes();
+    }
+  }
 
+  Future<List<RecipeModel>?> getBookmarkedRecipes() async {
+    return await _databaseHelper.getBookmarkedRecipes();
   }
 
   Future<int?> addCategory(Category category) async {
     return await _databaseHelper.addCategory(category);
+  }
+
+  Future<int?> updateRecipe(RecipeModel recipeModel) async {
+    return await _databaseHelper.updateRecipe(recipeModel);
   }
 
 // Retrieves a list of all categories from the database.

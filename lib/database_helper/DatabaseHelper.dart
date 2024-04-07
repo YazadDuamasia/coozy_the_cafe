@@ -8,6 +8,7 @@ import 'package:coozy_cafe/model/menu_item.dart';
 import 'package:coozy_cafe/model/menu_item_review.dart';
 import 'package:coozy_cafe/model/order_item.dart';
 import 'package:coozy_cafe/model/order_model.dart';
+import 'package:coozy_cafe/model/recipe_model.dart';
 import 'package:coozy_cafe/model/sub_category.dart';
 import 'package:coozy_cafe/model/table_info_model.dart';
 import 'package:coozy_cafe/utlis/utlis.dart';
@@ -29,6 +30,7 @@ class DatabaseHelper {
   final String orderItemsTable = 'order_items';
   final String invoicesTable = 'invoices';
   final String paymentModeTable = 'payment_modes';
+  final String recipeModelTable = 'recipes';
 
   factory DatabaseHelper() => _instance;
 
@@ -121,7 +123,8 @@ class DatabaseHelper {
   )
 ''');
     // Create the 'TableInfo' table
-    await db.execute('''CREATE TABLE $tableInfoTable ( id INTEGER PRIMARY KEY AUTOINCREMENT,  name TEXT, colorValue TEXT,  sortOrderIndex INTEGER,  nosOfChairs INTEGER ) ''');
+    await db.execute(
+        '''CREATE TABLE $tableInfoTable ( id INTEGER PRIMARY KEY AUTOINCREMENT,  name TEXT, colorValue TEXT,  sortOrderIndex INTEGER,  nosOfChairs INTEGER ) ''');
     // Create the 'orders' table
     await db.execute('''
       CREATE TABLE $ordersTable (
@@ -209,6 +212,112 @@ class DatabaseHelper {
     FOREIGN KEY (paymentModeId) REFERENCES $paymentModeTable (id)
   )
 ''');
+
+    await db.execute('''
+      CREATE TABLE $recipeModelTable(
+        recipe_id INTEGER PRIMARY KEY AUTOINCREMENT,
+        id INTEGER,
+        recipe_name TEXT,
+        translated_recipe_name TEXT,
+        recipe_ingredients TEXT,
+        recipe_translated_ingredients TEXT,
+        recipe_preparation_time_in_mins INTEGER,
+        recipe_cooking_time_in_mins INTEGER,
+        recipe_total_time_in_mins INTEGER,
+        recipe_servings INTEGER,
+        recipe_cuisine TEXT,
+        recipe_course TEXT,
+        recipe_diet TEXT,
+        recipe_instructions TEXT,
+        recipe_translated_instructions TEXT,
+        recipe_reference_url TEXT,
+        isBookmark INTEGER
+      )
+    ''');
+  }
+
+  Future<void> insertRecipes(List<RecipeModel> recipes) async {
+    final db = await database;
+    const batchSize = 100; // Adjust batch size as needed
+
+    for (var i = 0; i < recipes.length; i += batchSize) {
+      var batch = db!.batch();
+      final chunk = recipes.sublist(i, i + batchSize > recipes.length ? recipes.length : i + batchSize);
+
+      for (var recipe in chunk) {
+        final data = recipe.toJson();
+        // Constants.debugLog(DatabaseHelper, "insertRecipes:data:$data");
+        batch.insert(recipeModelTable, data);
+      }
+
+      await batch.commit(noResult: true);
+    }
+  }
+
+  Future<int?> updateRecipe(RecipeModel recipe) async {
+    final db = await database;
+
+    int? rowsAffected = await db!.update(
+      recipeModelTable,
+      recipe.toJson(),
+      where: 'recipe_id = ?',
+      whereArgs: [recipe.id],
+    );
+    return rowsAffected;
+  }
+
+  Future<List<RecipeModel>> getRecipes() async {
+    final db = await database;
+    final List<Map<String, dynamic>> maps = await db!.query(recipeModelTable);
+    return List.generate(maps.length, (i) {
+      return RecipeModel(
+        recipeID: maps[i]['recipe_id'],
+        id: maps[i]['id'],
+        recipeName: maps[i]['recipe_name'],
+        translatedRecipeName: maps[i]['translated_recipe_name'],
+        recipeIngredients: maps[i]['recipe_ingredients'],
+        recipeTranslatedIngredients: maps[i]['recipe_translated_ingredients'],
+        recipePreparationTimeInMins: maps[i]['recipe_preparation_time_in_mins'],
+        recipeCookingTimeInMins: maps[i]['recipe_cooking_time_in_mins'],
+        recipeTotalTimeInMins: maps[i]['recipe_total_time_in_mins'],
+        recipeServings: maps[i]['recipe_servings'],
+        recipeCuisine: maps[i]['recipe_cuisine'],
+        recipeCourse: maps[i]['recipe_course'],
+        recipeDiet: maps[i]['recipe_diet'],
+        recipeInstructions: maps[i]['recipe_instructions'],
+        recipeTranslatedInstructions: maps[i]['recipe_translated_instructions'],
+        recipeReferenceUrl: maps[i]['recipe_reference_url'],
+        isBookmark: maps[i]['isBookmark'] == 1, // Convert INTEGER to boolean
+      );
+    });
+  }
+
+  Future<List<RecipeModel>> getBookmarkedRecipes() async {
+    final db = await database;
+    final List<Map<String, dynamic>> maps = await db!.query(recipeModelTable,
+        where: 'isBookmark = ?',
+        whereArgs: [1]); // Filter where isBookmark column equals 1
+    return List.generate(maps.length, (i) {
+      return RecipeModel(
+        recipeID: maps[i]['recipe_id'],
+        id: maps[i]['id'],
+        recipeName: maps[i]['recipe_name'],
+        translatedRecipeName: maps[i]['translatedRecipeName'],
+        recipeIngredients: maps[i]['recipeIngredients'],
+        recipeTranslatedIngredients: maps[i]['recipeTranslatedIngredients'],
+        recipePreparationTimeInMins: maps[i]['recipePreparationTimeInMins'],
+        recipeCookingTimeInMins: maps[i]['recipeCookingTimeInMins'],
+        recipeTotalTimeInMins: maps[i]['recipeTotalTimeInMins'],
+        recipeServings: maps[i]['recipeServings'],
+        recipeCuisine: maps[i]['recipeCuisine'],
+        recipeCourse: maps[i]['recipeCourse'],
+        recipeDiet: maps[i]['recipeDiet'],
+        recipeInstructions: maps[i]['recipeInstructions'],
+        recipeTranslatedInstructions: maps[i]['recipeTranslatedInstructions'],
+        recipeReferenceUrl: maps[i]['recipeReferenceUrl'],
+        isBookmark: maps[i]['isBookmark'] == 1,
+      );
+    });
   }
 
   // Method to backup the database with the current date
@@ -1994,6 +2103,4 @@ class DatabaseHelper {
         0, (sum, review) => sum + (review.rating == null ? 0 : review.rating!));
     return totalRating / reviews.length;
   }
-
-
 }

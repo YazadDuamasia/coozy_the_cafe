@@ -20,4 +20,5 @@ class RouteName {
       "/menuAllSubCategoryScreen";
 
   static const String recipesListScreenRoute="/RecipesListScreen";
+  static const String recipesInfoScreenRoute="/RecipesInfoScreen";
 }

@@ -4,6 +4,7 @@ import 'dart:math' as math;
 import 'package:app_settings/app_settings.dart';
 import 'package:coozy_cafe/model/translator_language/translator_language.dart';
 import 'package:coozy_cafe/utlis/utlis.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/foundation.dart' show kDebugMode;
 import 'package:flutter/material.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
@@ -282,7 +283,7 @@ class Constants {
       barrierDismissible: false,
       barrierLabel: '',
       barrierColor: Colors.transparent,
-      transitionDuration: Duration(milliseconds: 200),
+      transitionDuration: const Duration(milliseconds: 200),
       pageBuilder: (BuildContext buildContext, Animation<double> animation,
           Animation<double> secondaryAnimation) {
         return Center(
@@ -899,4 +900,34 @@ class Constants {
   static List<TranslatorLanguageModel> languages = jsonLanguagesData
       .map((data) => TranslatorLanguageModel.fromJson(data))
       .toList();
+
+  static void showLoadingDialog(BuildContext context) {
+    showDialog(
+      context: context,
+      barrierDismissible: false, // Prevents dismissing dialog on outside tap
+      builder: (BuildContext context) {
+        return AlertDialog(
+          contentPadding: const EdgeInsets.all(10),
+          content: Padding(
+            padding: const EdgeInsets.all(10.0),
+            child: Row(
+              crossAxisAlignment: CrossAxisAlignment.center,
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                CupertinoActivityIndicator(
+                    animating: true,
+                    color: Theme.of(context).primaryColor,
+                    radius: 15),
+                const SizedBox(width: 16), // Space between indicator and text
+                Text(
+                  "Please wait...",
+                  style: Theme.of(context).textTheme.bodyMedium,
+                ), // Text indicating loading
+              ],
+            ),
+          ),
+        );
+      },
+    );
+  }
 }

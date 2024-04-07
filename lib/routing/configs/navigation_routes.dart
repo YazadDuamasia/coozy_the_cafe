@@ -1,3 +1,4 @@
+import 'package:coozy_cafe/model/recipe_model.dart';
 import 'package:coozy_cafe/routing/routs.dart';
 import 'package:coozy_cafe/utlis/utlis.dart';
 import 'package:flutter/services.dart';
@@ -51,8 +52,6 @@ class NavigationRoutes {
         .pushNamedAndRemoveUntil(RouteName.homeScreenRoute, (route) => false);
   }
 
-
-
   navigateToTableInfoScreen() {
     navigatorKey.currentState!.pushNamed(RouteName.tableInfoScreenRoute);
   }
@@ -89,22 +88,29 @@ class NavigationRoutes {
     navigatorKey.currentState!.pushNamedAndRemoveUntil(
       RouteName.loginRoute,
       arguments: isFirstTime,
-          (route) => false,
+      (route) => false,
     );
   }
 
   navigateToSignUpPage() {
     navigatorKey.currentState!.pushNamed(RouteName.registrationRoute);
   }
+
   navigateToOtpVerificationPage({String? arguments}) {
-    navigatorKey.currentState!.pushNamed(RouteName.otpVerificationRoute,arguments: arguments);
+    navigatorKey.currentState!
+        .pushNamed(RouteName.otpVerificationRoute, arguments: arguments);
   }
+
   navigateToSignInViaPhoneNumberPage({bool? isForLogin}) {
-    navigatorKey.currentState!.pushNamed(RouteName.loginViaPhoneNumberRoute,arguments: isForLogin??false);
+    navigatorKey.currentState!.pushNamed(RouteName.loginViaPhoneNumberRoute,
+        arguments: isForLogin ?? false);
   }
 
   void navigateToRecipesScreen() {
     navigatorKey.currentState!.pushNamed(RouteName.recipesListScreenRoute);
   }
 
+  void navigateToRecipesInfoScreen(RecipeModel arguments) {
+    navigatorKey.currentState!.pushNamed(RouteName.recipesInfoScreenRoute,arguments: arguments);
+  }
 }

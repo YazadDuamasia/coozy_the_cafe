@@ -6,6 +6,7 @@ import 'package:coozy_cafe/repositories/components/restaurant_repository.dart';
 import 'package:coozy_cafe/utlis/utlis.dart';
 import 'package:coozy_cafe/widgets/fliter_system_widget/filter_system.dart';
 import 'package:equatable/equatable.dart';
+import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:rxdart/rxdart.dart';
 
@@ -61,8 +62,14 @@ class RecipesFullListCubit extends Cubit<RecipesFullListState> {
       cookingTimeFilterOptionsList = [];
       uniqueTotalCookingTime = [];
       totalCookingTimeFilterOptionsList = [];
+
       // Replace this with your actual data loading logic
-      List<RecipeModel>? data = await RestaurantRepository().recipeList();
+      List<RecipeModel>? data;
+      try {
+        data = await RestaurantRepository().recipeList();
+      } catch (e) {
+        print(e);
+      }
       recipeList = data;
       if (data == null || data.isEmpty) {
         await Future.delayed(const Duration(milliseconds: 700));
@@ -283,7 +290,7 @@ class RecipesFullListCubit extends Cubit<RecipesFullListState> {
       } else {
         // Calculate the total number of pages
         int totalPages =
-            (recipesLoadedState.list!.length  / itemsPerPage!).ceil();
+            (recipesLoadedState.list!.length / itemsPerPage!).ceil();
 
         currentPage = 1;
         currentItemsPerPage = itemsPerPage;
@@ -325,6 +332,41 @@ class RecipesFullListCubit extends Cubit<RecipesFullListState> {
       Constants.debugLog(RecipesFullListCubit, "updatePageItems:error:$e");
       emit(RecipesErrorState('An error occurred: $e'));
     }
+  }
+
+  Future<void> updateBookmark(
+      {int? currentIndex,
+      required RecipeModel model,
+      BuildContext? context}) async {
+    RecipesLoadedState currentState = state as RecipesLoadedState;
+    RecipeModel currentModel = model;
+    currentModel.isBookmark = !model.isBookmark!;
+
+    Constants.showLoadingDialog(context!);
+    try {
+      var res = await RestaurantRepository().updateRecipe(currentModel);
+      Constants.debugLog(RecipesFullListCubit, "updateBookmark:res:$res ");
+      int? index = currentState.list
+          ?.indexWhere((element) => element.recipeID == currentModel.recipeID);
+      currentState.list![index!] = currentModel;
+      currentState.paginatedData![currentIndex!] = currentModel;
+    } catch (e) {
+      Constants.debugLog(RecipesFullListCubit, "updateBookmark:error:$e");
+    }
+
+    Navigator.pop(context);
+    emit(RecipesLoadedState(
+      list: currentState.list,
+      paginatedData: currentState.paginatedData,
+      currentPage: currentState.currentPage,
+      itemsPerPage: currentState.itemsPerPage,
+      totalPages: currentState.totalPages,
+      totalElements: currentState.totalElements,
+      itemsPerPageList: currentState.itemsPerPageList,
+      startIndex: currentState.startIndex,
+      endIndex: currentState.endIndex,
+      isInternalLoading: false,
+    ));
   }
 
   Future<void> pullToRefresh({int? itemsPerPage}) async {
