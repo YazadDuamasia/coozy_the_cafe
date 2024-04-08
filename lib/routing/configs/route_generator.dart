@@ -4,6 +4,7 @@ import 'package:coozy_cafe/pages/main_screen/menu_category_screen/add_menu_categ
 import 'package:coozy_cafe/pages/main_screen/menu_category_screen/edit_menu_category/edit_menu_category_screen.dart';
 import 'package:coozy_cafe/pages/main_screen/menu_category_screen/menu_category_full_list_screen.dart';
 import 'package:coozy_cafe/pages/main_screen/menu_screen/menu_full_list_screen.dart';
+import 'package:coozy_cafe/pages/main_screen/recipes_bookmark_list_screen/recipes_bookmark_list_screen.dart';
 import 'package:coozy_cafe/pages/main_screen/recipes_info_screen/recipes_info_screen.dart';
 import 'package:coozy_cafe/pages/main_screen/recipes_list_screen/recipes_list_screen.dart';
 import 'package:coozy_cafe/pages/main_screen/table_screen/table_screen.dart';
@@ -164,6 +165,22 @@ class RouteGenerator {
           settings: settings,
           curve: Curves.easeInOut,
           child: RecipesInfoScreen(model: args as RecipeModel),
+        );
+
+      case RouteName.recipesInfoScreenRoute:
+        return PageTransition(
+          type: PageTransitionType.rightToLeftWithFade,
+          settings: settings,
+          curve: Curves.easeInOut,
+          child: RecipesInfoScreen(model: args as RecipeModel),
+        );
+
+      case RouteName.recipesBookmarkListScreenRoute:
+        return PageTransition(
+          type: PageTransitionType.rightToLeftWithFade,
+          settings: settings,
+          curve: Curves.easeInOut,
+          child: RecipesBookmarkListScreen(list: args as List<RecipeModel>?),
         );
 
       default:

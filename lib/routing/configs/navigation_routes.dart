@@ -111,6 +111,14 @@ class NavigationRoutes {
   }
 
   void navigateToRecipesInfoScreen(RecipeModel arguments) {
-    navigatorKey.currentState!.pushNamed(RouteName.recipesInfoScreenRoute,arguments: arguments);
+    navigatorKey.currentState!
+        .pushNamed(RouteName.recipesInfoScreenRoute, arguments: arguments);
+  }
+
+  Future navigateToRecipesBookmarkListScreen(
+      List<RecipeModel>? arguments) async {
+    await navigatorKey.currentState!.pushNamed(
+        RouteName.recipesBookmarkListScreenRoute,
+        arguments: arguments);
   }
 }

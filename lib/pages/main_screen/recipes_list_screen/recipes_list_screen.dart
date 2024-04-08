@@ -55,7 +55,12 @@ class _RecipesListScreenState extends State<RecipesListScreen> {
                       Constants.showToastMsg(
                           msg: "Please select recipes to bookmark");
                     } else {
+                      await navigationRoutes
+                          .navigateToRecipesBookmarkListScreen(data).then((value) {
+                            setState(() {
 
+                            });
+                      });
                     }
                   },
                   icon: Icon(MdiIcons.bookmarkMultiple)),
