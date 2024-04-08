@@ -453,132 +453,136 @@ class _RecipesInfoScreenState extends State<RecipesInfoScreen> {
   }
 
   Widget cookingInstructionsWidget() {
-    /* return Card(
+    return Card(
       elevation: 3,
       shape: RoundedRectangleBorder(
         borderRadius: BorderRadius.circular(10),
       ),
-      margin: const EdgeInsets.only(top: 10, right: 10, left: 10, bottom: 20),
-      child: Theme(
-        data: Theme.of(context).copyWith(dividerColor: Colors.transparent),
-        child: ExpansionTile(
-          initiallyExpanded: true,
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(10),
-          ),
-          title: Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 10),
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.start,
-              crossAxisAlignment: CrossAxisAlignment.start,
-              mainAxisSize: MainAxisSize.min,
-              children: <Widget>[
-                Expanded(
-                  child: Text("Cooking Instructions: ",
-                      style: Theme.of(context).textTheme.titleMedium),
-                ),
-              ],
+      margin: const EdgeInsets.only(top: 10, right: 10, left: 10, bottom: 10),
+      child: ClipRRect(
+        borderRadius: BorderRadius.circular(10),
+        child: Theme(
+          data: Theme.of(context).copyWith(dividerColor: Colors.transparent),
+          child: ExpansionTile(
+            initiallyExpanded: true,
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(10),
             ),
-          ),
-          children: [
-            Column(
-              mainAxisAlignment: MainAxisAlignment.start,
-              crossAxisAlignment: CrossAxisAlignment.start,
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                const Divider(
-                  height: 1,
-                ),
-                const SizedBox(
-                  height: 5,
-                ),
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.start,
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  mainAxisSize: MainAxisSize.min,
-                  children: <Widget>[
-                    Expanded(
-                      child: Container(
-                        width: MediaQuery.of(context).size.width,
-                        padding: const EdgeInsets.symmetric(horizontal: 10),
-                        child: LayoutBuilder(
-                          builder: (context, constraints) {
-                            return ToggleButtons(
-                              renderBorder: false,
-                              constraints: BoxConstraints.expand(
-                                  width: constraints.maxWidth / 3),
-                              borderRadius: BorderRadius.circular(5),
-                              isSelected:
-                                  isInstructionEnglishTranslationSelection,
-                              onPressed: (int index) async {
-                                for (int i = 0;
-                                    i <
-                                        isInstructionEnglishTranslationSelection
-                                            .length;
-                                    i++) {
-                                  if (i == index) {
-                                    isInstructionEnglishTranslationSelection[
-                                        i] = (i == index) ? true : false;
-                                    if (i == 0) {
-                                      instructionInfoString!.clear();
-                                      instructionInfoString?.write(widget.model
-                                              ?.recipeTranslatedInstructions ??
-                                          "");
-                                    } else if (i == 1) {
-                                      instructionInfoString!.clear();
-                                      instructionInfoString?.write(
-                                          widget.model?.recipeInstructions ??
-                                              "");
-                                    } else if (i == 2) {
-                                      instructionInfoString?.clear();
-                                      _translateInstructions("en",
-                                          ingredientSelectedLanguage!.code2);
+            title: Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 10),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.start,
+                crossAxisAlignment: CrossAxisAlignment.start,
+                mainAxisSize: MainAxisSize.min,
+                children: <Widget>[
+                  Expanded(
+                    child: Text("Cooking Instructions: ",
+                        style: Theme.of(context).textTheme.titleMedium),
+                  ),
+                ],
+              ),
+            ),
+            children: [
+              Column(
+                mainAxisAlignment: MainAxisAlignment.start,
+                crossAxisAlignment: CrossAxisAlignment.start,
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  const Divider(
+                    height: 1,
+                  ),
+                  const SizedBox(
+                    height: 5,
+                  ),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.start,
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    mainAxisSize: MainAxisSize.min,
+                    children: <Widget>[
+                      Expanded(
+                        child: Container(
+                          width: MediaQuery.of(context).size.width,
+                          child: LayoutBuilder(
+                            builder: (context, constraints) {
+                              return ToggleButtons(
+                                renderBorder: false,
+                                constraints: BoxConstraints.expand(
+                                    width: constraints.maxWidth / 3),
+                                borderRadius: BorderRadius.circular(5),
+                                isSelected:
+                                    isInstructionEnglishTranslationSelection,
+                                onPressed: (int index) async {
+                                  for (int i = 0;
+                                      i <
+                                          isInstructionEnglishTranslationSelection
+                                              .length;
+                                      i++) {
+                                    if (i == index) {
+                                      isInstructionEnglishTranslationSelection[
+                                          i] = (i == index) ? true : false;
+                                      if (i == 0) {
+                                        instructionInfoString!.clear();
+                                        instructionInfoString?.write(widget
+                                                .model
+                                                ?.recipeTranslatedInstructions ??
+                                            "");
+                                      } else if (i == 1) {
+                                        instructionInfoString!.clear();
+                                        instructionInfoString?.write(
+                                            widget.model?.recipeInstructions ??
+                                                "");
+                                      } else if (i == 2) {
+                                        instructionInfoString?.clear();
+                                        _translateInstructions("en",
+                                            ingredientSelectedLanguage!.code2);
+                                      }
+                                    } else {
+                                      isInstructionEnglishTranslationSelection[
+                                          i] = false;
                                     }
-                                  } else {
-                                    isInstructionEnglishTranslationSelection[
-                                        i] = false;
                                   }
-                                }
 
-                                setState(() {});
-                              },
-                              children: const <Widget>[
-                                Text(
-                                  'English',
-                                  textAlign: TextAlign.center,
-                                ),
-                                Text(
-                                  'Offline Translation',
-                                  textAlign: TextAlign.center,
-                                ),
-                                Text(
-                                  'Other Language',
-                                  textAlign: TextAlign.center,
-                                ),
-                              ],
-                            );
-                          },
+                                  setState(() {});
+                                },
+                                children: const <Widget>[
+                                  Text(
+                                    'English',
+                                    textAlign: TextAlign.center,
+                                  ),
+                                  Text(
+                                    'Offline Translation',
+                                    textAlign: TextAlign.center,
+                                  ),
+                                  Text(
+                                    'Other Language',
+                                    textAlign: TextAlign.center,
+                                  ),
+                                ],
+                              );
+                            },
+                          ),
                         ),
-                      ),
-                    )
-                  ],
-                ),
-                const SizedBox(
-                  height: 5,
-                ),
-                const Divider(
-                  height: 1,
-                ),
-                const SizedBox(
-                  height: 5,
-                ),
-                instructionsInfoWidget(),
-              ],
-            ),
-          ],
+                      )
+                    ],
+                  ),
+                  const SizedBox(
+                    height: 5,
+                  ),
+                  const Divider(
+                    height: 1,
+                  ),
+                  const SizedBox(
+                    height: 5,
+                  ),
+                  instructionsInfoWidget(),
+                ],
+              ),
+            ],
+          ),
         ),
       ),
-    );*/
+    );
+    /*
     return Card(
       elevation: 3,
       margin: const EdgeInsets.only(top: 10, right: 10, left: 10, bottom: 20),
@@ -628,42 +632,37 @@ class _RecipesInfoScreenState extends State<RecipesInfoScreen> {
                         borderRadius: BorderRadius.circular(5),
                         isSelected: isInstructionEnglishTranslationSelection,
                         onPressed: (int index) async {
-                          for (int i = 0;
-                              i <
-                                  isInstructionEnglishTranslationSelection
-                                      .length;
-                              i++) {
-                            if (i == index) {
-                              isInstructionEnglishTranslationSelection[i] =
-                                  (i == index) ? true : false;
-                              if (i == 0) {
-                                setState(() {
-                                  instructionInfoString!.clear();
-                                  instructionInfoString?.write(widget.model
-                                          ?.recipeTranslatedInstructions ??
-                                      "");
-                                });
-                              } else if (i == 1) {
-                                setState(() {
-                                  instructionInfoString!.clear();
-                                  Constants.debugLog(RecipesInfoScreen, "recipeTranslatedInstructions:1:${widget.model?.toJson()}");
-                                  instructionInfoString?.write(widget.model?.recipeInstructions ??"");
-                                });
-                              } else if (i == 2) {
-                                setState(() {
-                                  instructionInfoString?.clear();
-                                  _translateInstructions(
-                                      "en", ingredientSelectedLanguage!.code2);
-                                });
-                              }
-                            } else {
-                              isInstructionEnglishTranslationSelection[i] =
-                                  false;
-                            }
-                          }
+                                  for (int i = 0;
+                                      i <
+                                          isInstructionEnglishTranslationSelection
+                                              .length;
+                                      i++) {
+                                    if (i == index) {
+                                      isInstructionEnglishTranslationSelection[
+                                          i] = (i == index) ? true : false;
+                                      if (i == 0) {
+                                        instructionInfoString!.clear();
+                                        instructionInfoString?.write(widget.model
+                                                ?.recipeTranslatedInstructions ??
+                                            "");
+                                      } else if (i == 1) {
+                                        instructionInfoString!.clear();
+                                        instructionInfoString?.write(
+                                            widget.model?.recipeInstructions ??
+                                                "");
+                                      } else if (i == 2) {
+                                        instructionInfoString?.clear();
+                                        _translateInstructions("en",
+                                            ingredientSelectedLanguage!.code2);
+                                      }
+                                    } else {
+                                      isInstructionEnglishTranslationSelection[
+                                          i] = false;
+                                    }
+                                  }
 
-                          setState(() {});
-                        },
+                                  setState(() {});
+                                },
                         children: const <Widget>[
                           Text(
                             'English',
@@ -697,10 +696,152 @@ class _RecipesInfoScreenState extends State<RecipesInfoScreen> {
           instructionsInfoWidget(),
         ],
       ),
-    );
+    );*/
   }
 
   Widget ingredientsWidget() {
+    return Card(
+      elevation: 3,
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(10),
+      ),
+      margin: const EdgeInsets.only(top: 10, right: 10, left: 10, bottom: 0),
+      child: ClipRRect(
+        borderRadius: BorderRadius.circular(10),
+        child: Theme(
+          data: Theme.of(context).copyWith(dividerColor: Colors.transparent),
+          child: ExpansionTile(
+            initiallyExpanded: true,
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(10),
+            ),
+            title: Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 10),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.start,
+                crossAxisAlignment: CrossAxisAlignment.start,
+                mainAxisSize: MainAxisSize.min,
+                children: <Widget>[
+                  Expanded(
+                    child: Text("Ingredients:",
+                        style: Theme.of(context).textTheme.titleMedium),
+                  ),
+                ],
+              ),
+            ),
+            children: [
+              Column(
+                mainAxisAlignment: MainAxisAlignment.start,
+                crossAxisAlignment: CrossAxisAlignment.start,
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  const Divider(
+                    height: 1,
+                  ),
+                  const SizedBox(
+                    height: 5,
+                  ),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.start,
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    mainAxisSize: MainAxisSize.min,
+                    children: <Widget>[
+                      Expanded(
+                        child: Container(
+                          width: MediaQuery.of(context).size.width,
+                          child: LayoutBuilder(
+                            builder: (context, constraints) {
+                              return ToggleButtons(
+                                renderBorder: false,
+                                constraints: BoxConstraints.expand(
+                                    width: constraints.maxWidth / 3),
+                                borderRadius: BorderRadius.circular(5),
+                                isSelected:
+                                    isIngredientsEnglishTranslationSelection,
+                                onPressed: (int index) async {
+                                  for (int i = 0;
+                                      i <
+                                          isIngredientsEnglishTranslationSelection
+                                              .length;
+                                      i++) {
+                                    if (i == index) {
+                                      isIngredientsEnglishTranslationSelection[
+                                          i] = (i == index) ? true : false;
+                                      if (i == 0) {
+                                        setState(() {
+                                          ingredientsInfoString!.clear();
+                                          ingredientsInfoString?.write(widget
+                                                  .model
+                                                  ?.recipeTranslatedIngredients ??
+                                              "");
+                                          Constants.debugLog(RecipesInfoScreen,
+                                              "Ingredients:0:$ingredientsInfoString");
+                                        });
+                                      } else if (i == 1) {
+                                        setState(() {
+                                          ingredientsInfoString!.clear();
+                                          ingredientsInfoString?.write(
+                                              widget.model?.recipeIngredients ??
+                                                  "");
+                                          Constants.debugLog(RecipesInfoScreen,
+                                              "Ingredients:1:${ingredientsInfoString!}");
+                                        });
+                                      } else if (i == 2) {
+                                        setState(() {
+                                          ingredientsInfoString!.clear();
+                                          _translateIngredients(
+                                              "en",
+                                              ingredientSelectedLanguage!
+                                                  .code2);
+                                        });
+                                      }
+                                    } else {
+                                      isIngredientsEnglishTranslationSelection[
+                                          i] = false;
+                                    }
+                                  }
+
+                                  setState(() {});
+                                },
+                                children: const <Widget>[
+                                  Text(
+                                    'English',
+                                    textAlign: TextAlign.center,
+                                  ),
+                                  Text(
+                                    'Offline Translation',
+                                    textAlign: TextAlign.center,
+                                  ),
+                                  Text(
+                                    'Other Language',
+                                    textAlign: TextAlign.center,
+                                  ),
+                                ],
+                              );
+                            },
+                          ),
+                        ),
+                      )
+                    ],
+                  ),
+                  const SizedBox(
+                    height: 5,
+                  ),
+                  const Divider(
+                    height: 1,
+                  ),
+                  const SizedBox(
+                    height: 5,
+                  ),
+                  ingredientsInfoWidget(),
+                ],
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+    /*
     return Card(
       elevation: 3,
       margin: const EdgeInsets.only(top: 10, right: 10, left: 10),
@@ -820,6 +961,7 @@ class _RecipesInfoScreenState extends State<RecipesInfoScreen> {
         ],
       ),
     );
+    */
   }
 
   void _translateIngredients(String? fromLanguage, String? toLanguage) async {
@@ -935,7 +1077,7 @@ class _RecipesInfoScreenState extends State<RecipesInfoScreen> {
       }
     }
     return Padding(
-      padding: const EdgeInsets.only(left: 15, right: 15, top: 5, bottom: 5),
+      padding: const EdgeInsets.only(left: 15, right: 15, top: 5, bottom: 0),
       child: Column(
         mainAxisAlignment: MainAxisAlignment.start,
         crossAxisAlignment: CrossAxisAlignment.start,
