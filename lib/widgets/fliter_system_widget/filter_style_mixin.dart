@@ -24,7 +24,6 @@ mixin FilterStyleMixin<T extends StatelessWidget> {
 
   TextStyle? getTitleTheme1(BuildContext context) =>
       Theme.of(context).textTheme.titleMedium?.copyWith(
-            // fontSize: 16,
             fontWeight: FontWeight.w500,
           );
 }

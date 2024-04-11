@@ -51,17 +51,21 @@ class _RecipesListScreenState extends State<RecipesListScreen> {
                       print(e);
                       return;
                     }
-                    if (data == null || data.isEmpty) {
-                      Constants.showToastMsg(
-                          msg: "Please select recipes to bookmark");
-                    } else {
-                      await navigationRoutes
-                          .navigateToRecipesBookmarkListScreen(data).then((value) {
-                            setState(() {
-
-                            });
-                      });
-                    }
+                    // if (data == null || data.isEmpty) {
+                    //   Constants.showToastMsg(
+                    //       msg: "Please select recipes to bookmark");
+                    // } else {
+                    //   await navigationRoutes
+                    //       .navigateToRecipesBookmarkListScreen(data)
+                    //       .then((value) {
+                    //     setState(() {});
+                    //   });
+                    // }
+                    await navigationRoutes
+                        .navigateToRecipesBookmarkListScreen(data)
+                        .then((value) {
+                      setState(() {});
+                    });
                   },
                   icon: Icon(MdiIcons.bookmarkMultiple)),
             ],
@@ -416,8 +420,8 @@ class _RecipesListScreenState extends State<RecipesListScreen> {
                               child: Text(model.translatedRecipeName ?? "",
                                   style: Theme.of(context)
                                       .textTheme
-                                      .titleLarge
-                                      ?.copyWith(fontWeight: FontWeight.w600)),
+                                      .bodyLarge
+                                      ?.copyWith(fontWeight: FontWeight.w700)),
                             )
                           ],
                         ),
@@ -472,90 +476,126 @@ class _RecipesListScreenState extends State<RecipesListScreen> {
                           ],
                         ),
                       ),
-                      Padding(
-                        padding: const EdgeInsets.only(top: 5),
-                        child: Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                          crossAxisAlignment: CrossAxisAlignment.center,
-                          mainAxisSize: MainAxisSize.min,
-                          children: <Widget>[
-                            Expanded(
-                              child: Row(
-                                mainAxisAlignment: MainAxisAlignment.start,
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                mainAxisSize: MainAxisSize.min,
-                                children: <Widget>[
-                                  Row(
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                        crossAxisAlignment: CrossAxisAlignment.center,
+                        mainAxisSize: MainAxisSize.min,
+                        children: <Widget>[
+                          Expanded(
+                            child: Column(
+                              mainAxisAlignment: MainAxisAlignment.start,
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              mainAxisSize: MainAxisSize.min,
+                              children: <Widget>[
+                                Padding(
+                                  padding: const EdgeInsets.only(top: 5),
+                                  child: Row(
                                     mainAxisAlignment: MainAxisAlignment.start,
                                     crossAxisAlignment:
-                                        CrossAxisAlignment.center,
+                                        CrossAxisAlignment.start,
                                     mainAxisSize: MainAxisSize.min,
-                                    children: [
-                                      const Icon(
-                                        MenuIcons.total_cooking_time,
-                                        size: 30,
+                                    children: <Widget>[
+                                      Expanded(
+                                        child: RichText(
+                                          text: TextSpan(
+                                            children: [
+                                              TextSpan(
+                                                text: 'Total cooking time: ',
+                                                style: Theme.of(context)
+                                                    .textTheme
+                                                    .bodyMedium
+                                                    ?.copyWith(
+                                                        fontWeight:
+                                                            FontWeight.w700),
+                                              ),
+                                              TextSpan(
+                                                text:
+                                                    '${model.recipeTotalTimeInMins ?? 0} mins',
+                                                style: Theme.of(context)
+                                                    .textTheme
+                                                    .bodyMedium,
+                                              ),
+                                            ],
+                                          ),
+                                        ),
                                       ),
-                                      const SizedBox(
-                                        width: 5,
-                                      ),
-                                      Text(
-                                          "${model.recipeTotalTimeInMins ?? "0"} mins",
-                                          style: Theme.of(context)
-                                              .textTheme
-                                              .bodyLarge),
                                     ],
                                   ),
-                                  const SizedBox(
-                                    width: 5,
-                                  ),
-                                  Row(
+                                ),
+                                Padding(
+                                  padding: const EdgeInsets.only(top: 5),
+                                  child: Row(
                                     mainAxisAlignment: MainAxisAlignment.start,
                                     crossAxisAlignment:
-                                        CrossAxisAlignment.center,
+                                        CrossAxisAlignment.start,
                                     mainAxisSize: MainAxisSize.min,
-                                    children: [
-                                      const Icon(
-                                        MenuIcons.coooking_time,
-                                        size: 30,
+                                    children: <Widget>[
+                                      Expanded(
+                                        child: RichText(
+                                          text: TextSpan(
+                                            children: [
+                                              TextSpan(
+                                                text: 'Cooking time: ',
+                                                style: Theme.of(context)
+                                                    .textTheme
+                                                    .bodyMedium
+                                                    ?.copyWith(
+                                                        fontWeight:
+                                                            FontWeight.w700),
+                                              ),
+                                              TextSpan(
+                                                text:
+                                                    '${model.recipeCookingTimeInMins ?? 0} mins',
+                                                style: Theme.of(context)
+                                                    .textTheme
+                                                    .bodyMedium,
+                                              ),
+                                            ],
+                                          ),
+                                        ),
                                       ),
-                                      const SizedBox(
-                                        width: 5,
-                                      ),
-                                      Text(
-                                          "${model.recipeCookingTimeInMins ?? "0"} mins",
-                                          style: Theme.of(context)
-                                              .textTheme
-                                              .bodyLarge),
                                     ],
                                   ),
-                                  const SizedBox(
-                                    width: 5,
-                                  ),
-                                  Row(
+                                ),
+                                Padding(
+                                  padding: const EdgeInsets.only(top: 5),
+                                  child: Row(
                                     mainAxisAlignment: MainAxisAlignment.start,
                                     crossAxisAlignment:
-                                        CrossAxisAlignment.center,
+                                        CrossAxisAlignment.start,
                                     mainAxisSize: MainAxisSize.min,
-                                    children: [
-                                      const Icon(
-                                        MenuIcons.serving_time,
-                                        size: 30,
+                                    children: <Widget>[
+                                      Expanded(
+                                        child: RichText(
+                                          text: TextSpan(
+                                            children: [
+                                              TextSpan(
+                                                text: 'Preparation time: ',
+                                                style: Theme.of(context)
+                                                    .textTheme
+                                                    .bodyMedium
+                                                    ?.copyWith(
+                                                        fontWeight:
+                                                            FontWeight.w700),
+                                              ),
+                                              TextSpan(
+                                                text:
+                                                    '${model.recipePreparationTimeInMins ?? 0} mins',
+                                                style: Theme.of(context)
+                                                    .textTheme
+                                                    .bodyMedium,
+                                              ),
+                                            ],
+                                          ),
+                                        ),
                                       ),
-                                      const SizedBox(
-                                        width: 5,
-                                      ),
-                                      Text(
-                                          "${model.recipePreparationTimeInMins ?? "0"} mins",
-                                          style: Theme.of(context)
-                                              .textTheme
-                                              .bodyLarge),
                                     ],
                                   ),
-                                ],
-                              ),
-                            )
-                          ],
-                        ),
+                                ),
+                              ],
+                            ),
+                          )
+                        ],
                       ),
                       Padding(
                         padding: const EdgeInsets.only(top: 5),
@@ -660,6 +700,7 @@ class _RecipesListScreenState extends State<RecipesListScreen> {
             },
             filters: [
               FilterListModel(
+                type: FilterType.RadioGroup,
                 filterOptions: context
                         .read<RecipesFullListCubit>()
                         .servingsFilterOptionsList ??
@@ -671,6 +712,7 @@ class _RecipesListScreenState extends State<RecipesListScreen> {
                 filterKey: 'servings',
               ),
               FilterListModel(
+                type: FilterType.CheckboxList,
                 filterOptions: context
                         .read<RecipesFullListCubit>()
                         .cuisineFilterOptionsList ??
@@ -682,6 +724,7 @@ class _RecipesListScreenState extends State<RecipesListScreen> {
                 filterKey: 'cuisine',
               ),
               FilterListModel(
+                type: FilterType.CheckboxList,
                 filterOptions: context
                         .read<RecipesFullListCubit>()
                         .courseFilterOptionsList ??
@@ -693,6 +736,7 @@ class _RecipesListScreenState extends State<RecipesListScreen> {
                 filterKey: 'course',
               ),
               FilterListModel(
+                type: FilterType.RadioGroup,
                 filterOptions: context
                         .read<RecipesFullListCubit>()
                         .dietFilterOptionsList ??
@@ -704,17 +748,7 @@ class _RecipesListScreenState extends State<RecipesListScreen> {
                 filterKey: 'diet',
               ),
               FilterListModel(
-                filterOptions: context
-                        .read<RecipesFullListCubit>()
-                        .cookingTimeFilterOptionsList ??
-                    [],
-                previousApplied: _getPreviousAppliedFilters(
-                    context.read<RecipesFullListCubit>().appliedFilterList,
-                    'cooking_time'),
-                title: 'Cooking Time',
-                filterKey: 'cooking_time',
-              ),
-              FilterListModel(
+                type: FilterType.VericalSlider,
                 filterOptions: context
                         .read<RecipesFullListCubit>()
                         .totalCookingTimeFilterOptionsList ??
@@ -725,7 +759,35 @@ class _RecipesListScreenState extends State<RecipesListScreen> {
                 title: 'Total cooking time',
                 filterKey: 'total_cooking_time',
               ),
+              FilterListModel(
+                type: FilterType.VericalSlider,
+                filterOptions: context
+                        .read<RecipesFullListCubit>()
+                        .cookingTimeFilterOptionsList ??
+                    [],
+                previousApplied: _getPreviousAppliedFilters(
+                    context.read<RecipesFullListCubit>().appliedFilterList,
+                    'cooking_time'),
+                title: 'Cooking Time',
+                filterKey: 'cooking_time',
+              ),
             ],
+            themeProps: ThemeProps(
+              activeFilterTextColor:
+                  Theme.of(context).textTheme.bodyLarge!.color,
+              dividerColor: Theme.of(context).dividerColor,
+              inActiveFilterItemBackgroundColor:
+                  Theme.of(context).colorScheme.secondaryContainer,
+              inActiveFilterTextColor:
+                  Theme.of(context).textTheme.bodyLarge!.color,
+              submitButtonColor: Theme.of(context).colorScheme.secondary,
+              resetButtonColor: Theme.of(context).colorScheme.secondary,
+              sliderTileThemeProps: const SliderTileThemeProps(
+                  label_suffix_str: "mins",
+                  tooltip_suffix_str: "mins",
+                  stepSize: 1.0,
+                  fractionDigits: 0),
+            ),
           ),
         );
       },

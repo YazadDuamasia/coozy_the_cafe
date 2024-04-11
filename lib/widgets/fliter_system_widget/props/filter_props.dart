@@ -1,6 +1,7 @@
 import 'package:coozy_cafe/widgets/fliter_system_widget/props/applied_filter_model.dart';
 import 'package:coozy_cafe/widgets/fliter_system_widget/props/filter_list_model.dart';
 import 'package:flutter/material.dart';
+import 'package:syncfusion_flutter_core/theme.dart';
 
 /*
 This class represents the properties regarding how filters should look.
@@ -33,6 +34,7 @@ class ThemeProps {
   final Color? titleColor;
   final Color? activeFilterHeaderColor;
   final Color? inActiveFilterHeaderColor;
+  final Color? inActiveFilterItemBackgroundColor;
   final TextStyle? activeFilterHeaderStyle;
   final TextStyle? activeFilterTextStyle;
   final Color? activeFilterTextColor;
@@ -47,11 +49,14 @@ class ThemeProps {
   final double? dividerThickness;
   final SearchBarViewProps? searchBarViewProps;
   final CheckBoxTileThemeProps? checkBoxTileThemeProps;
+  final RadioTileThemeProps? radioTileThemeProps;
+  final SliderTileThemeProps? sliderTileThemeProps;
 
   ThemeProps({
     this.searchBarViewProps,
     this.titleStyle,
     this.titleColor,
+    this.inActiveFilterItemBackgroundColor,
     this.resetButtonColor,
     this.submitButtonColor,
     this.divider,
@@ -63,10 +68,12 @@ class ThemeProps {
     this.inActiveFilterTextColor,
     this.inActiveFilterTextStyle,
     this.activeFilterHeaderStyle,
-    this.checkBoxTileThemeProps,
     this.dividerThickness,
     this.resetButtonStyle,
     this.submitButtonStyle,
+    this.checkBoxTileThemeProps,
+    this.radioTileThemeProps,
+    this.sliderTileThemeProps,
   });
 }
 
@@ -84,6 +91,42 @@ class CheckBoxTileThemeProps {
     this.checkboxTitleStyle,
     this.tileColor,
   });
+}
+
+class RadioTileThemeProps {
+  final Color? activeRadioColor;
+  final Color? inActiveRadioColor;
+  final TextStyle? radioTitleStyle;
+  final Color? radioTitleColor;
+  final Color? tileColor;
+
+  const RadioTileThemeProps({
+    this.activeRadioColor,
+    this.inActiveRadioColor,
+    this.radioTitleStyle,
+    this.radioTitleColor,
+    this.tileColor,
+  });
+}
+
+class SliderTileThemeProps {
+  final SfRangeSliderThemeData? sliderThemeData;
+  final String? tooltip_prefix_str;
+  final String? tooltip_suffix_str;
+  final String? label_prefix_str;
+
+  final String? label_suffix_str;
+  final double? stepSize;
+  final int? fractionDigits;
+
+  const SliderTileThemeProps(
+      {this.sliderThemeData,
+      this.label_prefix_str,
+      this.label_suffix_str,
+      this.tooltip_prefix_str,
+      this.tooltip_suffix_str,
+      this.fractionDigits,
+      this.stepSize});
 }
 
 class SearchBarViewProps {

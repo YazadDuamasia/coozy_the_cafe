@@ -107,5 +107,6 @@
   "common_common_phoneNumber_validator_error_empty_msg": "Please enter your phone number.",
   "common_common_phoneNumber_validator_error_msg": "Please enter a valid phone number.",
   "recipes_list_screen_no_data_title_msg": "No data founded",
-  "recipes_list_screen_no_data_sub_title_msg": "Please try again with different filter choices to pick from."
+  "recipes_bookmark_no_record_title": "No data founded",
+  "recipes_bookmark_no_record_sub_title": "Please try to add some new bookmarks from recipes list."
 }

@@ -1,3 +1,4 @@
+import 'package:coozy_cafe/AppLocalization.dart';
 import 'package:coozy_cafe/bloc/bloc.dart';
 import 'package:coozy_cafe/model/recipe_model.dart';
 import 'package:coozy_cafe/utlis/utlis.dart';
@@ -31,29 +32,81 @@ class _RecipesBookmarkListScreenState extends State<RecipesBookmarkListScreen> {
           appBar: AppBar(
             title: const Text('Recipe Bookmarks'),
           ),
-          body: Scrollbar(
-            thumbVisibility: true,
-            radius: const Radius.circular(10.0),
-            child: CustomScrollView(
-              physics: const ClampingScrollPhysics(
-                parent: AlwaysScrollableScrollPhysics(),
-              ),
-              shrinkWrap: true,
-              slivers: [
-                SliverList(
-                  delegate: SliverChildBuilderDelegate((context, index) {
-                    RecipeModel model = widget.list![index];
-                    return recipeItem(
-                      model: model,
-                      index: index,
-                    );
-                  },
-                      addSemanticIndexes: true,
-                      addAutomaticKeepAlives: true,
-                      addRepaintBoundaries: false,
-                      childCount: widget.list?.length ?? 0),
+          body: Visibility(
+            visible:
+                (widget.list == null || widget.list!.isEmpty) ? false : true,
+            replacement: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              crossAxisAlignment: CrossAxisAlignment.center,
+              mainAxisSize: MainAxisSize.max,
+              children: [
+                Icon(
+                  MenuIcons.recipe_bookmark,
+                  size: 120,
+                  color: Theme.of(context).colorScheme.primary,
+                ),
+                Padding(
+                  padding: const EdgeInsets.only(
+                      top: 10, bottom: 0, left: 20, right: 20),
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    crossAxisAlignment: CrossAxisAlignment.center,
+                    mainAxisSize: MainAxisSize.min,
+                    children: <Widget>[
+                      Expanded(
+                        child: Text(
+                          "${AppLocalizations.of(context)!.translate(StringValue.recipes_bookmark_no_record_title)}",
+                          textAlign: TextAlign.center,
+                          style: Theme.of(context).textTheme.titleLarge!.copyWith(fontWeight: FontWeight.w700),
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+                Padding(
+                  padding: const EdgeInsets.only(
+                      top: 10, bottom: 10, left: 20, right: 20),
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    crossAxisAlignment: CrossAxisAlignment.center,
+                    mainAxisSize: MainAxisSize.min,
+                    children: <Widget>[
+                      Expanded(
+                        child: Text(
+                          "${AppLocalizations.of(context)!.translate(StringValue.recipes_bookmark_no_record_sub_title)}",
+                          textAlign: TextAlign.center,
+                          style: Theme.of(context).textTheme.titleMedium!.copyWith(fontWeight: FontWeight.w600),
+                        ),
+                      ),
+                    ],
+                  ),
                 ),
               ],
+            ),
+            child: Scrollbar(
+              thumbVisibility: true,
+              radius: const Radius.circular(10.0),
+              child: CustomScrollView(
+                physics: const ClampingScrollPhysics(
+                  parent: AlwaysScrollableScrollPhysics(),
+                ),
+                shrinkWrap: true,
+                slivers: [
+                  SliverList(
+                    delegate: SliverChildBuilderDelegate((context, index) {
+                      RecipeModel model = widget.list![index];
+                      return recipeItem(
+                        model: model,
+                        index: index,
+                      );
+                    },
+                        addSemanticIndexes: true,
+                        addAutomaticKeepAlives: true,
+                        addRepaintBoundaries: false,
+                        childCount: widget.list?.length ?? 0),
+                  ),
+                ],
+              ),
             ),
           ),
         ),

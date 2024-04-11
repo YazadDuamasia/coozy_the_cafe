@@ -2,9 +2,14 @@
 /// Required parametter is FilterProps
 
 import 'package:coozy_cafe/widgets/fliter_system_widget/filter_style_mixin.dart';
+import 'package:coozy_cafe/widgets/fliter_system_widget/props/filter_item_model.dart';
+import 'package:coozy_cafe/widgets/fliter_system_widget/props/filter_list_model.dart';
 import 'package:coozy_cafe/widgets/fliter_system_widget/props/filter_props.dart';
 import 'package:coozy_cafe/widgets/fliter_system_widget/state/filter_cubit.dart';
 import 'package:coozy_cafe/widgets/fliter_system_widget/widgets/filter_checkbox_title.dart';
+import 'package:coozy_cafe/widgets/fliter_system_widget/widgets/filter_radiobox_title.dart';
+import 'package:coozy_cafe/widgets/fliter_system_widget/widgets/filter_slider_title.dart';
+import 'package:coozy_cafe/widgets/fliter_system_widget/widgets/filter_slider_vertical_title.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
@@ -103,238 +108,12 @@ class _FilterState extends State<Filter> with FilterStyleMixin {
                   ],
                 ),
               ),
-              /*  themeProps?.divider ??
-                  Divider(
-                    height: 1,
-                    thickness: themeProps?.dividerThickness ?? 1,
-                    color: themeProps?.dividerColor ?? getDividerColor(context),
-                  ),*/
-
               themeProps?.divider ??
                   Container(
                     height: themeProps?.dividerThickness ?? 2,
                     width: MediaQuery.of(context).size.width,
                     color: themeProps?.dividerColor ?? getDividerColor(context),
                   ),
-              /*  Expanded(
-                child: Row(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Expanded(
-                      flex: 3,
-                      child: Padding(
-                        padding: const EdgeInsets.only(
-                          left: 10,
-                          right: 5,
-                        ),
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            const SizedBox(
-                              height: 20,
-                            ),
-                            ...List.generate(state.filters.length, (index) {
-                              final e = state.filters[index];
-                              return GestureDetector(
-                                onTap: () {
-                                  _clearSearch();
-                                  _filterCubit.onFilterTitleTap(index);
-                                },
-                                child: Padding(
-                                  padding: const EdgeInsets.only(
-                                    bottom: 10,
-                                    top: 10,
-                                  ),
-                                  child: FilterText(
-                                    title: e.title,
-                                    fontSize: 17,
-                                    style: (index == state.activeFilterIndex)
-                                        ? themeProps?.activeFilterTextStyle
-                                        : themeProps?.inActiveFilterTextStyle,
-                                    fontWeight: FontWeight.w500,
-                                    fontColor: (index ==
-                                            state.activeFilterIndex)
-                                        ? themeProps?.activeFilterTextColor ??
-                                            getTheme(context).primaryColor
-                                        : themeProps?.inActiveFilterTextColor,
-                                  ),
-                                ),
-                              );
-                            }),
-                          ],
-                        ),
-                      ),
-                    ),
-                    themeProps?.divider ??
-                        Container(
-                          height: double.maxFinite,
-                          width: themeProps?.dividerThickness ?? 1,
-                          color: themeProps?.dividerColor ??
-                              getDividerColor(context),
-                        ),
-                    Expanded(
-                      flex: 6,
-                      child: Builder(builder: (context) {
-                        return SingleChildScrollView(
-                          padding: const EdgeInsets.all(10),
-                          physics: const BouncingScrollPhysics(),
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            mainAxisAlignment: MainAxisAlignment.start,
-                            children: [
-                              Padding(
-                                padding: const EdgeInsets.symmetric(
-                                  vertical: 10,
-                                  horizontal: 7,
-                                ),
-                                child: ValueListenableBuilder<String>(
-                                    valueListenable: _searchValueNotifier,
-                                    builder: (context, searchValue, child) {
-                                      return TextFormField(
-                                        controller: _searchController,
-                                        style: themeProps
-                                            ?.searchBarViewProps?.textStyle,
-                                        decoration: InputDecoration(
-                                            hintText: themeProps
-                                                    ?.searchBarViewProps
-                                                    ?.searchHint ??
-                                                'Search',
-                                            contentPadding:
-                                                const EdgeInsets.symmetric(
-                                              vertical: 10,
-                                              horizontal: 10,
-                                            ),
-                                            hintStyle: themeProps
-                                                ?.searchBarViewProps?.hintStyle,
-                                            fillColor: themeProps
-                                                    ?.searchBarViewProps
-                                                    ?.fillColor
-                                                    ?.withOpacity(0.8) ??
-                                                Theme.of(context)
-                                                    .primaryColor
-                                                    .withOpacity(0.1),
-                                            filled: themeProps
-                                                    ?.searchBarViewProps
-                                                    ?.filled ??
-                                                true,
-                                            border: themeProps
-                                                    ?.searchBarViewProps
-                                                    ?.inputBorder ??
-                                                OutlineInputBorder(
-                                                  borderRadius:
-                                                      BorderRadius.circular(10),
-                                                  borderSide: BorderSide(
-                                                    width: 1,
-                                                    color: themeProps
-                                                            ?.searchBarViewProps
-                                                            ?.fillColor ??
-                                                        getTheme(context)
-                                                            .primaryColor,
-                                                  ),
-                                                ),
-                                            suffixIcon: searchValue.isNotEmpty
-                                                ? IconButton(
-                                                    onPressed: () {
-                                                      _clearSearch();
-                                                    },
-                                                    icon: themeProps
-                                                            ?.searchBarViewProps
-                                                            ?.clearIcon ??
-                                                        Icon(Icons.close,
-                                                            color: themeProps
-                                                                ?.searchBarViewProps
-                                                                ?.clearIconColor),
-                                                  )
-                                                : IconButton(
-                                                    onPressed: () {
-                                                      _filterCubit
-                                                          .filterBySearch(
-                                                              _searchController
-                                                                  .text);
-                                                    },
-                                                    icon: themeProps
-                                                            ?.searchBarViewProps
-                                                            ?.searchIcon ??
-                                                        Icon(
-                                                          Icons.search,
-                                                          color: themeProps
-                                                              ?.searchBarViewProps
-                                                              ?.searchIconColor,
-                                                        ),
-                                                  )),
-                                        onFieldSubmitted: (value) {},
-                                        textInputAction: TextInputAction.search,
-                                        onChanged: (value) {
-                                          _searchValueNotifier.value = value;
-                                          if (value.isEmpty) {
-                                            _clearSearch();
-                                          } else {
-                                            _filterCubit.filterBySearch(
-                                                _searchController.text);
-                                          }
-                                        },
-                                      );
-                                    }),
-                                FilterText(
-                                  title:
-                                      'Showing for ${state.filters[state.activeFilterIndex].title ?? ''}',
-                                  style: themeProps?.activeFilterHeaderStyle ??
-                                      getTitle2Theme(context)?.copyWith(
-                                        fontSize: 15,
-                                        fontWeight: FontWeight.w500,
-                                        color:
-                                            themeProps?.activeFilterHeaderColor,
-                                      ),
-                                ),
-                              ),
-                              const SizedBox(
-                                height: 20,
-                              ),
-                              Builder(
-                                builder: (_) {
-                                  final list = state
-                                      .filters[state.activeFilterIndex]
-                                      .filterOptions;
-                                  if (list.isNotEmpty) {
-                                    return ListView.builder(
-                                      shrinkWrap: true,
-                                      itemCount: list.length,
-                                      itemBuilder: (_, index) {
-                                        final item = list[index];
-                                        return FilterCheckboxTitle(
-                                          checkBoxTileThemeProps: themeProps
-                                              ?.checkBoxTileThemeProps,
-                                          selected: _filterCubit.checked(
-                                            state
-                                                .filters[
-                                                    state.activeFilterIndex]
-                                                .previousApplied,
-                                            item,
-                                          ),
-                                          title: item.filterTitle,
-                                          onUpdate: (bool? value) {
-                                            _filterCubit
-                                                .onFilterItemCheck(item);
-                                          },
-                                        );
-                                      },
-                                    );
-                                  } else {
-                                    return const SizedBox();
-                                  }
-                                },
-                              ),
-                              const SizedBox(
-                                height: 40,
-                              ),
-                            ],
-                          ),
-                        );
-                      }),
-                    ),
-                  ],
-                ),
-              ),*/
               Expanded(
                 child: Container(
                   width: MediaQuery.of(context).size.width,
@@ -373,8 +152,17 @@ class _FilterState extends State<Filter> with FilterStyleMixin {
                                           child: Row(
                                             mainAxisSize: MainAxisSize.min,
                                             children: [
-                                              Flexible(
-                                                child: Padding(
+                                              Expanded(
+                                                child: Container(
+                                                  color: (index ==
+                                                          state
+                                                              .activeFilterIndex)
+                                                      ? themeProps
+                                                              ?.inActiveFilterItemBackgroundColor ??
+                                                          Theme.of(context)
+                                                              .colorScheme
+                                                              .primaryContainer
+                                                      : Colors.transparent,
                                                   padding:
                                                       const EdgeInsets.only(
                                                           left: 10,
@@ -391,8 +179,10 @@ class _FilterState extends State<Filter> with FilterStyleMixin {
                                                     style: (index ==
                                                             state
                                                                 .activeFilterIndex)
+                                                        // ? themeProps
+                                                        //     ?.activeFilterTextStyle
                                                         ? themeProps
-                                                            ?.activeFilterTextStyle
+                                                            ?.inActiveFilterTextStyle
                                                         : themeProps
                                                             ?.inActiveFilterTextStyle,
                                                     fontWeight: FontWeight.w500,
@@ -433,319 +223,7 @@ class _FilterState extends State<Filter> with FilterStyleMixin {
                           ),
                       Flexible(
                         flex: 6,
-                        child: SizedBox(
-                          width: MediaQuery.of(context).size.width,
-                          child: Builder(
-                            builder: (context) {
-                              /*        return SingleChildScrollView(
-                              padding: const EdgeInsets.all(10),
-                              physics: const BouncingScrollPhysics(),
-                              child: Column(
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                mainAxisAlignment: MainAxisAlignment.start,
-                                mainAxisSize: MainAxisSize.max,
-                                children: [
-                                  Padding(
-                                    padding: const EdgeInsets.symmetric(
-                                      vertical: 10,
-                                      horizontal: 7,
-                                    ),
-                                    child: ValueListenableBuilder<String>(
-                                        valueListenable: _searchValueNotifier,
-                                        builder: (context, searchValue, child) {
-                                          return TextFormField(
-                                            controller: _searchController,
-                                            style: themeProps
-                                                ?.searchBarViewProps?.textStyle,
-                                            decoration: InputDecoration(
-                                                hintText: themeProps
-                                                    ?.searchBarViewProps
-                                                    ?.searchHint ??
-                                                    'Search',
-                                                contentPadding:
-                                                const EdgeInsets.symmetric(
-                                                  vertical: 10,
-                                                  horizontal: 10,
-                                                ),
-                                                hintStyle: themeProps
-                                                    ?.searchBarViewProps?.hintStyle,
-                                                fillColor: themeProps
-                                                    ?.searchBarViewProps
-                                                    ?.fillColor
-                                                    ?.withOpacity(0.8) ??
-                                                    Theme.of(context)
-                                                        .primaryColor
-                                                        .withOpacity(0.1),
-                                                filled: themeProps
-                                                    ?.searchBarViewProps
-                                                    ?.filled ??
-                                                    true,
-                                                border: themeProps
-                                                    ?.searchBarViewProps
-                                                    ?.inputBorder ??
-                                                    OutlineInputBorder(
-                                                      borderRadius:
-                                                      BorderRadius.circular(10),
-                                                      borderSide: BorderSide(
-                                                        width: 1,
-                                                        color: themeProps
-                                                            ?.searchBarViewProps
-                                                            ?.fillColor ??
-                                                            getTheme(context)
-                                                                .primaryColor,
-                                                      ),
-                                                    ),
-                                                suffixIcon: searchValue.isNotEmpty
-                                                    ? IconButton(
-                                                  onPressed: () {
-                                                    _clearSearch();
-                                                  },
-                                                  icon: themeProps
-                                                      ?.searchBarViewProps
-                                                      ?.clearIcon ??
-                                                      Icon(Icons.close,
-                                                          color: themeProps
-                                                              ?.searchBarViewProps
-                                                              ?.clearIconColor),
-                                                )
-                                                    : IconButton(
-                                                  onPressed: () {
-                                                    _filterCubit
-                                                        .filterBySearch(
-                                                        _searchController
-                                                            .text);
-                                                  },
-                                                  icon: themeProps
-                                                      ?.searchBarViewProps
-                                                      ?.searchIcon ??
-                                                      Icon(
-                                                        Icons.search,
-                                                        color: themeProps
-                                                            ?.searchBarViewProps
-                                                            ?.searchIconColor,
-                                                      ),
-                                                )),
-                                            onFieldSubmitted: (value) {},
-                                            textInputAction: TextInputAction.search,
-                                            onChanged: (value) {
-                                              _searchValueNotifier.value = value;
-                                              if (value.isEmpty) {
-                                                _clearSearch();
-                                              } else {
-                                                _filterCubit.filterBySearch(
-                                                    _searchController.text);
-                                              }
-                                            },
-                                          );
-                                        }),
-                                  ),
-                                  const SizedBox(
-                                    height: 20,
-                                  ),
-                                  Builder(
-                                    builder: (_) {
-                                      final list = state
-                                          .filters[state.activeFilterIndex]
-                                          .filterOptions;
-                                      if (list.isNotEmpty) {
-                                        return ListView.builder(
-                                          shrinkWrap: true,
-                                          physics: const NeverScrollableScrollPhysics(),
-                                          itemCount: list.length,
-                                          itemBuilder: (_, index) {
-                                            final item = list[index];
-                                            return FilterCheckboxTitle(
-                                              checkBoxTileThemeProps: themeProps
-                                                  ?.checkBoxTileThemeProps,
-                                              selected: _filterCubit.checked(
-                                                state
-                                                    .filters[
-                                                state.activeFilterIndex]
-                                                    .previousApplied,
-                                                item,
-                                              ),
-                                              title: item.filterTitle,
-                                              onUpdate: (bool? value) {
-                                                _filterCubit
-                                                    .onFilterItemCheck(item);
-                                              },
-                                            );
-                                          },
-                                        );
-                                      } else {
-                                        return const SizedBox();
-                                      }
-                                    },
-                                  ),
-                                ],
-                              ),
-                            );*/
-                              final list = state
-                                  .filters[state.activeFilterIndex]
-                                  .filterOptions;
-
-                              return Column(
-                                mainAxisAlignment: MainAxisAlignment.start,
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                mainAxisSize: MainAxisSize.max,
-                                children: [
-                                  Padding(
-                                    padding: const EdgeInsets.symmetric(
-                                      vertical: 10,
-                                      horizontal: 7,
-                                    ),
-                                    child: ValueListenableBuilder<String>(
-                                        valueListenable: _searchValueNotifier,
-                                        builder: (context, searchValue, child) {
-                                          return TextFormField(
-                                            controller: _searchController,
-                                            style: themeProps
-                                                ?.searchBarViewProps?.textStyle,
-                                            decoration: InputDecoration(
-                                                hintText: themeProps
-                                                        ?.searchBarViewProps
-                                                        ?.searchHint ??
-                                                    'Search',
-                                                contentPadding:
-                                                    const EdgeInsets.symmetric(
-                                                  vertical: 10,
-                                                  horizontal: 10,
-                                                ),
-                                                hintStyle: themeProps
-                                                    ?.searchBarViewProps
-                                                    ?.hintStyle,
-                                                fillColor: themeProps
-                                                        ?.searchBarViewProps
-                                                        ?.fillColor
-                                                        ?.withOpacity(0.8) ??
-                                                    Theme.of(context)
-                                                        .primaryColor
-                                                        .withOpacity(0.1),
-                                                filled: themeProps
-                                                        ?.searchBarViewProps
-                                                        ?.filled ??
-                                                    true,
-                                                border: themeProps
-                                                        ?.searchBarViewProps
-                                                        ?.inputBorder ??
-                                                    OutlineInputBorder(
-                                                      borderRadius:
-                                                          BorderRadius.circular(
-                                                              10),
-                                                      borderSide: BorderSide(
-                                                        width: 1,
-                                                        color: themeProps
-                                                                ?.searchBarViewProps
-                                                                ?.fillColor ??
-                                                            getTheme(context)
-                                                                .primaryColor,
-                                                      ),
-                                                    ),
-                                                suffixIcon: searchValue
-                                                        .isNotEmpty
-                                                    ? IconButton(
-                                                        onPressed: () {
-                                                          _clearSearch();
-                                                        },
-                                                        icon: themeProps
-                                                                ?.searchBarViewProps
-                                                                ?.clearIcon ??
-                                                            Icon(Icons.close,
-                                                                color: themeProps
-                                                                    ?.searchBarViewProps
-                                                                    ?.clearIconColor),
-                                                      )
-                                                    : IconButton(
-                                                        onPressed: () {
-                                                          _filterCubit
-                                                              .filterBySearch(
-                                                                  _searchController
-                                                                      .text);
-                                                        },
-                                                        icon: themeProps
-                                                                ?.searchBarViewProps
-                                                                ?.searchIcon ??
-                                                            Icon(
-                                                              Icons.search,
-                                                              color: themeProps
-                                                                  ?.searchBarViewProps
-                                                                  ?.searchIconColor,
-                                                            ),
-                                                      )),
-                                            onFieldSubmitted: (value) {},
-                                            textInputAction:
-                                                TextInputAction.search,
-                                            onChanged: (value) {
-                                              _searchValueNotifier.value =
-                                                  value;
-                                              if (value.isEmpty) {
-                                                _clearSearch();
-                                              } else {
-                                                _filterCubit.filterBySearch(
-                                                    _searchController.text);
-                                              }
-                                            },
-                                          );
-                                        }),
-                                  ),
-                                  Visibility(
-                                    visible: list.isNotEmpty,
-                                    child: Expanded(
-                                      child: Scrollbar(
-                                        trackVisibility: true,
-                                        child: CustomScrollView(
-                                          physics: ClampingScrollPhysics(
-                                            parent:
-                                                AlwaysScrollableScrollPhysics(),
-                                          ),
-                                          shrinkWrap: true,
-                                          slivers: [
-                                            SliverPadding(
-                                              padding: const EdgeInsets.only(
-                                                  left: 10, right: 10, top: 10),
-                                              sliver: SliverList(
-                                                delegate:
-                                                    SliverChildBuilderDelegate(
-                                                  (context, index) {
-                                                    final item = list[index];
-                                                    return FilterCheckboxTitle(
-                                                      key: UniqueKey(),
-                                                      checkBoxTileThemeProps:
-                                                          themeProps
-                                                              ?.checkBoxTileThemeProps,
-                                                      selected:
-                                                          _filterCubit.checked(
-                                                        state
-                                                            .filters[state
-                                                                .activeFilterIndex]
-                                                            .previousApplied,
-                                                        item,
-                                                      ),
-                                                      title: item.filterTitle,
-                                                      onUpdate: (bool? value) {
-                                                        _filterCubit
-                                                            .onFilterItemCheck(
-                                                                item);
-                                                      },
-                                                    );
-                                                  },
-                                                  addSemanticIndexes: true,
-                                                  addAutomaticKeepAlives: true,
-                                                  addRepaintBoundaries: false,
-                                                  childCount: list.length ?? 0,
-                                                ),
-                                              ),
-                                            ),
-                                          ],
-                                        ),
-                                      ),
-                                    ),
-                                  ),
-                                ],
-                              );
-                            },
-                          ),
-                        ),
+                        child: custom_filter_widget(state, themeProps),
                       ),
                     ],
                   ),
@@ -794,6 +272,421 @@ class _FilterState extends State<Filter> with FilterStyleMixin {
           ),
         );
       },
+    );
+  }
+
+  custom_filter_widget(FilterState state, ThemeProps? themeProps) {
+    if (state.filters == null || state.filters.isEmpty) {
+      return const SizedBox.shrink();
+    } else {
+      switch (state.type) {
+        case FilterType.CheckboxList:
+          return checkboxWidget(state, themeProps);
+
+        case FilterType.RadioGroup:
+          return radioGroupWidget(state, themeProps);
+        case FilterType.Slider:
+          return sliderWidget(state, themeProps);
+        case FilterType.VericalSlider:
+          return verticalSliderWidget(state, themeProps);
+        case FilterType.TimePicker:
+          return Container();
+        case FilterType.RangeDatePicker:
+          return Container();
+        case FilterType.DatePicker:
+          return Container();
+        case FilterType.RangeTimePicker:
+          return Container();
+        default:
+          return Container();
+      }
+    }
+  }
+
+  double findSliderValue(List<FilterItemModel> filterOptions) {
+    // Use reduce to find the minimum value
+    return filterOptions
+        .map<double?>((item) {
+          return double.tryParse("${item.filterKey}") ?? 0.0;
+        })
+        .whereType<double>()
+        .reduce((minValue, value) => value < minValue ? value : minValue);
+  }
+
+  double? findMinValue(List<FilterItemModel> filterOptions) {
+    // Use reduce to find the minimum value
+    return filterOptions
+        .map<double?>((item) {
+          return double.tryParse("${item.filterKey}") ?? 0.0;
+        })
+        .whereType<double>()
+        .reduce((minValue, value) => value < minValue ? value : minValue);
+  }
+
+  double? findMaxValue(List<FilterItemModel> filterOptions) {
+    // Use reduce to find the maximum value
+    return filterOptions
+        .map<double?>((item) {
+          return double.tryParse("${item.filterKey}") ?? 0.0;
+        })
+        .whereType<double>()
+        .reduce((maxValue, value) => value > maxValue ? value : maxValue);
+  }
+
+  checkboxWidget(FilterState state, ThemeProps? themeProps) {
+    return SizedBox(
+      width: MediaQuery.of(context).size.width,
+      child: Builder(
+        builder: (context) {
+          final list = state.filters[state.activeFilterIndex].filterOptions;
+
+          return Column(
+            mainAxisAlignment: MainAxisAlignment.start,
+            crossAxisAlignment: CrossAxisAlignment.start,
+            mainAxisSize: MainAxisSize.max,
+            children: [
+              Padding(
+                padding: const EdgeInsets.symmetric(
+                  vertical: 10,
+                  horizontal: 7,
+                ),
+                child: ValueListenableBuilder<String>(
+                    valueListenable: _searchValueNotifier,
+                    builder: (context, searchValue, child) {
+                      return TextFormField(
+                        controller: _searchController,
+                        style: themeProps?.searchBarViewProps?.textStyle,
+                        decoration: InputDecoration(
+                            hintText:
+                                themeProps?.searchBarViewProps?.searchHint ??
+                                    'Search',
+                            contentPadding: const EdgeInsets.symmetric(
+                              vertical: 10,
+                              horizontal: 10,
+                            ),
+                            hintStyle:
+                                themeProps?.searchBarViewProps?.hintStyle,
+                            fillColor: themeProps?.searchBarViewProps?.fillColor
+                                    ?.withOpacity(0.8) ??
+                                Theme.of(context).primaryColor.withOpacity(0.1),
+                            filled:
+                                themeProps?.searchBarViewProps?.filled ?? true,
+                            border:
+                                themeProps?.searchBarViewProps?.inputBorder ??
+                                    OutlineInputBorder(
+                                      borderRadius: BorderRadius.circular(10),
+                                      borderSide: BorderSide(
+                                        width: 1,
+                                        color: themeProps?.searchBarViewProps
+                                                ?.fillColor ??
+                                            getTheme(context).primaryColor,
+                                      ),
+                                    ),
+                            suffixIcon: searchValue.isNotEmpty
+                                ? IconButton(
+                                    onPressed: () {
+                                      _clearSearch();
+                                    },
+                                    icon: themeProps
+                                            ?.searchBarViewProps?.clearIcon ??
+                                        Icon(Icons.close,
+                                            color: themeProps
+                                                ?.searchBarViewProps
+                                                ?.clearIconColor),
+                                  )
+                                : IconButton(
+                                    onPressed: () {
+                                      _filterCubit.filterBySearch(
+                                          _searchController.text);
+                                    },
+                                    icon: themeProps
+                                            ?.searchBarViewProps?.searchIcon ??
+                                        Icon(
+                                          Icons.search,
+                                          color: themeProps?.searchBarViewProps
+                                              ?.searchIconColor,
+                                        ),
+                                  )),
+                        onFieldSubmitted: (value) {},
+                        textInputAction: TextInputAction.search,
+                        onChanged: (value) {
+                          _searchValueNotifier.value = value;
+                          if (value.isEmpty) {
+                            _clearSearch();
+                          } else {
+                            _filterCubit.filterBySearch(_searchController.text);
+                          }
+                        },
+                      );
+                    }),
+              ),
+              Visibility(
+                visible: list.isNotEmpty,
+                child: Expanded(
+                  child: Scrollbar(
+                    trackVisibility: true,
+                    child: CustomScrollView(
+                      physics: ClampingScrollPhysics(
+                        parent: AlwaysScrollableScrollPhysics(),
+                      ),
+                      shrinkWrap: true,
+                      slivers: [
+                        SliverPadding(
+                          padding: const EdgeInsets.only(
+                              left: 10, right: 10, top: 10),
+                          sliver: SliverList(
+                            delegate: SliverChildBuilderDelegate(
+                              (context, index) {
+                                final item = list[index];
+                                return FilterCheckboxTitle(
+                                  key: UniqueKey(),
+                                  checkBoxTileThemeProps:
+                                      themeProps?.checkBoxTileThemeProps,
+                                  selected: _filterCubit.checked(
+                                    state.filters[state.activeFilterIndex]
+                                        .previousApplied,
+                                    item,
+                                  ),
+                                  title: item.filterTitle,
+                                  onUpdate: (bool? value) {
+                                    _filterCubit.onFilterItemCheck(item);
+                                  },
+                                );
+                              },
+                              addSemanticIndexes: true,
+                              addAutomaticKeepAlives: true,
+                              addRepaintBoundaries: false,
+                              childCount: list.length ?? 0,
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                ),
+              ),
+            ],
+          );
+        },
+      ),
+    );
+  }
+
+  radioGroupWidget(FilterState state, ThemeProps? themeProps) {
+    return SizedBox(
+      width: MediaQuery.of(context).size.width,
+      child: Builder(
+        builder: (context) {
+          final list = state.filters[state.activeFilterIndex].filterOptions;
+
+          return Column(
+            mainAxisAlignment: MainAxisAlignment.start,
+            crossAxisAlignment: CrossAxisAlignment.start,
+            mainAxisSize: MainAxisSize.max,
+            children: [
+              Padding(
+                padding: const EdgeInsets.symmetric(
+                  vertical: 10,
+                  horizontal: 7,
+                ),
+                child: ValueListenableBuilder<String>(
+                    valueListenable: _searchValueNotifier,
+                    builder: (context, searchValue, child) {
+                      return TextFormField(
+                        controller: _searchController,
+                        style: themeProps?.searchBarViewProps?.textStyle,
+                        decoration: InputDecoration(
+                            hintText:
+                                themeProps?.searchBarViewProps?.searchHint ??
+                                    'Search',
+                            contentPadding: const EdgeInsets.symmetric(
+                              vertical: 10,
+                              horizontal: 10,
+                            ),
+                            hintStyle:
+                                themeProps?.searchBarViewProps?.hintStyle,
+                            fillColor: themeProps?.searchBarViewProps?.fillColor
+                                    ?.withOpacity(0.8) ??
+                                Theme.of(context).primaryColor.withOpacity(0.1),
+                            filled:
+                                themeProps?.searchBarViewProps?.filled ?? true,
+                            border:
+                                themeProps?.searchBarViewProps?.inputBorder ??
+                                    OutlineInputBorder(
+                                      borderRadius: BorderRadius.circular(10),
+                                      borderSide: BorderSide(
+                                        width: 1,
+                                        color: themeProps?.searchBarViewProps
+                                                ?.fillColor ??
+                                            getTheme(context).primaryColor,
+                                      ),
+                                    ),
+                            suffixIcon: searchValue.isNotEmpty
+                                ? IconButton(
+                                    onPressed: () {
+                                      _clearSearch();
+                                    },
+                                    icon: themeProps
+                                            ?.searchBarViewProps?.clearIcon ??
+                                        Icon(Icons.close,
+                                            color: themeProps
+                                                ?.searchBarViewProps
+                                                ?.clearIconColor),
+                                  )
+                                : IconButton(
+                                    onPressed: () {
+                                      _filterCubit.filterBySearch(
+                                          _searchController.text);
+                                    },
+                                    icon: themeProps
+                                            ?.searchBarViewProps?.searchIcon ??
+                                        Icon(
+                                          Icons.search,
+                                          color: themeProps?.searchBarViewProps
+                                              ?.searchIconColor,
+                                        ),
+                                  )),
+                        onFieldSubmitted: (value) {},
+                        textInputAction: TextInputAction.search,
+                        onChanged: (value) {
+                          _searchValueNotifier.value = value;
+                          if (value.isEmpty) {
+                            _clearSearch();
+                          } else {
+                            _filterCubit.filterBySearch(_searchController.text);
+                          }
+                        },
+                      );
+                    }),
+              ),
+              Visibility(
+                visible: list.isNotEmpty,
+                child: Expanded(
+                  child: Scrollbar(
+                    trackVisibility: true,
+                    child: CustomScrollView(
+                      physics: ClampingScrollPhysics(
+                        parent: AlwaysScrollableScrollPhysics(),
+                      ),
+                      shrinkWrap: true,
+                      slivers: [
+                        SliverPadding(
+                          padding: const EdgeInsets.only(
+                              left: 10, right: 10, top: 10),
+                          sliver: SliverList(
+                            delegate: SliverChildBuilderDelegate(
+                              (context, index) {
+                                final item = list[index];
+                                return FilterRadioBoxTitle(
+                                  options: [item],
+                                  // Use single item as an option
+                                  selectedOption: _filterCubit.checked(
+                                          state.filters[state.activeFilterIndex]
+                                              .previousApplied,
+                                          item)
+                                      ? item
+                                      : null,
+                                  onChanged: (selected) {
+                                    _filterCubit.onFilterItemCheck(item);
+                                  },
+                                  radioTileThemeProps:
+                                      themeProps?.radioTileThemeProps,
+                                );
+                              },
+                              addSemanticIndexes: true,
+                              addAutomaticKeepAlives: true,
+                              addRepaintBoundaries: false,
+                              childCount: list.length ?? 0,
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                ),
+              ),
+            ],
+          );
+        },
+      ),
+    );
+  }
+
+  sliderWidget(FilterState state, ThemeProps? themeProps) {
+    final filterOptions = state.filters[state.activeFilterIndex].filterOptions;
+    final previousApplied =
+        state.filters[state.activeFilterIndex].previousApplied;
+    final title = state.filters[state.activeFilterIndex].title ?? "";
+
+    final minValue = findMinValue(filterOptions);
+    final maxValue = findMaxValue(filterOptions);
+    final double minGap = 1.0;
+    final values = state.sliderValues ??
+        double.tryParse("${previousApplied.first.filterKey}") ??
+        0.0;
+
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.start,
+      crossAxisAlignment: CrossAxisAlignment.start,
+      mainAxisSize: MainAxisSize.min,
+      children: <Widget>[
+        Expanded(
+          child: FilterSliderTitle(
+            key: UniqueKey(),
+            sliderTileThemeProps: themeProps!.sliderTileThemeProps,
+            filterOptions: filterOptions,
+            previousApplied: previousApplied,
+            title: title,
+            values: values,
+            minValue: minValue!,
+            maxValue: maxValue!,
+            onChanged: (double newValues) {
+              FilterItemModel model = FilterItemModel(
+                  filterKey: newValues, filterTitle: "${newValues}");
+              context.read<FilterCubit>().onFilterItemCheck(model);
+            },
+          ),
+        )
+      ],
+    );
+  }
+
+  verticalSliderWidget(FilterState state, ThemeProps? themeProps) {
+    final filterOptions = state.filters[state.activeFilterIndex].filterOptions;
+    final previousApplied =
+        state.filters[state.activeFilterIndex].previousApplied;
+    final title = state.filters[state.activeFilterIndex].title ?? "";
+
+    final minValue = findMinValue(filterOptions);
+    final maxValue = findMaxValue(filterOptions);
+    final double minGap = 1.0;
+    final values = state.sliderValues ??
+        double.tryParse("${previousApplied.first.filterKey}") ??
+        0.0;
+
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.start,
+      crossAxisAlignment: CrossAxisAlignment.start,
+      mainAxisSize: MainAxisSize.min,
+      children: <Widget>[
+        Expanded(
+          child: FilterVerticalSliderTitle(
+            key: UniqueKey(),
+            sliderTileThemeProps: themeProps!.sliderTileThemeProps,
+            filterOptions: filterOptions,
+            previousApplied: previousApplied,
+            title: title,
+            values: values,
+            minValue: minValue!,
+            maxValue: maxValue!,
+            onChanged: (double newValues) {
+              FilterItemModel model = FilterItemModel(
+                  filterKey: newValues, filterTitle: "${newValues}");
+              context.read<FilterCubit>().onFilterItemCheck(model);
+            },
+          ),
+        )
+      ],
     );
   }
 

@@ -5,8 +5,7 @@ final navigationRoutes = NavigationRoutes.getInstance();
 
 final bucketGlobal = PageStorageBucket();
 
-final GlobalKey<NavigatorState> navigatorKey =
-    GlobalKey<NavigatorState>(debugLabel: "navigatorKey");
+final GlobalKey<NavigatorState> navigatorKey = GlobalKey<NavigatorState>(debugLabel: "navigatorKey");
 
 // Define a list of language objects
 List<Map<String, String>> jsonLanguagesData = [

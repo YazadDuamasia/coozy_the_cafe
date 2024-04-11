@@ -157,7 +157,7 @@ class RouteGenerator {
           type: PageTransitionType.rightToLeftWithFade,
           settings: settings,
           curve: Curves.easeInOut,
-          child: RecipesListScreen(),
+          child: const RecipesListScreen(),
         );
       case RouteName.recipesInfoScreenRoute:
         return PageTransition(

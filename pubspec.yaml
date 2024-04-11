@@ -55,10 +55,10 @@ dependencies:
   material_design_icons_flutter: ^7.0.7296
   fluttertoast: ^8.2.4
   #
-  permission_handler: ^11.3.0
+  permission_handler: ^11.3.1
   image_cropper: ^5.0.1
   image_picker: ^1.0.7
-  file_picker: ^6.2.0
+  file_picker: ^8.0.0+1
   flutter_colorpicker: ^1.0.3
   #
   animations: ^2.0.11
@@ -69,7 +69,7 @@ dependencies:
   #
   intl: ^0.18.1
   collection: ^1.18.0
-  flutter_bloc: ^8.1.4
+  flutter_bloc: ^8.1.5
   equatable: ^2.0.5
   rxdart: ^0.27.7
   #
@@ -78,9 +78,10 @@ dependencies:
 #  skeletonizer: ^1.1.0
   fancy_shimmer_image: ^2.0.3
   url_launcher: ^6.2.5
-  flutter_spinkit: ^5.2.0
+  flutter_spinkit: ^5.2.1
   #
-  flutter_local_notifications: ^16.3.3
+#  flutter_local_notifications: ^16.3.3
+  flutter_local_notifications: ^17.0.0
   flutter_timezone: ^1.0.8
   timezone: ^0.9.2
 
@@ -88,10 +89,10 @@ dependencies:
 #  store_redirect: ^2.0.1
 
   #  Range Slider
-  syncfusion_flutter_core: ^24.2.9
-  syncfusion_flutter_sliders: ^24.2.9
-  syncfusion_flutter_charts: ^24.2.9
-  syncfusion_flutter_xlsio: ^24.2.9
+  syncfusion_flutter_core: ^25.1.39
+  syncfusion_flutter_sliders: ^25.1.39
+  syncfusion_flutter_charts: ^25.1.39+1
+  syncfusion_flutter_xlsio: 25.1.39
 
   geolocator: ^11.0.0
   app_settings: ^5.1.1
@@ -104,7 +105,7 @@ dependencies:
   duration_picker: ^1.1.1
   reorderable_grid_view: ^2.2.8
   scrollable_positioned_list: ^0.3.8
-  uuid: ^4.3.3
+  uuid: ^4.4.0
 
   url_strategy: ^0.2.0
   timeago: ^3.6.1

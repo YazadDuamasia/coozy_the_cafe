@@ -16,7 +16,7 @@ class FilterText extends StatelessWidget {
     this.fontFamilyLevel,
     this.overflow,
     this.maxLine,
-    this.decoration,
+    this.decoration
   }) : super(key: key);
 
   final String? title;
@@ -35,6 +35,7 @@ class FilterText extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
+
     return Text(
       title ?? '',
       textAlign: txtAlign ?? TextAlign.start,

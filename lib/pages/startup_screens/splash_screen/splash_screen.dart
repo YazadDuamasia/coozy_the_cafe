@@ -30,7 +30,7 @@ class _SplashScreenState extends State<SplashScreen> {
     WidgetsBinding.instance.addPostFrameCallback(
       (timeStamp) {
         final cubit = context.read<ThemeCubit>();
-        cubit.toggleTheme(false);
+        cubit.toggleTheme(true);
       },
     );
     super.initState();

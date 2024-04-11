@@ -3,11 +3,13 @@ This is a Dart file that implements a Flutter Bloc
 for managing the filter item state filtering items. 
 Here's what each part of the code does:
 */
+import 'package:coozy_cafe/utlis/components/constants.dart';
 import 'package:coozy_cafe/widgets/fliter_system_widget/props/applied_filter_model.dart';
 import 'package:coozy_cafe/widgets/fliter_system_widget/props/filter_item_model.dart';
 import 'package:coozy_cafe/widgets/fliter_system_widget/props/filter_list_model.dart';
 import 'package:coozy_cafe/widgets/fliter_system_widget/props/filter_props.dart';
 import 'package:equatable/equatable.dart';
+import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
 part 'filter_state.dart';
@@ -17,9 +19,11 @@ class FilterCubit extends Cubit<FilterState> {
     required this.filterProps,
   }) : super(
           FilterState.init(
-            filters: filterProps.filters,
-            activeFilterIndex: 0,
-          ),
+              filters: filterProps.filters,
+              activeFilterIndex: 0,
+              sliderValues: 0.0,
+              rangeSliderValues: RangeValues(0, 0),
+              type: filterProps.filters.first.type ?? FilterType.CheckboxList),
         );
 
   final FilterProps filterProps;
@@ -29,26 +33,83 @@ class FilterCubit extends Cubit<FilterState> {
   }
 
   onFilterTitleTap(int index) {
-    emit(state.copyWith(
-      activeFilterIndex: index,
-    ));
+    emit(
+      state.copyWith(
+        activeFilterIndex: index,
+        type: filterProps.filters[index].type ?? FilterType.CheckboxList,
+      ),
+    );
   }
 
   void onFilterItemCheck(FilterItemModel item) {
     List<FilterListModel> filterModels = [...state.filters];
     FilterListModel filterItem = filterModels[state.activeFilterIndex];
     final checkedItems = [...filterItem.previousApplied];
-    if (checkedItems.contains(item)) {
-      checkedItems.remove(item);
-    } else {
-      checkedItems.add(item);
+
+    switch (filterItem.type) {
+      case FilterType.CheckboxList:
+        {
+          Constants.debugLog(FilterCubit, "CheckboxList");
+          if (checkedItems.contains(item)) {
+            checkedItems.remove(item);
+          } else {
+            checkedItems.add(item);
+          }
+          Constants.debugLog(
+              FilterCubit, "CheckboxList:checkedItems:${checkedItems}");
+        }
+        break;
+      case FilterType.RadioGroup:
+        {
+          Constants.debugLog(FilterCubit, "RadioGroup");
+          checkedItems.clear();
+          checkedItems.add(item);
+          Constants.debugLog(
+              FilterCubit, "RadioGroup:checkedItems:${checkedItems}");
+        }
+        break;
+      case FilterType.Slider:
+        {
+          Constants.debugLog(FilterCubit, "Slider");
+          checkedItems.clear();
+          checkedItems.add(item);
+          Constants.debugLog(
+              FilterCubit, "Slider:Slider:${checkedItems}");
+        }
+        break;
+      case FilterType.TimePicker:
+        {
+          Constants.debugLog(FilterCubit, "TimePicker");
+        }
+        break;
+      case FilterType.RangeTimePicker:
+        {
+          Constants.debugLog(FilterCubit, "RangeTimePicker");
+        }
+        break;
+      case FilterType.DatePicker:
+        {
+          Constants.debugLog(FilterCubit, "DatePicker");
+        }
+        break;
+      case FilterType.RangeDatePicker:
+        {
+          Constants.debugLog(FilterCubit, "RangeDatePicker");
+        }
+        break;
+      default:
+        Constants.debugLog(FilterCubit, "default");
+        break;
     }
+
     final updatedItem = filterItem.copyWith(
       previousApplied: checkedItems,
     );
+
     filterModels[state.activeFilterIndex] = updatedItem;
     emit(state.copyWith(
       filters: filterModels,
+      sliderValues:double.tryParse("${item.filterKey.toString()}")??0.0
     ));
   }
 
@@ -132,4 +193,5 @@ class FilterCubit extends Cubit<FilterState> {
     // TODO: implement close
     return super.close();
   }
+
 }

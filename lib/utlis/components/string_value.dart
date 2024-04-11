@@ -159,4 +159,7 @@ abstract class StringValue {
       "recipes_list_screen_no_data_title_msg";
 
   static String recipes_list_screen_no_data_sub_title_msg="recipes_list_screen_no_data_sub_title_msg";
+
+  static String recipes_bookmark_no_record_title="recipes_bookmark_no_record_title";
+  static String recipes_bookmark_no_record_sub_title="recipes_bookmark_no_record_sub_title";
 }
