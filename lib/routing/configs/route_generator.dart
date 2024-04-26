@@ -12,6 +12,7 @@ import 'package:coozy_cafe/pages/pages.dart';
 import 'package:coozy_cafe/pages/startup_screens/login_screen/login_screen.dart';
 import 'package:coozy_cafe/pages/startup_screens/login_via_phone_number_page/login_via_phone_number_page.dart';
 import 'package:coozy_cafe/pages/startup_screens/otp_verification_page/otp_verification_page.dart';
+import 'package:coozy_cafe/pages/startup_screens/sign_up_page/sign_up_page.dart';
 import 'package:coozy_cafe/routing/routs.dart';
 import 'package:coozy_cafe/utlis/utlis.dart';
 import 'package:flutter/material.dart';
@@ -35,6 +36,8 @@ class RouteGenerator {
 
       case RouteName.splashRoute:
         return MaterialPageRoute<dynamic>(builder: (_) => const SplashScreen());
+      case RouteName.registrationRoute:
+        return MaterialPageRoute<dynamic>(builder: (_) => const SignUpPage());
 
       case RouteName.loginViaPhoneNumberRoute:
         bool? isForLogin = args as bool;

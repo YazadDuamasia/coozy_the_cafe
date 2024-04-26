@@ -916,7 +916,7 @@ class Constants {
               children: [
                 CupertinoActivityIndicator(
                     animating: true,
-                    color: Theme.of(context).primaryColor,
+                    color: Theme.of(context).brightness==Brightness.dark?Colors.white:Theme.of(context).primaryColor,
                     radius: 15),
                 const SizedBox(width: 16), // Space between indicator and text
                 Text(

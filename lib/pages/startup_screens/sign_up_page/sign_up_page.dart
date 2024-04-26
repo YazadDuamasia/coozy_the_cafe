@@ -2381,6 +2381,11 @@ class _SignUpPageState extends State<SignUpPage> {
                     CountryPickerUtils.getCountryByIsoCode('IN'),
                     CountryPickerUtils.getCountryByIsoCode('US'),
                   ],
+                  // Specific list need show in dialog
+                  // countryList: [
+                  //   CountryPickerUtils.getCountryByIsoCode('IN'),
+                  //   CountryPickerUtils.getCountryByIsoCode('US'),
+                  // ],
                   onSubmitted: (String value) {
                     FocusScope.of(context).requestFocus(_birthDateFocusNode);
                   },

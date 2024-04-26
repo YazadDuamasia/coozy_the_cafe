@@ -357,6 +357,7 @@ class AutoCompleteTextFieldState<T> extends State<AutoCompleteTextField<T>> {
               ),
               child: Card(
                 child: Scrollbar(
+                  interactive: true,
                   child: SingleChildScrollView(
                     controller: _scrollController,
                     child: Column(

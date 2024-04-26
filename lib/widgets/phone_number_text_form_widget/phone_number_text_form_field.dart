@@ -1,18 +1,22 @@
+import 'dart:async';
+
 import 'package:coozy_cafe/widgets/country_pickers/countries.dart';
 import 'package:coozy_cafe/widgets/country_pickers/country.dart';
 import 'package:coozy_cafe/widgets/country_pickers/country_picker_dialog.dart';
 import 'package:coozy_cafe/widgets/country_pickers/utils/utils.dart';
 import 'package:coozy_cafe/widgets/phone_number_text_form_widget/helpers.dart';
 import 'package:coozy_cafe/widgets/phone_number_text_form_widget/phone_number.dart';
+import 'package:flutter/foundation.dart' show kIsWeb;
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'dart:async';
-import 'package:flutter/foundation.dart' show kIsWeb;
 import 'package:lottie/lottie.dart';
 
 class PhoneNumberTextFormField extends StatefulWidget {
   /// show which Country need show first
   final List<Country>? priorityList;
+
+  /// show which Countries need to appear in list of dialog
+  final List<Country>? countryList;
 
   /// Whether to hide the text being edited (e.g., for passwords).
   final bool obscureText;
@@ -136,8 +140,8 @@ class PhoneNumberTextFormField extends StatefulWidget {
   /// ```
   final String? initialCountryCode;
 
-  /// List of Country to display see countries.dart for format
-  final List<Country>? countries;
+  // /// List of Country to display see countries.dart for format
+  // final List<Country>? countries;
 
   /// The decoration to show around the text field.
   ///
@@ -242,6 +246,7 @@ class PhoneNumberTextFormField extends StatefulWidget {
 
   const PhoneNumberTextFormField({
     super.key,
+    this.countryList,
     this.initialCountryCode,
     this.disableAutoFillHints = false,
     this.obscureText = false,
@@ -259,7 +264,7 @@ class PhoneNumberTextFormField extends StatefulWidget {
     this.onSubmitted,
     this.validator,
     this.onChanged,
-    this.countries,
+    // this.countries,
     this.onCountryChanged,
     this.onSaved,
     this.showDropdownIcon = true,
@@ -302,7 +307,8 @@ class _PhoneNumberTextFormFieldState extends State<PhoneNumberTextFormField> {
   @override
   void initState() {
     super.initState();
-    _countryList = widget.countries ?? countryList;
+    // _countryList = widget.countries ?? countryList;
+    _countryList = countryList;
     filteredCountries = _countryList;
     number = widget.initialValue ?? '';
     if (widget.initialCountryCode == null && number.startsWith('+')) {
@@ -476,6 +482,14 @@ class _PhoneNumberTextFormFieldState extends State<PhoneNumberTextFormField> {
           },
           itemBuilder: _buildDialogItem,
           priorityList: widget.priorityList,
+          itemFilter: (country) {
+            // Check if widget.countryList is not null and contains the country
+            if (widget.countryList != null && widget.countryList!.contains(country)) {
+              return true;
+            }
+            // If neither widget.countryList nor widget.countries contains the country, exclude it
+            return false;
+          },
         ),
       ),
     );
@@ -599,11 +613,11 @@ class _PhoneNumberTextFormFieldState extends State<PhoneNumberTextFormField> {
                           'assets/images/flags/${_selectedCountry.isoCode.toLowerCase()}.png',
                           width: 32,
                         )
-                      : Text(
-                          _selectedCountry.iso3Code,
-                          style: const TextStyle(fontSize: 18),
+                      : Image.asset(
+                          'assets/images/flags/${_selectedCountry.isoCode.toLowerCase()}.png',
+                          width: 32,
                         ),
-                  const SizedBox(width: 8),
+                  const SizedBox(width: 10),
                 ],
                 FittedBox(
                   child: Text(

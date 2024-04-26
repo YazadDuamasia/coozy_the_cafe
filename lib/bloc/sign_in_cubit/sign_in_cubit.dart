@@ -114,7 +114,7 @@ class SignUpCubit extends Cubit<SignUpState> {
 
   Stream<String> get genderController => _genderController.stream;
 
-  Stream<String> get dobController => _dobController.stream;
+  Stream<String?> get dobController => _dobController.stream;
 
   Stream<bool> get passwordObscureTextController =>
       _passwordObscureTextController.stream;

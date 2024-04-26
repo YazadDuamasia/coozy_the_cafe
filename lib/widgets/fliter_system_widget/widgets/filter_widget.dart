@@ -1,17 +1,21 @@
 /// Main widget for filtering data
 /// Required parametter is FilterProps
 
+import 'package:coozy_cafe/utlis/utlis.dart';
 import 'package:coozy_cafe/widgets/fliter_system_widget/filter_style_mixin.dart';
 import 'package:coozy_cafe/widgets/fliter_system_widget/props/filter_item_model.dart';
 import 'package:coozy_cafe/widgets/fliter_system_widget/props/filter_list_model.dart';
 import 'package:coozy_cafe/widgets/fliter_system_widget/props/filter_props.dart';
 import 'package:coozy_cafe/widgets/fliter_system_widget/state/filter_cubit.dart';
 import 'package:coozy_cafe/widgets/fliter_system_widget/widgets/filter_checkbox_title.dart';
-import 'package:coozy_cafe/widgets/fliter_system_widget/widgets/filter_radiobox_title.dart';
+import 'package:coozy_cafe/widgets/fliter_system_widget/widgets/filter_radio_box_title.dart';
+import 'package:coozy_cafe/widgets/fliter_system_widget/widgets/filter_range_slider_title.dart';
+import 'package:coozy_cafe/widgets/fliter_system_widget/widgets/filter_range_slider_vertical_title.dart';
 import 'package:coozy_cafe/widgets/fliter_system_widget/widgets/filter_slider_title.dart';
 import 'package:coozy_cafe/widgets/fliter_system_widget/widgets/filter_slider_vertical_title.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:syncfusion_flutter_sliders/sliders.dart';
 
 import 'filter_text.dart';
 import 'filter_text_button.dart';
@@ -125,6 +129,7 @@ class _FilterState extends State<Filter> with FilterStyleMixin {
                       Flexible(
                         flex: 4,
                         child: Scrollbar(
+                          interactive: true,
                           child: CustomScrollView(
                             physics: ClampingScrollPhysics(
                               parent: AlwaysScrollableScrollPhysics(),
@@ -282,13 +287,17 @@ class _FilterState extends State<Filter> with FilterStyleMixin {
       switch (state.type) {
         case FilterType.CheckboxList:
           return checkboxWidget(state, themeProps);
-
         case FilterType.RadioGroup:
           return radioGroupWidget(state, themeProps);
         case FilterType.Slider:
           return sliderWidget(state, themeProps);
         case FilterType.VericalSlider:
           return verticalSliderWidget(state, themeProps);
+        case FilterType.RangeSlider:
+          return rangerSliderTitleWidget(state, themeProps);
+
+          case FilterType.VericalRangeSlider:
+          return rangerVerticalSliderTitleWidget(state, themeProps);
         case FilterType.TimePicker:
           return Container();
         case FilterType.RangeDatePicker:
@@ -303,34 +312,54 @@ class _FilterState extends State<Filter> with FilterStyleMixin {
     }
   }
 
-  double findSliderValue(List<FilterItemModel> filterOptions) {
+  double findSliderValue(List<FilterItemModel>? filterOptions) {
     // Use reduce to find the minimum value
-    return filterOptions
-        .map<double?>((item) {
-          return double.tryParse("${item.filterKey}") ?? 0.0;
-        })
-        .whereType<double>()
-        .reduce((minValue, value) => value < minValue ? value : minValue);
+    try {
+      return filterOptions
+              ?.map<double?>((item) {
+                return double.tryParse("${item.filterKey}") ?? 0.0;
+              })
+              .whereType<double>()
+              .reduce(
+                  (minValue, value) => value < minValue ? value : minValue) ??
+          0.0;
+    } catch (e) {
+      print(e);
+      return 0.0;
+    }
   }
 
-  double? findMinValue(List<FilterItemModel> filterOptions) {
+  double? findMinValue(List<FilterItemModel>? filterOptions) {
     // Use reduce to find the minimum value
-    return filterOptions
-        .map<double?>((item) {
-          return double.tryParse("${item.filterKey}") ?? 0.0;
-        })
-        .whereType<double>()
-        .reduce((minValue, value) => value < minValue ? value : minValue);
+    try {
+      return filterOptions
+              ?.map<double?>((item) {
+                return double.tryParse("${item.filterKey}") ?? 0.0;
+              })
+              .whereType<double>()
+              .reduce(
+                  (minValue, value) => value < minValue ? value : minValue) ??
+          0.0;
+    } catch (e) {
+      return 0.0;
+    }
   }
 
-  double? findMaxValue(List<FilterItemModel> filterOptions) {
+  double? findMaxValue(List<FilterItemModel>? filterOptions) {
     // Use reduce to find the maximum value
-    return filterOptions
-        .map<double?>((item) {
-          return double.tryParse("${item.filterKey}") ?? 0.0;
-        })
-        .whereType<double>()
-        .reduce((maxValue, value) => value > maxValue ? value : maxValue);
+    try {
+      return filterOptions
+              ?.map<double?>((item) {
+                return double.tryParse("${item.filterKey}") ?? 0.0;
+              })
+              .whereType<double>()
+              .reduce(
+                  (maxValue, value) => value > maxValue ? value : maxValue) ??
+          0.0;
+    } catch (e) {
+      print(e);
+      return 0.0;
+    }
   }
 
   checkboxWidget(FilterState state, ThemeProps? themeProps) {
@@ -424,6 +453,7 @@ class _FilterState extends State<Filter> with FilterStyleMixin {
                 visible: list.isNotEmpty,
                 child: Expanded(
                   child: Scrollbar(
+                    interactive: true,
                     trackVisibility: true,
                     child: CustomScrollView(
                       physics: ClampingScrollPhysics(
@@ -563,6 +593,7 @@ class _FilterState extends State<Filter> with FilterStyleMixin {
                 visible: list.isNotEmpty,
                 child: Expanded(
                   child: Scrollbar(
+                    interactive: true,
                     trackVisibility: true,
                     child: CustomScrollView(
                       physics: ClampingScrollPhysics(
@@ -613,17 +644,20 @@ class _FilterState extends State<Filter> with FilterStyleMixin {
   }
 
   sliderWidget(FilterState state, ThemeProps? themeProps) {
-    final filterOptions = state.filters[state.activeFilterIndex].filterOptions;
-    final previousApplied =
+    final List<FilterItemModel>? filterOptions =
+        state.filters[state.activeFilterIndex].filterOptions;
+    List<FilterItemModel>? previousApplied =
         state.filters[state.activeFilterIndex].previousApplied;
     final title = state.filters[state.activeFilterIndex].title ?? "";
 
-    final minValue = findMinValue(filterOptions);
+    final minValue = findMinValue(filterOptions!);
     final maxValue = findMaxValue(filterOptions);
     final double minGap = 1.0;
-    final values = state.sliderValues ??
-        double.tryParse("${previousApplied.first.filterKey}") ??
-        0.0;
+    double? values = (previousApplied == null || previousApplied.isEmpty)
+        ? 0.0
+        : double.tryParse("${previousApplied.first.filterKey ?? 0.0}") ?? 0.0;
+    final SliderTileThemeProps? sliderTileThemeProps =
+        state.filters[state.activeFilterIndex].sliderTileThemeProps;
 
     return Row(
       mainAxisAlignment: MainAxisAlignment.start,
@@ -640,7 +674,7 @@ class _FilterState extends State<Filter> with FilterStyleMixin {
             values: values,
             minValue: minValue!,
             maxValue: maxValue!,
-            onChanged: (double newValues) {
+            onChanged: (double newValues) async {
               FilterItemModel model = FilterItemModel(
                   filterKey: newValues, filterTitle: "${newValues}");
               context.read<FilterCubit>().onFilterItemCheck(model);
@@ -660,9 +694,11 @@ class _FilterState extends State<Filter> with FilterStyleMixin {
     final minValue = findMinValue(filterOptions);
     final maxValue = findMaxValue(filterOptions);
     final double minGap = 1.0;
-    final values = state.sliderValues ??
-        double.tryParse("${previousApplied.first.filterKey}") ??
-        0.0;
+    final double? values = (previousApplied == null || previousApplied.isEmpty)
+        ? 0.0
+        : double.tryParse("${previousApplied.first.filterKey}") ?? 0.0;
+    final SliderTileThemeProps? sliderTileThemeProps =
+        state.filters[state.activeFilterIndex].sliderTileThemeProps;
 
     return Row(
       mainAxisAlignment: MainAxisAlignment.start,
@@ -672,7 +708,7 @@ class _FilterState extends State<Filter> with FilterStyleMixin {
         Expanded(
           child: FilterVerticalSliderTitle(
             key: UniqueKey(),
-            sliderTileThemeProps: themeProps!.sliderTileThemeProps,
+            sliderTileThemeProps: sliderTileThemeProps,
             filterOptions: filterOptions,
             previousApplied: previousApplied,
             title: title,
@@ -683,6 +719,129 @@ class _FilterState extends State<Filter> with FilterStyleMixin {
               FilterItemModel model = FilterItemModel(
                   filterKey: newValues, filterTitle: "${newValues}");
               context.read<FilterCubit>().onFilterItemCheck(model);
+            },
+          ),
+        )
+      ],
+    );
+  }
+
+  rangerSliderTitleWidget(FilterState state, ThemeProps? themeProps) {
+    final filterOptions = state.filters[state.activeFilterIndex].filterOptions;
+    final previousApplied =
+        state.filters[state.activeFilterIndex].previousApplied;
+    final title = state.filters[state.activeFilterIndex].title ?? "";
+    Constants.debugLog(
+        FilterWidget, "rangerSliderTitleWidget:rangerSliderTitleWidget");
+
+    final minValue = findMinValue(filterOptions);
+    final maxValue = findMaxValue(filterOptions);
+    final double minGap = 1.0;
+    double? minPreviousAppliedValue;
+    double? maxPreviousAppliedValue;
+    if (previousApplied == null && previousApplied.isEmpty) {
+      minPreviousAppliedValue = 0.0;
+      maxPreviousAppliedValue = 0.0;
+    } else {
+      minPreviousAppliedValue = findMinValue(previousApplied);
+      maxPreviousAppliedValue = findMaxValue(previousApplied);
+    }
+    SfRangeValues? values = ((previousApplied == null &&
+            previousApplied.isEmpty)
+        ? SfRangeValues(minValue ?? 0.0, maxValue ?? 0.0)
+        : SfRangeValues(
+            minPreviousAppliedValue ?? 0.0, maxPreviousAppliedValue ?? 0.0));
+    final SliderTileThemeProps? sliderTileThemeProps =
+        state.filters[state.activeFilterIndex].sliderTileThemeProps;
+
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.start,
+      crossAxisAlignment: CrossAxisAlignment.start,
+      mainAxisSize: MainAxisSize.min,
+      children: <Widget>[
+        Expanded(
+          child: FilterRangerSliderTitle(
+            key: UniqueKey(),
+            sliderTileThemeProps: sliderTileThemeProps,
+            filterOptions: filterOptions,
+            previousApplied: previousApplied,
+            title: title,
+            values: values,
+            minValue: minValue!,
+            maxValue: maxValue!,
+            onChanged: (newValues) async {
+              FilterItemModel startModel = FilterItemModel(
+                  filterKey: newValues.start,
+                  filterTitle: "${newValues.start}");
+              FilterItemModel endModel = FilterItemModel(
+                  filterKey: newValues.end, filterTitle: "${newValues.end}");
+              List<FilterItemModel> list = [];
+              list.add(startModel);
+              list.add(endModel);
+              Constants.debugLog(FilterWidget,
+                  "rangerSliderTitleWidget:rangerSliderTitleWidget:onChanged:${list.toString()}");
+              context.read<FilterCubit>().onFilterItemCheck(list);
+            },
+          ),
+        )
+      ],
+    );
+  }
+  rangerVerticalSliderTitleWidget(FilterState state, ThemeProps? themeProps) {
+    final filterOptions = state.filters[state.activeFilterIndex].filterOptions;
+    final previousApplied =
+        state.filters[state.activeFilterIndex].previousApplied;
+    final title = state.filters[state.activeFilterIndex].title ?? "";
+    Constants.debugLog(
+        FilterWidget, "rangerSliderTitleWidget:rangerSliderTitleWidget");
+
+    final minValue = findMinValue(filterOptions);
+    final maxValue = findMaxValue(filterOptions);
+    final double minGap = 1.0;
+    double? minPreviousAppliedValue;
+    double? maxPreviousAppliedValue;
+    if (previousApplied == null && previousApplied.isEmpty) {
+      minPreviousAppliedValue = 0.0;
+      maxPreviousAppliedValue = 0.0;
+    } else {
+      minPreviousAppliedValue = findMinValue(previousApplied);
+      maxPreviousAppliedValue = findMaxValue(previousApplied);
+    }
+    SfRangeValues? values = ((previousApplied == null &&
+            previousApplied.isEmpty)
+        ? SfRangeValues(minValue ?? 0.0, maxValue ?? 0.0)
+        : SfRangeValues(
+            minPreviousAppliedValue ?? 0.0, maxPreviousAppliedValue ?? 0.0));
+    final SliderTileThemeProps? sliderTileThemeProps =
+        state.filters[state.activeFilterIndex].sliderTileThemeProps;
+
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.start,
+      crossAxisAlignment: CrossAxisAlignment.start,
+      mainAxisSize: MainAxisSize.max,
+      children: <Widget>[
+        Expanded(
+          child: FilterVerticalRangerSliderTitle(
+            key: UniqueKey(),
+            sliderTileThemeProps: sliderTileThemeProps,
+            filterOptions: filterOptions,
+            previousApplied: previousApplied,
+            title: title,
+            values: values,
+            minValue: minValue!,
+            maxValue: maxValue!,
+            onChanged: (newValues) async {
+              FilterItemModel startModel = FilterItemModel(
+                  filterKey: newValues.start,
+                  filterTitle: "${newValues.start}");
+              FilterItemModel endModel = FilterItemModel(
+                  filterKey: newValues.end, filterTitle: "${newValues.end}");
+              List<FilterItemModel> list = [];
+              list.add(startModel);
+              list.add(endModel);
+              Constants.debugLog(FilterWidget,
+                  "rangerSliderTitleWidget:rangerSliderTitleWidget:onChanged:${list.toString()}");
+              context.read<FilterCubit>().onFilterItemCheck(list);
             },
           ),
         )

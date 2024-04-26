@@ -83,18 +83,21 @@ class _FilterSliderTitleState extends State<FilterSliderTitle> {
       min: widget.minValue,
       max: widget.maxValue,
       value: _values ?? 0.0,
-      stepSize: widget.sliderTileThemeProps?.stepSize ?? 1.0,
+       stepSize: widget.sliderTileThemeProps?.stepSize ?? 1.0,
       showLabels: true,
       enableTooltip: true,
       labelFormatterCallback: (value, formattedText) {
         return '${(widget.sliderTileThemeProps?.label_prefix_str == null || widget.sliderTileThemeProps!.label_prefix_str!.isEmpty) ? "" : "${widget.sliderTileThemeProps?.label_prefix_str.toString()} "}${double.tryParse("$value")?.toStringAsFixed(widget.sliderTileThemeProps?.fractionDigits??0) ?? 0}${(widget.sliderTileThemeProps?.label_suffix_str == null || widget.sliderTileThemeProps!.label_suffix_str!.isEmpty) ? "" : " ${widget.sliderTileThemeProps?.label_suffix_str.toString()}"}';
       },
-      onChanged: (newValues) {
-        Constants.debugLog(
-            FilterSliderTitle, "onChanged:newValues:${newValues}");
+      onChanged: (newValues) async{
+        Constants.debugLog(FilterSliderTitle, "onChanged:newValues:${newValues}");
+        // Call the onChanged callback passed from the parent widget
+
         setState(() {
           _values = newValues;
+          widget.onChanged(newValues);
         });
+
       },
     );
   }

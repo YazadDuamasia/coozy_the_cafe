@@ -1,8 +1,8 @@
+import 'package:flutter/material.dart';
 import 'package:coozy_cafe/widgets/country_pickers/country.dart';
 import 'package:coozy_cafe/widgets/country_pickers/utils/my_alert_dialog.dart';
 import 'package:coozy_cafe/widgets/country_pickers/utils/typedefs.dart';
-import 'package:flutter/material.dart';
-import 'countries.dart';
+import 'package:coozy_cafe/widgets/country_pickers/countries.dart';
 
 ///Provides a customizable [Dialog] which displays all countries
 /// with optional search feature

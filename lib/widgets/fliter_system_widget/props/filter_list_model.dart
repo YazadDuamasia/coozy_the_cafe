@@ -1,4 +1,5 @@
 import 'package:coozy_cafe/widgets/fliter_system_widget/props/filter_item_model.dart';
+import 'package:coozy_cafe/widgets/fliter_system_widget/props/filter_props.dart';
 import 'package:equatable/equatable.dart';
 
 /// Enumeration for different types of filter options
@@ -8,10 +9,14 @@ enum FilterType {
   Slider,
   VericalSlider,
   RangeSlider,
+  VericalRangeSlider,
+  RangeDateTimePicker,
+  RangeDateVerticalTimePicker,
   DatePicker,
   TimePicker,
   RangeDatePicker,
-  RangeTimePicker
+  RangeTimePicker,
+  RangeVerticalTimePicker
 }
 
 /// Filter option model
@@ -21,10 +26,10 @@ class FilterListModel extends Equatable {
   final List<FilterItemModel> filterOptions;
   final List<FilterItemModel> previousApplied;
   FilterType? type = FilterType.CheckboxList;
+  final SliderTileThemeProps? sliderTileThemeProps;
 
-
-   DateTime? firstDate;
-   DateTime? lastDate;
+  DateTime? firstDate;
+  DateTime? lastDate;
 
   FilterListModel({
     this.title,
@@ -32,6 +37,7 @@ class FilterListModel extends Equatable {
     required this.filterOptions,
     required this.previousApplied,
     required this.type,
+    this.sliderTileThemeProps,
   });
 
   FilterListModel copyWith({
@@ -40,6 +46,7 @@ class FilterListModel extends Equatable {
     String? title,
     String? filterKey,
     FilterType? type,
+    SliderTileThemeProps? sliderTileThemeProps,
   }) {
     return FilterListModel(
       title: title ?? this.title,
@@ -47,6 +54,7 @@ class FilterListModel extends Equatable {
       filterKey: filterKey ?? this.filterKey,
       filterOptions: filterOptions ?? this.filterOptions,
       previousApplied: previousApplied ?? this.previousApplied,
+      sliderTileThemeProps: sliderTileThemeProps ?? this.sliderTileThemeProps,
     );
   }
 
@@ -62,6 +70,7 @@ class FilterListModel extends Equatable {
       'type': type.toString().split('.').last,
       'previous_applied': previousApplied.map((e) => e.toMap()).toList(),
       'filter_options': filterOptions.map((e) => e.toMap()).toList(),
+      'SliderTileThemeProps': sliderTileThemeProps.toString(),
     });
   }
 }

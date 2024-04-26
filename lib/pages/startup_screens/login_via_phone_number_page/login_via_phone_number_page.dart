@@ -58,6 +58,8 @@ class _LoginViaPhoneNumberPageState extends State<LoginViaPhoneNumberPage> {
   bool hasError = false;
   String currentText = "";*/
 
+
+
   @override
   void initState() {
     appLogoLight = Image.asset(
@@ -159,10 +161,7 @@ class _LoginViaPhoneNumberPageState extends State<LoginViaPhoneNumberPage> {
                           child: CircleAvatar(
                             radius: 55.0,
                             backgroundColor:
-                                MediaQuery.of(context).platformBrightness ==
-                                        Brightness.dark
-                                    ? const Color(0xFF303F90)
-                                    : const Color(0xFF00105A),
+                            Theme.of(context).colorScheme.secondaryContainer
                           ),
                         ),
                         Positioned(
@@ -172,10 +171,7 @@ class _LoginViaPhoneNumberPageState extends State<LoginViaPhoneNumberPage> {
                           child: CircleAvatar(
                             radius: 33.0,
                             backgroundColor:
-                                MediaQuery.of(context).platformBrightness ==
-                                        Brightness.dark
-                                    ? const Color(0xFF303F90)
-                                    : const Color(0xFF00105A),
+                            Theme.of(context).colorScheme.secondaryContainer,
                           ),
                         ),
                         Card(
@@ -190,10 +186,7 @@ class _LoginViaPhoneNumberPageState extends State<LoginViaPhoneNumberPage> {
                             side: BorderSide(
                               width: 5,
                               color:
-                                  MediaQuery.of(context).platformBrightness ==
-                                          Brightness.dark
-                                      ? const Color(0xFF303F90)
-                                      : const Color(0xFF00105A),
+                              Theme.of(context).colorScheme.secondaryContainer
                             ),
                           ),
                           child: Container(
@@ -344,7 +337,7 @@ class _LoginViaPhoneNumberPageState extends State<LoginViaPhoneNumberPage> {
                             child: CircleAvatar(
                               backgroundColor: Colors.grey.shade300,
                               radius: 50.0,
-                              child: const Icon(CustomIcon.password, size: 65),
+                              child:  Icon(CustomIcon.password, size: 65,color: Theme.of(context).colorScheme.secondaryContainer),
                             ),
                           ),
                         ),
@@ -370,9 +363,9 @@ class _LoginViaPhoneNumberPageState extends State<LoginViaPhoneNumberPage> {
                                       ),
                                       strokeWidth: 4,
                                       color: Colors.grey.shade300,
-                                      child: const Center(
+                                      child:  Center(
                                         child: Icon(Icons.navigate_next_rounded,
-                                            color: Colors.white, size: 35),
+                                            color:  Theme.of(context).colorScheme.secondaryContainer, size: 40),
                                       ),
                                     );
                                   }),
@@ -799,7 +792,7 @@ class _LoginViaPhoneNumberPageState extends State<LoginViaPhoneNumberPage> {
                   controller: _phoneNumberController,
                   focusNode: _phoneNumberFocusNode,
                   showDropdownIcon: true,
-                  showCountryFlag: false,
+                  showCountryFlag: true,
                   textInputAction: TextInputAction.next,
                   decoration: InputDecoration(
                     contentPadding: const EdgeInsets.all(9),
@@ -853,8 +846,7 @@ class _LoginViaPhoneNumberPageState extends State<LoginViaPhoneNumberPage> {
                     _loginWithPhoneCubit!
                         .updatePhoneNumber(number.completeNumber, context);
                   },
-                  initialCountryCode:
-                      phoneIosCodeSnapshot.data?.isoCode ?? "IN",
+                  initialCountryCode: phoneIosCodeSnapshot.data?.isoCode ?? "IN",
                   priorityList: [
                     CountryPickerUtils.getCountryByIsoCode('IN'),
                     CountryPickerUtils.getCountryByIsoCode('US'),

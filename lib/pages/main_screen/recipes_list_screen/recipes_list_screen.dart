@@ -51,21 +51,21 @@ class _RecipesListScreenState extends State<RecipesListScreen> {
                       print(e);
                       return;
                     }
-                    // if (data == null || data.isEmpty) {
-                    //   Constants.showToastMsg(
-                    //       msg: "Please select recipes to bookmark");
-                    // } else {
-                    //   await navigationRoutes
-                    //       .navigateToRecipesBookmarkListScreen(data)
-                    //       .then((value) {
-                    //     setState(() {});
-                    //   });
-                    // }
-                    await navigationRoutes
-                        .navigateToRecipesBookmarkListScreen(data)
-                        .then((value) {
-                      setState(() {});
-                    });
+                    if (data == null || data.isEmpty) {
+                      Constants.showToastMsg(
+                          msg: "Please select recipes to bookmark");
+                    } else {
+                      await navigationRoutes
+                          .navigateToRecipesBookmarkListScreen(data)
+                          .then((value) {
+                        setState(() {});
+                      });
+                    }
+                    // await navigationRoutes
+                    //     .navigateToRecipesBookmarkListScreen(data)
+                    //     .then((value) {
+                    //   setState(() {});
+                    // });
                   },
                   icon: Icon(MdiIcons.bookmarkMultiple)),
             ],
@@ -196,7 +196,7 @@ class _RecipesListScreenState extends State<RecipesListScreen> {
                               children: [
                                 Icon(
                                   MenuIcons.recipe,
-                                  size: 100,
+                                  size: 120,
                                   color: Theme.of(context).colorScheme.primary,
                                 ),
                                 const SizedBox(height: 20),
@@ -218,7 +218,7 @@ class _RecipesListScreenState extends State<RecipesListScreen> {
                                           textAlign: TextAlign.center,
                                           style: Theme.of(context)
                                               .textTheme
-                                              .titleMedium,
+                                              .titleLarge,
                                         ),
                                       ),
                                     ],
@@ -243,7 +243,7 @@ class _RecipesListScreenState extends State<RecipesListScreen> {
                                           textAlign: TextAlign.center,
                                           style: Theme.of(context)
                                               .textTheme
-                                              .titleSmall,
+                                              .titleMedium,
                                         ),
                                       ),
                                     ],
@@ -254,6 +254,7 @@ class _RecipesListScreenState extends State<RecipesListScreen> {
                           ),
                           child: Scrollbar(
                             thumbVisibility: true,
+                            interactive: true,
                             radius: const Radius.circular(10.0),
                             child: CustomScrollView(
                               physics: const ClampingScrollPhysics(
@@ -693,10 +694,8 @@ class _RecipesListScreenState extends State<RecipesListScreen> {
           filterProps: FilterProps(
             onFilterChange: (List<AppliedFilterModel> value) async {
               // print('Applied filer - ${value.map((e) => e.toMap())}');
-              Constants.debugLog(RecipesListScreen,
-                  "Applied filer:${value.map((e) => e.toMap())}");
-              BlocProvider.of<RecipesFullListCubit>(context)
-                  .applyFilter(fliter: value);
+              Constants.debugLog(RecipesListScreen, "Applied filer:${value.map((e) => e.toMap())}");
+              BlocProvider.of<RecipesFullListCubit>(context).applyFilter(fliter: value);
             },
             filters: [
               FilterListModel(
@@ -748,7 +747,7 @@ class _RecipesListScreenState extends State<RecipesListScreen> {
                 filterKey: 'diet',
               ),
               FilterListModel(
-                type: FilterType.VericalSlider,
+                type: FilterType.Slider,
                 filterOptions: context
                         .read<RecipesFullListCubit>()
                         .totalCookingTimeFilterOptionsList ??
@@ -758,9 +757,14 @@ class _RecipesListScreenState extends State<RecipesListScreen> {
                     'total_cooking_time'),
                 title: 'Total cooking time',
                 filterKey: 'total_cooking_time',
+                sliderTileThemeProps: const SliderTileThemeProps(
+                    label_suffix_str: "mins",
+                    tooltip_suffix_str: "mins",
+                    stepSize: 1.0,
+                    fractionDigits: 0),
               ),
               FilterListModel(
-                type: FilterType.VericalSlider,
+                type: FilterType.VericalRangeSlider,
                 filterOptions: context
                         .read<RecipesFullListCubit>()
                         .cookingTimeFilterOptionsList ??
@@ -770,6 +774,11 @@ class _RecipesListScreenState extends State<RecipesListScreen> {
                     'cooking_time'),
                 title: 'Cooking Time',
                 filterKey: 'cooking_time',
+                sliderTileThemeProps: const SliderTileThemeProps(
+                    label_suffix_str: "mins",
+                    tooltip_suffix_str: "mins",
+                    stepSize: 1.0,
+                    fractionDigits: 0),
               ),
             ],
             themeProps: ThemeProps(
@@ -782,11 +791,6 @@ class _RecipesListScreenState extends State<RecipesListScreen> {
                   Theme.of(context).textTheme.bodyLarge!.color,
               submitButtonColor: Theme.of(context).colorScheme.secondary,
               resetButtonColor: Theme.of(context).colorScheme.secondary,
-              sliderTileThemeProps: const SliderTileThemeProps(
-                  label_suffix_str: "mins",
-                  tooltip_suffix_str: "mins",
-                  stepSize: 1.0,
-                  fractionDigits: 0),
             ),
           ),
         );

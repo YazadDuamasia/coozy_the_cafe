@@ -18,7 +18,7 @@ class RecipesFullListCubit extends Cubit<RecipesFullListState> {
   final BehaviorSubject<RecipesFullListState> _stateSubject = BehaviorSubject();
 
   Stream<RecipesFullListState> get stateStream => _stateSubject.stream;
-  List<int> itemsPerPageList = [10, 20, 30, 40, 50];
+  List<int> itemsPerPageList = [10, 20, 30, 40, 50,100];
 
   List<RecipeModel>? recipeList = [];
 

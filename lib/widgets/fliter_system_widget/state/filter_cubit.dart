@@ -9,8 +9,8 @@ import 'package:coozy_cafe/widgets/fliter_system_widget/props/filter_item_model.
 import 'package:coozy_cafe/widgets/fliter_system_widget/props/filter_list_model.dart';
 import 'package:coozy_cafe/widgets/fliter_system_widget/props/filter_props.dart';
 import 'package:equatable/equatable.dart';
-import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:syncfusion_flutter_sliders/sliders.dart';
 
 part 'filter_state.dart';
 
@@ -21,8 +21,6 @@ class FilterCubit extends Cubit<FilterState> {
           FilterState.init(
               filters: filterProps.filters,
               activeFilterIndex: 0,
-              sliderValues: 0.0,
-              rangeSliderValues: RangeValues(0, 0),
               type: filterProps.filters.first.type ?? FilterType.CheckboxList),
         );
 
@@ -41,7 +39,7 @@ class FilterCubit extends Cubit<FilterState> {
     );
   }
 
-  void onFilterItemCheck(FilterItemModel item) {
+  void onFilterItemCheck(item) {
     List<FilterListModel> filterModels = [...state.filters];
     FilterListModel filterItem = filterModels[state.activeFilterIndex];
     final checkedItems = [...filterItem.previousApplied];
@@ -73,6 +71,18 @@ class FilterCubit extends Cubit<FilterState> {
           Constants.debugLog(FilterCubit, "Slider");
           checkedItems.clear();
           checkedItems.add(item);
+          Constants.debugLog(FilterCubit, "Slider:Slider:${checkedItems}");
+        }
+        break;
+
+      case FilterType.RangeSlider:
+        {
+          Constants.debugLog(FilterCubit, "RangeSlider");
+          Constants.debugLog(FilterCubit, "RangeSlider:${item}");
+          checkedItems.clear();
+          for(FilterItemModel model in item) {
+            checkedItems.add(model);
+          }
           Constants.debugLog(
               FilterCubit, "Slider:Slider:${checkedItems}");
         }
@@ -109,7 +119,6 @@ class FilterCubit extends Cubit<FilterState> {
     filterModels[state.activeFilterIndex] = updatedItem;
     emit(state.copyWith(
       filters: filterModels,
-      sliderValues:double.tryParse("${item.filterKey.toString()}")??0.0
     ));
   }
 

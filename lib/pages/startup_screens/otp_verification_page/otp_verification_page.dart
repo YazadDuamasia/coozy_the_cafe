@@ -1,16 +1,13 @@
 import 'dart:async';
 import 'dart:convert';
 
-
 import 'package:coozy_cafe/routing/routs.dart';
 import 'package:coozy_cafe/utlis/utlis.dart';
 import 'package:coozy_cafe/widgets/widgets.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-
 import 'package:pin_code_fields/pin_code_fields.dart';
 import 'package:sms_autofill/sms_autofill.dart';
-
 
 class OtpVerificationPage extends StatefulWidget {
   final String? phoneNumber;
@@ -126,11 +123,7 @@ class _OtpVerificationPageState extends State<OtpVerificationPage>
                               child: Center(
                                 child: CircleAvatar(
                                   radius: 65,
-                                  backgroundColor: MediaQuery.of(context)
-                                              .platformBrightness ==
-                                          Brightness.light
-                                      ? const Color(0xFFDEE0FF)
-                                      : const Color(0xFF303F90),
+
                                   child: Padding(
                                     padding: const EdgeInsets.all(25.0),
                                     child: Icon(CustomIcon.open_message,
@@ -158,14 +151,9 @@ class _OtpVerificationPageState extends State<OtpVerificationPage>
                                       maxLines: 3,
                                       style: Theme.of(context)
                                           .textTheme
-                                          .headline4!
+                                          .headlineMedium!
                                           .copyWith(
-                                              fontWeight: FontWeight.w700,
-                                              color: MediaQuery.of(context)
-                                                          .platformBrightness ==
-                                                      Brightness.light
-                                                  ? Colors.black
-                                                  : Colors.grey.shade300),
+                                              fontWeight: FontWeight.w700),
                                     ),
                                   ),
                                 ],
@@ -175,7 +163,7 @@ class _OtpVerificationPageState extends State<OtpVerificationPage>
                               padding: const EdgeInsets.only(
                                   left: 28.0, top: 10, right: 28),
                               child: Text(
-                                "Please enter verification code sent to your mobile number ${widget.phoneNumber??""}",
+                                "Please enter verification code sent to your mobile number ${widget.phoneNumber ?? ""}",
                                 maxLines: 6,
                                 textAlign: TextAlign.center,
                                 style: Theme.of(context).textTheme.bodyLarge,
@@ -196,10 +184,13 @@ class _OtpVerificationPageState extends State<OtpVerificationPage>
                                       textAlign: TextAlign.start,
                                       style: Theme.of(context)
                                           .textTheme
-                                          .bodyMedium,
+                                          .bodyLarge,
                                     ),
                                   ),
                                   CountDownTimer(
+                                    textStyle: Theme.of(context)
+                                        .textTheme
+                                        .bodyLarge,
                                     animation: StepTween(
                                       begin: kStartValue,
                                       end: 0,
@@ -278,7 +269,7 @@ class _OtpVerificationPageState extends State<OtpVerificationPage>
   }
 
   Future<void> back_press_handle() async {
-   navigationRoutes.goBack();
+    navigationRoutes.goBack();
   }
 
   GlobalKey<FormState>? formKey = GlobalKey<FormState>();
@@ -365,16 +356,8 @@ class _OtpVerificationPageState extends State<OtpVerificationPage>
                                           Brightness.light
                                       ? Colors.white
                                       : Colors.white,
-                              activeColor:
-                                  MediaQuery.of(context).platformBrightness ==
-                                          Brightness.light
-                                      ? const Color(0xFF006495)
-                                      : const Color(0xFF8FCDFF),
-                              selectedColor:
-                                  MediaQuery.of(context).platformBrightness ==
-                                          Brightness.light
-                                      ? const Color(0xFF778DB6)
-                                      : const Color(0xFF1848DE),
+                              activeColor:Theme.of(context).colorScheme.primary,
+                              selectedColor: Theme.of(context).colorScheme.primary,
                             ),
 
                             boxShadows: [
@@ -435,18 +418,21 @@ class _OtpVerificationPageState extends State<OtpVerificationPage>
                 Padding(
                   padding:
                       const EdgeInsets.only(right: 25.0, left: 25.0, top: 0.0),
-                  child: Container(
-                    alignment: Alignment.center,
-                    child: ElevatedButton(
-                      onPressed: () async {
-                        onClickVerify();
-                      },
-                      child: Padding(
-                        padding: const EdgeInsets.only(
-                            left: 30, right: 30, bottom: 10, top: 10),
+                  child: Center(
+                    child: Theme(
+                      data: Theme.of(context),
+                      child: ElevatedButton(
+                        onPressed: () async {
+                          onClickVerify();
+                        },
+                        style: ElevatedButton.styleFrom(
+                            backgroundColor: Theme.of(context).colorScheme.secondaryContainer,
+
+
+                        ),
                         child: Text(
                           "Verify",
-                          style: Theme.of(context).textTheme.bodyLarge,
+                          style: Theme.of(context).textTheme.bodyLarge!.copyWith(fontSize: 25,fontWeight: FontWeight.w600),
                         ),
                       ),
                     ),

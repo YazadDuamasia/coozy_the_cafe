@@ -1,4 +1,3 @@
-import 'dart:convert';
 import 'dart:io';
 
 import 'package:animations/animations.dart';
@@ -6,11 +5,11 @@ import 'package:coozy_cafe/bloc/bloc.dart';
 import 'package:coozy_cafe/pages/main_screen/home_screen/home_screen_drawer.dart';
 import 'package:coozy_cafe/utlis/utlis.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:permission_handler/permission_handler.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
@@ -42,7 +41,7 @@ class _HomeScreenState extends State<HomeScreen>
     // _processCsvToJson();
   }
 
- /* Future<void> _processCsvToJson() async {
+  /* Future<void> _processCsvToJson() async {
     try {
       String jsonContent = await rootBundle.loadString("assets/data/recipes_for_indian_food_dataset.json");
       List<dynamic> jsonArray = json.decode(jsonContent);
@@ -96,7 +95,7 @@ class _HomeScreenState extends State<HomeScreen>
       // Print the modified JSON
       print(modifiedJsonContent);
       await FileStorage.writeCounter(modifiedJsonContent, "recipes_for_indian_food_dataset.json");
-    *//*  // Read the CSV file from assets
+    */ /*  // Read the CSV file from assets
       String csvString =
       await rootBundle.loadString("assets/data/IndianFoodDatasetCSV.csv");
 
@@ -122,12 +121,11 @@ class _HomeScreenState extends State<HomeScreen>
       }
 
       await FileStorage.writeCounter(
-          "${jsonEncode(jsonData)}", "recipes_for_indian_food_dataset.json");*//*
+          "${jsonEncode(jsonData)}", "recipes_for_indian_food_dataset.json");*/ /*
     } catch (e) {
       print('Error converting CSV to JSON: $e');
     }
   }*/
-
 
   Widget buildPageTransitionSwitcher({var list, int? currentIndex}) {
     return PageTransitionSwitcher(
@@ -276,8 +274,13 @@ class _HomeScreenState extends State<HomeScreen>
                 Theme(
                   data: Theme.of(context),
                   child: PopupMenuButton(
-                    onSelected: (value) {
+                    onSelected: (value) async {
                       print(value);
+                      if(value=="clear_data"){
+                        final prefs = await SharedPreferences.getInstance();
+                        prefs.clear();
+
+                      }
                     },
                     itemBuilder: (BuildContext bc) {
                       return const [
@@ -292,6 +295,10 @@ class _HomeScreenState extends State<HomeScreen>
                         PopupMenuItem(
                           value: 'restore',
                           child: Text("Restore"),
+                        ),
+                        PopupMenuItem(
+                          value: 'clear_data',
+                          child: Text("clear data"),
                         )
                       ];
                     },
@@ -321,6 +328,7 @@ class _HomeScreenState extends State<HomeScreen>
     );
   }
 }
+
 // To save the file in the device
 class FileStorage {
   static Future<String> getExternalDocumentPath() async {
@@ -352,11 +360,11 @@ class FileStorage {
     return directory;
   }
 
-  static Future<File> writeCounter(String bytes,String name) async {
+  static Future<File> writeCounter(String bytes, String name) async {
     final path = await _localPath;
     // Create a file for the path of
     // device and file name with extension
-    File file= File('$path/$name');
+    File file = File('$path/$name');
     print("Save file");
 
     // Write the data in the file you have created
