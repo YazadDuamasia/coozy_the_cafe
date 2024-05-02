@@ -691,12 +691,12 @@ class Constants {
         barrierDismissible: true,
         builder: (BuildContext context) {
           couter = Timer(
-            showForHowDuration ?? const Duration(seconds: 40),
+            showForHowDuration ?? const Duration(seconds: 5),
             () async {
               if ((couter?.isActive ?? false) == true) {
                 couter?.cancel();
               }
-              Navigator.pop(context);
+              Navigator.pop(navigatorKey.currentContext!);
             },
           );
           return dialog;

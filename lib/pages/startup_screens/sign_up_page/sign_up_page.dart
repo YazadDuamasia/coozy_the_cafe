@@ -1,21 +1,23 @@
 import 'dart:convert';
 import 'dart:ui';
 
-
+import 'package:carousel_slider/carousel_slider.dart';
 import 'package:coozy_cafe/AppLocalization.dart';
 import 'package:coozy_cafe/bloc/bloc.dart';
 import 'package:coozy_cafe/config/config.dart';
 import 'package:coozy_cafe/utlis/utlis.dart';
 import 'package:coozy_cafe/widgets/country_pickers/country.dart';
+import 'package:coozy_cafe/widgets/date_time_pickers/showDatePickerSheet.dart';
+import 'package:coozy_cafe/widgets/datetime_picker_formfield/datetime_picker_formfield.dart';
 import 'package:coozy_cafe/widgets/phone_number_text_form_widget/phone_number_text_form_field.dart';
 import 'package:coozy_cafe/widgets/widgets.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
-import 'package:lottie/lottie.dart';
 import 'package:geolocator/geolocator.dart';
-import 'package:carousel_slider/carousel_slider.dart';
+import 'package:intl/intl.dart';
+import 'package:lottie/lottie.dart';
 
 class SignUpPage extends StatefulWidget {
   const SignUpPage({Key? key}) : super(key: key);
@@ -352,132 +354,7 @@ class _SignUpPageState extends State<SignUpPage> {
                               ],
                             ),
                             phone_number_widget(),
-                            Row(
-                              mainAxisAlignment: MainAxisAlignment.start,
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              mainAxisSize: MainAxisSize.min,
-                              children: [
-                                StreamBuilder(
-                                  stream: _signUpCubit?.dobController,
-                                  builder: (context, snapshot) {
-                                    return Expanded(
-                                      child: Column(
-                                        mainAxisSize: MainAxisSize.min,
-                                        crossAxisAlignment:
-                                            CrossAxisAlignment.start,
-                                        children: [
-                                          GestureDetector(
-                                            onTap: () => _selectDate(context),
-                                            child: AbsorbPointer(
-                                              child: Padding(
-                                                padding: const EdgeInsets.only(
-                                                    left: 10,
-                                                    right: 10,
-                                                    top: 15),
-                                                child: TextFormField(
-                                                  onChanged: (value) {
-                                                    _signUpCubit
-                                                        ?.updateDob(value);
-                                                  },
-                                                  readOnly: true,
-                                                  controller:
-                                                      _birthDateController,
-                                                  focusNode:
-                                                      _birthDateFocusNode,
-                                                  decoration: InputDecoration(
-                                                    labelText: "Date of birth",
-                                                    hintText: "Date of birth",
-                                                    border: OutlineInputBorder(
-                                                      borderSide: BorderSide(
-                                                        color: Theme.of(context)
-                                                            .colorScheme
-                                                            .primary,
-                                                      ),
-                                                      borderRadius:
-                                                          BorderRadius.circular(
-                                                              5),
-                                                    ),
-                                                    disabledBorder:
-                                                        OutlineInputBorder(
-                                                      borderSide: BorderSide(
-                                                        color: Theme.of(context)
-                                                            .disabledColor,
-                                                      ),
-                                                      borderRadius:
-                                                          BorderRadius.circular(
-                                                              5),
-                                                    ),
-                                                    enabledBorder:
-                                                        OutlineInputBorder(
-                                                      borderSide: BorderSide(
-                                                        color: Theme.of(context)
-                                                            .colorScheme
-                                                            .primary,
-                                                      ),
-                                                      borderRadius:
-                                                          BorderRadius.circular(
-                                                              5),
-                                                    ),
-                                                    focusedBorder:
-                                                        OutlineInputBorder(
-                                                      borderSide: BorderSide(
-                                                          color:
-                                                              Theme.of(context)
-                                                                  .colorScheme
-                                                                  .primary),
-                                                      borderRadius:
-                                                          BorderRadius.circular(
-                                                              5),
-                                                    ),
-                                                    errorBorder:
-                                                        OutlineInputBorder(
-                                                      borderSide: BorderSide(
-                                                          color:
-                                                              Theme.of(context)
-                                                                  .colorScheme
-                                                                  .error),
-                                                      borderRadius:
-                                                          BorderRadius.circular(
-                                                              5),
-                                                    ),
-                                                    focusedErrorBorder:
-                                                        OutlineInputBorder(
-                                                      borderSide: BorderSide(
-                                                          color:
-                                                              Theme.of(context)
-                                                                  .colorScheme
-                                                                  .error),
-                                                      borderRadius:
-                                                          BorderRadius.circular(
-                                                              5),
-                                                    ),
-                                                  ),
-                                                  autovalidateMode:
-                                                      AutovalidateMode
-                                                          .onUserInteraction,
-                                                  validator: (value) {
-                                                    if (value!.isEmpty) {
-                                                      return "Date of birth is required.";
-                                                    } else {
-                                                      return null;
-                                                    }
-                                                  },
-                                                  onFieldSubmitted:
-                                                      (String value) {
-                                                    FocusScope.of(context)
-                                                        .requestFocus();
-                                                  },
-                                                ),
-                                              ),
-                                            ),
-                                          ),
-                                        ],
-                                      ),
-                                    );
-                                  },
-                                ),
-                              ],
-                            ),
+                            dob_picker_widget(),
                             Row(
                               children: [
                                 Expanded(
@@ -515,6 +392,214 @@ class _SignUpPageState extends State<SignUpPage> {
         }
         return Container();
       },
+    );
+  }
+
+  Widget dob_picker_widget() {
+    /* return Row(
+      mainAxisAlignment: MainAxisAlignment.start,
+      crossAxisAlignment: CrossAxisAlignment.start,
+      mainAxisSize: MainAxisSize.min,
+      children: [
+        StreamBuilder(
+          stream: _signUpCubit?.dobController,
+          builder: (context, snapshot) {
+            return Expanded(
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  GestureDetector(
+                    onTap: () => _selectDate(context),
+                    child: AbsorbPointer(
+                      child: Padding(
+                        padding:
+                            const EdgeInsets.only(left: 10, right: 10, top: 15),
+                        child: TextFormField(
+                          onChanged: (value) {
+                            _signUpCubit?.updateDob(value);
+                          },
+                          readOnly: true,
+                          controller: _birthDateController,
+                          focusNode: _birthDateFocusNode,
+                          decoration: InputDecoration(
+                            labelText: "Date of birth",
+                            hintText: "Date of birth",
+                            border: OutlineInputBorder(
+                              borderSide: BorderSide(
+                                color: Theme.of(context).colorScheme.primary,
+                              ),
+                              borderRadius: BorderRadius.circular(5),
+                            ),
+                            disabledBorder: OutlineInputBorder(
+                              borderSide: BorderSide(
+                                color: Theme.of(context).disabledColor,
+                              ),
+                              borderRadius: BorderRadius.circular(5),
+                            ),
+                            enabledBorder: OutlineInputBorder(
+                              borderSide: BorderSide(
+                                color: Theme.of(context).colorScheme.primary,
+                              ),
+                              borderRadius: BorderRadius.circular(5),
+                            ),
+                            focusedBorder: OutlineInputBorder(
+                              borderSide: BorderSide(
+                                  color: Theme.of(context).colorScheme.primary),
+                              borderRadius: BorderRadius.circular(5),
+                            ),
+                            errorBorder: OutlineInputBorder(
+                              borderSide: BorderSide(
+                                  color: Theme.of(context).colorScheme.error),
+                              borderRadius: BorderRadius.circular(5),
+                            ),
+                            focusedErrorBorder: OutlineInputBorder(
+                              borderSide: BorderSide(
+                                  color: Theme.of(context).colorScheme.error),
+                              borderRadius: BorderRadius.circular(5),
+                            ),
+                          ),
+                          autovalidateMode: AutovalidateMode.onUserInteraction,
+                          validator: (value) {
+                            if (value!.isEmpty) {
+                              return "Date of birth is required.";
+                            } else {
+                              return null;
+                            }
+                          },
+                          onFieldSubmitted: (String value) {
+                            FocusScope.of(context).requestFocus();
+                          },
+                        ),
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+            );
+          },
+        ),
+      ],
+    );*/
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.start,
+      crossAxisAlignment: CrossAxisAlignment.start,
+      mainAxisSize: MainAxisSize.min,
+      children: [
+        StreamBuilder(
+          stream: _signUpCubit?.dobController,
+          builder: (context, snapshot) {
+            return Expanded(
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Padding(
+                    padding:
+                        const EdgeInsets.only(left: 10, right: 10, top: 15),
+                    child: DateTimeField(
+                      format: DateFormat(DateUtil.DATE_FORMAT9),
+                      controller: _birthDateController,
+                      focusNode: _birthDateFocusNode,
+                      onShowPicker: (context, currentValue) async {
+                        final date = await showDatePickerSheet(
+                          context: context,
+                          initialDate: (_birthDateController!.text == null ||
+                                  _birthDateController!.text.isEmpty)
+                              ? DateTime.now()
+                              : DateUtil.stringToDate(
+                                      _birthDateController!.text,
+                                      DateUtil.DATE_FORMAT9) ??
+                                  DateTime.now(),
+                          pickerMode: CupertinoDatePickerMode.date,
+                          dateOrder: DatePickerDateOrder.dmy,
+                          backgroundColor:
+                              Theme.of(context).colorScheme.background,
+                          maximumDate: DateTime.now(),
+                          minimumDate:
+                              DateTime(DateTime.now().year - 150, 1, 1),
+                        );
+                        return date;
+                      },
+                      decoration: InputDecoration(
+                        labelText: "Date of birth",
+                        hintText: "Date of birth",
+                        border: OutlineInputBorder(
+                          borderSide: BorderSide(
+                            color: Theme.of(context).colorScheme.primary,
+                          ),
+                          borderRadius: BorderRadius.circular(5),
+                        ),
+                        disabledBorder: OutlineInputBorder(
+                          borderSide: BorderSide(
+                            color: Theme.of(context).disabledColor,
+                          ),
+                          borderRadius: BorderRadius.circular(5),
+                        ),
+                        enabledBorder: OutlineInputBorder(
+                          borderSide: BorderSide(
+                            color: Theme.of(context).colorScheme.primary,
+                          ),
+                          borderRadius: BorderRadius.circular(5),
+                        ),
+                        focusedBorder: OutlineInputBorder(
+                          borderSide: BorderSide(
+                              color: Theme.of(context).colorScheme.primary),
+                          borderRadius: BorderRadius.circular(5),
+                        ),
+                        errorBorder: OutlineInputBorder(
+                          borderSide: BorderSide(
+                              color: Theme.of(context).colorScheme.error),
+                          borderRadius: BorderRadius.circular(5),
+                        ),
+                        focusedErrorBorder: OutlineInputBorder(
+                          borderSide: BorderSide(
+                              color: Theme.of(context).colorScheme.error),
+                          borderRadius: BorderRadius.circular(5),
+                        ),
+                      ),
+                      autovalidateMode: AutovalidateMode.onUserInteraction,
+                      validator: (value) {
+                        if (value == null) {
+                          return "Date of birth is required.";
+                        } else {
+                          return null;
+                        }
+                      },
+                      onChanged: (datePick) async {
+                        if (datePick != null && datePick != date) {
+                          if (DateTime.now().year - datePick.year < 18) {
+                            Constants.customTimerPopUpDialogMessage(
+                                classObject: SignUpPage,
+                                isLoading: true,
+                                showForHowDuration: const Duration(seconds: 4),
+                                titleIcon: Padding(
+                                  padding: const EdgeInsets.all(2.0),
+                                  child: Icon(
+                                    Icons.person,
+                                    size: 50,
+                                    color: Theme.of(context).colorScheme.primary,
+                                  ),
+                                ),
+                                context: context,
+                                descriptions: "You must be 18+ years old to register.",
+                                textColorDescriptions: Colors.white);
+                          } else {
+                            date = datePick;
+                            String? str_date = await DateUtil.dateToString(datePick, DateUtil.DATE_FORMAT9);
+                            _signUpCubit?.updateDob(str_date ?? "");
+                          }
+                        }
+
+                      },
+                    ),
+                  ),
+                ],
+              ),
+            );
+          },
+        ),
+      ],
     );
   }
 
@@ -572,7 +657,8 @@ class _SignUpPageState extends State<SignUpPage> {
                                     pauseAutoPlayOnTouch: true,
                                     initialPage: 0,
                                     pauseAutoPlayInFiniteScroll: false,
-                                    autoPlayAnimationDuration: const Duration(seconds: 1),
+                                    autoPlayAnimationDuration:
+                                        const Duration(seconds: 1),
                                     viewportFraction: 1.0,
                                     height: size!.height,
                                   ),
@@ -868,157 +954,7 @@ class _SignUpPageState extends State<SignUpPage> {
                                         ],
                                       ),
                                       phone_number_widget(),
-                                      Row(
-                                        mainAxisAlignment:
-                                            MainAxisAlignment.start,
-                                        crossAxisAlignment:
-                                            CrossAxisAlignment.start,
-                                        mainAxisSize: MainAxisSize.min,
-                                        children: [
-                                          StreamBuilder(
-                                            stream: _signUpCubit?.dobController,
-                                            builder: (context, snapshot) {
-                                              return Expanded(
-                                                child: Column(
-                                                  mainAxisSize:
-                                                      MainAxisSize.min,
-                                                  crossAxisAlignment:
-                                                      CrossAxisAlignment.start,
-                                                  children: [
-                                                    GestureDetector(
-                                                      onTap: () =>
-                                                          _selectDate(context),
-                                                      child: AbsorbPointer(
-                                                        child: Padding(
-                                                          padding:
-                                                              const EdgeInsets
-                                                                  .only(
-                                                                  left: 10,
-                                                                  right: 10,
-                                                                  top: 15),
-                                                          child: TextFormField(
-                                                            onChanged: (value) {
-                                                              _signUpCubit
-                                                                  ?.updateDob(
-                                                                      value);
-                                                            },
-                                                            readOnly: true,
-                                                            controller:
-                                                                _birthDateController,
-                                                            focusNode:
-                                                                _birthDateFocusNode,
-                                                            decoration:
-                                                                InputDecoration(
-                                                              labelText:
-                                                                  "Date of birth",
-                                                              hintText:
-                                                                  "Date of birth",
-                                                              border:
-                                                                  OutlineInputBorder(
-                                                                borderSide:
-                                                                    BorderSide(
-                                                                  color: Theme.of(
-                                                                          context)
-                                                                      .colorScheme
-                                                                      .primary,
-                                                                ),
-                                                                borderRadius:
-                                                                    BorderRadius
-                                                                        .circular(
-                                                                            5),
-                                                              ),
-                                                              disabledBorder:
-                                                                  OutlineInputBorder(
-                                                                borderSide:
-                                                                    BorderSide(
-                                                                  color: Theme.of(
-                                                                          context)
-                                                                      .disabledColor,
-                                                                ),
-                                                                borderRadius:
-                                                                    BorderRadius
-                                                                        .circular(
-                                                                            5),
-                                                              ),
-                                                              enabledBorder:
-                                                                  OutlineInputBorder(
-                                                                borderSide:
-                                                                    BorderSide(
-                                                                  color: Theme.of(
-                                                                          context)
-                                                                      .colorScheme
-                                                                      .primary,
-                                                                ),
-                                                                borderRadius:
-                                                                    BorderRadius
-                                                                        .circular(
-                                                                            5),
-                                                              ),
-                                                              focusedBorder:
-                                                                  OutlineInputBorder(
-                                                                borderSide: BorderSide(
-                                                                    color: Theme.of(
-                                                                            context)
-                                                                        .colorScheme
-                                                                        .primary),
-                                                                borderRadius:
-                                                                    BorderRadius
-                                                                        .circular(
-                                                                            5),
-                                                              ),
-                                                              errorBorder:
-                                                                  OutlineInputBorder(
-                                                                borderSide: BorderSide(
-                                                                    color: Theme.of(
-                                                                            context)
-                                                                        .colorScheme
-                                                                        .error),
-                                                                borderRadius:
-                                                                    BorderRadius
-                                                                        .circular(
-                                                                            5),
-                                                              ),
-                                                              focusedErrorBorder:
-                                                                  OutlineInputBorder(
-                                                                borderSide: BorderSide(
-                                                                    color: Theme.of(
-                                                                            context)
-                                                                        .colorScheme
-                                                                        .error),
-                                                                borderRadius:
-                                                                    BorderRadius
-                                                                        .circular(
-                                                                            5),
-                                                              ),
-                                                            ),
-                                                            autovalidateMode:
-                                                                AutovalidateMode
-                                                                    .onUserInteraction,
-                                                            validator: (value) {
-                                                              if (value!
-                                                                  .isEmpty) {
-                                                                return "Date of birth is required.";
-                                                              } else {
-                                                                return null;
-                                                              }
-                                                            },
-                                                            onFieldSubmitted:
-                                                                (String value) {
-                                                              FocusScope.of(
-                                                                      context)
-                                                                  .requestFocus();
-                                                            },
-                                                          ),
-                                                        ),
-                                                      ),
-                                                    ),
-                                                  ],
-                                                ),
-                                              );
-                                            },
-                                          ),
-                                        ],
-                                      ),
+                                      dob_picker_widget(),
                                       Row(
                                         children: [
                                           Expanded(
@@ -1418,157 +1354,7 @@ class _SignUpPageState extends State<SignUpPage> {
                                         ],
                                       ),
                                       phone_number_widget(),
-                                      Row(
-                                        mainAxisAlignment:
-                                            MainAxisAlignment.start,
-                                        crossAxisAlignment:
-                                            CrossAxisAlignment.start,
-                                        mainAxisSize: MainAxisSize.min,
-                                        children: [
-                                          StreamBuilder(
-                                            stream: _signUpCubit?.dobController,
-                                            builder: (context, snapshot) {
-                                              return Expanded(
-                                                child: Column(
-                                                  mainAxisSize:
-                                                      MainAxisSize.min,
-                                                  crossAxisAlignment:
-                                                      CrossAxisAlignment.start,
-                                                  children: [
-                                                    GestureDetector(
-                                                      onTap: () =>
-                                                          _selectDate(context),
-                                                      child: AbsorbPointer(
-                                                        child: Padding(
-                                                          padding:
-                                                              const EdgeInsets
-                                                                  .only(
-                                                                  left: 10,
-                                                                  right: 10,
-                                                                  top: 15),
-                                                          child: TextFormField(
-                                                            onChanged: (value) {
-                                                              _signUpCubit
-                                                                  ?.updateDob(
-                                                                      value);
-                                                            },
-                                                            readOnly: true,
-                                                            controller:
-                                                                _birthDateController,
-                                                            focusNode:
-                                                                _birthDateFocusNode,
-                                                            decoration:
-                                                                InputDecoration(
-                                                              labelText:
-                                                                  "Date of birth",
-                                                              hintText:
-                                                                  "Date of birth",
-                                                              border:
-                                                                  OutlineInputBorder(
-                                                                borderSide:
-                                                                    BorderSide(
-                                                                  color: Theme.of(
-                                                                          context)
-                                                                      .colorScheme
-                                                                      .primary,
-                                                                ),
-                                                                borderRadius:
-                                                                    BorderRadius
-                                                                        .circular(
-                                                                            5),
-                                                              ),
-                                                              disabledBorder:
-                                                                  OutlineInputBorder(
-                                                                borderSide:
-                                                                    BorderSide(
-                                                                  color: Theme.of(
-                                                                          context)
-                                                                      .disabledColor,
-                                                                ),
-                                                                borderRadius:
-                                                                    BorderRadius
-                                                                        .circular(
-                                                                            5),
-                                                              ),
-                                                              enabledBorder:
-                                                                  OutlineInputBorder(
-                                                                borderSide:
-                                                                    BorderSide(
-                                                                  color: Theme.of(
-                                                                          context)
-                                                                      .colorScheme
-                                                                      .primary,
-                                                                ),
-                                                                borderRadius:
-                                                                    BorderRadius
-                                                                        .circular(
-                                                                            5),
-                                                              ),
-                                                              focusedBorder:
-                                                                  OutlineInputBorder(
-                                                                borderSide: BorderSide(
-                                                                    color: Theme.of(
-                                                                            context)
-                                                                        .colorScheme
-                                                                        .primary),
-                                                                borderRadius:
-                                                                    BorderRadius
-                                                                        .circular(
-                                                                            5),
-                                                              ),
-                                                              errorBorder:
-                                                                  OutlineInputBorder(
-                                                                borderSide: BorderSide(
-                                                                    color: Theme.of(
-                                                                            context)
-                                                                        .colorScheme
-                                                                        .error),
-                                                                borderRadius:
-                                                                    BorderRadius
-                                                                        .circular(
-                                                                            5),
-                                                              ),
-                                                              focusedErrorBorder:
-                                                                  OutlineInputBorder(
-                                                                borderSide: BorderSide(
-                                                                    color: Theme.of(
-                                                                            context)
-                                                                        .colorScheme
-                                                                        .error),
-                                                                borderRadius:
-                                                                    BorderRadius
-                                                                        .circular(
-                                                                            5),
-                                                              ),
-                                                            ),
-                                                            autovalidateMode:
-                                                                AutovalidateMode
-                                                                    .onUserInteraction,
-                                                            validator: (value) {
-                                                              if (value!
-                                                                  .isEmpty) {
-                                                                return "Date of birth is required.";
-                                                              } else {
-                                                                return null;
-                                                              }
-                                                            },
-                                                            onFieldSubmitted:
-                                                                (String value) {
-                                                              FocusScope.of(
-                                                                      context)
-                                                                  .requestFocus();
-                                                            },
-                                                          ),
-                                                        ),
-                                                      ),
-                                                    ),
-                                                  ],
-                                                ),
-                                              );
-                                            },
-                                          ),
-                                        ],
-                                      ),
+                                      dob_picker_widget(),
                                       Row(
                                         children: [
                                           Expanded(
@@ -1654,11 +1440,11 @@ class _SignUpPageState extends State<SignUpPage> {
                     ),
                     child: snapshot.data == false
                         ? const Text("Submit")
-                        : Row(
+                        : const Row(
                             mainAxisAlignment: MainAxisAlignment.center,
                             crossAxisAlignment: CrossAxisAlignment.center,
                             mainAxisSize: MainAxisSize.min,
-                            children: const [
+                            children: [
                               SizedBox(
                                 width: 22,
                                 height: 22,
@@ -2364,13 +2150,12 @@ class _SignUpPageState extends State<SignUpPage> {
                     labelText: "Phone Number",
                     hintText: "Enter your phone number",
                   ),
-                  onCountryChanged: (Country country) =>Constants.debugLog(SignUpPage, "Country changed to:  + ${country.name}"),
+                  onCountryChanged: (Country country) => Constants.debugLog(
+                      SignUpPage, "Country changed to:  + ${country.name}"),
                   autovalidateMode: AutovalidateMode.onUserInteraction,
-                  invalidNumberMessage:AppLocalizations.of(
-                      context)
-                      ?.translate(
-                      StringValue
-                          .common_common_phoneNumber_validator_error_msg) ??
+                  invalidNumberMessage: AppLocalizations.of(context)?.translate(
+                          StringValue
+                              .common_common_phoneNumber_validator_error_msg) ??
                       "Please enter a valid phone number.",
                   onChanged: (number) {
                     _signUpCubit!.updatePhoneNumber(number.completeNumber);
@@ -2777,11 +2562,11 @@ class _SignUpPageState extends State<SignUpPage> {
                       ),
                     ),
                   ),
-                  Row(
+                  const Row(
                     mainAxisAlignment: MainAxisAlignment.start,
                     crossAxisAlignment: CrossAxisAlignment.center,
                     mainAxisSize: MainAxisSize.min,
-                    children: const [
+                    children: [
                       Expanded(
                         child: Text("Please enter proper world name..",
                             textAlign: TextAlign.center),
@@ -2907,7 +2692,8 @@ class _SignUpPageState extends State<SignUpPage> {
     String? _emailText = _emailTextEditingController!.text.toString();
     String? _userNameText = _userNameTextEditingController!.text.toString();
     String? _passwordText = _passwordTextEditingController!.text.toString();
-    String? _countryCodeText = _signUpCubit?.phoneNumberIosCodeController.value?.phoneCode ?? "+91";
+    String? _countryCodeText =
+        _signUpCubit?.phoneNumberIosCodeController.value?.phoneCode ?? "+91";
     String? _phNumberText = _phoneNumberTextEditingController!.text.toString();
     String? _birthDateText = _birthDateController!.text.toString();
     String? genderText = selectedGender.toString();

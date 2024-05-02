@@ -6,6 +6,7 @@ import 'package:coozy_cafe/widgets/fliter_system_widget/filter_style_mixin.dart'
 import 'package:coozy_cafe/widgets/fliter_system_widget/props/filter_props.dart';
 import 'package:flutter/material.dart';
 import 'filter_text.dart';
+import 'package:async/async.dart';
 
 class FilterCheckboxTitle extends StatelessWidget with FilterStyleMixin {
   const FilterCheckboxTitle({

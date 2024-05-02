@@ -97,7 +97,7 @@ Future<DateTime?> showDatePickerSheet({
             initialDateTime: initialDate ?? DateTime.now(),
             minimumDate: minimumDate,
             maximumDate: maximumDate,
-            backgroundColor: backgroundColor,
+            // backgroundColor: backgroundColor??Colors.white,
             dateOrder: dateOrder,
             onDateTimeChanged: (DateTime newDate) {
               selectedDate = newDate; // Update the selected date
@@ -157,10 +157,9 @@ Future<TimeOfDay?> showTimePickerSheet({
           child: CupertinoDatePicker(
             mode: CupertinoDatePickerMode.time,
             initialDateTime: DateTime.now(),
-            backgroundColor: backgroundColor,
+            // backgroundColor: backgroundColor??Colors.white,
             onDateTimeChanged: (DateTime newTime) {
-              selectedTime =
-                  TimeOfDay.fromDateTime(newTime); // Update the selected time
+              selectedTime = TimeOfDay.fromDateTime(newTime); // Update the selected time
             },
           ),
         ),

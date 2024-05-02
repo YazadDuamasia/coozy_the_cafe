@@ -1,3 +1,4 @@
+import 'package:async/async.dart';
 import 'package:coozy_cafe/utlis/components/constants.dart';
 import 'package:coozy_cafe/widgets/fliter_system_widget/props/filter_item_model.dart';
 import 'package:coozy_cafe/widgets/fliter_system_widget/props/filter_props.dart';
@@ -33,6 +34,7 @@ class FilterSliderTitle extends StatefulWidget {
 
 class _FilterSliderTitleState extends State<FilterSliderTitle> {
   double? _values;
+  final AsyncMemoizer<void> _debouncer = AsyncMemoizer();
 
   @override
   void initState() {
@@ -78,27 +80,36 @@ class _FilterSliderTitleState extends State<FilterSliderTitle> {
 
   slider() {
     return SfSlider(
+      key: UniqueKey(),
       tooltipTextFormatterCallback: (value, formattedText) =>
-          '${(widget.sliderTileThemeProps?.tooltip_prefix_str == null || widget.sliderTileThemeProps!.tooltip_prefix_str!.isEmpty) ? "" : "${widget.sliderTileThemeProps?.tooltip_prefix_str.toString()} "}${double.tryParse("$value")?.toStringAsFixed(widget.sliderTileThemeProps?.fractionDigits??0) ?? 0}${(widget.sliderTileThemeProps?.tooltip_suffix_str == null || widget.sliderTileThemeProps!.tooltip_suffix_str!.isEmpty) ? "" : " ${widget.sliderTileThemeProps?.tooltip_suffix_str}"}',
+          '${(widget.sliderTileThemeProps?.tooltip_prefix_str == null || widget.sliderTileThemeProps!.tooltip_prefix_str!.isEmpty) ? "" : "${widget.sliderTileThemeProps?.tooltip_prefix_str.toString()} "}${double.tryParse("$value")?.toStringAsFixed(widget.sliderTileThemeProps?.fractionDigits ?? 0) ?? 0}${(widget.sliderTileThemeProps?.tooltip_suffix_str == null || widget.sliderTileThemeProps!.tooltip_suffix_str!.isEmpty) ? "" : " ${widget.sliderTileThemeProps?.tooltip_suffix_str}"}',
       min: widget.minValue,
       max: widget.maxValue,
       value: _values ?? 0.0,
-       stepSize: widget.sliderTileThemeProps?.stepSize ?? 1.0,
+      stepSize: widget.sliderTileThemeProps?.stepSize ?? 1.0,
       showLabels: true,
       enableTooltip: true,
       labelFormatterCallback: (value, formattedText) {
-        return '${(widget.sliderTileThemeProps?.label_prefix_str == null || widget.sliderTileThemeProps!.label_prefix_str!.isEmpty) ? "" : "${widget.sliderTileThemeProps?.label_prefix_str.toString()} "}${double.tryParse("$value")?.toStringAsFixed(widget.sliderTileThemeProps?.fractionDigits??0) ?? 0}${(widget.sliderTileThemeProps?.label_suffix_str == null || widget.sliderTileThemeProps!.label_suffix_str!.isEmpty) ? "" : " ${widget.sliderTileThemeProps?.label_suffix_str.toString()}"}';
+        return '${(widget.sliderTileThemeProps?.label_prefix_str == null || widget.sliderTileThemeProps!.label_prefix_str!.isEmpty) ? "" : "${widget.sliderTileThemeProps?.label_prefix_str.toString()} "}${double.tryParse("$value")?.toStringAsFixed(widget.sliderTileThemeProps?.fractionDigits ?? 0) ?? 0}${(widget.sliderTileThemeProps?.label_suffix_str == null || widget.sliderTileThemeProps!.label_suffix_str!.isEmpty) ? "" : " ${widget.sliderTileThemeProps?.label_suffix_str.toString()}"}';
       },
-      onChanged: (newValues) async{
-        Constants.debugLog(FilterSliderTitle, "onChanged:newValues:${newValues}");
-        // Call the onChanged callback passed from the parent widget
-
-        setState(() {
-          _values = newValues;
-          widget.onChanged(newValues);
-        });
-
-      },
+      onChanged: _handleSliderChange,
     );
   }
+
+  void _handleSliderChange(newValues) async {
+    // Call the debounce function with the callback and delay duration
+    _debouncer.runOnce(() async {
+      Constants.debugLog(FilterSliderTitle, "onChanged:newValues:${newValues}");
+      await widget.onChanged(newValues);
+      setState(() {
+        _values = newValues;
+      });
+    });
+  }
+
+  @override
+  void dispose() {
+    super.dispose();
+  }
+
 }
