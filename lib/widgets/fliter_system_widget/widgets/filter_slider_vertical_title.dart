@@ -1,4 +1,5 @@
 import 'package:coozy_cafe/utlis/components/constants.dart';
+import 'package:coozy_cafe/utlis/components/debouncer.dart';
 import 'package:coozy_cafe/widgets/fliter_system_widget/props/filter_item_model.dart';
 import 'package:coozy_cafe/widgets/fliter_system_widget/props/filter_props.dart';
 import 'package:flutter/material.dart';
@@ -34,6 +35,7 @@ class FilterVerticalSliderTitle extends StatefulWidget {
 
 class _FilterVerticalSliderTitleState extends State<FilterVerticalSliderTitle> {
   double? _values;
+  final _debouncer = Debouncer(milliseconds: 500);
 
   @override
   void initState() {
@@ -76,6 +78,9 @@ class _FilterVerticalSliderTitleState extends State<FilterVerticalSliderTitle> {
             ],
           ),
         ),
+        SizedBox(
+          height: 5,
+        ),
       ],
     );
   }
@@ -99,10 +104,8 @@ class _FilterVerticalSliderTitleState extends State<FilterVerticalSliderTitle> {
 
         setState(() {
           _values = newValues;
-          // Call the onChanged callback passed from the parent widget
-          widget.onChanged(newValues);
+          widget.onChanged(_values ?? 0);
         });
-
       },
     );
   }

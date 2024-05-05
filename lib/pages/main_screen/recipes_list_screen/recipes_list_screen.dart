@@ -760,11 +760,11 @@ class _RecipesListScreenState extends State<RecipesListScreen> {
                 sliderTileThemeProps: const SliderTileThemeProps(
                     label_suffix_str: "mins",
                     tooltip_suffix_str: "mins",
-                    stepSize: 1.0,
+                    stepSize: 1,
                     fractionDigits: 0),
               ),
               FilterListModel(
-                type: FilterType.VericalRangeSlider,
+                type: FilterType.Slider,
                 filterOptions: context
                         .read<RecipesFullListCubit>()
                         .cookingTimeFilterOptionsList ??
@@ -777,7 +777,7 @@ class _RecipesListScreenState extends State<RecipesListScreen> {
                 sliderTileThemeProps: const SliderTileThemeProps(
                     label_suffix_str: "mins",
                     tooltip_suffix_str: "mins",
-                    stepSize: 1.0,
+                    stepSize: 1,
                     fractionDigits: 0),
               ),
             ],
@@ -803,8 +803,9 @@ class _RecipesListScreenState extends State<RecipesListScreen> {
     if (appliedFilterList == null || appliedFilterList.isEmpty) {
       return [];
     } else {
-      AppliedFilterModel? previousFilter = appliedFilterList?.firstWhere(
+      AppliedFilterModel? previousFilter = appliedFilterList.firstWhere(
         (element) => element.filterKey == filterKey,
+        orElse: null,
       );
 
       if (previousFilter == null) {

@@ -68,213 +68,211 @@ class _FilterState extends State<Filter> with FilterStyleMixin {
 
   @override
   Widget build(BuildContext context) {
-    return BlocBuilder<FilterCubit, FilterState>(
+    return BlocConsumer<FilterCubit, FilterState>(
+      listener: (context, state) {
+        // setState(() {});
+      },
       builder: (_, state) {
         final themeProps = _filterCubit.filterProps.themeProps;
-        return Scaffold(
-          body: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            mainAxisAlignment: MainAxisAlignment.start,
-            mainAxisSize: MainAxisSize.max,
-            children: [
-              Padding(
-                padding: const EdgeInsets.symmetric(
-                  horizontal: 15,
-                  vertical: 15,
-                ),
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    FilterText(
-                      title: _filterCubit.filterProps.title ?? 'Filters',
-                      style: themeProps?.titleStyle,
-                      fontColor: themeProps?.titleColor,
-                    ),
-                    Visibility(
-                      visible: (_filterCubit.filterProps.showCloseIcon ?? true),
-                      child: IconButton(
-                        padding: EdgeInsets.zero,
-                        visualDensity: const VisualDensity(
-                          horizontal: -4,
-                          vertical: -4,
-                        ),
-                        onPressed: () {
-                          if (_filterCubit.filterProps.onCloseTap != null) {
-                            _filterCubit.filterProps.onCloseTap!();
-                          }
-                          Navigator.of(context).pop();
-                        },
-                        icon: _filterCubit.filterProps.closeIcon ??
-                            const Icon(Icons.close),
-                      ),
-                    )
-                  ],
-                ),
+        return Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          mainAxisAlignment: MainAxisAlignment.start,
+          mainAxisSize: MainAxisSize.max,
+          children: [
+            Padding(
+              padding: const EdgeInsets.symmetric(
+                horizontal: 15,
+                vertical: 15,
               ),
-              themeProps?.divider ??
-                  Container(
-                    height: themeProps?.dividerThickness ?? 2,
-                    width: MediaQuery.of(context).size.width,
-                    color: themeProps?.dividerColor ?? getDividerColor(context),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  FilterText(
+                    title: _filterCubit.filterProps.title ?? 'Filters',
+                    style: themeProps?.titleStyle,
+                    fontColor: themeProps?.titleColor,
                   ),
-              Expanded(
-                child: Container(
+                  Visibility(
+                    visible: (_filterCubit.filterProps.showCloseIcon ?? true),
+                    child: IconButton(
+                      padding: EdgeInsets.zero,
+                      visualDensity: const VisualDensity(
+                        horizontal: -4,
+                        vertical: -4,
+                      ),
+                      onPressed: () {
+                        if (_filterCubit.filterProps.onCloseTap != null) {
+                          _filterCubit.filterProps.onCloseTap!();
+                        }
+                        Navigator.of(context).pop();
+                      },
+                      icon: _filterCubit.filterProps.closeIcon ??
+                          const Icon(Icons.close),
+                    ),
+                  )
+                ],
+              ),
+            ),
+            themeProps?.divider ??
+                Container(
+                  height: themeProps?.dividerThickness ?? 2,
                   width: MediaQuery.of(context).size.width,
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.start,
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    mainAxisSize: MainAxisSize.min,
-                    children: [
-                      Flexible(
-                        flex: 4,
-                        child: Scrollbar(
-                          interactive: true,
-                          child: CustomScrollView(
-                            physics: ClampingScrollPhysics(
-                              parent: AlwaysScrollableScrollPhysics(),
-                            ),
-                            shrinkWrap: true,
-                            slivers: [
-                              SliverPadding(
-                                padding: const EdgeInsets.only(
-                                    left: 10, right: 5, top: 5),
-                                sliver: SliverList(
-                                  delegate: SliverChildBuilderDelegate(
-                                    (context, index) {
-                                      final filterTitleListModel =
-                                          state.filters[index];
-                                      return Material(
-                                        type: MaterialType.card,
-                                        child: InkWell(
-                                          splashColor:
-                                              Theme.of(context).splashColor,
-                                          onTap: () {
-                                            _clearSearch();
-                                            _filterCubit
-                                                .onFilterTitleTap(index);
-                                          },
-                                          child: Row(
-                                            mainAxisSize: MainAxisSize.min,
-                                            children: [
-                                              Expanded(
-                                                child: Container(
-                                                  color: (index ==
+                  color: themeProps?.dividerColor ?? getDividerColor(context),
+                ),
+            Expanded(
+              child: Container(
+                width: MediaQuery.of(context).size.width,
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.start,
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    Flexible(
+                      flex: 4,
+                      child: Scrollbar(
+                        interactive: true,
+                        child: CustomScrollView(
+                          physics: ClampingScrollPhysics(
+                            parent: AlwaysScrollableScrollPhysics(),
+                          ),
+                          shrinkWrap: true,
+                          slivers: [
+                            SliverPadding(
+                              padding: const EdgeInsets.only(
+                                  left: 10, right: 5, top: 5),
+                              sliver: SliverList(
+                                delegate: SliverChildBuilderDelegate(
+                                  (context, index) {
+                                    final filterTitleListModel =
+                                        state.filters[index];
+                                    return Material(
+                                      type: MaterialType.transparency,
+                                      child: InkWell(
+                                        splashColor:
+                                            Theme.of(context).splashColor,
+                                        onTap: () {
+                                          _clearSearch();
+                                          _filterCubit.onFilterTitleTap(index);
+                                        },
+                                        child: Row(
+                                          mainAxisSize: MainAxisSize.min,
+                                          children: [
+                                            Expanded(
+                                              child: Container(
+                                                color: (index ==
+                                                        state.activeFilterIndex)
+                                                    ? themeProps
+                                                            ?.inActiveFilterItemBackgroundColor ??
+                                                        Theme.of(context)
+                                                            .colorScheme
+                                                            .primaryContainer
+                                                    : null,
+                                                padding: const EdgeInsets.only(
+                                                    left: 10,
+                                                    top: 5,
+                                                    bottom: 5),
+                                                child: FilterText(
+                                                  title: filterTitleListModel
+                                                          .title ??
+                                                      "",
+                                                  fontSize: Theme.of(context)
+                                                      .textTheme
+                                                      .titleMedium!
+                                                      .fontSize,
+                                                  style: (index ==
+                                                          state
+                                                              .activeFilterIndex)
+                                                      // ? themeProps
+                                                      //     ?.activeFilterTextStyle
+                                                      ? themeProps
+                                                          ?.inActiveFilterTextStyle
+                                                      : themeProps
+                                                          ?.inActiveFilterTextStyle,
+                                                  fontWeight: FontWeight.w500,
+                                                  fontColor: (index ==
                                                           state
                                                               .activeFilterIndex)
                                                       ? themeProps
-                                                              ?.inActiveFilterItemBackgroundColor ??
-                                                          Theme.of(context)
-                                                              .colorScheme
-                                                              .primaryContainer
-                                                      : Colors.transparent,
-                                                  padding:
-                                                      const EdgeInsets.only(
-                                                          left: 10,
-                                                          top: 5,
-                                                          bottom: 5),
-                                                  child: FilterText(
-                                                    title: filterTitleListModel
-                                                            .title ??
-                                                        "",
-                                                    fontSize: Theme.of(context)
-                                                        .textTheme
-                                                        .titleMedium!
-                                                        .fontSize,
-                                                    style: (index ==
-                                                            state
-                                                                .activeFilterIndex)
-                                                        // ? themeProps
-                                                        //     ?.activeFilterTextStyle
-                                                        ? themeProps
-                                                            ?.inActiveFilterTextStyle
-                                                        : themeProps
-                                                            ?.inActiveFilterTextStyle,
-                                                    fontWeight: FontWeight.w500,
-                                                    fontColor: (index ==
-                                                            state
-                                                                .activeFilterIndex)
-                                                        ? themeProps
-                                                                ?.activeFilterTextColor ??
-                                                            getTheme(context)
-                                                                .primaryColor
-                                                        : themeProps
-                                                            ?.inActiveFilterTextColor,
-                                                  ),
+                                                              ?.activeFilterTextColor ??
+                                                          getTheme(context)
+                                                              .primaryColor
+                                                      : themeProps
+                                                          ?.inActiveFilterTextColor,
                                                 ),
                                               ),
-                                            ],
-                                          ),
+                                            ),
+                                          ],
                                         ),
-                                      );
-                                    },
-                                    addSemanticIndexes: true,
-                                    addAutomaticKeepAlives: true,
-                                    addRepaintBoundaries: false,
-                                    childCount: state.filters.length ?? 0,
-                                  ),
+                                      ),
+                                    );
+                                  },
+                                  addSemanticIndexes: true,
+                                  addAutomaticKeepAlives: true,
+                                  addRepaintBoundaries: false,
+                                  childCount: state.filters.length ?? 0,
                                 ),
                               ),
-                            ],
-                          ),
+                            ),
+                          ],
                         ),
                       ),
-                      themeProps?.divider ??
-                          Container(
-                            height: double.maxFinite,
-                            width: themeProps?.dividerThickness ?? 1,
-                            color: themeProps?.dividerColor ??
-                                getDividerColor(context),
-                          ),
-                      Flexible(
-                        flex: 6,
-                        child: custom_filter_widget(state, themeProps),
-                      ),
-                    ],
-                  ),
-                ),
-              ),
-              themeProps?.divider ??
-                  Container(
-                    height: themeProps?.dividerThickness ?? 2,
-                    width: MediaQuery.of(context).size.width,
-                    color: themeProps?.dividerColor ?? getDividerColor(context),
-                  ),
-              Container(
-                width: MediaQuery.of(context).size.width,
-                // color: getTheme(context).primaryColor,
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.end,
-                  mainAxisSize: MainAxisSize.max,
-                  children: [
-                    FilterTextButton(
-                      text: 'Reset',
-                      isSecondary: true,
-                      onTap: () {
-                        _filterCubit.onFilterRemove();
-                        Navigator.of(context).pop();
-                      },
-                      style: themeProps?.resetButtonStyle,
-                      txtColor: themeProps?.resetButtonColor,
                     ),
-                    FilterTextButton(
-                      text: 'Apply',
-                      txtColor: themeProps?.submitButtonColor ??
-                          getTheme(context).colorScheme.secondary,
-                      onTap: () {
-                        _filterCubit.onFilterSubmit();
-                        Navigator.of(context).pop();
-                      },
-                      style: themeProps?.submitButtonStyle,
-                    ),
-                    const SizedBox(
-                      width: 10,
+                    themeProps?.divider ??
+                        Container(
+                          height: double.maxFinite,
+                          width: themeProps?.dividerThickness ?? 1,
+                          color: themeProps?.dividerColor ??
+                              getDividerColor(context),
+                        ),
+                    Flexible(
+                      flex: 6,
+                      child: custom_filter_widget(state, themeProps),
                     ),
                   ],
                 ),
               ),
-            ],
-          ),
+            ),
+            themeProps?.divider ??
+                Container(
+                  height: themeProps?.dividerThickness ?? 2,
+                  width: MediaQuery.of(context).size.width,
+                  color: themeProps?.dividerColor ?? getDividerColor(context),
+                ),
+            Container(
+              width: MediaQuery.of(context).size.width,
+              // color: getTheme(context).primaryColor,
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.end,
+                mainAxisSize: MainAxisSize.max,
+                children: [
+                  FilterTextButton(
+                    text: 'Reset',
+                    isSecondary: true,
+                    onTap: () {
+                      _filterCubit.onFilterRemove();
+                      Navigator.of(context).pop();
+                    },
+                    style: themeProps?.resetButtonStyle,
+                    txtColor: themeProps?.resetButtonColor,
+                  ),
+                  FilterTextButton(
+                    text: 'Apply',
+                    txtColor: themeProps?.submitButtonColor ??
+                        getTheme(context).colorScheme.secondary,
+                    onTap: () {
+                      _filterCubit.onFilterSubmit();
+                      Navigator.of(context).pop();
+                    },
+                    style: themeProps?.submitButtonStyle,
+                  ),
+                  const SizedBox(
+                    width: 10,
+                  ),
+                ],
+              ),
+            ),
+          ],
         );
       },
     );
@@ -289,15 +287,14 @@ class _FilterState extends State<Filter> with FilterStyleMixin {
           return checkboxWidget(state, themeProps);
         case FilterType.RadioGroup:
           return radioGroupWidget(state, themeProps);
-        case FilterType.Slider:
+      case FilterType.Slider:
           return sliderWidget(state, themeProps);
-        case FilterType.VericalSlider:
+        /*  case FilterType.VericalSlider:
           return verticalSliderWidget(state, themeProps);
         case FilterType.RangeSlider:
           return rangerSliderTitleWidget(state, themeProps);
-
-          case FilterType.VericalRangeSlider:
-          return rangerVerticalSliderTitleWidget(state, themeProps);
+        case FilterType.VericalRangeSlider:
+          return rangerVerticalSliderTitleWidget(state, themeProps);*/
         case FilterType.TimePicker:
           return Container();
         case FilterType.RangeDatePicker:
@@ -643,6 +640,7 @@ class _FilterState extends State<Filter> with FilterStyleMixin {
     );
   }
 
+
   sliderWidget(FilterState state, ThemeProps? themeProps) {
     final List<FilterItemModel>? filterOptions =
         state.filters[state.activeFilterIndex].filterOptions;
@@ -674,17 +672,17 @@ class _FilterState extends State<Filter> with FilterStyleMixin {
             values: values,
             minValue: minValue!,
             maxValue: maxValue!,
-            onChanged: (double newValues) async {
+        /*    onChanged: (newValues) async {
               FilterItemModel model = FilterItemModel(
                   filterKey: newValues, filterTitle: "${newValues}");
               context.read<FilterCubit>().onFilterItemCheck(model);
-            },
+            },*/
           ),
         )
       ],
     );
   }
-
+/*
   verticalSliderWidget(FilterState state, ThemeProps? themeProps) {
     final filterOptions = state.filters[state.activeFilterIndex].filterOptions;
     final previousApplied =
@@ -715,7 +713,7 @@ class _FilterState extends State<Filter> with FilterStyleMixin {
             values: values,
             minValue: minValue!,
             maxValue: maxValue!,
-            onChanged: (double newValues) {
+            onChanged: (double newValues) async {
               FilterItemModel model = FilterItemModel(
                   filterKey: newValues, filterTitle: "${newValues}");
               context.read<FilterCubit>().onFilterItemCheck(model);
@@ -787,6 +785,7 @@ class _FilterState extends State<Filter> with FilterStyleMixin {
       ],
     );
   }
+
   rangerVerticalSliderTitleWidget(FilterState state, ThemeProps? themeProps) {
     final filterOptions = state.filters[state.activeFilterIndex].filterOptions;
     final previousApplied =
@@ -848,6 +847,7 @@ class _FilterState extends State<Filter> with FilterStyleMixin {
       ],
     );
   }
+*/
 
   @override
   void dispose() {

@@ -27,7 +27,6 @@ class FilterListModel extends Equatable {
   final List<FilterItemModel> previousApplied;
   FilterType? type = FilterType.CheckboxList;
   final SliderTileThemeProps? sliderTileThemeProps;
-
   DateTime? firstDate;
   DateTime? lastDate;
 

@@ -10,7 +10,6 @@ import 'package:coozy_cafe/widgets/fliter_system_widget/props/filter_list_model.
 import 'package:coozy_cafe/widgets/fliter_system_widget/props/filter_props.dart';
 import 'package:equatable/equatable.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:syncfusion_flutter_sliders/sliders.dart';
 
 part 'filter_state.dart';
 
@@ -26,11 +25,15 @@ class FilterCubit extends Cubit<FilterState> {
 
   final FilterProps filterProps;
 
+  List<FilterListModel>? filters;
+  int? activeFilterIndex;
+
   bool checked(List<FilterItemModel> items, FilterItemModel item) {
     return items.contains(item);
   }
 
   onFilterTitleTap(int index) {
+    activeFilterIndex=index;
     emit(
       state.copyWith(
         activeFilterIndex: index,
@@ -40,15 +43,15 @@ class FilterCubit extends Cubit<FilterState> {
   }
 
   void onFilterItemCheck(item) {
-    List<FilterListModel> filterModels = [...state.filters];
-    FilterListModel filterItem = filterModels[state.activeFilterIndex];
-    final checkedItems = [...filterItem.previousApplied];
+    List<FilterListModel>? filterModels = [...state.filters];
+    FilterListModel? filterItem = filterModels[state.activeFilterIndex];
+    final List<FilterItemModel>? checkedItems = [...filterItem.previousApplied];
 
     switch (filterItem.type) {
       case FilterType.CheckboxList:
         {
           Constants.debugLog(FilterCubit, "CheckboxList");
-          if (checkedItems.contains(item)) {
+          if (checkedItems!.contains(item)) {
             checkedItems.remove(item);
           } else {
             checkedItems.add(item);
@@ -60,8 +63,8 @@ class FilterCubit extends Cubit<FilterState> {
       case FilterType.RadioGroup:
         {
           Constants.debugLog(FilterCubit, "RadioGroup");
-          checkedItems.clear();
-          checkedItems.add(item);
+          checkedItems!.clear();
+          checkedItems!.add(item);
           Constants.debugLog(
               FilterCubit, "RadioGroup:checkedItems:${checkedItems}");
         }
@@ -69,7 +72,7 @@ class FilterCubit extends Cubit<FilterState> {
       case FilterType.Slider:
         {
           Constants.debugLog(FilterCubit, "Slider");
-          checkedItems.clear();
+          checkedItems!.clear();
           checkedItems.add(item);
           Constants.debugLog(FilterCubit, "Slider:Slider:${checkedItems}");
         }
@@ -79,12 +82,11 @@ class FilterCubit extends Cubit<FilterState> {
         {
           Constants.debugLog(FilterCubit, "RangeSlider");
           Constants.debugLog(FilterCubit, "RangeSlider:${item}");
-          checkedItems.clear();
-          for(FilterItemModel model in item) {
+          checkedItems!.clear();
+          for (FilterItemModel model in item) {
             checkedItems.add(model);
           }
-          Constants.debugLog(
-              FilterCubit, "Slider:Slider:${checkedItems}");
+          Constants.debugLog(FilterCubit, "Slider:Slider:${checkedItems}");
         }
         break;
       case FilterType.TimePicker:
@@ -117,14 +119,16 @@ class FilterCubit extends Cubit<FilterState> {
     );
 
     filterModels[state.activeFilterIndex] = updatedItem;
-    emit(state.copyWith(
+    filters=filterModels;
+   /* emit(state.copyWith(
       filters: filterModels,
-    ));
+    ));*/
   }
 
   void onFilterSubmit() {
     final appliedFilters = <AppliedFilterModel>[];
     for (var element in state.filters) {
+
       appliedFilters.add(AppliedFilterModel(
         filterKey: element.filterKey,
         applied: element.previousApplied,
@@ -172,9 +176,9 @@ class FilterCubit extends Cubit<FilterState> {
         filterOptions: searchedItems,
       );
       filters[state.activeFilterIndex] = updatedItem;
-      emit(state.copyWith(
-        filters: filters,
-      ));
+      // emit(state.copyWith(
+      //   filters: filters,
+      // ));
     }
   }
 
@@ -202,5 +206,4 @@ class FilterCubit extends Cubit<FilterState> {
     // TODO: implement close
     return super.close();
   }
-
 }
