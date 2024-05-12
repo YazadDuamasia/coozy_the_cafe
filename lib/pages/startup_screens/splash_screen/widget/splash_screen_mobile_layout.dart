@@ -104,7 +104,8 @@ class _SplashScreenMobileLayoutState extends State<SplashScreenMobileLayout> {
                                 child: SizedBox(
                                   width:
                                       MediaQuery.of(context).size.width * .40,
-                                  child: appLogoLight,
+                                  // child: appLogoLight,
+                                  child: FlutterLogo(size: 150,),
                                 ),
                               ),
                             ),
@@ -130,7 +131,8 @@ class _SplashScreenMobileLayoutState extends State<SplashScreenMobileLayout> {
                                 child: SizedBox(
                                   width:
                                       MediaQuery.of(context).size.width * .65,
-                                  child: appLogoLight,
+                                  // child: appLogoLight,
+                                  child: FlutterLogo(size: 150,),
                                 ),
                               ),
                             ),

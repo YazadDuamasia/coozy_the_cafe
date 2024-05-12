@@ -105,7 +105,8 @@ class _SplashScreenTabletLayoutState extends State<SplashScreenTabletLayout> {
                                 child: SizedBox(
                                   width:
                                       MediaQuery.of(context).size.width * .40,
-                                  child: appLogoLight,
+                                  // child: appLogoLight,
+                                  child: FlutterLogo(size: 150,),
                                 ),
                               ),
                             ),
@@ -131,7 +132,8 @@ class _SplashScreenTabletLayoutState extends State<SplashScreenTabletLayout> {
                                 child: SizedBox(
                                   width:
                                       MediaQuery.of(context).size.width * .60,
-                                  child: appLogoLight,
+                                  // child: appLogoLight,
+                                  child: FlutterLogo(size: 150,),
                                 ),
                               ),
                             ),

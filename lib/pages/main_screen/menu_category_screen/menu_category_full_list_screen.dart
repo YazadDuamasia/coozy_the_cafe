@@ -142,29 +142,33 @@ class _MenuCategoryFullListScreenState
             child: SearchAnchor(
               searchController: searchController,
               builder: (BuildContext context, SearchController controller) {
-                return SearchBar(
-                  controller: controller,
-                  focusNode: searchAnchorFocusNode,
-                  padding: const MaterialStatePropertyAll<EdgeInsets>(
-                      EdgeInsets.symmetric(horizontal: 10.0)),
-                  onTap: () {
-                    controller.openView();
-                  },
-                  onChanged: (value) {
-                    Constants.debugLog(MenuCategoryFullListScreen,
-                        "SearchAnchor:onChanged:$value");
-                    if (!controller.isOpen) {
-                      scrollToItemAndExpand(value);
-                    } else {
+                return Theme(
+                  data: Theme.of(context),
+                  child: SearchBar(
+                    controller: controller,
+                    focusNode: searchAnchorFocusNode,
+                    padding: const MaterialStatePropertyAll<EdgeInsets>(
+                        EdgeInsets.symmetric(horizontal: 10.0)),
+                    onTap: () {
                       controller.openView();
-                    }
-                  },
-                  // onSubmitted: (value) {
-                  //   Constants.debugLog(MenuCategoryFullListScreen,
-                  //       "SearchAnchor:onSubmitted:$value");
-                  //   scrollToItemAndExpand(value);
-                  // },
-                  leading: const Icon(Icons.search),
+                    },
+                    onChanged: (value) {
+                      Constants.debugLog(MenuCategoryFullListScreen,
+                          "SearchAnchor:onChanged:$value");
+                      if (!controller.isOpen) {
+                        scrollToItemAndExpand(value);
+                      } else {
+                        controller.openView();
+                      }
+                    },
+
+                    onSubmitted: (value) {
+                      Constants.debugLog(MenuCategoryFullListScreen,
+                          "SearchAnchor:onSubmitted:$value");
+                      scrollToItemAndExpand(value);
+                    },
+                    leading: const Icon(Icons.search),
+                  ),
                 );
               },
               isFullScreen: false,
@@ -258,11 +262,11 @@ class _MenuCategoryFullListScreenState
                 scrollToItemAndExpand(value);
               },
 
-              // onSubmitted: (value) {
-              //   Constants.debugLog(MenuCategoryFullListScreen,
-              //       "SearchAnchor:onSubmitted:$value");
-              //   scrollToItemAndExpand(value);
-              // },
+              onSubmitted: (value) {
+                Constants.debugLog(MenuCategoryFullListScreen,
+                    "SearchAnchor:onSubmitted:$value");
+                scrollToItemAndExpand(value);
+              },
               leading: const Icon(Icons.search),
             ),
           ),
