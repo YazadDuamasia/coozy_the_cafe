@@ -28,7 +28,8 @@ class FilterRangerSliderTitle extends StatefulWidget {
   }) : super(key: key);
 
   @override
-  _FilterRangerSliderTitleState createState() => _FilterRangerSliderTitleState();
+  _FilterRangerSliderTitleState createState() =>
+      _FilterRangerSliderTitleState();
 }
 
 class _FilterRangerSliderTitleState extends State<FilterRangerSliderTitle> {
@@ -90,12 +91,16 @@ class _FilterRangerSliderTitleState extends State<FilterRangerSliderTitle> {
         return '${(widget.sliderTileThemeProps?.label_prefix_str == null || widget.sliderTileThemeProps!.label_prefix_str!.isEmpty) ? "" : "${widget.sliderTileThemeProps?.label_prefix_str.toString()} "}${double.tryParse("$value")?.toStringAsFixed(widget.sliderTileThemeProps?.fractionDigits ?? 0) ?? 0}${(widget.sliderTileThemeProps?.label_suffix_str == null || widget.sliderTileThemeProps!.label_suffix_str!.isEmpty) ? "" : " ${widget.sliderTileThemeProps?.label_suffix_str.toString()}"}';
       },
       onChanged: (SfRangeValues newValues) async {
-        Constants.debugLog(FilterRangerSliderTitle, "onChanged:newValues:${newValues.toString()}");
+        Constants.debugLog(FilterRangerSliderTitle,
+            "onChanged:newValues:${newValues.toString()}");
         setState(() {
           _values = newValues;
-          widget.onChanged(newValues);
         });
-
+      },
+      onChangeEnd: (SfRangeValues value) {
+        Constants.debugLog(FilterRangerSliderTitle,
+            "onChangeEnd:newValues:${value.toString()}");
+        widget.onChanged(value);
       },
     );
   }

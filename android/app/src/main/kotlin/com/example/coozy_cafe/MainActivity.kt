@@ -1,4 +1,4 @@
-package com.dumasia.coozy_cafe
+package com.example.coozy_cafe
 
 import io.flutter.embedding.android.FlutterActivity
 

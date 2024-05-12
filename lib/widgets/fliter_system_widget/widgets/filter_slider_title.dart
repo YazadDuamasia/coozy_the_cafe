@@ -16,7 +16,7 @@ class FilterSliderTitle extends StatefulWidget {
   final double minValue;
   final double maxValue;
 
-  // final Function(double) onChanged;
+  final Function(double) onChanged;
   final SliderTileThemeProps? sliderTileThemeProps;
 
   const FilterSliderTitle({
@@ -27,7 +27,7 @@ class FilterSliderTitle extends StatefulWidget {
     required this.values,
     required this.minValue,
     required this.maxValue,
-    // required this.onChanged,
+    required this.onChanged,
     this.sliderTileThemeProps,
   }) : super(key: key);
 
@@ -70,7 +70,7 @@ class _FilterSliderTitleState extends State<FilterSliderTitle> {
                   replacement: slider(),
                   child: SfRangeSliderTheme(
                     data: widget.sliderTileThemeProps?.sliderThemeData ??
-                        const SfRangeSliderThemeData(),
+                        SfRangeSliderThemeData(),
                     child: slider(),
                   ),
                 ),
@@ -106,16 +106,10 @@ class _FilterSliderTitleState extends State<FilterSliderTitle> {
         });
         // widget.onChanged(newValues);
       },
-      onChangeEnd: (value) {
+      onChangeEnd: (value) async {
         Constants.debugLog(
             FilterSliderTitle, "onChangeEnd:finalValues:${value}");
-        if (_values != null) {
-          FilterItemModel model = FilterItemModel(
-            filterKey: _values!,
-            filterTitle: "$_values",
-          );
-          context.read<FilterCubit>().onFilterItemCheck(model);
-        }
+        widget.onChanged(value);
       },
     );
   }
@@ -125,111 +119,3 @@ class _FilterSliderTitleState extends State<FilterSliderTitle> {
     super.dispose();
   }
 }
-/*
-
-import 'package:coozy_cafe/utlis/components/constants.dart';
-import 'package:coozy_cafe/widgets/fliter_system_widget/props/filter_item_model.dart';
-import 'package:coozy_cafe/widgets/fliter_system_widget/props/filter_props.dart';
-import 'package:flutter/material.dart';
-
-class FilterSliderTitle extends StatefulWidget {
-  final List<FilterItemModel>? filterOptions;
-  final List<FilterItemModel>? previousApplied;
-  final String title;
-  final double? values;
-  final double minValue;
-  final double maxValue;
-  final Function(dynamic) onChanged;
-  final SliderTileThemeProps? sliderTileThemeProps;
-
-  const FilterSliderTitle(
-      {Key? key,
-      required this.filterOptions,
-      required this.previousApplied,
-      required this.title,
-      required this.values,
-      required this.minValue,
-      required this.maxValue,
-      required this.onChanged,
-      this.sliderTileThemeProps})
-      : super(key: key);
-
-  @override
-  _FilterSliderTitleState createState() => _FilterSliderTitleState();
-}
-
-class _FilterSliderTitleState extends State<FilterSliderTitle> {
-  double? _values;
-
-  @override
-  void initState() {
-    _values = widget.values ?? 0;
-    super.initState();
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    return Column(
-      mainAxisAlignment: MainAxisAlignment.start,
-      crossAxisAlignment: CrossAxisAlignment.start,
-      mainAxisSize: MainAxisSize.min,
-      children: [
-        Padding(
-          padding: const EdgeInsets.symmetric(vertical: 10, horizontal: 10),
-          child: Text(widget.title),
-        ),
-        Row(
-          mainAxisAlignment: MainAxisAlignment.start,
-          crossAxisAlignment: CrossAxisAlignment.start,
-          mainAxisSize: MainAxisSize.min,
-          children: <Widget>[
-            Expanded(
-              child: Padding(
-                padding: const EdgeInsets.only(right: 20, left: 20, top: 10),
-                child:  slider(),
-                // child: Visibility(
-                //   visible: widget.sliderTileThemeProps?.sliderThemeData != null,
-                //   replacement: slider(),
-                //   child: SliderTheme(
-                //     data: widget.sliderTileThemeProps?.sliderThemeData ??
-                //         SliderTheme.of(context).copyWith(
-                //           valueIndicatorColor:
-                //               Theme.of(context).colorScheme.primaryContainer,
-                //           valueIndicatorTextStyle: Theme.of(context).textTheme.labelMedium!.copyWith(color: Colors.white)
-                //         ),
-                //     child: slider(),
-                //   ),
-                // ),
-              ),
-            ),
-          ],
-        ),
-      ],
-    );
-  }
-
-  @override
-  void dispose() {
-    super.dispose();
-  }
-
-  slider() {
-    return Slider.adaptive(
-      min: widget.minValue,
-      max: widget.maxValue,
-      value: _values ?? 0.0,
-      label:
-          '${(widget.sliderTileThemeProps?.label_prefix_str == null || widget.sliderTileThemeProps!.label_prefix_str!.isEmpty) ? "" : "${widget.sliderTileThemeProps?.label_prefix_str.toString()} "}${double.tryParse("${_values ?? 0}")?.toStringAsFixed(widget.sliderTileThemeProps?.fractionDigits ?? 0) ?? 0}${(widget.sliderTileThemeProps?.label_suffix_str == null || widget.sliderTileThemeProps!.label_suffix_str!.isEmpty) ? "" : " ${widget.sliderTileThemeProps?.label_suffix_str.toString()}"}',
-      divisions: widget.sliderTileThemeProps?.stepSize ?? null,
-      onChanged: (value) {
-        Constants.debugLog(FilterSliderTitle, "onChanged:newValues:${value}");
-
-        setState(() {
-          _values = double.tryParse("${value.round()}") ?? 0;
-          widget.onChanged(_values ?? 0);
-        });
-      },
-    );
-  }
-}
-*/

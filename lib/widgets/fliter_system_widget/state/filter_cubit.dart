@@ -1,8 +1,3 @@
-/*
-This is a Dart file that implements a Flutter Bloc
-for managing the filter item state filtering items. 
-Here's what each part of the code does:
-*/
 import 'package:coozy_cafe/utlis/components/constants.dart';
 import 'package:coozy_cafe/widgets/fliter_system_widget/props/applied_filter_model.dart';
 import 'package:coozy_cafe/widgets/fliter_system_widget/props/filter_item_model.dart';
@@ -120,9 +115,10 @@ class FilterCubit extends Cubit<FilterState> {
 
     filterModels[state.activeFilterIndex] = updatedItem;
     filters=filterModels;
-   /* emit(state.copyWith(
+ emit(state.copyWith(
       filters: filterModels,
-    ));*/
+    ));
+
   }
 
   void onFilterSubmit() {
@@ -207,3 +203,167 @@ class FilterCubit extends Cubit<FilterState> {
     return super.close();
   }
 }
+
+/*
+import 'package:coozy_cafe/widgets/fliter_system_widget/props/applied_filter_model.dart';
+import 'package:coozy_cafe/widgets/fliter_system_widget/props/filter_item_model.dart';
+import 'package:coozy_cafe/widgets/fliter_system_widget/props/filter_list_model.dart';
+import 'package:rxdart/rxdart.dart';
+
+class FilterCubit {
+  final BehaviorSubject<int> _activeFilterIndexSubject = BehaviorSubject<int>();
+  final BehaviorSubject<FilterType> _filterTypeSubject = BehaviorSubject<FilterType>();
+  final BehaviorSubject<List<FilterListModel>> _filtersSubject = BehaviorSubject<List<FilterListModel>>();
+
+  Stream<int> get activeFilterIndexStream => _activeFilterIndexSubject.stream;
+  Stream<FilterType> get filterTypeStream => _filterTypeSubject.stream;
+  Stream<List<FilterListModel>> get filtersStream => _filtersSubject.stream;
+
+  FilterCubit({
+    required List<FilterListModel> filters,
+    required int activeFilterIndex,
+    required FilterType filterType,
+  }) {
+    _filtersSubject.add(filters);
+    _activeFilterIndexSubject.add(activeFilterIndex);
+    _filterTypeSubject.add(filterType);
+  }
+
+  void setActiveFilterIndex(int index) {
+    _activeFilterIndexSubject.add(index);
+  }
+
+  void setFilterType(FilterType type) {
+    _filterTypeSubject.add(type);
+  }
+
+  void setFilters(List<FilterListModel> filters) {
+    _filtersSubject.add(filters);
+  }
+
+  bool checked(List<FilterItemModel> items, FilterItemModel item) {
+    return items.contains(item);
+  }
+
+  void onFilterItemCheck(var item) {
+    final currentIndex = _activeFilterIndexSubject.value;
+    final currentFilters = _filtersSubject.value ?? [];
+    final currentFilter = currentFilters[currentIndex];
+    final List<FilterItemModel> checkedItems = [...currentFilter.previousApplied];
+
+    switch (currentFilter.type) {
+      case FilterType.CheckboxList:
+        if (checkedItems.contains(item)) {
+          checkedItems.remove(item);
+        } else {
+          checkedItems.add(item);
+        }
+        break;
+      case FilterType.RadioGroup:
+        checkedItems.clear();
+        checkedItems.add(item);
+        break;
+      case FilterType.Slider:
+        checkedItems.clear();
+        checkedItems.add(item);
+        break;
+      case FilterType.RangeSlider:
+        checkedItems.clear();
+        for(int i=0;i<item!.lenght;i++){
+          checkedItems.add(item[i]);
+        }
+        */
+/*for (FilterItemModel model in item) {
+          checkedItems.add(model);
+        }*//*
+
+        break;
+      case FilterType.TimePicker:
+        break;
+      case FilterType.RangeTimePicker:
+        break;
+      case FilterType.DatePicker:
+        break;
+      case FilterType.RangeDatePicker:
+        break;
+      default:
+        break;
+    }
+
+    final updatedItem = currentFilter.copyWith(previousApplied: checkedItems);
+    final updatedFilters = List<FilterListModel>.from(currentFilters);
+    updatedFilters[currentIndex] = updatedItem;
+
+    _filtersSubject.add(updatedFilters);
+  }
+
+  void onFilterSubmit(Function(List<AppliedFilterModel>)? onFilterChange) {
+    final currentFilters = _filtersSubject.value ?? [];
+    final appliedFilters = <AppliedFilterModel>[];
+    for (var element in currentFilters) {
+      appliedFilters.add(AppliedFilterModel(
+        filterKey: element.title,
+        applied: element.previousApplied,
+        filterTitle: element.title,
+      ));
+    }
+    if (onFilterChange != null) {
+      onFilterChange(appliedFilters);
+    }
+  }
+
+  void onFilterRemove(Function(List<AppliedFilterModel>)? onFilterChange) {
+    final currentFilters = _filtersSubject.value ?? [];
+    final clearFilterList = <FilterListModel>[];
+    for (var element in currentFilters) {
+      final newModel = element.copyWith(
+        previousApplied: [],
+      );
+      clearFilterList.add(newModel);
+    }
+    _filtersSubject.add(clearFilterList);
+    if (onFilterChange != null) {
+      onFilterChange([]);
+    }
+  }
+
+  void filterBySearch(String text) {
+    if (text.isEmpty) {
+      return;
+    }
+    final currentFilters = _filtersSubject.value ?? [];
+    final currentFilter = currentFilters[_activeFilterIndexSubject.value];
+    final filterOptions = [...currentFilter.filterOptions];
+    if (filterOptions.isNotEmpty) {
+      List<FilterItemModel> searchedItems = [];
+      for (var element in filterOptions) {
+        if (element.filterTitle.toLowerCase().contains(text.toLowerCase())) {
+          searchedItems.add(element);
+        }
+      }
+      final updatedItem = currentFilter.copyWith(filterOptions: searchedItems);
+      final updatedFilters = List<FilterListModel>.from(currentFilters);
+      updatedFilters[_activeFilterIndexSubject.value] = updatedItem;
+      _filtersSubject.add(updatedFilters);
+    }
+  }
+
+  void clearSearch() {
+    final currentFilters = _filtersSubject.value ?? [];
+    final currentFilter = currentFilters[_activeFilterIndexSubject.value];
+    final filterOptions = [...currentFilter.filterOptions];
+    if (filterOptions.isNotEmpty) {
+      final updatedItem = currentFilter.copyWith(filterOptions: filterOptions);
+      final updatedFilters = List<FilterListModel>.from(currentFilters);
+      updatedFilters[_activeFilterIndexSubject.value] = updatedItem;
+      _filtersSubject.add(updatedFilters);
+    }
+  }
+
+  void dispose() {
+    _activeFilterIndexSubject.close();
+    _filterTypeSubject.close();
+    _filtersSubject.close();
+  }
+
+}*/

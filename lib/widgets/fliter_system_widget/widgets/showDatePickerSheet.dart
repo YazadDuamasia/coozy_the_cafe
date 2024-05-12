@@ -1,7 +1,5 @@
 import 'dart:async';
 
-import 'package:coozy_cafe/AppLocalization.dart';
-import 'package:coozy_cafe/utlis/utlis.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
@@ -71,10 +69,7 @@ Future<DateTime?> showDatePickerSheet(
                   Navigator.pop(context);
                 },
                 child: Text(
-                  textButtonCancel ??
-                      AppLocalizations.of(context)
-                          ?.translate(StringValue.common_cancel) ??
-                      "cancel",
+                  textButtonCancel ?? "cancel",
                   style: TextStyle(
                     color: Theme.of(context).colorScheme.error,
                   ),
@@ -89,10 +84,7 @@ Future<DateTime?> showDatePickerSheet(
                   Navigator.pop(context);
                 },
                 child: Text(
-                  textButtonOkay ??
-                      AppLocalizations.of(context)
-                          ?.translate(StringValue.common_ok) ??
-                      "Ok",
+                  textButtonOkay ?? "Ok",
                 ),
               ),
             ),
@@ -150,10 +142,7 @@ Future<TimeOfDay?> showTimePickerSheet(
                   Navigator.pop(context);
                 },
                 child: Text(
-                  textButtonCancel ??
-                      AppLocalizations.of(context)
-                          ?.translate(StringValue.common_cancel) ??
-                      "cancel",
+                  textButtonCancel ?? "cancel",
                 ),
               ),
             ),
@@ -165,10 +154,7 @@ Future<TimeOfDay?> showTimePickerSheet(
                   Navigator.pop(context);
                 },
                 child: Text(
-                  textButtonOkay ??
-                      AppLocalizations.of(context)
-                          ?.translate(StringValue.common_ok) ??
-                      "Ok",
+                  textButtonOkay ?? "Ok",
                 ),
               ),
             ),

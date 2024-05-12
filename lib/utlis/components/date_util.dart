@@ -4,6 +4,7 @@ import '../utlis.dart';
 
 class DateUtil {
   static const DATE_FORMAT = "yyyy-MM-ddTHH:mm:ss.SSSSSSZ";
+
   // 'yyyy-MM-dd HH:mm' =>"2022-02-21 04:14"
   static const DATE_FORMAT1 = 'yyyy-MM-dd HH:mm';
 
@@ -101,6 +102,7 @@ class DateUtil {
       }
     } catch (e) {
       Constants.debugLog(DateUtil, "StingToDate:error:${e.toString()}");
+      input = null;
     }
     return input!;
   }

@@ -3,6 +3,7 @@ This code defines the FilterState class and implements
  the Equatable interface
 */
 
+
 part of 'filter_cubit.dart';
 
 class FilterState extends Equatable {

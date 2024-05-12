@@ -257,7 +257,6 @@ class _HomeScreenState extends State<HomeScreen>
                   Tab(text: 'kitchen'),
                   Tab(text: 'more'),
                 ],
-                tabAlignment: TabAlignment.fill,
                 indicatorColor: Theme.of(context).dividerColor,
                 labelColor: Colors.white,
                 unselectedLabelColor: Colors.black,

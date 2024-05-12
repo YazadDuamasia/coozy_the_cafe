@@ -104,8 +104,11 @@ class _FilterVerticalSliderTitleState extends State<FilterVerticalSliderTitle> {
 
         setState(() {
           _values = newValues;
-          widget.onChanged(_values ?? 0);
         });
+      },
+      onChangeEnd: (value) {
+        Constants.debugLog(FilterVerticalSliderTitle, "onChanged:FinalUpdatedValue:${value}");
+        widget.onChanged(value ?? 0);
       },
     );
   }

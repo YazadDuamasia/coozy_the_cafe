@@ -159,11 +159,11 @@ class _MenuCategoryFullListScreenState
                       controller.openView();
                     }
                   },
-                  onSubmitted: (value) {
-                    Constants.debugLog(MenuCategoryFullListScreen,
-                        "SearchAnchor:onSubmitted:$value");
-                    scrollToItemAndExpand(value);
-                  },
+                  // onSubmitted: (value) {
+                  //   Constants.debugLog(MenuCategoryFullListScreen,
+                  //       "SearchAnchor:onSubmitted:$value");
+                  //   scrollToItemAndExpand(value);
+                  // },
                   leading: const Icon(Icons.search),
                 );
               },
@@ -257,11 +257,12 @@ class _MenuCategoryFullListScreenState
                     "SearchAnchor:onChanged:$value");
                 scrollToItemAndExpand(value);
               },
-              onSubmitted: (value) {
-                Constants.debugLog(MenuCategoryFullListScreen,
-                    "SearchAnchor:onSubmitted:$value");
-                scrollToItemAndExpand(value);
-              },
+
+              // onSubmitted: (value) {
+              //   Constants.debugLog(MenuCategoryFullListScreen,
+              //       "SearchAnchor:onSubmitted:$value");
+              //   scrollToItemAndExpand(value);
+              // },
               leading: const Icon(Icons.search),
             ),
           ),

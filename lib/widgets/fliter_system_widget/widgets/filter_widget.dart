@@ -7,14 +7,18 @@ import 'package:coozy_cafe/widgets/fliter_system_widget/props/filter_item_model.
 import 'package:coozy_cafe/widgets/fliter_system_widget/props/filter_list_model.dart';
 import 'package:coozy_cafe/widgets/fliter_system_widget/props/filter_props.dart';
 import 'package:coozy_cafe/widgets/fliter_system_widget/state/filter_cubit.dart';
+import 'package:coozy_cafe/widgets/fliter_system_widget/widgets/datetime_picker_formfield.dart';
 import 'package:coozy_cafe/widgets/fliter_system_widget/widgets/filter_checkbox_title.dart';
 import 'package:coozy_cafe/widgets/fliter_system_widget/widgets/filter_radio_box_title.dart';
 import 'package:coozy_cafe/widgets/fliter_system_widget/widgets/filter_range_slider_title.dart';
 import 'package:coozy_cafe/widgets/fliter_system_widget/widgets/filter_range_slider_vertical_title.dart';
 import 'package:coozy_cafe/widgets/fliter_system_widget/widgets/filter_slider_title.dart';
 import 'package:coozy_cafe/widgets/fliter_system_widget/widgets/filter_slider_vertical_title.dart';
+import 'package:coozy_cafe/widgets/fliter_system_widget/widgets/showDatePickerSheet.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:intl/intl.dart';
 import 'package:syncfusion_flutter_sliders/sliders.dart';
 
 import 'filter_text.dart';
@@ -287,7 +291,7 @@ class _FilterState extends State<Filter> with FilterStyleMixin {
           return checkboxWidget(state, themeProps);
         case FilterType.RadioGroup:
           return radioGroupWidget(state, themeProps);
-      case FilterType.Slider:
+        case FilterType.Slider:
           return sliderWidget(state, themeProps);
         /*  case FilterType.VericalSlider:
           return verticalSliderWidget(state, themeProps);
@@ -295,12 +299,14 @@ class _FilterState extends State<Filter> with FilterStyleMixin {
           return rangerSliderTitleWidget(state, themeProps);
         case FilterType.VericalRangeSlider:
           return rangerVerticalSliderTitleWidget(state, themeProps);*/
+
+        case FilterType.DatePicker:
+          return datePickerWidget(state, themeProps);
         case FilterType.TimePicker:
           return Container();
         case FilterType.RangeDatePicker:
           return Container();
-        case FilterType.DatePicker:
-          return Container();
+
         case FilterType.RangeTimePicker:
           return Container();
         default:
@@ -640,7 +646,6 @@ class _FilterState extends State<Filter> with FilterStyleMixin {
     );
   }
 
-
   sliderWidget(FilterState state, ThemeProps? themeProps) {
     final List<FilterItemModel>? filterOptions =
         state.filters[state.activeFilterIndex].filterOptions;
@@ -672,17 +677,17 @@ class _FilterState extends State<Filter> with FilterStyleMixin {
             values: values,
             minValue: minValue!,
             maxValue: maxValue!,
-        /*    onChanged: (newValues) async {
+                onChanged: (newValues) async {
               FilterItemModel model = FilterItemModel(
                   filterKey: newValues, filterTitle: "${newValues}");
               context.read<FilterCubit>().onFilterItemCheck(model);
-            },*/
+            },
           ),
         )
       ],
     );
   }
-/*
+
   verticalSliderWidget(FilterState state, ThemeProps? themeProps) {
     final filterOptions = state.filters[state.activeFilterIndex].filterOptions;
     final previousApplied =
@@ -847,7 +852,71 @@ class _FilterState extends State<Filter> with FilterStyleMixin {
       ],
     );
   }
-*/
+
+  datePickerWidget(FilterState state, ThemeProps? themeProps) {
+    final filterOptions = state.filters[state.activeFilterIndex].filterOptions;
+    final previousApplied =
+        state.filters[state.activeFilterIndex].previousApplied;
+    final title = state.filters[state.activeFilterIndex].title ?? "";
+
+    final DateFormat inputDateFormat =
+        state.filters[state.activeFilterIndex].inputDateFormat ??
+            DateFormat("dd-MM-yyyy");
+    final DateTime initialDate =
+        (state.filters[state.activeFilterIndex].initialDate == null ||
+                state.filters[state.activeFilterIndex].initialDate!.isEmpty)
+            ? DateUtil.simpleDateFormatChanger(
+                DateTime.now(), inputDateFormat.pattern!)!
+            : DateUtil.stringToDate(
+                state.filters[state.activeFilterIndex].initialDate,
+                inputDateFormat.pattern!);
+    final minimumDate = state.filters[state.activeFilterIndex].minimumDate ??
+        DateTime(DateTime.now().year - 150, 1, 1);
+    final maximumDate = state.filters[state.activeFilterIndex].maximumDate ??
+        DateTime(DateTime.now().year + 150, 1, 1);
+    final datePickerDateOrder =
+        state.filters[state.activeFilterIndex].datePickerDateOrder ??
+            DatePickerDateOrder.dmy;
+
+    Constants.debugLog(
+        FilterWidget, "rangerSliderTitleWidget:datePickerWidget");
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.start,
+      crossAxisAlignment: CrossAxisAlignment.start,
+      mainAxisSize: MainAxisSize.min,
+      children: <Widget>[
+        Expanded(
+          child: DateTimeField(
+            key: UniqueKey(),
+            onChanged: (value) {
+
+            },
+            controller:new TextEditingController(),
+            focusNode: new FocusNode(),
+            validator: (value) {
+
+            },
+            initialValue: initialDate,
+            autovalidateMode: AutovalidateMode.disabled,
+
+            format: inputDateFormat,
+            onShowPicker: (BuildContext context, DateTime? currentValue) async {
+              final date = await showDatePickerSheet(
+                context: context,
+                initialDate: initialDate,
+                pickerMode: CupertinoDatePickerMode.date,
+                dateOrder: DatePickerDateOrder.dmy,
+                backgroundColor: Theme.of(context).colorScheme.background,
+                minimumDate: minimumDate,
+                maximumDate: maximumDate,
+              );
+              return date;
+            },
+          ),
+        ),
+      ],
+    );
+  }
 
   @override
   void dispose() {
