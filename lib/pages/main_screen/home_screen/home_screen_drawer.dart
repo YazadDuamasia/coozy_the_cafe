@@ -48,7 +48,7 @@ class HomeScreenDrawer extends StatelessWidget {
           ),
           ListTile(
             leading: const Icon(Icons.restaurant_menu),
-            title: const Text('Menu'),
+            title: const Text('Menu Items'),
             onTap: () {
               Navigator.pop(context);
               navigationRoutes.navigateToMenuFullListScreen();

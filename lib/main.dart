@@ -8,6 +8,7 @@ import 'package:coozy_cafe/model/language_model/language_model.dart';
 import 'package:coozy_cafe/routing/routs.dart';
 import 'package:coozy_cafe/simple_bloc_observer.dart';
 import 'package:coozy_cafe/utlis/utlis.dart';
+import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
@@ -17,6 +18,7 @@ import 'package:url_strategy/url_strategy.dart';
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
   setPathUrlStrategy();
+  GestureBinding.instance.resamplingEnabled = true;
 
   // Load the theme from shared preferences
   final prefs = await SharedPreferences.getInstance();

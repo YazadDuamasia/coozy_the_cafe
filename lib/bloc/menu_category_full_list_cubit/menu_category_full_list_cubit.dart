@@ -1,3 +1,4 @@
+import 'package:another_flushbar/flushbar.dart';
 import 'package:coozy_cafe/AppLocalization.dart';
 import 'package:coozy_cafe/model/category.dart';
 import 'package:coozy_cafe/model/sub_category.dart';
@@ -100,24 +101,79 @@ class MenuCategoryFullListCubit extends Cubit<MenuCategoryFullListState> {
             "handleIsEnableCategory:updateCategory:res:$resCategory");
 
         if (isEnable == false) {
-          Constants.showToastMsg(
-              msg: AppLocalizations.of(context)?.translate(StringValue
-                      .menu_category_full_list_unable_to_update_category_msg) ??
-                  "Your selected Category has been deactivated, and you will no longer receive orders for it.");
+          // Constants.showToastMsg(
+          //     msg: AppLocalizations.of(context)?.translate(StringValue
+          //             .menu_category_full_list_unable_to_update_category_msg) ??
+          //         "Your selected Category has been deactivated, and you will no longer receive orders for it.");
+
+          Flushbar(
+            message: AppLocalizations.of(context)?.translate(StringValue
+                    .menu_category_full_list_unable_to_update_category_msg) ??
+                "Your selected Category has been deactivated, and you will no longer receive orders for it.",
+            icon: Icon(
+              Icons.info_outline,
+              size: 28.0,
+              color: Colors.white,
+            ),
+            margin: EdgeInsets.all(5.0),
+            flushbarStyle: FlushbarStyle.FLOATING,
+            flushbarPosition: FlushbarPosition.BOTTOM,
+            textDirection: Directionality.of(context),
+            borderRadius: BorderRadius.circular(12),
+            duration: Duration(seconds: 3),
+            leftBarIndicatorColor: Theme.of(context).colorScheme.primary,
+          )..show(context);
         } else {
-          Constants.showToastMsg(
-              msg: AppLocalizations.of(context)?.translate(StringValue
-                      .menu_category_full_list_enable_to_update_category_msg) ??
-                  "Your selected Category has been activated, and you are able to accept orders for it.");
+          // Constants.showToastMsg(
+          //     msg: AppLocalizations.of(context)?.translate(StringValue
+          //             .menu_category_full_list_enable_to_update_category_msg) ??
+          //         "Your selected Category has been activated, and you are able to accept orders for it.");
+
+          Flushbar(
+            message: AppLocalizations.of(context)?.translate(StringValue
+                    .menu_category_full_list_enable_to_update_category_msg) ??
+                "Your selected Category has been activated, and you are able to accept orders for it.",
+            icon: Icon(
+              Icons.info_outline,
+              size: 28.0,
+              color: Colors.white,
+            ),
+            margin: EdgeInsets.all(5.0),
+            flushbarStyle: FlushbarStyle.FLOATING,
+            flushbarPosition: FlushbarPosition.BOTTOM,
+            textDirection: Directionality.of(context),
+            borderRadius: BorderRadius.circular(12),
+            duration: Duration(seconds: 3),
+            leftBarIndicatorColor: Theme.of(context).colorScheme.primary,
+          )..show(context);
         }
       } catch (error) {
         Constants.debugLog(
             MenuCategoryFullListCubit, "handleIsEnableCategory:Error:${error}");
 
-        Constants.showToastMsg(
-            msg: AppLocalizations.of(context)?.translate(StringValue
-                    .menu_category_full_list_failed_to_update_category_msg) ??
-                "Failed to enable your selected category! Please try again.");
+        // Constants.showToastMsg(
+        //     msg: AppLocalizations.of(context)?.translate(StringValue
+        //             .menu_category_full_list_failed_to_update_category_msg) ??
+        //         "Failed to enable your selected category! Please try again.");
+
+        Flushbar(
+          message: AppLocalizations.of(context)?.translate(StringValue
+                  .menu_category_full_list_failed_to_update_category_msg) ??
+              "Failed to enable your selected category! Please try again.",
+          icon: Icon(
+            Icons.warning,
+            size: 28.0,
+            color: Colors.white,
+          ),
+          margin: EdgeInsets.all(5.0),
+          flushbarStyle: FlushbarStyle.FLOATING,
+          flushbarPosition: FlushbarPosition.BOTTOM,
+          textDirection: Directionality.of(context),
+          borderRadius: BorderRadius.circular(12),
+          duration: Duration(seconds: 3),
+          leftBarIndicatorColor: Theme.of(context).colorScheme.primary,
+        )..show(context);
+
         return;
       }
 
@@ -170,30 +226,79 @@ class MenuCategoryFullListCubit extends Cubit<MenuCategoryFullListState> {
 
         Constants.debugLog(MenuCategoryFullListCubit,
             "handleIsEnableCategory:Category:${subCategory.toJson()}");
-        var resCategory =
-            await RestaurantRepository().updateSubcategory(subCategory);
-        Constants.debugLog(MenuCategoryFullListCubit,
-            "handleIsEnableCategory:updateCategory:res:$resCategory");
+        var resCategory = await RestaurantRepository().updateSubcategory(subCategory);
+        Constants.debugLog(MenuCategoryFullListCubit, "handleIsEnableCategory:updateCategory:res:$resCategory");
 
         if (isEnable == false) {
-          Constants.showToastMsg(
-              msg: AppLocalizations.of(context)?.translate(StringValue
-                      .menu_category_full_list_unable_to_update_sub_category_msg) ??
-                  "Your selected sub-category has been deactivated, and you will no longer receive orders for it.");
+          // Constants.showToastMsg(
+          //     msg: AppLocalizations.of(context)?.translate(StringValue
+          //             .menu_category_full_list_unable_to_update_sub_category_msg) ??
+          //         "Your selected sub-category has been deactivated, and you will no longer receive orders for it.");
+          Flushbar(
+            message: AppLocalizations.of(context)?.translate(StringValue
+                .menu_category_full_list_unable_to_update_sub_category_msg) ??
+                "Your selected sub-category has been deactivated, and you will no longer receive orders for it.",
+            icon: Icon(
+              Icons.info_outline,
+              size: 28.0,
+              color: Colors.white,
+            ),
+            margin: EdgeInsets.all(5.0),
+            flushbarStyle: FlushbarStyle.FLOATING,
+            flushbarPosition: FlushbarPosition.BOTTOM,
+            textDirection: Directionality.of(context),
+            borderRadius: BorderRadius.circular(12),
+            duration: Duration(seconds: 3),
+            leftBarIndicatorColor: Theme.of(context).colorScheme.primary,
+          )..show(context);
         } else {
-          Constants.showToastMsg(
-              msg: AppLocalizations.of(context)?.translate(StringValue
-                      .menu_category_full_list_enable_to_update_sub_category_msg) ??
-                  "Your selected sub-category has been activated, and you are able to accept orders for it.");
+          // Constants.showToastMsg(
+          //     msg: AppLocalizations.of(context)?.translate(StringValue
+          //             .menu_category_full_list_enable_to_update_sub_category_msg) ??
+          //         "Your selected sub-category has been activated, and you are able to accept orders for it.");
+          Flushbar(
+            message: AppLocalizations.of(context)?.translate(StringValue
+                    .menu_category_full_list_enable_to_update_sub_category_msg) ??
+                "Your selected sub-category has been activated, and you are able to accept orders for it.",
+            icon: Icon(
+              Icons.info_outline,
+              size: 28.0,
+              color: Colors.white,
+            ),
+            margin: EdgeInsets.all(5.0),
+            flushbarStyle: FlushbarStyle.FLOATING,
+            flushbarPosition: FlushbarPosition.BOTTOM,
+            textDirection: Directionality.of(context),
+            borderRadius: BorderRadius.circular(12),
+            duration: Duration(seconds: 3),
+            leftBarIndicatorColor: Theme.of(context).colorScheme.primary,
+          )..show(context);
         }
       } catch (error) {
         Constants.debugLog(
             MenuCategoryFullListCubit, "handleIsEnableCategory:Error:${error}");
 
-        Constants.showToastMsg(
-            msg: AppLocalizations.of(context)?.translate(StringValue
-                    .menu_category_full_list_failed_to_update_sub_category_msg) ??
-                "Failed to enable your selected sub-category! Please try again.");
+        // Constants.showToastMsg(
+        //     msg: AppLocalizations.of(context)?.translate(StringValue
+        //             .menu_category_full_list_failed_to_update_sub_category_msg) ??
+        //         "Failed to enable your selected sub-category! Please try again.");
+        Flushbar(
+          message: AppLocalizations.of(context)?.translate(StringValue
+                  .menu_category_full_list_failed_to_update_sub_category_msg) ??
+              "Failed to enable your selected sub-category! Please try again.",
+          icon: Icon(
+            Icons.warning,
+            size: 28.0,
+            color: Colors.white,
+          ),
+          margin: EdgeInsets.all(5.0),
+          flushbarStyle: FlushbarStyle.FLOATING,
+          flushbarPosition: FlushbarPosition.BOTTOM,
+          textDirection: Directionality.of(context),
+          borderRadius: BorderRadius.circular(12),
+          duration: Duration(seconds: 3),
+          leftBarIndicatorColor: Theme.of(context).colorScheme.primary,
+        )..show(context);
         return;
       }
 
@@ -216,20 +321,18 @@ class MenuCategoryFullListCubit extends Cubit<MenuCategoryFullListState> {
         //     expansionTileKeys: expansionTileKeys,
         //     expandedTitleControllerList: expandedTitleControllerList));
 
-
         final currentState = state as LoadedState;
 
         final newExpansionTileKeys =
-        List<GlobalKey?>.from(currentState.expansionTileKeys!);
+            List<GlobalKey?>.from(currentState.expansionTileKeys!);
         final newExpandedTitleControllerList =
-        List<ExpansionTileController>.from(
-            currentState.expandedTitleControllerList!);
+            List<ExpansionTileController>.from(
+                currentState.expandedTitleControllerList!);
 
         emit(LoadedState(
             data: data,
             expansionTileKeys: newExpansionTileKeys,
             expandedTitleControllerList: newExpandedTitleControllerList));
-
       }
       //   emit(NoInternetState());
     } catch (e) {

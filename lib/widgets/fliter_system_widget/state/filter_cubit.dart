@@ -37,7 +37,7 @@ class FilterCubit extends Cubit<FilterState> {
     );
   }
 
-  void onFilterItemCheck(item) {
+  Future<void> onFilterItemCheck(item)async {
     List<FilterListModel>? filterModels = [...state.filters];
     FilterListModel? filterItem = filterModels[state.activeFilterIndex];
     final List<FilterItemModel>? checkedItems = [...filterItem.previousApplied];

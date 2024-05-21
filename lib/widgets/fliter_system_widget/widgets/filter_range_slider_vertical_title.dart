@@ -29,10 +29,12 @@ class FilterVerticalRangerSliderTitle extends StatefulWidget {
   }) : super(key: key);
 
   @override
-  _FilterVerticalRangerSliderTitleState createState() => _FilterVerticalRangerSliderTitleState();
+  _FilterVerticalRangerSliderTitleState createState() =>
+      _FilterVerticalRangerSliderTitleState();
 }
 
-class _FilterVerticalRangerSliderTitleState extends State<FilterVerticalRangerSliderTitle> {
+class _FilterVerticalRangerSliderTitleState
+    extends State<FilterVerticalRangerSliderTitle> {
   SfRangeValues? _values;
 
   @override
@@ -62,7 +64,8 @@ class _FilterVerticalRangerSliderTitleState extends State<FilterVerticalRangerSl
                 child: Padding(
                   padding: const EdgeInsets.only(right: 20, left: 20, top: 10),
                   child: Visibility(
-                    visible: widget.sliderTileThemeProps?.sliderThemeData != null,
+                    visible:
+                        widget.sliderTileThemeProps?.sliderThemeData != null,
                     replacement: slider(),
                     child: SfRangeSliderTheme(
                       data: widget.sliderTileThemeProps?.sliderThemeData ??
@@ -80,26 +83,29 @@ class _FilterVerticalRangerSliderTitleState extends State<FilterVerticalRangerSl
   }
 
   slider() {
-    return SfRangeSlider.vertical(
-      tooltipTextFormatterCallback: (value, formattedText) =>
-          '${(widget.sliderTileThemeProps?.tooltip_prefix_str == null || widget.sliderTileThemeProps!.tooltip_prefix_str!.isEmpty) ? "" : "${widget.sliderTileThemeProps?.tooltip_prefix_str.toString()} "}${double.tryParse("$value")?.toStringAsFixed(widget.sliderTileThemeProps?.fractionDigits ?? 0) ?? 0}${(widget.sliderTileThemeProps?.tooltip_suffix_str == null || widget.sliderTileThemeProps!.tooltip_suffix_str!.isEmpty) ? "" : " ${widget.sliderTileThemeProps?.tooltip_suffix_str}"}',
-      min: widget.minValue,
-      max: widget.maxValue,
-      values: _values ?? SfRangeValues(0.0, 0.0),
-      stepSize: widget.sliderTileThemeProps?.stepSize ?? 1.0,
-      showLabels: true,
-      enableTooltip: true,
-      labelFormatterCallback: (value, formattedText) {
-        return '${(widget.sliderTileThemeProps?.label_prefix_str == null || widget.sliderTileThemeProps!.label_prefix_str!.isEmpty) ? "" : "${widget.sliderTileThemeProps?.label_prefix_str.toString()} "}${double.tryParse("$value")?.toStringAsFixed(widget.sliderTileThemeProps?.fractionDigits ?? 0) ?? 0}${(widget.sliderTileThemeProps?.label_suffix_str == null || widget.sliderTileThemeProps!.label_suffix_str!.isEmpty) ? "" : " ${widget.sliderTileThemeProps?.label_suffix_str.toString()}"}';
-      },
-      onChanged: (SfRangeValues newValues) async {
-        Constants.debugLog(FilterVerticalRangerSliderTitle, "onChanged:newValues:${newValues.toString()}");
-        setState(() {
-          _values = newValues;
-          widget.onChanged(newValues);
-        });
+    return StatefulBuilder(builder: (context, state) {
+      return SfRangeSlider.vertical(
+        tooltipTextFormatterCallback: (value, formattedText) =>
+            '${(widget.sliderTileThemeProps?.tooltip_prefix_str == null || widget.sliderTileThemeProps!.tooltip_prefix_str!.isEmpty) ? "" : "${widget.sliderTileThemeProps?.tooltip_prefix_str.toString()} "}${double.tryParse("$value")?.toStringAsFixed(widget.sliderTileThemeProps?.fractionDigits ?? 0) ?? 0}${(widget.sliderTileThemeProps?.tooltip_suffix_str == null || widget.sliderTileThemeProps!.tooltip_suffix_str!.isEmpty) ? "" : " ${widget.sliderTileThemeProps?.tooltip_suffix_str}"}',
+        min: widget.minValue,
+        max: widget.maxValue,
+        values: _values ?? SfRangeValues(0.0, 0.0),
+        stepSize: widget.sliderTileThemeProps?.stepSize ?? 1.0,
+        showLabels: true,
+        enableTooltip: true,
+        labelFormatterCallback: (value, formattedText) {
+          return '${(widget.sliderTileThemeProps?.label_prefix_str == null || widget.sliderTileThemeProps!.label_prefix_str!.isEmpty) ? "" : "${widget.sliderTileThemeProps?.label_prefix_str.toString()} "}${double.tryParse("$value")?.toStringAsFixed(widget.sliderTileThemeProps?.fractionDigits ?? 0) ?? 0}${(widget.sliderTileThemeProps?.label_suffix_str == null || widget.sliderTileThemeProps!.label_suffix_str!.isEmpty) ? "" : " ${widget.sliderTileThemeProps?.label_suffix_str.toString()}"}';
+        },
+        onChanged: (SfRangeValues newValues) async {
+          Constants.debugLog(FilterVerticalRangerSliderTitle,
+              "onChanged:newValues:${newValues.toString()}");
 
-      },
-    );
+          _values = newValues;
+          await widget.onChanged(newValues);
+          state(() {});
+          setState(() {});
+        },
+      );
+    });
   }
 }

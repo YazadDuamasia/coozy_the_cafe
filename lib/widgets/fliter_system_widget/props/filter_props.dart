@@ -110,16 +110,15 @@ class RadioTileThemeProps {
 }
 
 class SliderTileThemeProps {
-  final SfRangeSliderThemeData? sliderThemeData;
-  final String? tooltip_prefix_str;
-  final String? tooltip_suffix_str;
-  final String? label_prefix_str;
+  SfRangeSliderThemeData? sliderThemeData;
+  String? tooltip_prefix_str;
+  String? tooltip_suffix_str;
+  String? label_prefix_str;
+  String? label_suffix_str;
+  double? stepSize;
+  int? fractionDigits;
 
-  final String? label_suffix_str;
-  final double? stepSize;
-  final int? fractionDigits;
-
-  const SliderTileThemeProps(
+  SliderTileThemeProps(
       {this.sliderThemeData,
       this.label_prefix_str,
       this.label_suffix_str,
@@ -127,19 +126,24 @@ class SliderTileThemeProps {
       this.tooltip_suffix_str,
       this.fractionDigits,
       this.stepSize});
+
+  @override
+  String toString() {
+    return 'SliderTileThemeProps{sliderThemeData: $sliderThemeData, tooltip_prefix_str: $tooltip_prefix_str, tooltip_suffix_str: $tooltip_suffix_str, label_prefix_str: $label_prefix_str, label_suffix_str: $label_suffix_str, stepSize: $stepSize, fractionDigits: $fractionDigits}';
+  }
 }
 
 class SearchBarViewProps {
-  final OutlineInputBorder? inputBorder;
-  final Color? fillColor;
-  final Color? clearIconColor;
-  final Color? searchIconColor;
-  final Widget? clearIcon;
-  final Widget? searchIcon;
-  final bool? filled;
-  final String? searchHint;
-  final TextStyle? textStyle;
-  final TextStyle? hintStyle;
+  OutlineInputBorder? inputBorder;
+  Color? fillColor;
+  Color? clearIconColor;
+  Color? searchIconColor;
+  Widget? clearIcon;
+  Widget? searchIcon;
+  bool? filled;
+  String? searchHint;
+  TextStyle? textStyle;
+  TextStyle? hintStyle;
 
   SearchBarViewProps({
     this.clearIconColor,

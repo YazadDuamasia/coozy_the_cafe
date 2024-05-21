@@ -1,81 +1,63 @@
-/// Main widget for filtering data
-/// Required parametter is FilterProps
-
 import 'package:coozy_cafe/utlis/utlis.dart';
 import 'package:coozy_cafe/widgets/fliter_system_widget/filter_style_mixin.dart';
-import 'package:coozy_cafe/widgets/fliter_system_widget/props/filter_item_model.dart';
-import 'package:coozy_cafe/widgets/fliter_system_widget/props/filter_list_model.dart';
-import 'package:coozy_cafe/widgets/fliter_system_widget/props/filter_props.dart';
-import 'package:coozy_cafe/widgets/fliter_system_widget/state/filter_cubit.dart';
-import 'package:coozy_cafe/widgets/fliter_system_widget/widgets/datetime_picker_formfield.dart';
-import 'package:coozy_cafe/widgets/fliter_system_widget/widgets/filter_checkbox_title.dart';
-import 'package:coozy_cafe/widgets/fliter_system_widget/widgets/filter_radio_box_title.dart';
-import 'package:coozy_cafe/widgets/fliter_system_widget/widgets/filter_range_slider_title.dart';
-import 'package:coozy_cafe/widgets/fliter_system_widget/widgets/filter_range_slider_vertical_title.dart';
-import 'package:coozy_cafe/widgets/fliter_system_widget/widgets/filter_slider_title.dart';
-import 'package:coozy_cafe/widgets/fliter_system_widget/widgets/filter_slider_vertical_title.dart';
-import 'package:coozy_cafe/widgets/fliter_system_widget/widgets/showDatePickerSheet.dart';
+import 'package:coozy_cafe/widgets/fliter_system_widget/widgets/widgets.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:intl/intl.dart';
 import 'package:syncfusion_flutter_sliders/sliders.dart';
 
-import 'filter_text.dart';
-import 'filter_text_button.dart';
+import '../props/props.dart';
 
-class FilterWidget extends StatelessWidget {
-  const FilterWidget({
-    Key? key,
-    required this.filterProps,
-  }) : super(key: key);
-
+class FilterSystemWidget extends StatefulWidget {
   final FilterProps filterProps;
 
-  @override
-  Widget build(BuildContext context) {
-    return BlocProvider(
-      create: (_) => FilterCubit(
-        filterProps: filterProps,
-      ),
-      child: Filter(),
-    );
-  }
-}
-
-class Filter extends StatefulWidget {
-  const Filter({
-    Key? key,
-  }) : super(key: key);
+  const FilterSystemWidget({Key? key, required this.filterProps})
+      : super(key: key);
 
   @override
-  State<Filter> createState() => _FilterState();
+  _FilterSystemWidgetState createState() => _FilterSystemWidgetState();
 }
 
-class _FilterState extends State<Filter> with FilterStyleMixin {
-  late FilterCubit _filterCubit;
-
+class _FilterSystemWidgetState extends State<FilterSystemWidget>
+    with FilterStyleMixin {
   final _searchValueNotifier = ValueNotifier<String>('');
-  final _searchController = TextEditingController();
+  final _searchController = TextEditingController(text: "");
 
-  @override
-  void initState() {
-    _filterCubit = context.read<FilterCubit>();
-    super.initState();
-  }
+  FilterProps? filterProps;
+
+  List<FilterListModel>? filters = [];
+  int? activeFilterIndex = 0;
+  FilterType? type;
 
   void _clearSearch() {
     _searchValueNotifier.value = '';
     _searchController.clear();
-    _filterCubit.clearSearch();
+    setState(() {});
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      filterProps = widget.filterProps;
+      filters = widget.filterProps.filters;
+      activeFilterIndex = 0;
+      if (filterProps != null &&
+          filterProps!.filters != null &&
+          filterProps!.filters.isNotEmpty) {
+        type = filterProps?.filters.first.type;
+      } else {
+        type = FilterType.CheckboxList;
+      }
+      setState(() {});
+    });
   }
 
   @override
   Widget build(BuildContext context) {
-    return BlocConsumer<FilterCubit, FilterState>(
-      listener: (context, state) {},
-      builder: (_, state) {
-        final themeProps = _filterCubit.filterProps.themeProps;
+    return StatefulBuilder(
+      builder: (context, setState) {
+        final themeProps = filterProps?.themeProps;
         return Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           mainAxisAlignment: MainAxisAlignment.start,
@@ -91,12 +73,12 @@ class _FilterState extends State<Filter> with FilterStyleMixin {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   FilterText(
-                    title: _filterCubit.filterProps.title ?? 'Filters',
+                    title: filterProps?.title ?? 'Filters',
                     style: themeProps?.titleStyle,
                     fontColor: themeProps?.titleColor,
                   ),
                   Visibility(
-                    visible: (_filterCubit.filterProps.showCloseIcon ?? true),
+                    visible: (filterProps?.showCloseIcon ?? true),
                     child: IconButton(
                       padding: EdgeInsets.zero,
                       visualDensity: const VisualDensity(
@@ -104,13 +86,12 @@ class _FilterState extends State<Filter> with FilterStyleMixin {
                         vertical: -4,
                       ),
                       onPressed: () {
-                        if (_filterCubit.filterProps.onCloseTap != null) {
-                          _filterCubit.filterProps.onCloseTap!();
+                        if (filterProps?.onCloseTap != null) {
+                          filterProps?.onCloseTap!();
                         }
                         Navigator.of(context).pop();
                       },
-                      icon: _filterCubit.filterProps.closeIcon ??
-                          const Icon(Icons.close),
+                      icon: filterProps?.closeIcon ?? const Icon(Icons.close),
                     ),
                   )
                 ],
@@ -147,7 +128,7 @@ class _FilterState extends State<Filter> with FilterStyleMixin {
                                 delegate: SliverChildBuilderDelegate(
                                   (context, index) {
                                     final filterTitleListModel =
-                                        state.filters[index];
+                                        filters![index];
                                     return Material(
                                       type: MaterialType.transparency,
                                       child: InkWell(
@@ -155,7 +136,7 @@ class _FilterState extends State<Filter> with FilterStyleMixin {
                                             Theme.of(context).splashColor,
                                         onTap: () {
                                           _clearSearch();
-                                          _filterCubit.onFilterTitleTap(index);
+                                          onFilterTitleTap(index);
                                         },
                                         child: Row(
                                           mainAxisSize: MainAxisSize.min,
@@ -163,7 +144,7 @@ class _FilterState extends State<Filter> with FilterStyleMixin {
                                             Expanded(
                                               child: Container(
                                                 color: (index ==
-                                                        state.activeFilterIndex)
+                                                        activeFilterIndex)
                                                     ? themeProps
                                                             ?.inActiveFilterItemBackgroundColor ??
                                                         Theme.of(context)
@@ -183,8 +164,7 @@ class _FilterState extends State<Filter> with FilterStyleMixin {
                                                       .titleMedium!
                                                       .fontSize,
                                                   style: (index ==
-                                                          state
-                                                              .activeFilterIndex)
+                                                          activeFilterIndex)
                                                       // ? themeProps
                                                       //     ?.activeFilterTextStyle
                                                       ? themeProps
@@ -193,8 +173,7 @@ class _FilterState extends State<Filter> with FilterStyleMixin {
                                                           ?.inActiveFilterTextStyle,
                                                   fontWeight: FontWeight.w500,
                                                   fontColor: (index ==
-                                                          state
-                                                              .activeFilterIndex)
+                                                          activeFilterIndex)
                                                       ? themeProps
                                                               ?.activeFilterTextColor ??
                                                           getTheme(context)
@@ -212,7 +191,7 @@ class _FilterState extends State<Filter> with FilterStyleMixin {
                                   addSemanticIndexes: true,
                                   addAutomaticKeepAlives: true,
                                   addRepaintBoundaries: false,
-                                  childCount: state.filters.length ?? 0,
+                                  childCount: filters?.length ?? 0,
                                 ),
                               ),
                             ),
@@ -229,7 +208,7 @@ class _FilterState extends State<Filter> with FilterStyleMixin {
                         ),
                     Flexible(
                       flex: 6,
-                      child: custom_filter_widget(state, themeProps),
+                      child: custom_filter_widget(themeProps),
                     ),
                   ],
                 ),
@@ -252,7 +231,7 @@ class _FilterState extends State<Filter> with FilterStyleMixin {
                     text: 'Reset',
                     isSecondary: true,
                     onTap: () {
-                      _filterCubit.onFilterRemove();
+                      onFilterRemove();
                       Navigator.of(context).pop();
                     },
                     style: themeProps?.resetButtonStyle,
@@ -262,8 +241,8 @@ class _FilterState extends State<Filter> with FilterStyleMixin {
                     text: 'Apply',
                     txtColor: themeProps?.submitButtonColor ??
                         getTheme(context).colorScheme.secondary,
-                    onTap: () {
-                      _filterCubit.onFilterSubmit();
+                    onTap: () async {
+                      await onFilterSubmit();
                       Navigator.of(context).pop();
                     },
                     style: themeProps?.submitButtonStyle,
@@ -280,37 +259,59 @@ class _FilterState extends State<Filter> with FilterStyleMixin {
     );
   }
 
-  custom_filter_widget(FilterState state, ThemeProps? themeProps) {
-    if (state.filters == null || state.filters.isEmpty) {
-      return const SizedBox.shrink();
-    } else {
-      switch (state.type) {
-        case FilterType.CheckboxList:
-          return checkboxWidget(state, themeProps);
-        case FilterType.RadioGroup:
-          return radioGroupWidget(state, themeProps);
-        case FilterType.Slider:
-          return sliderWidget(state, themeProps);
-        /*  case FilterType.VericalSlider:
-          return verticalSliderWidget(state, themeProps);
-        case FilterType.RangeSlider:
-          return rangerSliderTitleWidget(state, themeProps);
-        case FilterType.VericalRangeSlider:
-          return rangerVerticalSliderTitleWidget(state, themeProps);*/
+  onFilterTitleTap(int index) {
+    setState(() {
+      activeFilterIndex = index;
+      type = filterProps?.filters[index].type ?? FilterType.CheckboxList;
+    });
+  }
 
-        case FilterType.DatePicker:
-          return datePickerWidget(state, themeProps);
-        case FilterType.TimePicker:
-          return Container();
-        case FilterType.RangeDatePicker:
-          return Container();
-
-        case FilterType.RangeTimePicker:
-          return Container();
-        default:
-          return Container();
-      }
+  void onFilterRemove() async {
+    final clearFilterList = <FilterListModel>[];
+    // final filtered = [...filters!];
+    final filtered = filters?.where((item) => item != null).toList() ?? [];
+    for (var element in filtered) {
+      final newModel = element.copyWith(
+        previousApplied: [],
+      );
+      clearFilterList.add(newModel);
     }
+    setState(() {
+      filters = clearFilterList;
+    });
+    if (filterProps?.onFilterChange != null) {
+      filterProps?.onFilterChange!([]);
+    }
+    setState(() {});
+  }
+
+  bool checked(List<FilterItemModel>? items, FilterItemModel? item) {
+    return items!.contains(item);
+  }
+
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+  }
+
+  @override
+  void dispose() {
+    super.dispose();
+  }
+
+  onFilterSubmit() async {
+    final appliedFilters = <AppliedFilterModel>[];
+    for (var element in filters!) {
+      appliedFilters.add(AppliedFilterModel(
+        filterKey: element.filterKey,
+        applied: element.previousApplied,
+        filterTitle: element.title,
+      ));
+    }
+    if (filterProps?.onFilterChange != null) {
+      filterProps?.onFilterChange!(appliedFilters);
+    }
+    setState(() {});
   }
 
   double findSliderValue(List<FilterItemModel>? filterOptions) {
@@ -363,12 +364,161 @@ class _FilterState extends State<Filter> with FilterStyleMixin {
     }
   }
 
-  checkboxWidget(FilterState state, ThemeProps? themeProps) {
+  Widget custom_filter_widget(ThemeProps? themeProps) {
+    if (filters == null || filters!.isEmpty) {
+      return const SizedBox.shrink();
+    } else {
+      switch (type) {
+        case FilterType.CheckboxList:
+          return checkboxWidget(themeProps);
+        case FilterType.RadioGroup:
+          return radioGroupWidget(themeProps);
+        case FilterType.Slider:
+          return sliderWidget(themeProps);
+        case FilterType.VericalSlider:
+          return verticalSliderWidget(themeProps);
+        case FilterType.RangeSlider:
+          return rangerSliderTitleWidget(themeProps);
+        case FilterType.VericalRangeSlider:
+          return rangerVerticalSliderTitleWidget(themeProps);
+        case FilterType.DatePicker:
+          return datePickerWidget(themeProps);
+        case FilterType.TimePicker:
+          return Container();
+        case FilterType.RangeDatePicker:
+          return Container();
+
+        case FilterType.RangeTimePicker:
+          return Container();
+        default:
+          return Container();
+      }
+    }
+  }
+
+  void filterBySearch(String text) async {
+    if (text.isEmpty) {
+      setState(() {});
+      return;
+    }
+    final filteringItem = filterProps?.filters[activeFilterIndex!];
+    List<FilterItemModel> filterOption = [];
+    if (filteringItem != null && filteringItem.filterOptions.isNotEmpty) {
+      filterOption = [...filteringItem.filterOptions];
+    } else {
+      filterOption = [];
+    }
+
+    if (filterOption.isNotEmpty) {
+      List<FilterItemModel> searchedItems = [];
+      for (var element in filterOption) {
+        if (element.filterTitle.toLowerCase().contains(text.toLowerCase())) {
+          searchedItems.add(element);
+        }
+      }
+
+      if (filters != null) {
+        final updatedItem = filters![activeFilterIndex!].copyWith(
+          filterOptions: searchedItems,
+        );
+        filters![activeFilterIndex!] = updatedItem;
+      }
+    }
+    setState(() {});
+  }
+
+  void onFilterItemCheck(item) {
+    List<FilterListModel>? filterModels = filters;
+    FilterListModel? filterItem = filterModels?[activeFilterIndex!];
+    // final List<FilterItemModel>? checkedItems = [...filterItem.previousApplied];
+    final List<FilterItemModel>? checkedItems =
+        filterItem?.previousApplied.where((item) => item != null).toList() ??
+            [];
+
+    switch (filterItem!.type) {
+      case FilterType.CheckboxList:
+        {
+          Constants.debugLog(FilterSystemWidget, "CheckboxList");
+          if (checkedItems!.contains(item)) {
+            checkedItems.remove(item);
+          } else {
+            checkedItems.add(item);
+          }
+          Constants.debugLog(
+              FilterSystemWidget, "CheckboxList:checkedItems:${checkedItems}");
+        }
+        break;
+      case FilterType.RadioGroup:
+        {
+          Constants.debugLog(FilterSystemWidget, "RadioGroup");
+          checkedItems!.clear();
+          checkedItems.add(item);
+          Constants.debugLog(
+              FilterSystemWidget, "RadioGroup:checkedItems:${checkedItems}");
+        }
+        break;
+      case FilterType.Slider:
+        {
+          Constants.debugLog(FilterSystemWidget, "Slider");
+          checkedItems!.clear();
+          checkedItems.add(item);
+          Constants.debugLog(
+              FilterSystemWidget, "Slider:Slider:${checkedItems}");
+        }
+        break;
+
+      case FilterType.RangeSlider:
+        {
+          Constants.debugLog(FilterSystemWidget, "RangeSlider");
+          Constants.debugLog(FilterSystemWidget, "RangeSlider:${item}");
+          checkedItems!.clear();
+          for (FilterItemModel model in item) {
+            checkedItems.add(model);
+          }
+          Constants.debugLog(
+              FilterSystemWidget, "Slider:Slider:${checkedItems}");
+        }
+        break;
+      case FilterType.TimePicker:
+        {
+          Constants.debugLog(FilterSystemWidget, "TimePicker");
+        }
+        break;
+      case FilterType.RangeTimePicker:
+        {
+          Constants.debugLog(FilterSystemWidget, "RangeTimePicker");
+        }
+        break;
+      case FilterType.DatePicker:
+        {
+          Constants.debugLog(FilterSystemWidget, "DatePicker");
+        }
+        break;
+      case FilterType.RangeDatePicker:
+        {
+          Constants.debugLog(FilterSystemWidget, "RangeDatePicker");
+        }
+        break;
+      default:
+        Constants.debugLog(FilterSystemWidget, "default");
+        break;
+    }
+
+    final updatedItem = filterItem.copyWith(
+      previousApplied: checkedItems,
+    );
+
+    filterModels?[activeFilterIndex!] = updatedItem;
+    filters = filterModels;
+    setState(() {});
+  }
+
+  checkboxWidget(ThemeProps? themeProps) {
     return SizedBox(
       width: MediaQuery.of(context).size.width,
       child: Builder(
         builder: (context) {
-          final list = state.filters[state.activeFilterIndex].filterOptions;
+          final list = filters?[activeFilterIndex!].filterOptions;
 
           return Column(
             mainAxisAlignment: MainAxisAlignment.start,
@@ -426,8 +576,7 @@ class _FilterState extends State<Filter> with FilterStyleMixin {
                                   )
                                 : IconButton(
                                     onPressed: () {
-                                      _filterCubit.filterBySearch(
-                                          _searchController.text);
+                                      filterBySearch(_searchController.text);
                                     },
                                     icon: themeProps
                                             ?.searchBarViewProps?.searchIcon ??
@@ -444,14 +593,14 @@ class _FilterState extends State<Filter> with FilterStyleMixin {
                           if (value.isEmpty) {
                             _clearSearch();
                           } else {
-                            _filterCubit.filterBySearch(_searchController.text);
+                            filterBySearch(_searchController.text);
                           }
                         },
                       );
                     }),
               ),
               Visibility(
-                visible: list.isNotEmpty,
+                visible: list?.isNotEmpty ?? false,
                 child: Expanded(
                   child: Scrollbar(
                     interactive: true,
@@ -468,26 +617,26 @@ class _FilterState extends State<Filter> with FilterStyleMixin {
                           sliver: SliverList(
                             delegate: SliverChildBuilderDelegate(
                               (context, index) {
-                                final item = list[index];
+                                final item = list?[index] ?? null;
                                 return FilterCheckboxTitle(
                                   key: UniqueKey(),
                                   checkBoxTileThemeProps:
                                       themeProps?.checkBoxTileThemeProps,
-                                  selected: _filterCubit.checked(
-                                    state.filters[state.activeFilterIndex]
+                                  selected: checked(
+                                    filters?[activeFilterIndex!]
                                         .previousApplied,
                                     item,
                                   ),
-                                  title: item.filterTitle,
-                                  onUpdate: (bool? value) {
-                                    _filterCubit.onFilterItemCheck(item);
+                                  title: item?.filterTitle ?? "",
+                                  onUpdate: (bool? value) async {
+                                    onFilterItemCheck(item);
                                   },
                                 );
                               },
                               addSemanticIndexes: true,
                               addAutomaticKeepAlives: true,
                               addRepaintBoundaries: false,
-                              childCount: list.length ?? 0,
+                              childCount: list?.length ?? 0,
                             ),
                           ),
                         ),
@@ -503,12 +652,12 @@ class _FilterState extends State<Filter> with FilterStyleMixin {
     );
   }
 
-  radioGroupWidget(FilterState state, ThemeProps? themeProps) {
+  radioGroupWidget(ThemeProps? themeProps) {
     return SizedBox(
       width: MediaQuery.of(context).size.width,
       child: Builder(
         builder: (context) {
-          final list = state.filters[state.activeFilterIndex].filterOptions;
+          final list = filters?[activeFilterIndex!].filterOptions;
 
           return Column(
             mainAxisAlignment: MainAxisAlignment.start,
@@ -554,7 +703,7 @@ class _FilterState extends State<Filter> with FilterStyleMixin {
                                     ),
                             suffixIcon: searchValue.isNotEmpty
                                 ? IconButton(
-                                    onPressed: () {
+                                    onPressed: () async {
                                       _clearSearch();
                                     },
                                     icon: themeProps
@@ -565,9 +714,8 @@ class _FilterState extends State<Filter> with FilterStyleMixin {
                                                 ?.clearIconColor),
                                   )
                                 : IconButton(
-                                    onPressed: () {
-                                      _filterCubit.filterBySearch(
-                                          _searchController.text);
+                                    onPressed: () async {
+                                      filterBySearch(_searchController.text);
                                     },
                                     icon: themeProps
                                             ?.searchBarViewProps?.searchIcon ??
@@ -584,14 +732,14 @@ class _FilterState extends State<Filter> with FilterStyleMixin {
                           if (value.isEmpty) {
                             _clearSearch();
                           } else {
-                            _filterCubit.filterBySearch(_searchController.text);
+                            filterBySearch(_searchController.text);
                           }
                         },
                       );
                     }),
               ),
               Visibility(
-                visible: list.isNotEmpty,
+                visible: list?.isNotEmpty ?? false,
                 child: Expanded(
                   child: Scrollbar(
                     interactive: true,
@@ -608,18 +756,18 @@ class _FilterState extends State<Filter> with FilterStyleMixin {
                           sliver: SliverList(
                             delegate: SliverChildBuilderDelegate(
                               (context, index) {
-                                final item = list[index];
+                                final item = list?[index];
                                 return FilterRadioBoxTitle(
-                                  options: [item],
+                                  options: [item!],
                                   // Use single item as an option
-                                  selectedOption: _filterCubit.checked(
-                                          state.filters[state.activeFilterIndex]
+                                  selectedOption: checked(
+                                          filters?[activeFilterIndex!]
                                               .previousApplied,
                                           item)
                                       ? item
                                       : null,
                                   onChanged: (selected) {
-                                    _filterCubit.onFilterItemCheck(item);
+                                    onFilterItemCheck(item);
                                   },
                                   radioTileThemeProps:
                                       themeProps?.radioTileThemeProps,
@@ -628,7 +776,7 @@ class _FilterState extends State<Filter> with FilterStyleMixin {
                               addSemanticIndexes: true,
                               addAutomaticKeepAlives: true,
                               addRepaintBoundaries: false,
-                              childCount: list.length ?? 0,
+                              childCount: list?.length ?? 0,
                             ),
                           ),
                         ),
@@ -644,12 +792,12 @@ class _FilterState extends State<Filter> with FilterStyleMixin {
     );
   }
 
-  sliderWidget(FilterState state, ThemeProps? themeProps) {
+  sliderWidget(ThemeProps? themeProps) {
     final List<FilterItemModel>? filterOptions =
-        state.filters[state.activeFilterIndex].filterOptions;
+        filters?[activeFilterIndex!].filterOptions;
     List<FilterItemModel>? previousApplied =
-        state.filters[state.activeFilterIndex].previousApplied;
-    final title = state.filters[state.activeFilterIndex].title ?? "";
+        filters?[activeFilterIndex!].previousApplied;
+    final title = filters?[activeFilterIndex!].title ?? "";
 
     final minValue = findMinValue(filterOptions!);
     final maxValue = findMaxValue(filterOptions);
@@ -658,7 +806,7 @@ class _FilterState extends State<Filter> with FilterStyleMixin {
         ? 0.0
         : double.tryParse("${previousApplied.first.filterKey ?? 0.0}") ?? 0.0;
     final SliderTileThemeProps? sliderTileThemeProps =
-        state.filters[state.activeFilterIndex].sliderTileThemeProps;
+        filters?[activeFilterIndex!].sliderTileThemeProps;
 
     return Row(
       mainAxisAlignment: MainAxisAlignment.start,
@@ -668,29 +816,30 @@ class _FilterState extends State<Filter> with FilterStyleMixin {
         Expanded(
           child: FilterSliderTitle(
             key: UniqueKey(),
-            sliderTileThemeProps: sliderTileThemeProps,
+            sliderTileThemeProps: themeProps!.sliderTileThemeProps,
             filterOptions: filterOptions,
-            previousApplied: previousApplied,
+            previousApplied: previousApplied!,
             title: title,
             values: values,
             minValue: minValue!,
             maxValue: maxValue!,
-            onChanged: (newValues) {
+            onChanged: (newValues) async {
               FilterItemModel model = FilterItemModel(
                   filterKey: newValues, filterTitle: "${newValues}");
-              context.read<FilterCubit>().onFilterItemCheck(model);
+              onFilterItemCheck(model);
             },
           ),
         )
       ],
     );
+
+
   }
 
-  verticalSliderWidget(FilterState state, ThemeProps? themeProps) {
-    final filterOptions = state.filters[state.activeFilterIndex].filterOptions;
-    final previousApplied =
-        state.filters[state.activeFilterIndex].previousApplied;
-    final title = state.filters[state.activeFilterIndex].title ?? "";
+  verticalSliderWidget(ThemeProps? themeProps) {
+    final filterOptions = filters?[activeFilterIndex!].filterOptions;
+    final previousApplied = filters?[activeFilterIndex!].previousApplied;
+    final title = filters?[activeFilterIndex!].title ?? "";
 
     final minValue = findMinValue(filterOptions);
     final maxValue = findMaxValue(filterOptions);
@@ -699,7 +848,7 @@ class _FilterState extends State<Filter> with FilterStyleMixin {
         ? 0.0
         : double.tryParse("${previousApplied.first.filterKey}") ?? 0.0;
     final SliderTileThemeProps? sliderTileThemeProps =
-        state.filters[state.activeFilterIndex].sliderTileThemeProps;
+        filters?[activeFilterIndex!].sliderTileThemeProps;
 
     return Row(
       mainAxisAlignment: MainAxisAlignment.start,
@@ -710,8 +859,8 @@ class _FilterState extends State<Filter> with FilterStyleMixin {
           child: FilterVerticalSliderTitle(
             key: UniqueKey(),
             sliderTileThemeProps: sliderTileThemeProps,
-            filterOptions: filterOptions,
-            previousApplied: previousApplied,
+            filterOptions: filterOptions!,
+            previousApplied: previousApplied!,
             title: title,
             values: values,
             minValue: minValue!,
@@ -719,7 +868,7 @@ class _FilterState extends State<Filter> with FilterStyleMixin {
             onChanged: (double newValues) async {
               FilterItemModel model = FilterItemModel(
                   filterKey: newValues, filterTitle: "${newValues}");
-              context.read<FilterCubit>().onFilterItemCheck(model);
+              onFilterItemCheck(model);
             },
           ),
         )
@@ -727,20 +876,19 @@ class _FilterState extends State<Filter> with FilterStyleMixin {
     );
   }
 
-  rangerSliderTitleWidget(FilterState state, ThemeProps? themeProps) {
-    final filterOptions = state.filters[state.activeFilterIndex].filterOptions;
-    final previousApplied =
-        state.filters[state.activeFilterIndex].previousApplied;
-    final title = state.filters[state.activeFilterIndex].title ?? "";
+  rangerSliderTitleWidget(ThemeProps? themeProps) {
+    final filterOptions = filters?[activeFilterIndex!].filterOptions;
+    final previousApplied = filters?[activeFilterIndex!].previousApplied;
+    final title = filters?[activeFilterIndex!].title ?? "";
     Constants.debugLog(
-        FilterWidget, "rangerSliderTitleWidget:rangerSliderTitleWidget");
+        FilterSystemWidget, "rangerSliderTitleWidget:rangerSliderTitleWidget");
 
     final minValue = findMinValue(filterOptions);
     final maxValue = findMaxValue(filterOptions);
     final double minGap = 1.0;
     double? minPreviousAppliedValue;
     double? maxPreviousAppliedValue;
-    if (previousApplied == null && previousApplied.isEmpty) {
+    if (previousApplied == null && previousApplied!.isEmpty) {
       minPreviousAppliedValue = 0.0;
       maxPreviousAppliedValue = 0.0;
     } else {
@@ -748,12 +896,12 @@ class _FilterState extends State<Filter> with FilterStyleMixin {
       maxPreviousAppliedValue = findMaxValue(previousApplied);
     }
     SfRangeValues? values = ((previousApplied == null &&
-            previousApplied.isEmpty)
+            previousApplied!.isEmpty)
         ? SfRangeValues(minValue ?? 0.0, maxValue ?? 0.0)
         : SfRangeValues(
             minPreviousAppliedValue ?? 0.0, maxPreviousAppliedValue ?? 0.0));
     final SliderTileThemeProps? sliderTileThemeProps =
-        state.filters[state.activeFilterIndex].sliderTileThemeProps;
+        filters?[activeFilterIndex!].sliderTileThemeProps;
 
     return Row(
       mainAxisAlignment: MainAxisAlignment.start,
@@ -764,8 +912,8 @@ class _FilterState extends State<Filter> with FilterStyleMixin {
           child: FilterRangerSliderTitle(
             key: UniqueKey(),
             sliderTileThemeProps: sliderTileThemeProps,
-            filterOptions: filterOptions,
-            previousApplied: previousApplied,
+            filterOptions: filterOptions!,
+            previousApplied: previousApplied!,
             title: title,
             values: values,
             minValue: minValue!,
@@ -779,9 +927,9 @@ class _FilterState extends State<Filter> with FilterStyleMixin {
               List<FilterItemModel> list = [];
               list.add(startModel);
               list.add(endModel);
-              Constants.debugLog(FilterWidget,
+              Constants.debugLog(FilterSystemWidget,
                   "rangerSliderTitleWidget:rangerSliderTitleWidget:onChanged:${list.toString()}");
-              context.read<FilterCubit>().onFilterItemCheck(list);
+              onFilterItemCheck(list);
             },
           ),
         )
@@ -789,20 +937,19 @@ class _FilterState extends State<Filter> with FilterStyleMixin {
     );
   }
 
-  rangerVerticalSliderTitleWidget(FilterState state, ThemeProps? themeProps) {
-    final filterOptions = state.filters[state.activeFilterIndex].filterOptions;
-    final previousApplied =
-        state.filters[state.activeFilterIndex].previousApplied;
-    final title = state.filters[state.activeFilterIndex].title ?? "";
+  rangerVerticalSliderTitleWidget(ThemeProps? themeProps) {
+    final filterOptions = filters?[activeFilterIndex!].filterOptions;
+    final previousApplied = filters?[activeFilterIndex!].previousApplied;
+    final title = filters?[activeFilterIndex!].title ?? "";
     Constants.debugLog(
-        FilterWidget, "rangerSliderTitleWidget:rangerSliderTitleWidget");
+        FilterSystemWidget, "rangerSliderTitleWidget:rangerSliderTitleWidget");
 
     final minValue = findMinValue(filterOptions);
     final maxValue = findMaxValue(filterOptions);
     final double minGap = 1.0;
     double? minPreviousAppliedValue;
     double? maxPreviousAppliedValue;
-    if (previousApplied == null && previousApplied.isEmpty) {
+    if (previousApplied == null && previousApplied!.isEmpty) {
       minPreviousAppliedValue = 0.0;
       maxPreviousAppliedValue = 0.0;
     } else {
@@ -815,7 +962,7 @@ class _FilterState extends State<Filter> with FilterStyleMixin {
         : SfRangeValues(
             minPreviousAppliedValue ?? 0.0, maxPreviousAppliedValue ?? 0.0));
     final SliderTileThemeProps? sliderTileThemeProps =
-        state.filters[state.activeFilterIndex].sliderTileThemeProps;
+        filters?[activeFilterIndex!].sliderTileThemeProps;
 
     return Row(
       mainAxisAlignment: MainAxisAlignment.start,
@@ -826,8 +973,8 @@ class _FilterState extends State<Filter> with FilterStyleMixin {
           child: FilterVerticalRangerSliderTitle(
             key: UniqueKey(),
             sliderTileThemeProps: sliderTileThemeProps,
-            filterOptions: filterOptions,
-            previousApplied: previousApplied,
+            filterOptions: filterOptions!,
+            previousApplied: previousApplied!,
             title: title,
             values: values,
             minValue: minValue!,
@@ -841,9 +988,9 @@ class _FilterState extends State<Filter> with FilterStyleMixin {
               List<FilterItemModel> list = [];
               list.add(startModel);
               list.add(endModel);
-              Constants.debugLog(FilterWidget,
+              Constants.debugLog(FilterSystemWidget,
                   "rangerSliderTitleWidget:rangerSliderTitleWidget:onChanged:${list.toString()}");
-              context.read<FilterCubit>().onFilterItemCheck(list);
+              onFilterItemCheck(list);
             },
           ),
         )
@@ -851,29 +998,27 @@ class _FilterState extends State<Filter> with FilterStyleMixin {
     );
   }
 
-  datePickerWidget(FilterState state, ThemeProps? themeProps) {
-    final filterOptions = state.filters[state.activeFilterIndex].filterOptions;
-    final previousApplied =
-        state.filters[state.activeFilterIndex].previousApplied;
-    final title = state.filters[state.activeFilterIndex].title ?? "";
+  datePickerWidget(ThemeProps? themeProps) {
+    final filterOptions = filters![activeFilterIndex!].filterOptions;
+    final previousApplied = filters?[activeFilterIndex!].previousApplied;
+    final title = filters?[activeFilterIndex!].title ?? "";
 
     final DateFormat inputDateFormat =
-        state.filters[state.activeFilterIndex].inputDateFormat ??
+        filters?[activeFilterIndex!].inputDateFormat ??
             DateFormat("dd-MM-yyyy");
-    final DateTime initialDate =
-        (state.filters[state.activeFilterIndex].initialDate == null ||
-                state.filters[state.activeFilterIndex].initialDate!.isEmpty)
-            ? DateUtil.simpleDateFormatChanger(
-                DateTime.now(), inputDateFormat.pattern!)!
-            : DateUtil.stringToDate(
-                state.filters[state.activeFilterIndex].initialDate,
-                inputDateFormat.pattern!);
-    final minimumDate = state.filters[state.activeFilterIndex].minimumDate ??
+    final DateTime initialDate = (filters?[activeFilterIndex!].initialDate ==
+                null ||
+            filters![activeFilterIndex!].initialDate!.isEmpty)
+        ? DateUtil.simpleDateFormatChanger(
+            DateTime.now(), inputDateFormat.pattern!)!
+        : DateUtil.stringToDate(
+            filters?[activeFilterIndex!].initialDate, inputDateFormat.pattern!);
+    final minimumDate = filters?[activeFilterIndex!].minimumDate ??
         DateTime(DateTime.now().year - 150, 1, 1);
-    final maximumDate = state.filters[state.activeFilterIndex].maximumDate ??
+    final maximumDate = filters?[activeFilterIndex!].maximumDate ??
         DateTime(DateTime.now().year + 150, 1, 1);
     final datePickerDateOrder =
-        state.filters[state.activeFilterIndex].datePickerDateOrder ??
+        filters?[activeFilterIndex!].datePickerDateOrder ??
             DatePickerDateOrder.dmy;
 
     Constants.debugLog(
@@ -898,7 +1043,7 @@ class _FilterState extends State<Filter> with FilterStyleMixin {
                 context: context,
                 initialDate: initialDate,
                 pickerMode: CupertinoDatePickerMode.date,
-                dateOrder: DatePickerDateOrder.dmy,
+                dateOrder: datePickerDateOrder,
                 backgroundColor: Theme.of(context).colorScheme.background,
                 minimumDate: minimumDate,
                 maximumDate: maximumDate,
@@ -909,12 +1054,5 @@ class _FilterState extends State<Filter> with FilterStyleMixin {
         ),
       ],
     );
-  }
-
-  @override
-  void dispose() {
-    _searchValueNotifier.dispose();
-    _searchController.dispose();
-    super.dispose();
   }
 }

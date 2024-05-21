@@ -87,6 +87,7 @@
         android:name="${applicationName}"
         android:icon="@mipmap/ic_launcher"
         android:label="coozy_cafe"
+        android:enableOnBackInvokedCallback="true"
         tools:ignore="AllowBackup,GoogleAppIndexingWarning">
         <activity
             android:name=".MainActivity"

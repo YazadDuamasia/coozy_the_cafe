@@ -8,6 +8,7 @@ import 'package:coozy_cafe/widgets/pager/src/pager.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:material_design_icons_flutter/material_design_icons_flutter.dart';
+import 'package:syncfusion_flutter_core/theme.dart';
 
 import '../../../widgets/fliter_system_widget/filter_system.dart';
 
@@ -694,8 +695,10 @@ class _RecipesListScreenState extends State<RecipesListScreen> {
           filterProps: FilterProps(
             onFilterChange: (List<AppliedFilterModel> value) async {
               // print('Applied filer - ${value.map((e) => e.toMap())}');
-              Constants.debugLog(RecipesListScreen, "Applied filer:${value.map((e) => e.toMap())}");
-              BlocProvider.of<RecipesFullListCubit>(context).applyFilter(fliter: value);
+              Constants.debugLog(RecipesListScreen,
+                  "Applied filer:${value.map((e) => e.toMap())}");
+              BlocProvider.of<RecipesFullListCubit>(context)
+                  .applyFilter(fliter: value);
             },
             filters: [
               FilterListModel(
@@ -757,7 +760,7 @@ class _RecipesListScreenState extends State<RecipesListScreen> {
                     'total_cooking_time'),
                 title: 'Total cooking time',
                 filterKey: 'total_cooking_time',
-                sliderTileThemeProps: const SliderTileThemeProps(
+                sliderTileThemeProps: SliderTileThemeProps(
                     label_suffix_str: "mins",
                     tooltip_suffix_str: "mins",
                     stepSize: 1,
@@ -774,9 +777,10 @@ class _RecipesListScreenState extends State<RecipesListScreen> {
                     'cooking_time'),
                 title: 'Cooking Time',
                 filterKey: 'cooking_time',
-                sliderTileThemeProps: const SliderTileThemeProps(
+                sliderTileThemeProps: SliderTileThemeProps(
                     label_suffix_str: "mins",
                     tooltip_suffix_str: "mins",
+                    sliderThemeData:SfRangeSliderThemeData() ,
                     stepSize: 1,
                     fractionDigits: 0),
               ),

@@ -242,7 +242,8 @@ class DatabaseHelper {
 
     for (var i = 0; i < recipes.length; i += batchSize) {
       var batch = db!.batch();
-      final chunk = recipes.sublist(i, i + batchSize > recipes.length ? recipes.length : i + batchSize);
+      final chunk = recipes.sublist(
+          i, i + batchSize > recipes.length ? recipes.length : i + batchSize);
 
       for (var recipe in chunk) {
         final data = recipe.toJson();
@@ -959,7 +960,7 @@ class DatabaseHelper {
     });
   }
 
-//   // Delete a menu item
+  //   // Delete a menu item
   Future<void> deleteMenuItem(int menuItemId) async {
     final db = await database;
 

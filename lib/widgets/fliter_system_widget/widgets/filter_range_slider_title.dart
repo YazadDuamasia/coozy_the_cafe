@@ -78,30 +78,32 @@ class _FilterRangerSliderTitleState extends State<FilterRangerSliderTitle> {
   }
 
   slider() {
-    return SfRangeSlider(
-      tooltipTextFormatterCallback: (value, formattedText) =>
-          '${(widget.sliderTileThemeProps?.tooltip_prefix_str == null || widget.sliderTileThemeProps!.tooltip_prefix_str!.isEmpty) ? "" : "${widget.sliderTileThemeProps?.tooltip_prefix_str.toString()} "}${double.tryParse("$value")?.toStringAsFixed(widget.sliderTileThemeProps?.fractionDigits ?? 0) ?? 0}${(widget.sliderTileThemeProps?.tooltip_suffix_str == null || widget.sliderTileThemeProps!.tooltip_suffix_str!.isEmpty) ? "" : " ${widget.sliderTileThemeProps?.tooltip_suffix_str}"}',
-      min: widget.minValue,
-      max: widget.maxValue,
-      values: _values ?? SfRangeValues(0.0, 0.0),
-      stepSize: widget.sliderTileThemeProps?.stepSize ?? 1.0,
-      showLabels: true,
-      enableTooltip: true,
-      labelFormatterCallback: (value, formattedText) {
-        return '${(widget.sliderTileThemeProps?.label_prefix_str == null || widget.sliderTileThemeProps!.label_prefix_str!.isEmpty) ? "" : "${widget.sliderTileThemeProps?.label_prefix_str.toString()} "}${double.tryParse("$value")?.toStringAsFixed(widget.sliderTileThemeProps?.fractionDigits ?? 0) ?? 0}${(widget.sliderTileThemeProps?.label_suffix_str == null || widget.sliderTileThemeProps!.label_suffix_str!.isEmpty) ? "" : " ${widget.sliderTileThemeProps?.label_suffix_str.toString()}"}';
-      },
-      onChanged: (SfRangeValues newValues) async {
-        Constants.debugLog(FilterRangerSliderTitle,
-            "onChanged:newValues:${newValues.toString()}");
-        setState(() {
+    return StatefulBuilder(builder: (context, state) {
+      return SfRangeSlider(
+        tooltipTextFormatterCallback: (value, formattedText) =>
+            '${(widget.sliderTileThemeProps?.tooltip_prefix_str == null || widget.sliderTileThemeProps!.tooltip_prefix_str!.isEmpty) ? "" : "${widget.sliderTileThemeProps?.tooltip_prefix_str.toString()} "}${double.tryParse("$value")?.toStringAsFixed(widget.sliderTileThemeProps?.fractionDigits ?? 0) ?? 0}${(widget.sliderTileThemeProps?.tooltip_suffix_str == null || widget.sliderTileThemeProps!.tooltip_suffix_str!.isEmpty) ? "" : " ${widget.sliderTileThemeProps?.tooltip_suffix_str}"}',
+        min: widget.minValue,
+        max: widget.maxValue,
+        values: _values ?? SfRangeValues(0.0, 0.0),
+        stepSize: widget.sliderTileThemeProps?.stepSize ?? 1.0,
+        showLabels: true,
+        enableTooltip: true,
+        labelFormatterCallback: (value, formattedText) {
+          return '${(widget.sliderTileThemeProps?.label_prefix_str == null || widget.sliderTileThemeProps!.label_prefix_str!.isEmpty) ? "" : "${widget.sliderTileThemeProps?.label_prefix_str.toString()} "}${double.tryParse("$value")?.toStringAsFixed(widget.sliderTileThemeProps?.fractionDigits ?? 0) ?? 0}${(widget.sliderTileThemeProps?.label_suffix_str == null || widget.sliderTileThemeProps!.label_suffix_str!.isEmpty) ? "" : " ${widget.sliderTileThemeProps?.label_suffix_str.toString()}"}';
+        },
+        onChanged: (SfRangeValues newValues) async {
+          Constants.debugLog(FilterRangerSliderTitle,
+              "onChanged:newValues:${newValues.toString()}");
           _values = newValues;
-        });
-      },
-      onChangeEnd: (SfRangeValues value) {
-        Constants.debugLog(FilterRangerSliderTitle,
-            "onChangeEnd:newValues:${value.toString()}");
-        widget.onChanged(value);
-      },
-    );
+          await widget.onChanged(newValues);
+          state(() {});
+          setState(() {});
+        },
+        onChangeEnd: (SfRangeValues value) {
+          Constants.debugLog(FilterRangerSliderTitle,
+              "onChangeEnd:newValues:${value.toString()}");
+        },
+      );
+    });
   }
 }

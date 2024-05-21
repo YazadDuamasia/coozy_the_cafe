@@ -1,10 +1,7 @@
 import 'package:coozy_cafe/utlis/components/constants.dart';
-import 'package:coozy_cafe/utlis/components/debouncer.dart';
 import 'package:coozy_cafe/widgets/fliter_system_widget/props/filter_item_model.dart';
 import 'package:coozy_cafe/widgets/fliter_system_widget/props/filter_props.dart';
-import 'package:coozy_cafe/widgets/fliter_system_widget/state/filter_cubit.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:syncfusion_flutter_core/theme.dart';
 import 'package:syncfusion_flutter_sliders/sliders.dart';
 
@@ -37,12 +34,13 @@ class FilterSliderTitle extends StatefulWidget {
 
 class _FilterSliderTitleState extends State<FilterSliderTitle> {
   double? _values;
-  final _debouncer = Debouncer(milliseconds: 500);
 
   @override
   void initState() {
     super.initState();
     _values = widget.values ?? 0;
+    Constants.debugLog(
+        FilterSliderTitle, "sliderTileThemeProps:${widget.sliderTileThemeProps.toString()}");
   }
 
   @override
@@ -67,12 +65,12 @@ class _FilterSliderTitleState extends State<FilterSliderTitle> {
                 child: Visibility(
                   visible: widget.sliderTileThemeProps == null ||
                       widget.sliderTileThemeProps?.sliderThemeData != null,
-                  replacement: slider(),
                   child: SfRangeSliderTheme(
                     data: widget.sliderTileThemeProps?.sliderThemeData ??
                         SfRangeSliderThemeData(),
                     child: slider(),
                   ),
+                  replacement: slider(),
                 ),
               ),
             ),
@@ -83,35 +81,35 @@ class _FilterSliderTitleState extends State<FilterSliderTitle> {
   }
 
   slider() {
-    return SfSlider(
-      key: UniqueKey(),
-      tooltipTextFormatterCallback: (value, formattedText) =>
-          '${(widget.sliderTileThemeProps?.tooltip_prefix_str == null || widget.sliderTileThemeProps!.tooltip_prefix_str!.isEmpty) ? "" : "${widget.sliderTileThemeProps?.tooltip_prefix_str.toString()} "}${double.tryParse("$value")?.toStringAsFixed(widget.sliderTileThemeProps?.fractionDigits ?? 0) ?? 0}${(widget.sliderTileThemeProps?.tooltip_suffix_str == null || widget.sliderTileThemeProps!.tooltip_suffix_str!.isEmpty) ? "" : " ${widget.sliderTileThemeProps?.tooltip_suffix_str}"}',
-      min: widget.minValue,
-      max: widget.maxValue,
-      value: _values ?? 0.0,
-      stepSize:
-          double.tryParse("{widget.sliderTileThemeProps?.stepSize ?? 1.0}") ??
+    return StatefulBuilder(builder: (context, state) {
+      return StatefulBuilder(builder: (context, state) {
+        return SfSlider(
+          key: UniqueKey(),
+          tooltipTextFormatterCallback: (value, formattedText) =>
+              '${(widget.sliderTileThemeProps?.tooltip_prefix_str == null || widget.sliderTileThemeProps!.tooltip_prefix_str!.isEmpty) ? "" : "${widget.sliderTileThemeProps?.tooltip_prefix_str.toString()} "}${double.tryParse("$value")?.toStringAsFixed(widget.sliderTileThemeProps?.fractionDigits ?? 0) ?? 0}${(widget.sliderTileThemeProps?.tooltip_suffix_str == null || widget.sliderTileThemeProps!.tooltip_suffix_str!.isEmpty) ? "" : " ${widget.sliderTileThemeProps?.tooltip_suffix_str}"}',
+          min: widget.minValue,
+          max: widget.maxValue,
+          value: _values ?? 0.0,
+          stepSize: double.tryParse(
+                  "${widget.sliderTileThemeProps?.stepSize ?? 1.0}") ??
               1.0,
-      showLabels: true,
-      enableTooltip: true,
-      labelFormatterCallback: (value, formattedText) {
-        return '${(widget.sliderTileThemeProps?.label_prefix_str == null || widget.sliderTileThemeProps!.label_prefix_str!.isEmpty) ? "" : "${widget.sliderTileThemeProps?.label_prefix_str.toString()} "}${double.tryParse("$value")?.toStringAsFixed(widget.sliderTileThemeProps?.fractionDigits ?? 0) ?? 0}${(widget.sliderTileThemeProps?.label_suffix_str == null || widget.sliderTileThemeProps!.label_suffix_str!.isEmpty) ? "" : " ${widget.sliderTileThemeProps?.label_suffix_str.toString()}"}';
-      },
-      onChanged: (newValues) async {
-        Constants.debugLog(
-            FilterSliderTitle, "onChanged:newValues:${newValues}");
-        setState(() {
-          _values = newValues;
-        });
-        // widget.onChanged(newValues);
-      },
-      onChangeEnd: (value) async {
-        Constants.debugLog(
-            FilterSliderTitle, "onChangeEnd:finalValues:${value}");
-        widget.onChanged(value);
-      },
-    );
+          showLabels: true,
+          enableTooltip: true,
+          labelFormatterCallback: (value, formattedText) {
+            return '${(widget.sliderTileThemeProps?.label_prefix_str == null || widget.sliderTileThemeProps!.label_prefix_str!.isEmpty) ? "" : "${widget.sliderTileThemeProps?.label_prefix_str.toString()} "}${double.tryParse("$value")?.toStringAsFixed(widget.sliderTileThemeProps?.fractionDigits ?? 0) ?? 0}${(widget.sliderTileThemeProps?.label_suffix_str == null || widget.sliderTileThemeProps!.label_suffix_str!.isEmpty) ? "" : " ${widget.sliderTileThemeProps?.label_suffix_str.toString()}"}';
+          },
+          onChanged: (newValues) async {
+            Constants.debugLog(
+                FilterSliderTitle, "onChanged:newValues:${newValues}");
+            _values = newValues;
+            await widget.onChanged(newValues);
+            state(() {});
+            setState(() {});
+            // widget.onChanged(newValues);
+          },
+        );
+      });
+    });
   }
 
   @override

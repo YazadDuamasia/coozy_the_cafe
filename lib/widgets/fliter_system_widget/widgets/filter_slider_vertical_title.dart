@@ -1,5 +1,4 @@
 import 'package:coozy_cafe/utlis/components/constants.dart';
-import 'package:coozy_cafe/utlis/components/debouncer.dart';
 import 'package:coozy_cafe/widgets/fliter_system_widget/props/filter_item_model.dart';
 import 'package:coozy_cafe/widgets/fliter_system_widget/props/filter_props.dart';
 import 'package:flutter/material.dart';
@@ -35,7 +34,6 @@ class FilterVerticalSliderTitle extends StatefulWidget {
 
 class _FilterVerticalSliderTitleState extends State<FilterVerticalSliderTitle> {
   double? _values;
-  final _debouncer = Debouncer(milliseconds: 500);
 
   @override
   void initState() {
@@ -86,30 +84,28 @@ class _FilterVerticalSliderTitleState extends State<FilterVerticalSliderTitle> {
   }
 
   slider() {
-    return SfSlider.vertical(
-      tooltipTextFormatterCallback: (value, formattedText) =>
-          '${(widget.sliderTileThemeProps?.tooltip_prefix_str == null || widget.sliderTileThemeProps!.tooltip_prefix_str!.isEmpty) ? "" : "${widget.sliderTileThemeProps?.tooltip_prefix_str.toString()} "}${double.tryParse("$value")?.toStringAsFixed(widget.sliderTileThemeProps?.fractionDigits ?? 0) ?? 0}${(widget.sliderTileThemeProps?.tooltip_suffix_str == null || widget.sliderTileThemeProps!.tooltip_suffix_str!.isEmpty) ? "" : " ${widget.sliderTileThemeProps?.tooltip_suffix_str}"}',
-      min: widget.minValue,
-      max: widget.maxValue,
-      value: _values ?? 0.0,
-      stepSize: widget.sliderTileThemeProps?.stepSize ?? 1.0,
-      showLabels: true,
-      enableTooltip: true,
-      labelFormatterCallback: (value, formattedText) {
-        return '${(widget.sliderTileThemeProps?.label_prefix_str == null || widget.sliderTileThemeProps!.label_prefix_str!.isEmpty) ? "" : "${widget.sliderTileThemeProps?.label_prefix_str.toString()} "}${double.tryParse("$value")?.toStringAsFixed(widget.sliderTileThemeProps?.fractionDigits ?? 0) ?? 0}${(widget.sliderTileThemeProps?.label_suffix_str == null || widget.sliderTileThemeProps!.label_suffix_str!.isEmpty) ? "" : " ${widget.sliderTileThemeProps?.label_suffix_str.toString()}"}';
-      },
-      onChanged: (newValues) async {
-        Constants.debugLog(
-            FilterVerticalSliderTitle, "onChanged:newValues:${newValues}");
-
-        setState(() {
+    return StatefulBuilder(builder: (context, state) {
+      return SfSlider.vertical(
+        tooltipTextFormatterCallback: (value, formattedText) =>
+            '${(widget.sliderTileThemeProps?.tooltip_prefix_str == null || widget.sliderTileThemeProps!.tooltip_prefix_str!.isEmpty) ? "" : "${widget.sliderTileThemeProps?.tooltip_prefix_str.toString()} "}${double.tryParse("$value")?.toStringAsFixed(widget.sliderTileThemeProps?.fractionDigits ?? 0) ?? 0}${(widget.sliderTileThemeProps?.tooltip_suffix_str == null || widget.sliderTileThemeProps!.tooltip_suffix_str!.isEmpty) ? "" : " ${widget.sliderTileThemeProps?.tooltip_suffix_str}"}',
+        min: widget.minValue,
+        max: widget.maxValue,
+        value: _values ?? 0.0,
+        stepSize: widget.sliderTileThemeProps?.stepSize ?? 1.0,
+        showLabels: true,
+        enableTooltip: true,
+        labelFormatterCallback: (value, formattedText) {
+          return '${(widget.sliderTileThemeProps?.label_prefix_str == null || widget.sliderTileThemeProps!.label_prefix_str!.isEmpty) ? "" : "${widget.sliderTileThemeProps?.label_prefix_str.toString()} "}${double.tryParse("$value")?.toStringAsFixed(widget.sliderTileThemeProps?.fractionDigits ?? 0) ?? 0}${(widget.sliderTileThemeProps?.label_suffix_str == null || widget.sliderTileThemeProps!.label_suffix_str!.isEmpty) ? "" : " ${widget.sliderTileThemeProps?.label_suffix_str.toString()}"}';
+        },
+        onChanged: (newValues) async {
+          Constants.debugLog(FilterVerticalSliderTitle, "onChanged:newValues:${newValues}");
           _values = newValues;
-        });
-      },
-      onChangeEnd: (value) {
-        Constants.debugLog(FilterVerticalSliderTitle, "onChanged:FinalUpdatedValue:${value}");
-        widget.onChanged(value ?? 0);
-      },
-    );
+         await widget.onChanged(newValues ?? 0);
+          state(() {});
+          setState(() {});
+        },
+
+      );
+    });
   }
 }
