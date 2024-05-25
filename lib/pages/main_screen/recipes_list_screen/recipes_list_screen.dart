@@ -5,8 +5,10 @@ import 'package:coozy_cafe/pages/pages.dart';
 import 'package:coozy_cafe/repositories/components/restaurant_repository.dart';
 import 'package:coozy_cafe/utlis/utlis.dart';
 import 'package:coozy_cafe/widgets/pager/src/pager.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:intl/intl.dart';
 import 'package:material_design_icons_flutter/material_design_icons_flutter.dart';
 import 'package:syncfusion_flutter_core/theme.dart';
 
@@ -712,6 +714,7 @@ class _RecipesListScreenState extends State<RecipesListScreen> {
                     'servings'),
                 title: 'Servings',
                 filterKey: 'servings',
+                backgroundColor: Theme.of(context).colorScheme.background,
               ),
               FilterListModel(
                 type: FilterType.CheckboxList,
@@ -724,6 +727,7 @@ class _RecipesListScreenState extends State<RecipesListScreen> {
                     'cuisine'),
                 title: 'Cuisine',
                 filterKey: 'cuisine',
+                backgroundColor: Theme.of(context).colorScheme.background,
               ),
               FilterListModel(
                 type: FilterType.CheckboxList,
@@ -736,6 +740,7 @@ class _RecipesListScreenState extends State<RecipesListScreen> {
                     'course'),
                 title: 'Course',
                 filterKey: 'course',
+                backgroundColor: Theme.of(context).colorScheme.background,
               ),
               FilterListModel(
                 type: FilterType.RadioGroup,
@@ -748,9 +753,10 @@ class _RecipesListScreenState extends State<RecipesListScreen> {
                     'diet'),
                 title: 'Diet',
                 filterKey: 'diet',
+                backgroundColor: Theme.of(context).colorScheme.background,
               ),
               FilterListModel(
-                type: FilterType.Slider,
+                type: FilterType.RangeSlider,
                 filterOptions: context
                         .read<RecipesFullListCubit>()
                         .totalCookingTimeFilterOptionsList ??
@@ -760,6 +766,7 @@ class _RecipesListScreenState extends State<RecipesListScreen> {
                     'total_cooking_time'),
                 title: 'Total cooking time',
                 filterKey: 'total_cooking_time',
+                backgroundColor: Theme.of(context).colorScheme.background,
                 sliderTileThemeProps: SliderTileThemeProps(
                     label_suffix_str: "mins",
                     tooltip_suffix_str: "mins",
@@ -777,13 +784,44 @@ class _RecipesListScreenState extends State<RecipesListScreen> {
                     'cooking_time'),
                 title: 'Cooking Time',
                 filterKey: 'cooking_time',
+                backgroundColor: Theme.of(context).colorScheme.background,
                 sliderTileThemeProps: SliderTileThemeProps(
                     label_suffix_str: "mins",
                     tooltip_suffix_str: "mins",
-                    sliderThemeData:SfRangeSliderThemeData() ,
+                    sliderThemeData: SfRangeSliderThemeData(),
                     stepSize: 1,
                     fractionDigits: 0),
               ),
+              FilterListModel(
+                  type: FilterType.DatePicker,
+                  filterOptions: [],
+                  previousApplied: [],
+                  title: 'Date',
+                  filterKey: 'date_time',
+                  backgroundColor: Theme.of(context).colorScheme.background,
+                  datePickerDateOrder: DatePickerDateOrder.dmy,
+                  initialDate: DateUtil.dateToString(
+                      DateTime.now(), DateUtil.DATE_FORMAT9),
+                  inputDateFormat: DateFormat(DateUtil.DATE_FORMAT9),
+                  minimumDate: DateUtil.simpleDateFormatChanger(
+                      DateTime.now(), DateUtil.DATE_FORMAT9),
+                  maximumDate: DateUtil.simpleDateFormatChanger(
+                      DateTime(DateTime.now().year + 100, 31, 24),
+                      DateUtil.DATE_FORMAT9),
+                  labelText: "Date Picker",
+                  hintText: "Please Enter date"),
+              FilterListModel(
+                  type: FilterType.TimePicker,
+                  filterOptions: [],
+                  previousApplied: [],
+                  title: 'Time',
+                  filterKey: 'time',
+                  backgroundColor: Theme.of(context).colorScheme.background,
+                  initialDate: DateUtil.dateToString(
+                      DateTime.now(), DateUtil.TIME_FORMAT1),
+                  inputDateFormat: DateFormat(DateUtil.TIME_FORMAT1),
+                  labelText: "Time Picker",
+                  hintText: "Please Enter time"),
             ],
             themeProps: ThemeProps(
               activeFilterTextColor:

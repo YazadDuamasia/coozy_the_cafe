@@ -67,7 +67,7 @@ class _FilterSliderTitleState extends State<FilterSliderTitle> {
                       widget.sliderTileThemeProps?.sliderThemeData != null,
                   child: SfRangeSliderTheme(
                     data: widget.sliderTileThemeProps?.sliderThemeData ??
-                        SfRangeSliderThemeData(),
+                        SfRangeSliderThemeData(inactiveTrackColor:Colors.grey),
                     child: slider(),
                   ),
                   replacement: slider(),

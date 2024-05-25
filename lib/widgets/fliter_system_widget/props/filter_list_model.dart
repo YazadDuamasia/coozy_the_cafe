@@ -32,12 +32,17 @@ class FilterListModel extends Equatable {
   DateTime? firstDate;
   DateTime? lastDate;
   String? initialDate;
-
+  String? labelText;
+  String? hintText;
   DateTime? minimumDate;
   DateTime? maximumDate;
   DatePickerDateOrder? datePickerDateOrder;
-
   DateFormat? inputDateFormat;
+  Color? backgroundColor;
+  int? minuteInterval;
+  bool? use24hFormat;
+  String? textButtonCancel;
+  String? textButtonOkay;
 
   FilterListModel({
     this.title,
@@ -46,17 +51,26 @@ class FilterListModel extends Equatable {
     required this.previousApplied,
     required this.type,
     this.inputDateFormat,
+    this.labelText,
+    this.hintText,
     this.initialDate,
     this.minimumDate,
     this.maximumDate,
     this.datePickerDateOrder,
     this.sliderTileThemeProps,
+    this.backgroundColor,
+    this.minuteInterval,
+    this.use24hFormat,
+    this.textButtonCancel,
+    this.textButtonOkay,
   });
 
   FilterListModel copyWith(
       {List<FilterItemModel>? filterOptions,
       List<FilterItemModel>? previousApplied,
       String? title,
+      String? labelText,
+      String? hintText,
       String? filterKey,
       FilterType? type,
       SliderTileThemeProps? sliderTileThemeProps,
@@ -64,9 +78,16 @@ class FilterListModel extends Equatable {
       String? initialDate,
       DateTime? minimumDate,
       DateTime? maximumDate,
+      Color? backgroundColor,
+      int? minuteInterval,
+      bool? use24hFormat,
+      String? textButtonCancel,
+      String? textButtonOkay,
       DatePickerDateOrder? datePickerDateOrder}) {
     return FilterListModel(
         title: title ?? this.title,
+        labelText: labelText ?? this.labelText,
+        hintText: hintText ?? this.hintText,
         type: type ?? this.type,
         filterKey: filterKey ?? this.filterKey,
         filterOptions: filterOptions ?? this.filterOptions,
@@ -76,6 +97,11 @@ class FilterListModel extends Equatable {
         initialDate: initialDate ?? this.initialDate,
         minimumDate: minimumDate ?? this.minimumDate,
         maximumDate: maximumDate ?? this.maximumDate,
+        backgroundColor: backgroundColor ?? this.backgroundColor,
+        minuteInterval: minuteInterval ?? this.minuteInterval,
+        use24hFormat: use24hFormat ?? this.use24hFormat,
+        textButtonCancel: textButtonCancel ?? this.textButtonCancel,
+        textButtonOkay: textButtonOkay ?? this.textButtonOkay,
         datePickerDateOrder: datePickerDateOrder ?? this.datePickerDateOrder);
   }
 
@@ -92,6 +118,13 @@ class FilterListModel extends Equatable {
         initialDate,
         minimumDate,
         maximumDate,
+        hintText,
+        labelText,
+        backgroundColor,
+        minuteInterval,
+        use24hFormat,
+        textButtonCancel,
+        textButtonOkay
       ];
 
   Map<String, dynamic> toMap() {
@@ -106,6 +139,13 @@ class FilterListModel extends Equatable {
       'initialDate': initialDate.toString(),
       'minimumDate': minimumDate.toString(),
       'maximumDate': maximumDate.toString(),
+      'labelText': labelText,
+      'hintText': hintText,
+      'backgroundColor': backgroundColor,
+      'minuteInterval': minuteInterval,
+      'use24hFormat': use24hFormat,
+      'textButtonCancel': textButtonCancel,
+      'textButtonOkay': textButtonOkay
     });
   }
 }

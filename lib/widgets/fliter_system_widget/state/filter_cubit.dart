@@ -28,7 +28,7 @@ class FilterCubit extends Cubit<FilterState> {
   }
 
   onFilterTitleTap(int index) {
-    activeFilterIndex=index;
+    activeFilterIndex = index;
     emit(
       state.copyWith(
         activeFilterIndex: index,
@@ -37,16 +37,16 @@ class FilterCubit extends Cubit<FilterState> {
     );
   }
 
-  Future<void> onFilterItemCheck(item)async {
-    List<FilterListModel>? filterModels = [...state.filters];
-    FilterListModel? filterItem = filterModels[state.activeFilterIndex];
-    final List<FilterItemModel>? checkedItems = [...filterItem.previousApplied];
+  Future<void> onFilterItemCheck(item) async {
+    List<FilterListModel> filterModels = [...state.filters];
+    FilterListModel filterItem = filterModels[state.activeFilterIndex];
+    List<FilterItemModel>? checkedItems = [...filterItem.previousApplied];
 
     switch (filterItem.type) {
       case FilterType.CheckboxList:
         {
           Constants.debugLog(FilterCubit, "CheckboxList");
-          if (checkedItems!.contains(item)) {
+          if (checkedItems.contains(item)) {
             checkedItems.remove(item);
           } else {
             checkedItems.add(item);
@@ -58,8 +58,12 @@ class FilterCubit extends Cubit<FilterState> {
       case FilterType.RadioGroup:
         {
           Constants.debugLog(FilterCubit, "RadioGroup");
-          checkedItems!.clear();
-          checkedItems!.add(item);
+          if (checkedItems.contains(item)) {
+            checkedItems = [];
+          } else {
+            checkedItems = [];
+            checkedItems.add(item);
+          }
           Constants.debugLog(
               FilterCubit, "RadioGroup:checkedItems:${checkedItems}");
         }
@@ -67,7 +71,7 @@ class FilterCubit extends Cubit<FilterState> {
       case FilterType.Slider:
         {
           Constants.debugLog(FilterCubit, "Slider");
-          checkedItems!.clear();
+          checkedItems = [];
           checkedItems.add(item);
           Constants.debugLog(FilterCubit, "Slider:Slider:${checkedItems}");
         }
@@ -77,15 +81,21 @@ class FilterCubit extends Cubit<FilterState> {
         {
           Constants.debugLog(FilterCubit, "RangeSlider");
           Constants.debugLog(FilterCubit, "RangeSlider:${item}");
-          checkedItems!.clear();
+          checkedItems = [];
           for (FilterItemModel model in item) {
             checkedItems.add(model);
           }
-          Constants.debugLog(FilterCubit, "Slider:Slider:${checkedItems}");
+          Constants.debugLog(
+              FilterCubit, "RangeSlider:RangeSlider:${checkedItems}");
         }
         break;
       case FilterType.TimePicker:
         {
+          if (item == null) {
+            checkedItems = [];
+          } else {
+            checkedItems.add(item);
+          }
           Constants.debugLog(FilterCubit, "TimePicker");
         }
         break;
@@ -96,6 +106,11 @@ class FilterCubit extends Cubit<FilterState> {
         break;
       case FilterType.DatePicker:
         {
+          if (item == null) {
+            checkedItems = [];
+          } else {
+            checkedItems.add(item);
+          }
           Constants.debugLog(FilterCubit, "DatePicker");
         }
         break;
@@ -114,23 +129,24 @@ class FilterCubit extends Cubit<FilterState> {
     );
 
     filterModels[state.activeFilterIndex] = updatedItem;
-    filters=filterModels;
- emit(state.copyWith(
+    filters = filterModels;
+    Constants.debugLog(FilterCubit, "CurrentList:${filters.toString()}");
+    emit(state.copyWith(
       filters: filterModels,
     ));
-
   }
 
   void onFilterSubmit() {
     final appliedFilters = <AppliedFilterModel>[];
     for (var element in state.filters) {
-
       appliedFilters.add(AppliedFilterModel(
         filterKey: element.filterKey,
         applied: element.previousApplied,
         filterTitle: element.title,
       ));
     }
+    Constants.debugLog(
+        FilterCubit, "appliedFilters:${appliedFilters.toString()}");
     if (filterProps.onFilterChange != null) {
       filterProps.onFilterChange!(appliedFilters);
     }
@@ -275,7 +291,7 @@ class FilterCubit {
         */
 /*for (FilterItemModel model in item) {
           checkedItems.add(model);
-        }*//*
+        }*/ /*
 
         break;
       case FilterType.TimePicker:

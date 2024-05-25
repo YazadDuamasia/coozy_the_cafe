@@ -2,12 +2,12 @@
 /// Required parametter is FilterProps
 
 import 'package:coozy_cafe/utlis/utlis.dart';
+import 'package:coozy_cafe/widgets/datetime_picker_formfield/datetime_picker_formfield.dart';
 import 'package:coozy_cafe/widgets/fliter_system_widget/filter_style_mixin.dart';
 import 'package:coozy_cafe/widgets/fliter_system_widget/props/filter_item_model.dart';
 import 'package:coozy_cafe/widgets/fliter_system_widget/props/filter_list_model.dart';
 import 'package:coozy_cafe/widgets/fliter_system_widget/props/filter_props.dart';
 import 'package:coozy_cafe/widgets/fliter_system_widget/state/filter_cubit.dart';
-import 'package:coozy_cafe/widgets/fliter_system_widget/widgets/datetime_picker_formfield.dart';
 import 'package:coozy_cafe/widgets/fliter_system_widget/widgets/filter_checkbox_title.dart';
 import 'package:coozy_cafe/widgets/fliter_system_widget/widgets/filter_radio_box_title.dart';
 import 'package:coozy_cafe/widgets/fliter_system_widget/widgets/filter_range_slider_title.dart';
@@ -291,19 +291,19 @@ class _FilterState extends State<Filter> with FilterStyleMixin {
           return radioGroupWidget(state, themeProps);
         case FilterType.Slider:
           return sliderWidget(state, themeProps);
-        /*  case FilterType.VericalSlider:
+        case FilterType.VericalSlider:
           return verticalSliderWidget(state, themeProps);
         case FilterType.RangeSlider:
           return rangerSliderTitleWidget(state, themeProps);
         case FilterType.VericalRangeSlider:
-          return rangerVerticalSliderTitleWidget(state, themeProps);*/
+          return rangerVerticalSliderTitleWidget(state, themeProps);
 
         case FilterType.DatePicker:
           return datePickerWidget(state, themeProps);
         case FilterType.TimePicker:
-          return Container();
+          return timePickerWidget(state, themeProps);
         case FilterType.RangeDatePicker:
-          return Container();
+          return rangeDatePickerWidget(state, themeProps);
 
         case FilterType.RangeTimePicker:
           return Container();
@@ -860,14 +860,8 @@ class _FilterState extends State<Filter> with FilterStyleMixin {
     final DateFormat inputDateFormat =
         state.filters[state.activeFilterIndex].inputDateFormat ??
             DateFormat("dd-MM-yyyy");
-    final DateTime initialDate =
-        (state.filters[state.activeFilterIndex].initialDate == null ||
-                state.filters[state.activeFilterIndex].initialDate!.isEmpty)
-            ? DateUtil.simpleDateFormatChanger(
-                DateTime.now(), inputDateFormat.pattern!)!
-            : DateUtil.stringToDate(
-                state.filters[state.activeFilterIndex].initialDate,
-                inputDateFormat.pattern!);
+    DateTime initialDate;
+
     final minimumDate = state.filters[state.activeFilterIndex].minimumDate ??
         DateTime(DateTime.now().year - 150, 1, 1);
     final maximumDate = state.filters[state.activeFilterIndex].maximumDate ??
@@ -875,39 +869,413 @@ class _FilterState extends State<Filter> with FilterStyleMixin {
     final datePickerDateOrder =
         state.filters[state.activeFilterIndex].datePickerDateOrder ??
             DatePickerDateOrder.dmy;
+    final labelText = state.filters[state.activeFilterIndex].labelText ?? "";
+    final hintText = state.filters[state.activeFilterIndex].hintText ?? "";
+    var backgroundColor =
+        state.filters[state.activeFilterIndex].backgroundColor;
+    var textButtonCancel =
+        state.filters[state.activeFilterIndex].textButtonCancel;
+    var textButtonOkay = state.filters[state.activeFilterIndex].textButtonOkay;
 
-    Constants.debugLog(
-        FilterWidget, "rangerSliderTitleWidget:datePickerWidget");
-    return Row(
-      mainAxisAlignment: MainAxisAlignment.start,
-      crossAxisAlignment: CrossAxisAlignment.start,
-      mainAxisSize: MainAxisSize.min,
-      children: <Widget>[
-        Expanded(
-          child: DateTimeField(
-            key: UniqueKey(),
-            onChanged: (value) {},
-            controller: new TextEditingController(),
-            focusNode: new FocusNode(),
-            validator: (value) {},
-            initialValue: initialDate,
-            autovalidateMode: AutovalidateMode.disabled,
-            format: inputDateFormat,
-            onShowPicker: (BuildContext context, DateTime? currentValue) async {
-              final date = await showDatePickerSheet(
-                context: context,
-                initialDate: initialDate,
-                pickerMode: CupertinoDatePickerMode.date,
-                dateOrder: DatePickerDateOrder.dmy,
-                backgroundColor: Theme.of(context).colorScheme.background,
-                minimumDate: minimumDate,
-                maximumDate: maximumDate,
-              );
-              return date;
-            },
-          ),
-        ),
-      ],
+    String? initialDateValue;
+
+    if (previousApplied == null || previousApplied.isEmpty) {
+      initialDate =
+          (state.filters[state.activeFilterIndex].initialDate == null ||
+                  state.filters[state.activeFilterIndex].initialDate!.isEmpty)
+              ? DateTime.now()
+              : DateUtil.stringToDate(
+                  state.filters[state.activeFilterIndex].initialDate!,
+                  inputDateFormat.pattern!);
+      initialDateValue = inputDateFormat.format(initialDate);
+    } else {
+      initialDate = DateUtil.stringToDate(
+          previousApplied.first.filterKey!, inputDateFormat.pattern!);
+      initialDateValue = inputDateFormat.format(initialDate);
+    }
+    Constants.debugLog(FilterWidget, "datePickerWidget");
+    TextEditingController? textEditingController = new TextEditingController();
+    return StatefulBuilder(
+      builder: (context, setState) {
+        return Column(
+          mainAxisAlignment: MainAxisAlignment.start,
+          crossAxisAlignment: CrossAxisAlignment.start,
+          mainAxisSize: MainAxisSize.max,
+          children: <Widget>[
+            Padding(
+              padding: const EdgeInsets.only(
+                  left: 10.0, right: 10.0, top: 10, bottom: 0.0),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.start,
+                crossAxisAlignment: CrossAxisAlignment.start,
+                mainAxisSize: MainAxisSize.min,
+                children: <Widget>[
+                  Expanded(
+                    child: Text(title),
+                  ),
+                ],
+              ),
+            ),
+            Padding(
+              padding: const EdgeInsets.only(
+                  left: 10.0, right: 10.0, top: 10.0, bottom: 10.0),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.start,
+                crossAxisAlignment: CrossAxisAlignment.start,
+                mainAxisSize: MainAxisSize.min,
+                children: <Widget>[
+                  Expanded(
+                    child: DateTimeField(
+                      format: inputDateFormat,
+                      autofocus: false,
+                      onShowPicker: (context, currentValue) async {
+                        final date = await showDatePickerSheet(
+                          context: context,
+                          initialDate: initialDate,
+                          pickerMode: CupertinoDatePickerMode.date,
+                          dateOrder: datePickerDateOrder,
+                          backgroundColor: backgroundColor ??
+                              Theme.of(context).colorScheme.background,
+                          maximumDate: maximumDate,
+                          minimumDate: minimumDate,
+                          textButtonOkay: textButtonOkay,
+                          textButtonCancel: textButtonCancel,
+                        );
+                        return date;
+                      },
+                      initialValue: initialDate,
+                      autovalidateMode: AutovalidateMode.disabled,
+                      controller: textEditingController,
+                      decoration: InputDecoration(
+                        labelText: labelText,
+                        hintText: hintText,
+                        border: OutlineInputBorder(
+                          borderSide: BorderSide(
+                            color: Theme.of(context).colorScheme.primary,
+                          ),
+                          borderRadius: BorderRadius.circular(5),
+                        ),
+                        disabledBorder: OutlineInputBorder(
+                          borderSide: BorderSide(
+                            color: Theme.of(context).disabledColor,
+                          ),
+                          borderRadius: BorderRadius.circular(5),
+                        ),
+                        enabledBorder: OutlineInputBorder(
+                          borderSide: BorderSide(
+                            color: Theme.of(context).colorScheme.primary,
+                          ),
+                          borderRadius: BorderRadius.circular(5),
+                        ),
+                        focusedBorder: OutlineInputBorder(
+                          borderSide: BorderSide(
+                              color: Theme.of(context).colorScheme.primary),
+                          borderRadius: BorderRadius.circular(5),
+                        ),
+                        errorBorder: OutlineInputBorder(
+                          borderSide: BorderSide(
+                              color: Theme.of(context).colorScheme.error),
+                          borderRadius: BorderRadius.circular(5),
+                        ),
+                        focusedErrorBorder: OutlineInputBorder(
+                          borderSide: BorderSide(
+                              color: Theme.of(context).colorScheme.error),
+                          borderRadius: BorderRadius.circular(5),
+                        ),
+                      ),
+                      validator: (value) {
+                        return null;
+                      },
+                      onChanged: (DateTime? value) async {
+                        if (value == null) {
+                          context.read<FilterCubit>().onFilterItemCheck(null);
+                        } else {
+                          String? date = DateUtil.dateToString(
+                              value, inputDateFormat.pattern!);
+                          print("datePickerWidget:date:${date?.toString()}");
+
+                          FilterItemModel model = FilterItemModel(
+                              filterKey: date, filterTitle: "${date}");
+                          context.read<FilterCubit>().onFilterItemCheck(model);
+                        }
+                      },
+                      onFieldSubmitted: (value) {
+                        FocusScope.of(context).unfocus();
+                      },
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ],
+        );
+      },
+    );
+  }
+
+  timePickerWidget(FilterState state, ThemeProps? themeProps) {
+    final filterOptions = state.filters[state.activeFilterIndex].filterOptions;
+    final previousApplied =
+        state.filters[state.activeFilterIndex].previousApplied;
+    final title = state.filters[state.activeFilterIndex].title ?? "";
+
+    final DateFormat inputDateFormat =
+        state.filters[state.activeFilterIndex].inputDateFormat ??
+            DateFormat("hh:mm:ss aaa");
+
+    final labelText = state.filters[state.activeFilterIndex].labelText ?? "";
+    final hintText = state.filters[state.activeFilterIndex].hintText ?? "";
+    var backgroundColor =
+        state.filters[state.activeFilterIndex].backgroundColor;
+    var minuteInterval = state.filters[state.activeFilterIndex].minuteInterval;
+    var use24hFormat = state.filters[state.activeFilterIndex].use24hFormat;
+    var textButtonCancel =
+        state.filters[state.activeFilterIndex].textButtonCancel;
+    var textButtonOkay = state.filters[state.activeFilterIndex].textButtonOkay;
+
+    DateTime? initialDate;
+    TimeOfDay? initialTime;
+    String? initialTimeValue;
+
+    if (previousApplied == null || previousApplied.isEmpty) {
+      initialDate =
+          (state.filters[state.activeFilterIndex].initialDate == null ||
+                  state.filters[state.activeFilterIndex].initialDate!.isEmpty)
+              ? DateTime.now()
+              : DateUtil.stringToDate(
+                  state.filters[state.activeFilterIndex].initialDate!,
+                  inputDateFormat.pattern!);
+      initialTime = DateUtil.dateTimeToTimeOfDay(initialDate);
+      initialTimeValue = inputDateFormat.format(initialDate);
+    } else {
+      initialDate = DateUtil.stringToDate(
+          previousApplied.first.filterKey!, inputDateFormat.pattern!);
+      initialTime = DateUtil.dateTimeToTimeOfDay(initialDate);
+      initialTimeValue = inputDateFormat.format(initialDate);
+    }
+
+    Constants.debugLog(FilterWidget, "timePickerWidget");
+    TextEditingController? textEditingController = new TextEditingController();
+
+    return StatefulBuilder(
+      builder: (context, setState) {
+        return Column(
+          mainAxisAlignment: MainAxisAlignment.start,
+          crossAxisAlignment: CrossAxisAlignment.start,
+          mainAxisSize: MainAxisSize.max,
+          children: <Widget>[
+            Padding(
+              padding: const EdgeInsets.only(
+                  left: 10.0, right: 10.0, top: 10, bottom: 0.0),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.start,
+                crossAxisAlignment: CrossAxisAlignment.start,
+                mainAxisSize: MainAxisSize.min,
+                children: <Widget>[
+                  Expanded(
+                    child: Text(title),
+                  ),
+                ],
+              ),
+            ),
+            Padding(
+              padding: const EdgeInsets.only(
+                  left: 10.0, right: 10.0, top: 10.0, bottom: 10.0),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.start,
+                crossAxisAlignment: CrossAxisAlignment.start,
+                mainAxisSize: MainAxisSize.min,
+                children: <Widget>[
+                  Expanded(
+                    child: DateTimeField(
+                      format: inputDateFormat,
+                      autofocus: false,
+                      onShowPicker: (context, currentValue) async {
+                        final time = await showTimePickerSheet(
+                            context: context,
+                            initialTime: initialTime,
+                            backgroundColor: backgroundColor ??
+                                Theme.of(context).colorScheme.background,
+                            minuteInterval: minuteInterval ?? 1,
+                            use24hFormat: use24hFormat,
+                            textButtonOkay: textButtonOkay,
+                            textButtonCancel: textButtonCancel);
+                        return DateTimeField.convert(time);
+                      },
+                      onChanged: (value) {
+                        print("timePickerWidget:${value.toString()}");
+                      },
+                      initialValue: initialDate,
+                      autovalidateMode: AutovalidateMode.disabled,
+                      controller: textEditingController,
+                      decoration: InputDecoration(
+                        labelText: labelText,
+                        hintText: hintText,
+                        border: OutlineInputBorder(
+                          borderSide: BorderSide(
+                            color: Theme.of(context).colorScheme.primary,
+                          ),
+                          borderRadius: BorderRadius.circular(5),
+                        ),
+                        disabledBorder: OutlineInputBorder(
+                          borderSide: BorderSide(
+                            color: Theme.of(context).disabledColor,
+                          ),
+                          borderRadius: BorderRadius.circular(5),
+                        ),
+                        enabledBorder: OutlineInputBorder(
+                          borderSide: BorderSide(
+                            color: Theme.of(context).colorScheme.primary,
+                          ),
+                          borderRadius: BorderRadius.circular(5),
+                        ),
+                        focusedBorder: OutlineInputBorder(
+                          borderSide: BorderSide(
+                              color: Theme.of(context).colorScheme.primary),
+                          borderRadius: BorderRadius.circular(5),
+                        ),
+                        errorBorder: OutlineInputBorder(
+                          borderSide: BorderSide(
+                              color: Theme.of(context).colorScheme.error),
+                          borderRadius: BorderRadius.circular(5),
+                        ),
+                        focusedErrorBorder: OutlineInputBorder(
+                          borderSide: BorderSide(
+                              color: Theme.of(context).colorScheme.error),
+                          borderRadius: BorderRadius.circular(5),
+                        ),
+                      ),
+                      onFieldSubmitted: (value) {
+                        FocusScope.of(context).unfocus();
+                      },
+                      validator: (value) {
+                        return null;
+                      },
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ],
+        );
+      },
+    );
+  }
+
+  Future<DateTimeRange?> showDateRangePickerDialog({
+    required BuildContext context,
+    DateTimeRange? initialDateRange,
+    DateTime? firstDate,
+    DateTime? lastDate,
+    String? cancelText,
+    String? confirmText,
+    String? helpText,
+  }) async {
+    return showDateRangePicker(
+      context: context,
+      initialDateRange: initialDateRange,
+      firstDate: firstDate ?? DateTime(DateTime.now().year - 5),
+      lastDate: lastDate ?? DateTime(DateTime.now().year + 5),
+      cancelText: cancelText,
+      confirmText:confirmText ,
+      helpText: helpText,
+    );
+  }
+
+  rangeDatePickerWidget(FilterState state, ThemeProps? themeProps) {
+    final filterOptions = state.filters[state.activeFilterIndex].filterOptions;
+    final previousApplied = state.filters[state.activeFilterIndex].previousApplied;
+
+    final title = state.filters[state.activeFilterIndex].title ?? "";
+
+    final DateFormat inputDateFormat =
+        state.filters[state.activeFilterIndex].inputDateFormat ??
+            DateFormat("dd-MM-yyyy");
+
+    final minimumDate = state.filters[state.activeFilterIndex].minimumDate ??
+        DateTime(DateTime.now().year - 150, 1, 1);
+    final maximumDate = state.filters[state.activeFilterIndex].maximumDate ??
+        DateTime(DateTime.now().year + 150, 1, 1);
+
+    DateTimeRange? initialDateRange;
+    if (previousApplied == null || previousApplied.isEmpty) {
+      final initialDate = state.filters[state.activeFilterIndex].initialDate;
+      if (initialDate != null && initialDate.isNotEmpty) {
+        final startDate = DateUtil.stringToDate(initialDate, inputDateFormat.pattern!);
+        initialDateRange = DateTimeRange(start: startDate, end: startDate.add(Duration(days: 1)));
+      } else {
+        final now = DateTime.now();
+        initialDateRange = DateTimeRange(start: now, end: now.add(Duration(days: 1)));
+      }
+    } else {
+      final startDate = DateUtil.stringToDate(previousApplied.first.filterKey, inputDateFormat.pattern!);
+      final endDate = DateUtil.stringToDate(previousApplied.last.filterKey, inputDateFormat.pattern!);
+      initialDateRange = DateTimeRange(start: startDate, end: endDate);
+    }
+
+    TextEditingController textEditingController = TextEditingController();
+
+    return StatefulBuilder(
+      builder: (context, setState) {
+        return Column(
+          mainAxisAlignment: MainAxisAlignment.start,
+          crossAxisAlignment: CrossAxisAlignment.start,
+          mainAxisSize: MainAxisSize.max,
+          children: <Widget>[
+            Padding(
+              padding: const EdgeInsets.only(left: 10.0, right: 10.0, top: 10, bottom: 10.0),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.start,
+                crossAxisAlignment: CrossAxisAlignment.start,
+                mainAxisSize: MainAxisSize.min,
+                children: <Widget>[
+                  Expanded(
+                    child: Text(title),
+                  ),
+                ],
+              ),
+            ),
+            Padding(
+              padding: const EdgeInsets.only(left: 10.0, right: 10.0, top: 0.0, bottom: 10.0),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.start,
+                crossAxisAlignment: CrossAxisAlignment.start,
+                mainAxisSize: MainAxisSize.min,
+                children: <Widget>[
+                  Expanded(
+                    child: GestureDetector(
+                      onTap: () async {
+                        final DateTimeRange? picked = await showDateRangePickerDialog(
+                          context: context,
+                          initialDateRange: initialDateRange,
+                          firstDate: minimumDate,
+                          lastDate: maximumDate,
+                        );
+                        if (picked != null && picked != initialDateRange) {
+                          setState(() {
+                            initialDateRange = picked;
+                            textEditingController.text = "${inputDateFormat.format(picked.start)} - ${inputDateFormat.format(picked.end)}";
+                          });
+                          // Handle the selected date range here
+                        }
+                      },
+                      child: AbsorbPointer(
+                        child: TextFormField(
+                          controller: textEditingController,
+                          decoration: InputDecoration(
+                            labelText: "Select Date Range",
+                            border: OutlineInputBorder(),
+                          ),
+                        ),
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ],
+        );
+      },
     );
   }
 

@@ -1,3 +1,4 @@
+import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 
 import '../utlis.dart';
@@ -176,5 +177,22 @@ class DateUtil {
           DateUtil, "StringToLocalDateTime: error - ${e.toString()}");
     }
     return null;
+  }
+
+  // Convert DateTime to TimeOfDay
+  static TimeOfDay dateTimeToTimeOfDay(DateTime dateTime) {
+    return TimeOfDay(hour: dateTime.hour, minute: dateTime.minute);
+  }
+
+  // Convert TimeOfDay to DateTime
+  static DateTime timeOfDayToDateTime(TimeOfDay timeOfDay) {
+    final now = DateTime.now();
+    return DateTime(now.year, now.month, now.day, timeOfDay.hour, timeOfDay.minute);
+  }
+
+  // Format TimeOfDay as string
+  static String formatTimeOfDay(TimeOfDay timeOfDay, String pattern) {
+    final dateTime = timeOfDayToDateTime(timeOfDay);
+    return DateFormat(pattern).format(dateTime);
   }
 }

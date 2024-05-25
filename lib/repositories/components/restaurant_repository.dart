@@ -8,6 +8,7 @@ import 'package:coozy_cafe/model/sub_category.dart';
 import 'package:coozy_cafe/model/table_info_model.dart';
 import 'package:coozy_cafe/utlis/components/constants.dart';
 import 'package:flutter/services.dart';
+import 'package:translator/translator.dart';
 
 class RestaurantRepository {
   final DatabaseHelper _databaseHelper = DatabaseHelper();
@@ -19,14 +20,15 @@ class RestaurantRepository {
     bool? isFirstTime = await Constants.isFirstTime("recipeList");
 
     if (isFirstTime == true) {
-      final jsonContent = await rootBundle
-          .loadString("assets/data/recipes_for_indian_food_dataset.json");
-      final recipeModel = recipeModelFromJson(jsonContent);
+      final jsonContent = await rootBundle.loadString('assets/data/recipes_for_indian_food_dataset.json');
+      List<RecipeModel> recipes = recipeModelFromJson(jsonContent);
+
       Constants.debugLog(
-          RestaurantRepository, "recipeModel:length:${recipeModel.length}");
-      await _databaseHelper.insertRecipes(recipeModel);
-      Constants.debugLog(RestaurantRepository, "insertRecipes:Done");
-      return recipeModel;
+          RestaurantRepository, "recipeModel length: ${recipes.length}");
+      await _databaseHelper.insertRecipes(recipes); // Insert translated recipes into the database
+
+      Constants.debugLog(RestaurantRepository, "insertRecipes: Done");
+      return recipes;
     } else {
       return await _databaseHelper.getRecipes();
     }

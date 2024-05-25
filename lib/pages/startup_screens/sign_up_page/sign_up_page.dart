@@ -396,7 +396,7 @@ class _SignUpPageState extends State<SignUpPage> {
   }
 
   Widget dob_picker_widget() {
-    /* return Row(
+     return Row(
       mainAxisAlignment: MainAxisAlignment.start,
       crossAxisAlignment: CrossAxisAlignment.start,
       mainAxisSize: MainAxisSize.min,
@@ -480,8 +480,8 @@ class _SignUpPageState extends State<SignUpPage> {
           },
         ),
       ],
-    );*/
-    return Row(
+    );
+    /*return Row(
       mainAxisAlignment: MainAxisAlignment.start,
       crossAxisAlignment: CrossAxisAlignment.start,
       mainAxisSize: MainAxisSize.min,
@@ -600,7 +600,7 @@ class _SignUpPageState extends State<SignUpPage> {
           },
         ),
       ],
-    );
+    );*/
   }
 
   Widget tabletLayout() {

@@ -117,6 +117,8 @@ Future<DateTime?> showDatePickerSheet(
  **/
 Future<TimeOfDay?> showTimePickerSheet(
     {required BuildContext? context,
+    bool? use24hFormat,
+    int? minuteInterval,
     Color? backgroundColor,
     TimeOfDay? initialTime,
     String? textButtonCancel,
@@ -125,6 +127,7 @@ Future<TimeOfDay?> showTimePickerSheet(
   TimeOfDay selectedTime = initialTime ?? TimeOfDay.now();
   showModalBottomSheet(
     context: context!,
+    backgroundColor: backgroundColor,
     builder: (_) => Column(
       mainAxisAlignment: MainAxisAlignment.start,
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -164,7 +167,10 @@ Future<TimeOfDay?> showTimePickerSheet(
           child: CupertinoDatePicker(
             mode: CupertinoDatePickerMode.time,
             initialDateTime: DateTime.now(),
-            onDateTimeChanged: (DateTime newTime) {
+            use24hFormat: use24hFormat ?? false,
+            minuteInterval: minuteInterval ?? 1,
+            backgroundColor: Colors.transparent,
+            onDateTimeChanged: (DateTime newTime) async {
               selectedTime =
                   TimeOfDay.fromDateTime(newTime); // Update the selected time
             },

@@ -1137,8 +1137,7 @@ class _RecipesInfoScreenState extends State<RecipesInfoScreen> {
   }
 
   void _showIngredientLanguageSelectionBottomSheet(BuildContext context) {
-    List<TranslatorLanguageModel> filteredLanguages =
-        List.from(Constants.languages);
+    List<TranslatorLanguageModel> filteredLanguages = List.from(Constants.languages);
 
     showModalBottomSheet(
       context: context,
