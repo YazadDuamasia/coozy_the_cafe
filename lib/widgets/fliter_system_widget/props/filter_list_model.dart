@@ -43,6 +43,7 @@ class FilterListModel extends Equatable {
   bool? use24hFormat;
   String? textButtonCancel;
   String? textButtonOkay;
+  String? helpText;
 
   FilterListModel({
     this.title,
@@ -63,6 +64,7 @@ class FilterListModel extends Equatable {
     this.use24hFormat,
     this.textButtonCancel,
     this.textButtonOkay,
+    this.helpText,
   });
 
   FilterListModel copyWith(
@@ -83,6 +85,7 @@ class FilterListModel extends Equatable {
       bool? use24hFormat,
       String? textButtonCancel,
       String? textButtonOkay,
+      String? helpText,
       DatePickerDateOrder? datePickerDateOrder}) {
     return FilterListModel(
         title: title ?? this.title,
@@ -102,6 +105,7 @@ class FilterListModel extends Equatable {
         use24hFormat: use24hFormat ?? this.use24hFormat,
         textButtonCancel: textButtonCancel ?? this.textButtonCancel,
         textButtonOkay: textButtonOkay ?? this.textButtonOkay,
+        helpText: helpText ?? this.helpText,
         datePickerDateOrder: datePickerDateOrder ?? this.datePickerDateOrder);
   }
 
@@ -123,6 +127,7 @@ class FilterListModel extends Equatable {
         backgroundColor,
         minuteInterval,
         use24hFormat,
+        helpText,
         textButtonCancel,
         textButtonOkay
       ];
@@ -145,6 +150,7 @@ class FilterListModel extends Equatable {
       'minuteInterval': minuteInterval,
       'use24hFormat': use24hFormat,
       'textButtonCancel': textButtonCancel,
+      'helpText': helpText,
       'textButtonOkay': textButtonOkay
     });
   }

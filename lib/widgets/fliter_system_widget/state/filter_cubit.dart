@@ -89,21 +89,6 @@ class FilterCubit extends Cubit<FilterState> {
               FilterCubit, "RangeSlider:RangeSlider:${checkedItems}");
         }
         break;
-      case FilterType.TimePicker:
-        {
-          if (item == null) {
-            checkedItems = [];
-          } else {
-            checkedItems.add(item);
-          }
-          Constants.debugLog(FilterCubit, "TimePicker");
-        }
-        break;
-      case FilterType.RangeTimePicker:
-        {
-          Constants.debugLog(FilterCubit, "RangeTimePicker");
-        }
-        break;
       case FilterType.DatePicker:
         {
           if (item == null) {
@@ -114,11 +99,36 @@ class FilterCubit extends Cubit<FilterState> {
           Constants.debugLog(FilterCubit, "DatePicker");
         }
         break;
-      case FilterType.RangeDatePicker:
+      case FilterType.TimePicker:
         {
-          Constants.debugLog(FilterCubit, "RangeDatePicker");
+          if (item == null) {
+            checkedItems = [];
+          } else {
+            checkedItems.add(item);
+          }
+          Constants.debugLog(FilterCubit, "TimePicker");
         }
         break;
+      case FilterType.RangeDatePicker:
+      {
+        if (item == null) {
+          checkedItems = [];
+        } else {
+          checkedItems = [];
+          for (FilterItemModel model in item) {
+            checkedItems.add(model);
+          }
+        }
+        Constants.debugLog(FilterCubit, "RangeDatePicker");
+      }
+      break;
+      case FilterType.RangeTimePicker:
+        {
+          Constants.debugLog(FilterCubit, "RangeTimePicker");
+        }
+        break;
+
+
       default:
         Constants.debugLog(FilterCubit, "default");
         break;

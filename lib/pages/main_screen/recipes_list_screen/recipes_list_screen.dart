@@ -822,6 +822,32 @@ class _RecipesListScreenState extends State<RecipesListScreen> {
                   inputDateFormat: DateFormat(DateUtil.TIME_FORMAT1),
                   labelText: "Time Picker",
                   hintText: "Please Enter time"),
+              FilterListModel(
+                  type: FilterType.RangeDatePicker,
+                  filterOptions: [],
+                  previousApplied: [],
+                  title: 'RangeDate',
+                  filterKey: 'range_date',
+                  helpText: "Please select date",
+                  backgroundColor: Theme.of(context).colorScheme.background,
+                  initialDate: DateUtil.dateToString(
+                      DateTime.now(), DateUtil.DATE_FORMAT9),
+                  inputDateFormat: DateFormat(DateUtil.DATE_FORMAT9),
+                  labelText: "Date Range Picker",
+                  hintText: "Please enter date"),
+              FilterListModel(
+                  type: FilterType.RangeTimePicker,
+                  filterOptions: [],
+                  previousApplied: [],
+                  title: 'Range Time',
+                  filterKey: 'range_time',
+                  helpText: "Please select time",
+                  backgroundColor: Theme.of(context).colorScheme.background,
+                  initialDate: DateUtil.dateToString(
+                      DateTime.now(), DateUtil.TIME_FORMAT1),
+                  inputDateFormat: DateFormat(DateUtil.TIME_FORMAT1),
+                  labelText: "Time Range Picker",
+                  hintText: "Please enter time"),
             ],
             themeProps: ThemeProps(
               activeFilterTextColor:

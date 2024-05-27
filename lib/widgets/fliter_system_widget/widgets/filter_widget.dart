@@ -38,7 +38,7 @@ class FilterWidget extends StatelessWidget {
       create: (_) => FilterCubit(
         filterProps: filterProps,
       ),
-      child: Filter(),
+      child: const Filter(),
     );
   }
 }
@@ -135,7 +135,7 @@ class _FilterState extends State<Filter> with FilterStyleMixin {
                       child: Scrollbar(
                         interactive: true,
                         child: CustomScrollView(
-                          physics: ClampingScrollPhysics(
+                          physics: const ClampingScrollPhysics(
                             parent: AlwaysScrollableScrollPhysics(),
                           ),
                           shrinkWrap: true,
@@ -306,7 +306,7 @@ class _FilterState extends State<Filter> with FilterStyleMixin {
           return rangeDatePickerWidget(state, themeProps);
 
         case FilterType.RangeTimePicker:
-          return Container();
+          return rangeTimePickerWidget(state, themeProps);
         default:
           return Container();
       }
@@ -457,7 +457,7 @@ class _FilterState extends State<Filter> with FilterStyleMixin {
                     interactive: true,
                     trackVisibility: true,
                     child: CustomScrollView(
-                      physics: ClampingScrollPhysics(
+                      physics: const ClampingScrollPhysics(
                         parent: AlwaysScrollableScrollPhysics(),
                       ),
                       shrinkWrap: true,
@@ -597,7 +597,7 @@ class _FilterState extends State<Filter> with FilterStyleMixin {
                     interactive: true,
                     trackVisibility: true,
                     child: CustomScrollView(
-                      physics: ClampingScrollPhysics(
+                      physics: const ClampingScrollPhysics(
                         parent: AlwaysScrollableScrollPhysics(),
                       ),
                       shrinkWrap: true,
@@ -1025,6 +1025,7 @@ class _FilterState extends State<Filter> with FilterStyleMixin {
 
     final labelText = state.filters[state.activeFilterIndex].labelText ?? "";
     final hintText = state.filters[state.activeFilterIndex].hintText ?? "";
+    final helpText = state.filters[state.activeFilterIndex].helpText ?? "";
     var backgroundColor =
         state.filters[state.activeFilterIndex].backgroundColor;
     var minuteInterval = state.filters[state.activeFilterIndex].minuteInterval;
@@ -1162,55 +1163,49 @@ class _FilterState extends State<Filter> with FilterStyleMixin {
     );
   }
 
-  Future<DateTimeRange?> showDateRangePickerDialog({
-    required BuildContext context,
-    DateTimeRange? initialDateRange,
-    DateTime? firstDate,
-    DateTime? lastDate,
-    String? cancelText,
-    String? confirmText,
-    String? helpText,
-  }) async {
-    return showDateRangePicker(
-      context: context,
-      initialDateRange: initialDateRange,
-      firstDate: firstDate ?? DateTime(DateTime.now().year - 5),
-      lastDate: lastDate ?? DateTime(DateTime.now().year + 5),
-      cancelText: cancelText,
-      confirmText:confirmText ,
-      helpText: helpText,
-    );
-  }
-
-  rangeDatePickerWidget(FilterState state, ThemeProps? themeProps) {
+  Widget rangeDatePickerWidget(FilterState state, ThemeProps? themeProps) {
     final filterOptions = state.filters[state.activeFilterIndex].filterOptions;
     final previousApplied = state.filters[state.activeFilterIndex].previousApplied;
 
     final title = state.filters[state.activeFilterIndex].title ?? "";
 
-    final DateFormat inputDateFormat =
-        state.filters[state.activeFilterIndex].inputDateFormat ??
-            DateFormat("dd-MM-yyyy");
+    final DateFormat inputDateFormat = state.filters[state.activeFilterIndex].inputDateFormat ??
+        DateFormat("dd-MM-yyyy");
 
     final minimumDate = state.filters[state.activeFilterIndex].minimumDate ??
         DateTime(DateTime.now().year - 150, 1, 1);
     final maximumDate = state.filters[state.activeFilterIndex].maximumDate ??
         DateTime(DateTime.now().year + 150, 1, 1);
 
+    final labelText = state.filters[state.activeFilterIndex].labelText ?? "";
+    final hintText = state.filters[state.activeFilterIndex].hintText ?? "";
+    final helpText = state.filters[state.activeFilterIndex].helpText ?? "";
+    var textButtonCancel = state.filters[state.activeFilterIndex].textButtonCancel;
+    var textButtonOkay = state.filters[state.activeFilterIndex].textButtonOkay;
+
     DateTimeRange? initialDateRange;
     if (previousApplied == null || previousApplied.isEmpty) {
       final initialDate = state.filters[state.activeFilterIndex].initialDate;
-      if (initialDate != null && initialDate.isNotEmpty) {
-        final startDate = DateUtil.stringToDate(initialDate, inputDateFormat.pattern!);
-        initialDateRange = DateTimeRange(start: startDate, end: startDate.add(Duration(days: 1)));
-      } else {
+
+      if (initialDate == null || initialDate.isEmpty) {
         final now = DateTime.now();
-        initialDateRange = DateTimeRange(start: now, end: now.add(Duration(days: 1)));
+        initialDateRange = DateTimeRange(start: now, end: now.add(const Duration(days: 1)));
+      } else {
+        DateTime? startDate = DateUtil.stringToDate(initialDate, inputDateFormat.pattern!);
+        initialDateRange = DateTimeRange(start: startDate, end: startDate.add(const Duration(days: 1)));
       }
     } else {
-      final startDate = DateUtil.stringToDate(previousApplied.first.filterKey, inputDateFormat.pattern!);
-      final endDate = DateUtil.stringToDate(previousApplied.last.filterKey, inputDateFormat.pattern!);
-      initialDateRange = DateTimeRange(start: startDate, end: endDate);
+      DateTime? startDate;
+      DateTime? endDate;
+
+      for (int i = 0; i < previousApplied.length; i++) {
+        if (previousApplied[i].filterTitle.contains("from_date")) {
+          startDate = DateUtil.stringToDate(previousApplied[i].filterKey, inputDateFormat.pattern!);
+        } else if (previousApplied[i].filterTitle.contains("to_date")) {
+          endDate = DateUtil.stringToDate(previousApplied[i].filterKey, inputDateFormat.pattern!);
+        }
+      }
+      initialDateRange = DateTimeRange(start: startDate!, end: endDate!);
     }
 
     TextEditingController textEditingController = TextEditingController();
@@ -1250,21 +1245,76 @@ class _FilterState extends State<Filter> with FilterStyleMixin {
                           initialDateRange: initialDateRange,
                           firstDate: minimumDate,
                           lastDate: maximumDate,
+                          cancelText: textButtonCancel,
+                          confirmText: textButtonOkay,
+                          helpText: helpText,
                         );
                         if (picked != null && picked != initialDateRange) {
                           setState(() {
                             initialDateRange = picked;
-                            textEditingController.text = "${inputDateFormat.format(picked.start)} - ${inputDateFormat.format(picked.end)}";
+                            textEditingController.text =
+                            "${inputDateFormat.format(picked.start)} - ${inputDateFormat.format(picked.end)}";
+
+                            FilterItemModel startModel = FilterItemModel(
+                                filterKey: inputDateFormat.format(picked.start),
+                                filterTitle: "from_date");
+                            FilterItemModel endModel = FilterItemModel(
+                                filterKey: inputDateFormat.format(picked.end),
+                                filterTitle: "to_date");
+                            List<FilterItemModel> list = [startModel, endModel];
+                            Constants.debugLog(FilterWidget, "rangeDatePickerWidget:onTap:${list.toString()}");
+                            context.read<FilterCubit>().onFilterItemCheck(list);
                           });
-                          // Handle the selected date range here
                         }
                       },
                       child: AbsorbPointer(
                         child: TextFormField(
                           controller: textEditingController,
                           decoration: InputDecoration(
-                            labelText: "Select Date Range",
-                            border: OutlineInputBorder(),
+                            labelText: labelText,
+                            hintText: hintText,
+                            suffixIcon: textEditingController.text.isNotEmpty
+                                ? IconButton(
+                              icon: const Icon(Icons.close),
+                              onPressed: () {
+                                setState(() {
+                                  textEditingController.clear();
+                                  initialDateRange = null;
+                                  context.read<FilterCubit>().onFilterItemCheck([]);
+                                });
+                              },
+                            )
+                                : null,
+                            border: OutlineInputBorder(
+                              borderSide: BorderSide(
+                                color: Theme.of(context).colorScheme.primary,
+                              ),
+                              borderRadius: BorderRadius.circular(5),
+                            ),
+                            disabledBorder: OutlineInputBorder(
+                              borderSide: BorderSide(
+                                color: Theme.of(context).disabledColor,
+                              ),
+                              borderRadius: BorderRadius.circular(5),
+                            ),
+                            enabledBorder: OutlineInputBorder(
+                              borderSide: BorderSide(
+                                color: Theme.of(context).colorScheme.primary,
+                              ),
+                              borderRadius: BorderRadius.circular(5),
+                            ),
+                            focusedBorder: OutlineInputBorder(
+                              borderSide: BorderSide(color: Theme.of(context).colorScheme.primary),
+                              borderRadius: BorderRadius.circular(5),
+                            ),
+                            errorBorder: OutlineInputBorder(
+                              borderSide: BorderSide(color: Theme.of(context).colorScheme.error),
+                              borderRadius: BorderRadius.circular(5),
+                            ),
+                            focusedErrorBorder: OutlineInputBorder(
+                              borderSide: BorderSide(color: Theme.of(context).colorScheme.error),
+                              borderRadius: BorderRadius.circular(5),
+                            ),
                           ),
                         ),
                       ),
@@ -1277,6 +1327,235 @@ class _FilterState extends State<Filter> with FilterStyleMixin {
         );
       },
     );
+  }
+
+  rangeTimePickerWidget(FilterState state, ThemeProps? themeProps) {
+    final filterOptions = state.filters[state.activeFilterIndex].filterOptions;
+    final previousApplied =
+        state.filters[state.activeFilterIndex].previousApplied;
+
+    final title = state.filters[state.activeFilterIndex].title ?? "";
+
+    final DateFormat inputDateFormat =
+        state.filters[state.activeFilterIndex].inputDateFormat ??
+            DateFormat("hh:mm:ss aaa");
+
+    final minimumDate = state.filters[state.activeFilterIndex].minimumDate ??
+        DateTime(DateTime.now().year, 1, 1, DateTime.now().hour,
+            DateTime.now().minute, DateTime.now().second);
+
+    final maximumDate = state.filters[state.activeFilterIndex].maximumDate ??
+        DateTime(DateTime.now().year, 1, 1, DateTime.now().hour + 1,
+            DateTime.now().minute, DateTime.now().second);
+
+    final labelText = state.filters[state.activeFilterIndex].labelText ?? "";
+    final hintText = state.filters[state.activeFilterIndex].hintText ?? "";
+    final helpText = state.filters[state.activeFilterIndex].helpText ?? "";
+    var textButtonCancel =
+        state.filters[state.activeFilterIndex].textButtonCancel;
+    var textButtonOkay = state.filters[state.activeFilterIndex].textButtonOkay;
+
+    DateTimeRange? initialDateRange;
+    if (previousApplied == null || previousApplied.isEmpty) {
+      final initialDate = state.filters[state.activeFilterIndex].initialDate;
+      if (initialDate != null && initialDate.isNotEmpty) {
+        final startDate =
+            DateUtil.stringToDate(initialDate, inputDateFormat.pattern!);
+        initialDateRange = DateTimeRange(
+            start: startDate, end: startDate.add(const Duration(hours: 1)));
+      } else {
+        final now = DateTime.now();
+        initialDateRange =
+            DateTimeRange(start: now, end: now.add(const Duration(hours: 1)));
+      }
+    } else {
+      DateTime? startDate;
+      DateTime? endDate;
+
+      for (int i = 0; i < previousApplied.length; i++) {
+        if (previousApplied[i].filterTitle.contains("from_date")) {
+          startDate = DateUtil.stringToDate(
+              previousApplied.first.filterKey, inputDateFormat.pattern!);
+        } else if (previousApplied[i].filterTitle.contains("to_date")) {
+          endDate = DateUtil.stringToDate(
+              previousApplied.last.filterKey, inputDateFormat.pattern!);
+        }
+      }
+      initialDateRange = DateTimeRange(start: startDate!, end: endDate!);
+    }
+
+    TextEditingController textEditingController = new TextEditingController();
+
+    return StatefulBuilder(
+      builder: (context, state) {
+        return Column(
+          mainAxisAlignment: MainAxisAlignment.start,
+          crossAxisAlignment: CrossAxisAlignment.start,
+          mainAxisSize: MainAxisSize.max,
+          children: <Widget>[
+            Padding(
+              padding: const EdgeInsets.only(
+                  left: 10.0, right: 10.0, top: 10, bottom: 10.0),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.start,
+                crossAxisAlignment: CrossAxisAlignment.start,
+                mainAxisSize: MainAxisSize.min,
+                children: <Widget>[
+                  Expanded(
+                    child: Text(title),
+                  ),
+                ],
+              ),
+            ),
+            Padding(
+              padding: const EdgeInsets.only(
+                  left: 10.0, right: 10.0, top: 0.0, bottom: 10.0),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.start,
+                crossAxisAlignment: CrossAxisAlignment.start,
+                mainAxisSize: MainAxisSize.min,
+                children: <Widget>[
+                  Expanded(
+                    child: GestureDetector(
+                      onTap: () async {
+                        final DateTimeRange? picked =
+                            await showTimeRangePickerDialog(
+                                context: context,
+                                initialDateRange: initialDateRange,
+                                firstDate: minimumDate,
+                                lastDate: maximumDate,
+                                cancelText: textButtonCancel,
+                                confirmText: textButtonOkay,
+                                helpText: helpText);
+                        if (picked != null && picked != initialDateRange) {
+                          initialDateRange = picked;
+                          textEditingController.text =
+                              "${inputDateFormat.format(picked.start)} - ${inputDateFormat.format(picked.end)}";
+
+                          FilterItemModel startModel = FilterItemModel(
+                              filterKey: inputDateFormat.format(picked.start),
+                              filterTitle: "from_date");
+                          FilterItemModel endModel = FilterItemModel(
+                              filterKey: inputDateFormat.format(picked.end),
+                              filterTitle: "to_date");
+                          List<FilterItemModel> list = [];
+                          list.add(startModel);
+                          list.add(endModel);
+                          Constants.debugLog(FilterWidget,
+                              "rangeDatePickerWidget:onTap:${list.toString()}");
+                          await context
+                              .read<FilterCubit>()
+                              .onFilterItemCheck(list);
+                          setState(() {});
+                          state(() {});
+                        }
+                      },
+                      child: AbsorbPointer(
+                        child: TextFormField(
+                          controller: textEditingController,
+                          decoration: InputDecoration(
+                            labelText: labelText,
+                            hintText: hintText,
+                            suffixIcon: textEditingController.text.isNotEmpty
+                                ? IconButton(
+                                    icon: const Icon(Icons.close),
+                                    onPressed: () async {
+                                      setState(() {
+                                        textEditingController.clear();
+                                        initialDateRange = null;
+                                        context
+                                            .read<FilterCubit>()
+                                            .onFilterItemCheck(null);
+                                      });
+                                      state(() {});
+                                    },
+                                  )
+                                : null,
+                            border: OutlineInputBorder(
+                              borderSide: BorderSide(
+                                color: Theme.of(context).colorScheme.primary,
+                              ),
+                              borderRadius: BorderRadius.circular(5),
+                            ),
+                            disabledBorder: OutlineInputBorder(
+                              borderSide: BorderSide(
+                                color: Theme.of(context).disabledColor,
+                              ),
+                              borderRadius: BorderRadius.circular(5),
+                            ),
+                            enabledBorder: OutlineInputBorder(
+                              borderSide: BorderSide(
+                                color: Theme.of(context).colorScheme.primary,
+                              ),
+                              borderRadius: BorderRadius.circular(5),
+                            ),
+                            focusedBorder: OutlineInputBorder(
+                              borderSide: BorderSide(
+                                  color: Theme.of(context).colorScheme.primary),
+                              borderRadius: BorderRadius.circular(5),
+                            ),
+                            errorBorder: OutlineInputBorder(
+                              borderSide: BorderSide(
+                                  color: Theme.of(context).colorScheme.error),
+                              borderRadius: BorderRadius.circular(5),
+                            ),
+                            focusedErrorBorder: OutlineInputBorder(
+                              borderSide: BorderSide(
+                                  color: Theme.of(context).colorScheme.error),
+                              borderRadius: BorderRadius.circular(5),
+                            ),
+                          ),
+                        ),
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ],
+        );
+      },
+    );
+  }
+
+  Future<DateTimeRange?> showDateRangePickerDialog({
+    required BuildContext context,
+    DateTimeRange? initialDateRange,
+    DateTime? firstDate,
+    DateTime? lastDate,
+    String? cancelText,
+    String? confirmText,
+    String? helpText,
+  }) async {
+    return showDateRangePicker(
+      context: context,
+      currentDate: DateTime.now(),
+      initialDateRange: initialDateRange,
+      firstDate: firstDate ?? DateTime(DateTime.now().year - 5),
+      lastDate: lastDate ?? DateTime(DateTime.now().year + 5),
+      cancelText: cancelText,
+      confirmText: confirmText,
+      helpText: helpText,
+    );
+  }
+
+  Future<DateTimeRange?> showTimeRangePickerDialog({
+    required BuildContext context,
+    DateTimeRange? initialDateRange,
+    DateTime? firstDate,
+    DateTime? lastDate,
+    String? cancelText,
+    String? confirmText,
+    String? helpText,
+  }) async {
+    return showTimeRangePickerDialog(
+        context: context,
+        initialDateRange: initialDateRange,
+        helpText: helpText,
+        confirmText: confirmText,
+        cancelText: cancelText,
+        firstDate: firstDate,
+        lastDate: lastDate);
   }
 
   @override
