@@ -40,7 +40,24 @@ class _FilterVerticalRangerSliderTitleState
   @override
   void initState() {
     super.initState();
-    _values = widget.values;
+    _values = widget.values ?? SfRangeValues(widget.minValue, widget.maxValue);
+  }
+
+  @override
+  void didUpdateWidget(FilterVerticalRangerSliderTitle oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    if (widget.values != oldWidget.values) {
+      setState(() {
+        _values = widget.values ?? SfRangeValues(widget.minValue, widget.maxValue);
+      });
+    }
+    Constants.debugLog(FilterVerticalRangerSliderTitle, "didUpdateWidget called");
+  }
+
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    Constants.debugLog(FilterVerticalRangerSliderTitle, "didChangeDependencies called");
   }
 
   @override
@@ -64,12 +81,10 @@ class _FilterVerticalRangerSliderTitleState
                 child: Padding(
                   padding: const EdgeInsets.only(right: 20, left: 20, top: 10),
                   child: Visibility(
-                    visible:
-                        widget.sliderTileThemeProps?.sliderThemeData != null,
+                    visible: widget.sliderTileThemeProps?.sliderThemeData != null,
                     replacement: slider(),
                     child: SfRangeSliderTheme(
-                      data: widget.sliderTileThemeProps?.sliderThemeData ??
-                          SfRangeSliderThemeData(),
+                      data: widget.sliderTileThemeProps?.sliderThemeData ?? SfRangeSliderThemeData(),
                       child: slider(),
                     ),
                   ),
@@ -82,30 +97,26 @@ class _FilterVerticalRangerSliderTitleState
     );
   }
 
-  slider() {
-    return StatefulBuilder(builder: (context, state) {
-      return SfRangeSlider.vertical(
-        tooltipTextFormatterCallback: (value, formattedText) =>
-            '${(widget.sliderTileThemeProps?.tooltip_prefix_str == null || widget.sliderTileThemeProps!.tooltip_prefix_str!.isEmpty) ? "" : "${widget.sliderTileThemeProps?.tooltip_prefix_str.toString()} "}${double.tryParse("$value")?.toStringAsFixed(widget.sliderTileThemeProps?.fractionDigits ?? 0) ?? 0}${(widget.sliderTileThemeProps?.tooltip_suffix_str == null || widget.sliderTileThemeProps!.tooltip_suffix_str!.isEmpty) ? "" : " ${widget.sliderTileThemeProps?.tooltip_suffix_str}"}',
-        min: widget.minValue,
-        max: widget.maxValue,
-        values: _values ?? SfRangeValues(0.0, 0.0),
-        stepSize: widget.sliderTileThemeProps?.stepSize ?? 1.0,
-        showLabels: true,
-        enableTooltip: true,
-        labelFormatterCallback: (value, formattedText) {
-          return '${(widget.sliderTileThemeProps?.label_prefix_str == null || widget.sliderTileThemeProps!.label_prefix_str!.isEmpty) ? "" : "${widget.sliderTileThemeProps?.label_prefix_str.toString()} "}${double.tryParse("$value")?.toStringAsFixed(widget.sliderTileThemeProps?.fractionDigits ?? 0) ?? 0}${(widget.sliderTileThemeProps?.label_suffix_str == null || widget.sliderTileThemeProps!.label_suffix_str!.isEmpty) ? "" : " ${widget.sliderTileThemeProps?.label_suffix_str.toString()}"}';
-        },
-        onChanged: (SfRangeValues newValues) async {
-          Constants.debugLog(FilterVerticalRangerSliderTitle,
-              "onChanged:newValues:${newValues.toString()}");
-
+  Widget slider() {
+    return SfRangeSlider.vertical(
+      key: UniqueKey(),
+      tooltipTextFormatterCallback: (value, formattedText) =>
+      '${(widget.sliderTileThemeProps?.tooltip_prefix_str == null || widget.sliderTileThemeProps!.tooltip_prefix_str!.isEmpty) ? "" : "${widget.sliderTileThemeProps?.tooltip_prefix_str.toString()} "}${double.tryParse("$value")?.toStringAsFixed(widget.sliderTileThemeProps?.fractionDigits ?? 0) ?? 0}${(widget.sliderTileThemeProps?.tooltip_suffix_str == null || widget.sliderTileThemeProps!.tooltip_suffix_str!.isEmpty) ? "" : " ${widget.sliderTileThemeProps?.tooltip_suffix_str}"}',
+      min: widget.minValue,
+      max: widget.maxValue,
+      values: _values ?? SfRangeValues(widget.minValue, widget.maxValue),
+      stepSize: widget.sliderTileThemeProps?.stepSize ?? 1.0,
+      showLabels: true,
+      enableTooltip: true,
+      labelFormatterCallback: (value, formattedText) {
+        return '${(widget.sliderTileThemeProps?.label_prefix_str == null || widget.sliderTileThemeProps!.label_prefix_str!.isEmpty) ? "" : "${widget.sliderTileThemeProps?.label_prefix_str.toString()} "}${double.tryParse("$value")?.toStringAsFixed(widget.sliderTileThemeProps?.fractionDigits ?? 0) ?? 0}${(widget.sliderTileThemeProps?.label_suffix_str == null || widget.sliderTileThemeProps!.label_suffix_str!.isEmpty) ? "" : " ${widget.sliderTileThemeProps?.label_suffix_str.toString()}"}';
+      },
+      onChanged: (SfRangeValues newValues) {
+        setState(() {
           _values = newValues;
-          await widget.onChanged(newValues);
-          state(() {});
-          setState(() {});
-        },
-      );
-    });
+        });
+        widget.onChanged(newValues);
+      },
+    );
   }
 }

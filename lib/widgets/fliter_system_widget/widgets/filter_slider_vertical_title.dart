@@ -42,6 +42,24 @@ class _FilterVerticalSliderTitleState extends State<FilterVerticalSliderTitle> {
   }
 
   @override
+  void didUpdateWidget(FilterVerticalSliderTitle oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    if (widget.values != oldWidget.values) {
+      setState(() {
+        _values = widget.values ?? widget.minValue;
+      });
+    }
+    Constants.debugLog(FilterVerticalSliderTitle, "didUpdateWidget called");
+  }
+
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    Constants.debugLog(
+        FilterVerticalSliderTitle, "didChangeDependencies called");
+  }
+
+  @override
   Widget build(BuildContext context) {
     return Column(
       mainAxisAlignment: MainAxisAlignment.start,
@@ -98,14 +116,19 @@ class _FilterVerticalSliderTitleState extends State<FilterVerticalSliderTitle> {
           return '${(widget.sliderTileThemeProps?.label_prefix_str == null || widget.sliderTileThemeProps!.label_prefix_str!.isEmpty) ? "" : "${widget.sliderTileThemeProps?.label_prefix_str.toString()} "}${double.tryParse("$value")?.toStringAsFixed(widget.sliderTileThemeProps?.fractionDigits ?? 0) ?? 0}${(widget.sliderTileThemeProps?.label_suffix_str == null || widget.sliderTileThemeProps!.label_suffix_str!.isEmpty) ? "" : " ${widget.sliderTileThemeProps?.label_suffix_str.toString()}"}';
         },
         onChanged: (newValues) async {
-          Constants.debugLog(FilterVerticalSliderTitle, "onChanged:newValues:${newValues}");
+          Constants.debugLog(
+              FilterVerticalSliderTitle, "onChanged:newValues:${newValues}");
           _values = newValues;
-         await widget.onChanged(newValues ?? 0);
           state(() {});
           setState(() {});
+          widget.onChanged(newValues ?? 0);
         },
-
       );
     });
+  }
+
+  @override
+  void dispose() {
+    super.dispose();
   }
 }

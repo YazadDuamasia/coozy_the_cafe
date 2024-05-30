@@ -39,8 +39,24 @@ class _FilterSliderTitleState extends State<FilterSliderTitle> {
   void initState() {
     super.initState();
     _values = widget.values ?? 0;
-    Constants.debugLog(
-        FilterSliderTitle, "sliderTileThemeProps:${widget.sliderTileThemeProps.toString()}");
+    Constants.debugLog(FilterSliderTitle, "sliderTileThemeProps:${widget.sliderTileThemeProps.toString()}");
+  }
+
+  @override
+  void didUpdateWidget(FilterSliderTitle oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    if (widget.values != oldWidget.values) {
+      setState(() {
+        _values = widget.values ?? 0;
+      });
+    }
+    Constants.debugLog(FilterSliderTitle, "didUpdateWidget called");
+  }
+
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    Constants.debugLog(FilterSliderTitle, "didChangeDependencies called");
   }
 
   @override
@@ -67,7 +83,7 @@ class _FilterSliderTitleState extends State<FilterSliderTitle> {
                       widget.sliderTileThemeProps?.sliderThemeData != null,
                   child: SfRangeSliderTheme(
                     data: widget.sliderTileThemeProps?.sliderThemeData ??
-                        SfRangeSliderThemeData(inactiveTrackColor:Colors.grey),
+                        SfRangeSliderThemeData(inactiveTrackColor: Colors.grey),
                     child: slider(),
                   ),
                   replacement: slider(),
@@ -82,33 +98,29 @@ class _FilterSliderTitleState extends State<FilterSliderTitle> {
 
   slider() {
     return StatefulBuilder(builder: (context, state) {
-      return StatefulBuilder(builder: (context, state) {
-        return SfSlider(
-          key: UniqueKey(),
-          tooltipTextFormatterCallback: (value, formattedText) =>
-              '${(widget.sliderTileThemeProps?.tooltip_prefix_str == null || widget.sliderTileThemeProps!.tooltip_prefix_str!.isEmpty) ? "" : "${widget.sliderTileThemeProps?.tooltip_prefix_str.toString()} "}${double.tryParse("$value")?.toStringAsFixed(widget.sliderTileThemeProps?.fractionDigits ?? 0) ?? 0}${(widget.sliderTileThemeProps?.tooltip_suffix_str == null || widget.sliderTileThemeProps!.tooltip_suffix_str!.isEmpty) ? "" : " ${widget.sliderTileThemeProps?.tooltip_suffix_str}"}',
-          min: widget.minValue,
-          max: widget.maxValue,
-          value: _values ?? 0.0,
-          stepSize: double.tryParse(
-                  "${widget.sliderTileThemeProps?.stepSize ?? 1.0}") ??
-              1.0,
-          showLabels: true,
-          enableTooltip: true,
-          labelFormatterCallback: (value, formattedText) {
-            return '${(widget.sliderTileThemeProps?.label_prefix_str == null || widget.sliderTileThemeProps!.label_prefix_str!.isEmpty) ? "" : "${widget.sliderTileThemeProps?.label_prefix_str.toString()} "}${double.tryParse("$value")?.toStringAsFixed(widget.sliderTileThemeProps?.fractionDigits ?? 0) ?? 0}${(widget.sliderTileThemeProps?.label_suffix_str == null || widget.sliderTileThemeProps!.label_suffix_str!.isEmpty) ? "" : " ${widget.sliderTileThemeProps?.label_suffix_str.toString()}"}';
-          },
-          onChanged: (newValues) async {
-            Constants.debugLog(
-                FilterSliderTitle, "onChanged:newValues:${newValues}");
-            _values = newValues;
-            await widget.onChanged(newValues);
-            state(() {});
-            setState(() {});
-            // widget.onChanged(newValues);
-          },
-        );
-      });
+      return SfSlider(
+        key: UniqueKey(),
+        tooltipTextFormatterCallback: (value, formattedText) =>
+        '${(widget.sliderTileThemeProps?.tooltip_prefix_str == null || widget.sliderTileThemeProps!.tooltip_prefix_str!.isEmpty) ? "" : "${widget.sliderTileThemeProps?.tooltip_prefix_str.toString()} "}${double.tryParse("$value")?.toStringAsFixed(widget.sliderTileThemeProps?.fractionDigits ?? 0) ?? 0}${(widget.sliderTileThemeProps?.tooltip_suffix_str == null || widget.sliderTileThemeProps!.tooltip_suffix_str!.isEmpty) ? "" : " ${widget.sliderTileThemeProps?.tooltip_suffix_str}"}',
+        min: widget.minValue,
+        max: widget.maxValue,
+        value: _values ?? 0.0,
+        stepSize: double.tryParse(
+            "${widget.sliderTileThemeProps?.stepSize ?? 1.0}") ??
+            1.0,
+        showLabels: true,
+        enableTooltip: true,
+        labelFormatterCallback: (value, formattedText) {
+          return '${(widget.sliderTileThemeProps?.label_prefix_str == null || widget.sliderTileThemeProps!.label_prefix_str!.isEmpty) ? "" : "${widget.sliderTileThemeProps?.label_prefix_str.toString()} "}${double.tryParse("$value")?.toStringAsFixed(widget.sliderTileThemeProps?.fractionDigits ?? 0) ?? 0}${(widget.sliderTileThemeProps?.label_suffix_str == null || widget.sliderTileThemeProps!.label_suffix_str!.isEmpty) ? "" : " ${widget.sliderTileThemeProps?.label_suffix_str.toString()}"}';
+        },
+        onChanged: (newValues) async {
+          Constants.debugLog(FilterSliderTitle, "onChanged:newValues:${newValues}");
+          _values = newValues;
+          widget.onChanged(newValues);
+          state(() {});
+          setState(() {});
+        },
+      );
     });
   }
 

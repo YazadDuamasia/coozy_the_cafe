@@ -1163,7 +1163,7 @@ class _FilterState extends State<Filter> with FilterStyleMixin {
     );
   }
 
-  Widget rangeDatePickerWidget(FilterState state, ThemeProps? themeProps) {
+  rangeDatePickerWidget(FilterState state, ThemeProps? themeProps) {
     final filterOptions = state.filters[state.activeFilterIndex].filterOptions;
     final previousApplied = state.filters[state.activeFilterIndex].previousApplied;
 
