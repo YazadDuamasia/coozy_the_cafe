@@ -10,7 +10,8 @@ class RouteName {
   static const String otpVerificationRoute = '/otpVerificationScreen';
   static const String homeScreenRoute = '/homeScreen';
   static const String tableInfoScreenRoute = '/tableInfoScreen';
-  static const String menuFullListScreenRoute = '/menuFullListScreenRoute';
+  static const String menuItemFullListScreenRoute = '/menuItemFullListScreenRoute';
+  static const String addNewMenuItemScreenRoute = '/addNewMenuItemScreenRoute';
   static const String menuCategoryFullListRoute = "/menuCategoryFullListScreen";
   static const String addNewMenuCategoryScreenRoute =
       "/addNewMenuCategoryScreen";

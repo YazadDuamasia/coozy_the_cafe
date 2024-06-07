@@ -838,9 +838,19 @@ class Constants {
 
   static Future<Position?> getCurrentLocation(
       {BuildContext? context, LocationAccuracy? desiredAccuracy}) async {
-    LocationPermission permission = await Geolocator.checkPermission();
+    // LocationPermission permission = await Geolocator.checkPermission();
+    PermissionStatus? permission;
+    bool serviceEnabled;
+    serviceEnabled = await Geolocator.isLocationServiceEnabled();
+    if (!serviceEnabled) {
+      return await Geolocator.openLocationSettings().then((value) async{
+        return await getCurrentLocation(context: context, desiredAccuracy: desiredAccuracy);
+      });
+    }
 
-    if (permission == LocationPermission.deniedForever) {
+    permission = await Permission.location.status;
+
+    if (permission == PermissionStatus.permanentlyDenied) {
       if (platform.isMobile) {
         showDialog(
           context: context!,
@@ -868,11 +878,13 @@ class Constants {
       } else {
         return Future.error('Location permissions are denied.');
       }
-    } else if (permission == LocationPermission.denied) {
+    } else if (permission == PermissionStatus.denied) {
       // The user has denied location permissions.
-      permission = await Geolocator.requestPermission();
-
-      if (permission == LocationPermission.denied) {
+      permission = await Permission.location.request();
+      if (permission == PermissionStatus.granted) {
+        return await getCurrentLocation(
+            context: context, desiredAccuracy: desiredAccuracy);
+      } else {
         return Future.error('Location permissions are denied.');
       }
     }
@@ -916,13 +928,26 @@ class Constants {
               children: [
                 CupertinoActivityIndicator(
                     animating: true,
-                    color: Theme.of(context).brightness==Brightness.dark?Colors.white:Theme.of(context).primaryColor,
+                    color: Theme.of(context).brightness == Brightness.dark
+                        ? Colors.white
+                        : Theme.of(context).primaryColor,
                     radius: 15),
-                const SizedBox(width: 16), // Space between indicator and text
-                Text(
-                  "Please wait...",
-                  style: Theme.of(context).textTheme.bodyMedium,
-                ), // Text indicating loading
+                const SizedBox(width: 16),
+                Expanded(
+                  child: Row(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    mainAxisAlignment: MainAxisAlignment.start,
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      Expanded(
+                        child: Text(
+                          "Please wait...",
+                          style: Theme.of(context).textTheme.bodyMedium,
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
               ],
             ),
           ),

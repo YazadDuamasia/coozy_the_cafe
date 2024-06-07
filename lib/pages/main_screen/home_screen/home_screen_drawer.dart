@@ -51,7 +51,7 @@ class HomeScreenDrawer extends StatelessWidget {
             title: const Text('Menu Items'),
             onTap: () {
               Navigator.pop(context);
-              navigationRoutes.navigateToMenuFullListScreen();
+              navigationRoutes.navigateToMenuItemFullListScreen();
             },
           ),
           ListTile(

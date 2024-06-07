@@ -3,14 +3,14 @@ import 'dart:convert' as convert;
 import 'dart:convert';
 import 'dart:io';
 
+import 'package:coozy_cafe/utlis/utlis.dart';
 import 'package:http/http.dart' as http;
 
-import '../../utlis/utlis.dart';
 
 enum HTTPMethod { GET, POST, PUT, DELETE, POST_ENCODE }
 
 class HttpCallGenerator {
-  static Future<Map<String, dynamic>> _handleResponse(
+  static Future<dynamic> _handleResponse(
       http.Response response) async {
     if (response.statusCode == 429) {
       return await _handleResponse(response);

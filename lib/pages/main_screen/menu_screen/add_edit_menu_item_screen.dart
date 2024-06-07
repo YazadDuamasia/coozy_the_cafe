@@ -1,25 +1,156 @@
+import 'dart:core';
+
+import 'package:coozy_cafe/model/category.dart';
+import 'package:coozy_cafe/model/sub_category.dart';
+import 'package:coozy_cafe/repositories/components/restaurant_repository.dart';
+import 'package:coozy_cafe/utlis/utlis.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/widgets.dart';
 
 class AddEditMenuItemScreen extends StatefulWidget {
-  const AddEditMenuItemScreen({super.key});
+  AddEditMenuItemScreen({Key? key}) : super(key: key);
 
   @override
   _AddEditMenuItemScreenState createState() => _AddEditMenuItemScreenState();
 }
 
 class _AddEditMenuItemScreenState extends State<AddEditMenuItemScreen> {
-  Size? size;
-  Orientation? orientation;
+  final _formKey = GlobalKey<FormState>();
+
+  TextEditingController? dishNameTextController =
+      TextEditingController(text: "");
+  FocusNode? dishNameFocusNode = FocusNode(debugLabel: "dish_name_focus_node");
+  TextEditingController? dishPriceTextController =
+      TextEditingController(text: "");
+  FocusNode? dishPriceFocusNode =
+      FocusNode(debugLabel: "dish_price_focus_node");
+  FocusNode? foodTypeFocusNode = FocusNode(debugLabel: "food_type_focus_node");
+  FocusNode? foodMeasuringUnitsFocusNode =
+      FocusNode(debugLabel: "food_measuring_units_focus_node");
+
+  TextEditingController? dishSellingUnitTextController =
+      TextEditingController(text: "");
+  FocusNode? dishSellingUnitFocusNode =
+      FocusNode(debugLabel: "dish_selling_unit_focus_node");
+
+  List<String> foodTypes = [
+    'Vegetarian',
+    'Lacto-Vegetarian',
+    'Ovo-Vegetarian',
+    'Lacto-Ovo Vegetarian',
+    'Vegan',
+    'Non-Vegetarian',
+    'Poultry',
+    'Red Meat',
+    'Seafood',
+    'Game',
+    'Pescatarian',
+    'Flexitarian',
+    'Gluten-Free',
+    'Ketogenic (Keto)',
+    'Paleo',
+    'Low-Carb',
+    'Low-Fat',
+    'Mediterranean',
+    'Organic',
+    'Processed',
+    'Raw Food',
+    'Junk Food'
+  ];
+
+  final List<String> measuringUnits = [
+    "Unit",
+    'Piece',
+    'Dozen',
+    'Pack',
+    'Box',
+    'Cup',
+    'Slice',
+    'Can',
+    'Bottle',
+    'Jar',
+    'Bag',
+    'Bundle',
+    'Milligram',
+    'Gram',
+    'Kilogram',
+    'Liter',
+    'Milliliter',
+    'Ounce',
+    'Pound',
+    'Gallon',
+    'Pint',
+    'Quart',
+  ];
+
+  String? selectedFoodType;
+  String? selectedMeasuringUnits;
+  Map<String, dynamic>? result;
+  List<Category>? categories = [];
+  Map<int, List<SubCategory>?>? subCategoryMap = {};
+  Category? selectedCategory;
+  SubCategory? selectedSubCategory;
+
+  List<bool>? isSimpleSelected = [true, false];
 
   @override
   void initState() {
     super.initState();
+    WidgetsBinding.instance.addPostFrameCallback((_) async {
+      result = await fetchDataFromApi();
+      if (result != null) {
+        categories = (result!['categories'] as List)
+            .map((e) => Category.fromJson(e))
+            .toList();
+        subCategoryMap = {
+          for (Category category in categories!)
+            category.id!: (result!['categories'] as List?)!
+                .firstWhere(
+                    (element) => element['id'] == category.id)['subCategories']
+                .map<SubCategory>((e) => SubCategory.fromJson(e))
+                .toList()
+        };
+      }
+      setState(() {});
+    });
+  }
+
+  Future<Map<String, dynamic>?> fetchDataFromApi() async {
+    try {
+      List<Category>? categoryList;
+      categoryList = await RestaurantRepository().getCategories();
+      var subCategoryList = await RestaurantRepository().getSubcategories();
+
+      var result = {
+        "categories": categoryList?.map((category) {
+              List<Map<String, dynamic>?> subCategories = subCategoryList
+                      ?.where((subCategory) =>
+                          subCategory.categoryId == category.id)
+                      .map((subCategory) => subCategory.toJson())
+                      .toList() ??
+                  [];
+              return {
+                "id": category.id!,
+                "name": category.name!,
+                "isActive": category.isActive!,
+                "createdDate": category.createdDate,
+                "subCategories": subCategories,
+              };
+            }).toList() ??
+            [],
+      };
+
+      return result;
+    } catch (e) {
+      Constants.debugLog(
+          AddEditMenuItemScreen, "fetchDataFromApi:catchError:$e");
+      return null;
+    }
   }
 
   @override
   Widget build(BuildContext context) {
-    size = MediaQuery.of(context).size;
-    orientation = MediaQuery.of(context).orientation;
     return SafeArea(
       child: WillPopScope(
         onWillPop: () async {
@@ -30,29 +161,66 @@ class _AddEditMenuItemScreenState extends State<AddEditMenuItemScreen> {
           resizeToAvoidBottomInset: true,
           backgroundColor: Colors.white,
           appBar: AppBar(
-            title: const Text(
-              "Add New Menu category",
-            ),
+            title: const Text("Add Dish"),
             leadingWidth: 35,
             centerTitle: false,
           ),
           body: SingleChildScrollView(
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.start,
-              crossAxisAlignment: CrossAxisAlignment.start,
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.start,
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    Expanded(
-                      child: Container(),
-                    ),
-                  ],
+            physics: const BouncingScrollPhysics(),
+            child: Theme(
+              data: Theme.of(context),
+              child: Padding(
+                padding: const EdgeInsets.all(10.0),
+                child: Form(
+                  key: _formKey,
+                  autovalidateMode: AutovalidateMode.onUserInteraction,
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.start,
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.start,
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        mainAxisSize: MainAxisSize.min,
+                        children: <Widget>[
+                          Expanded(
+                            child: TextFormField(
+                              autovalidateMode:
+                                  AutovalidateMode.onUserInteraction,
+                              controller: dishNameTextController,
+                              focusNode: dishNameFocusNode,
+                              keyboardType: TextInputType.text,
+                              decoration: InputDecoration(
+                                labelText: "Dish Name",
+                                hintText: "Enter dish name",
+                                errorMaxLines: 3,
+                              ),
+                              validator: (value) {
+                                if (value == null || value.isEmpty) {
+                                  return 'Please enter dish name';
+                                }
+                                return null;
+                              },
+                              onFieldSubmitted: (value) {
+                                // Future.microtask(() => FocusScope.of(context).requestFocus(dish_price_focus_node));
+                              },
+                            ),
+                          ),
+                        ],
+                      ),
+                      foodTypeWidget(),
+                      categoryDropdownWidget(),
+                      Visibility(
+                        visible: selectedCategory != null,
+                        child: subCategoryDropdownWidget(),
+                      ),
+                      measuringUnitsWidget(),
+                      buildRow(),
+                    ],
+                  ),
                 ),
-              ],
+              ),
             ),
           ),
         ),
@@ -60,8 +228,329 @@ class _AddEditMenuItemScreenState extends State<AddEditMenuItemScreen> {
     );
   }
 
+  buildRow() {
+    return Padding(
+      padding: const EdgeInsets.only(top: 10),
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.start,
+        crossAxisAlignment: CrossAxisAlignment.start,
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Expanded(
+            child: LayoutBuilder(
+              builder: (context, constraints) {
+                return ToggleButtons(
+                constraints: BoxConstraints.expand(width: ((constraints.maxWidth-3) / 2)),
+
+                  isSelected: isSimpleSelected!,
+                  onPressed: (int index) {
+                    setState(() {
+                      for (int i = 0; i < isSimpleSelected!.length; i++) {
+                        isSimpleSelected![i] = i == index;
+                      }
+                    });
+                  },
+                  textStyle: Theme.of(context).textTheme.titleLarge,
+                  children: [
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      crossAxisAlignment: CrossAxisAlignment.center,
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        Expanded(
+                          child: Text(
+                            'Simple',
+                            textAlign: TextAlign.center,
+                            style: TextStyle(
+                              color: isSimpleSelected![0]
+                                  ? Colors.white
+                                  : Theme.of(context).colorScheme.primary,
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      crossAxisAlignment: CrossAxisAlignment.center,
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        Expanded(
+                          child: Text(
+                            'Advance',
+                            textAlign: TextAlign.center,
+                            style: TextStyle(
+                              color: isSimpleSelected![1]
+                                  ? Colors.white
+                                  : Theme.of(context).colorScheme.primary,
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
+                  ],
+                  fillColor: Theme.of(context).colorScheme.primary,
+                  selectedColor: Colors.white,
+                  borderColor: Theme.of(context).colorScheme.primary,
+                  selectedBorderColor: Theme.of(context).colorScheme.primary,
+                  borderRadius: BorderRadius.circular(5.0),
+                  color: Theme.of(context).colorScheme.primary,
+                );
+              },
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget categoryDropdownWidget() {
+    Constants.debugLog(
+        AddEditMenuItemScreen, "categories:${categories.toString()}");
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.start,
+      crossAxisAlignment: CrossAxisAlignment.start,
+      mainAxisSize: MainAxisSize.min,
+      children: <Widget>[
+        Expanded(
+          child: Theme(
+            data: Theme.of(context),
+            child: DropdownButtonFormField<Category>(
+              key: UniqueKey(),
+              menuMaxHeight: MediaQuery.of(context).size.height * 0.35,
+              isDense: true,
+              isExpanded: true,
+              padding: const EdgeInsets.only(top: 10),
+              autovalidateMode: AutovalidateMode.onUserInteraction,
+              decoration: const InputDecoration(
+                labelText: 'Select Category',
+                errorMaxLines: 3,
+              ),
+              value: selectedCategory,
+              onChanged: (Category? newValue) {
+                setState(() {
+                  selectedCategory = newValue;
+                  selectedSubCategory = null;
+                });
+              },
+              validator: (value) {
+                if (value == null) {
+                  return 'Please select a category';
+                }
+                return null;
+              },
+              items: categories?.map((Category category) {
+                return DropdownMenuItem<Category>(
+                  value: category,
+                  child: Text(category.name ?? ""),
+                );
+              }).toList(),
+            ),
+          ),
+        ),
+      ],
+    );
+  }
+
+  Widget subCategoryDropdownWidget() {
+    List<SubCategory>? filteredSubCategories =
+        subCategoryMap?[selectedCategory?.id] ?? [];
+
+    return Visibility(
+      visible:
+          filteredSubCategories != null && filteredSubCategories.isNotEmpty,
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.start,
+        crossAxisAlignment: CrossAxisAlignment.start,
+        mainAxisSize: MainAxisSize.min,
+        children: <Widget>[
+          Expanded(
+            child: Theme(
+              data: Theme.of(context),
+              child: DropdownButtonFormField<SubCategory>(
+                key: UniqueKey(),
+                menuMaxHeight: MediaQuery.of(context).size.height * 0.35,
+                isDense: true,
+                isExpanded: true,
+                padding: const EdgeInsets.only(top: 10),
+                autovalidateMode: AutovalidateMode.onUserInteraction,
+                decoration: const InputDecoration(
+                  labelText: 'Select Subcategory',
+                  errorMaxLines: 3,
+                ),
+                value: selectedSubCategory,
+                onChanged: (SubCategory? newValue) {
+                  setState(() {
+                    selectedSubCategory = newValue;
+                  });
+                },
+                validator: (value) {
+                  if (value == null) {
+                    return 'Please select a subcategory';
+                  }
+                  return null;
+                },
+                items: filteredSubCategories.map((SubCategory subCategory) {
+                  return DropdownMenuItem<SubCategory>(
+                    value: subCategory,
+                    child: Text(subCategory.name ?? ""),
+                  );
+                }).toList(),
+              ),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget foodTypeWidget() {
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.start,
+      crossAxisAlignment: CrossAxisAlignment.start,
+      mainAxisSize: MainAxisSize.min,
+      children: <Widget>[
+        Expanded(
+          child: Theme(
+            data: Theme.of(context),
+            child: DropdownButtonFormField<String>(
+              key: UniqueKey(),
+              menuMaxHeight: MediaQuery.of(context).size.height * 0.35,
+              focusNode: foodTypeFocusNode,
+              isDense: true,
+              isExpanded: true,
+              padding: const EdgeInsets.only(top: 10),
+              autovalidateMode: AutovalidateMode.onUserInteraction,
+              decoration: const InputDecoration(
+                labelText: 'Select Food Type',
+                errorMaxLines: 3,
+              ),
+              value: selectedFoodType,
+              onChanged: (String? newValue) {
+                setState(() {
+                  selectedFoodType = newValue;
+                });
+              },
+              validator: (value) {
+                if (value == null || value.isEmpty) {
+                  return 'Please select a food type';
+                }
+                return null;
+              },
+              items: foodTypes.map((String foodType) {
+                return DropdownMenuItem<String>(
+                  value: foodType,
+                  child: Text(foodType),
+                );
+              }).toList(),
+            ),
+          ),
+        ),
+      ],
+    );
+  }
+
+  Widget measuringUnitsWidget() {
+    return Column(
+      mainAxisAlignment: MainAxisAlignment.start,
+      crossAxisAlignment: CrossAxisAlignment.start,
+      mainAxisSize: MainAxisSize.min,
+      children: [
+        Row(
+          mainAxisAlignment: MainAxisAlignment.start,
+          crossAxisAlignment: CrossAxisAlignment.start,
+          mainAxisSize: MainAxisSize.min,
+          children: <Widget>[
+            Expanded(
+              child: Theme(
+                data: Theme.of(context),
+                child: DropdownButtonFormField<String>(
+                  key: UniqueKey(),
+                  menuMaxHeight: MediaQuery.of(context).size.height * 0.35,
+                  focusNode: foodMeasuringUnitsFocusNode,
+                  isDense: true,
+                  isExpanded: true,
+                  padding: const EdgeInsets.only(top: 10),
+                  autovalidateMode: AutovalidateMode.onUserInteraction,
+                  decoration: const InputDecoration(
+                    labelText: "Selling Unit",
+                    hintText: 'Select measuring units type',
+                    errorMaxLines: 3,
+                  ),
+                  value: selectedMeasuringUnits,
+                  onChanged: (String? newValue) async {
+                    setState(() {
+                      selectedMeasuringUnits = newValue;
+                      dishSellingUnitTextController?.clear();
+                    });
+                  },
+                  validator: (value) {
+                    if (value == null || value.isEmpty) {
+                      return 'Please select a measuring units type';
+                    }
+                    return null;
+                  },
+                  items: measuringUnits.map((String foodType) {
+                    return DropdownMenuItem<String>(
+                      value: foodType,
+                      child: Text(foodType),
+                    );
+                  }).toList(),
+                ),
+              ),
+            ),
+          ],
+        ),
+        Visibility(
+          visible: selectedMeasuringUnits != null,
+          child: Padding(
+            padding: const EdgeInsets.only(top: 10),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.start,
+              crossAxisAlignment: CrossAxisAlignment.start,
+              mainAxisSize: MainAxisSize.min,
+              children: <Widget>[
+                Expanded(
+                  child: TextFormField(
+                    autovalidateMode: AutovalidateMode.onUserInteraction,
+                    controller: dishSellingUnitTextController,
+                    focusNode: dishSellingUnitFocusNode,
+                    keyboardType:
+                        const TextInputType.numberWithOptions(decimal: true),
+                    decoration: const InputDecoration(
+                      labelText: "Selling Unit Value",
+                      hintText: "Enter value of selling amount",
+                      errorMaxLines: 3,
+                    ),
+                    validator: (value) {
+                      if (value == null || value.isEmpty) {
+                        return 'Please enter selling unit value';
+                      }
+                      return null;
+                    },
+                    onFieldSubmitted: (value) {
+                      FocusScope.of(context).requestFocus(dishPriceFocusNode);
+                    },
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ),
+      ],
+    );
+  }
+
   @override
   void dispose() {
+    dishNameTextController?.dispose();
+    dishNameFocusNode?.dispose();
+    dishPriceTextController?.dispose();
+    dishPriceFocusNode?.dispose();
+    foodTypeFocusNode?.dispose();
+    foodMeasuringUnitsFocusNode?.dispose();
+    dishSellingUnitTextController?.dispose();
+    dishSellingUnitFocusNode?.dispose();
     super.dispose();
   }
 }

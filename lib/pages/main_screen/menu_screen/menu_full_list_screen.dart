@@ -1,5 +1,6 @@
 import 'package:coozy_cafe/model/menu_item.dart';
 import 'package:coozy_cafe/repositories/components/restaurant_repository.dart';
+import 'package:coozy_cafe/utlis/utlis.dart';
 import 'package:flutter/material.dart';
 
 class MenuFullListScreen extends StatefulWidget {
@@ -34,13 +35,19 @@ class _MenuFullListScreenState extends State<MenuFullListScreen>
           resizeToAvoidBottomInset: true,
           appBar: AppBar(
             title: const Text(
-              "Menu List",
+              "Menu Item List",
             ),
             leadingWidth: 35,
             centerTitle: false,
             actions: [
               IconButton(
-                onPressed: () async {},
+                onPressed: () async {
+                  navigationRoutes
+                      .navigateTAddNewMenuItemScreen()
+                      .then((value) {
+
+                  });
+                },
                 icon: const Icon(
                   Icons.add,
                   color: Colors.white,

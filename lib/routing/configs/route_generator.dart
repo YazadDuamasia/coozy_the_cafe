@@ -3,6 +3,7 @@ import 'package:coozy_cafe/pages/main_screen/menu_all_sub_category_screen/menu_a
 import 'package:coozy_cafe/pages/main_screen/menu_category_screen/add_menu_category_screen/add_new_menu_category_screen.dart';
 import 'package:coozy_cafe/pages/main_screen/menu_category_screen/edit_menu_category/edit_menu_category_screen.dart';
 import 'package:coozy_cafe/pages/main_screen/menu_category_screen/menu_category_full_list_screen.dart';
+import 'package:coozy_cafe/pages/main_screen/menu_screen/add_edit_menu_item_screen.dart';
 import 'package:coozy_cafe/pages/main_screen/menu_screen/menu_full_list_screen.dart';
 import 'package:coozy_cafe/pages/main_screen/recipes_bookmark_list_screen/recipes_bookmark_list_screen.dart';
 import 'package:coozy_cafe/pages/main_screen/recipes_info_screen/recipes_info_screen.dart';
@@ -114,12 +115,20 @@ class RouteGenerator {
           curve: Curves.easeInOut,
           child: const TableScreen(),
         );
-      case RouteName.menuFullListScreenRoute:
+      case RouteName.menuItemFullListScreenRoute:
         return PageTransition(
           type: PageTransitionType.rightToLeftWithFade,
           settings: settings,
           curve: Curves.easeInOut,
           child: const MenuFullListScreen(),
+        );
+
+      case RouteName.addNewMenuItemScreenRoute:
+        return PageTransition(
+          type: PageTransitionType.rightToLeftWithFade,
+          settings: settings,
+          curve: Curves.easeInOut,
+          child:  AddEditMenuItemScreen(),
         );
 
       case RouteName.menuCategoryFullListRoute:

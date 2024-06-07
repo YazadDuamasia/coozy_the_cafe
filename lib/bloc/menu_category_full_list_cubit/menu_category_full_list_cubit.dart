@@ -73,8 +73,7 @@ class MenuCategoryFullListCubit extends Cubit<MenuCategoryFullListState> {
                 "createdDate": category.createdDate,
                 "subCategories": subCategories,
               };
-            }).toList() ??
-            [],
+            }).toList() ?? [],
       };
 
       return result;

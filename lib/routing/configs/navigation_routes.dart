@@ -56,8 +56,13 @@ class NavigationRoutes {
     navigatorKey.currentState!.pushNamed(RouteName.tableInfoScreenRoute);
   }
 
-  navigateToMenuFullListScreen() {
-    navigatorKey.currentState!.pushNamed(RouteName.menuFullListScreenRoute);
+  navigateToMenuItemFullListScreen() {
+    navigatorKey.currentState!.pushNamed(RouteName.menuItemFullListScreenRoute);
+  }
+
+  Future navigateTAddNewMenuItemScreen() async {
+    return await navigatorKey.currentState!
+        .pushNamed(RouteName.addNewMenuItemScreenRoute);
   }
 
   navigateToMenuCategoryFullListScreen() {

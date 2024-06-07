@@ -56,8 +56,7 @@ class _MyAppState extends State<MyApp> {
             child: MaterialApp(
               title: Constants.appName,
               debugShowCheckedModeBanner: false,
-
-                 theme: ThemeData(
+              theme: ThemeData(
                 useMaterial3: true,
                 colorScheme: AppColor.lightColorScheme,
                 fontFamily: "Sono",
@@ -88,7 +87,7 @@ class _MyAppState extends State<MyApp> {
                   selectionHandleColor: Theme.of(context).primaryColor,
                 ),
               ),
-            darkTheme: ThemeData(
+              darkTheme: ThemeData(
                 useMaterial3: true,
                 colorScheme: AppColor.darkColorScheme,
                 fontFamily: "Sono",
@@ -127,71 +126,62 @@ class _MyAppState extends State<MyApp> {
                     inputDecorationTheme: InputDecorationTheme(
                       border: OutlineInputBorder(
                         borderSide: BorderSide(
-                          color: Theme
-                              .of(context)
-                              .colorScheme
-                              .primary,
+                          color: Theme.of(context).colorScheme.primary,
                         ),
                         borderRadius: BorderRadius.circular(5),
                       ),
                       disabledBorder: OutlineInputBorder(
                         borderSide: BorderSide(
-                          color: Theme
-                              .of(context)
-                              .disabledColor,
+                          color: Theme.of(context).disabledColor,
                         ),
                         borderRadius: BorderRadius.circular(5),
                       ),
                       enabledBorder: OutlineInputBorder(
                         borderSide: BorderSide(
-                          color: Theme
-                              .of(context)
-                              .colorScheme
-                              .primary,
+                          color: Theme.of(context).colorScheme.primary,
                         ),
                         borderRadius: BorderRadius.circular(5),
                       ),
                       focusedBorder: OutlineInputBorder(
                         borderSide: BorderSide(
-                            color: Theme
-                                .of(context)
-                                .colorScheme
-                                .primary),
+                            color: Theme.of(context).colorScheme.primary),
                         borderRadius: BorderRadius.circular(5),
                       ),
                       errorBorder: OutlineInputBorder(
                         borderSide: BorderSide(
-                            color: Theme
-                                .of(context)
-                                .colorScheme
-                                .error),
+                            color: Theme.of(context).colorScheme.error),
                         borderRadius: BorderRadius.circular(5),
                       ),
                       focusedErrorBorder: OutlineInputBorder(
                         borderSide: BorderSide(
-                            color: Theme
-                                .of(context)
-                                .colorScheme
-                                .error),
+                            color: Theme.of(context).colorScheme.error),
                         borderRadius: BorderRadius.circular(5),
                       ),
                     ),
+                    dropdownMenuTheme:
+                        Theme.of(context).dropdownMenuTheme.copyWith(
+                              inputDecorationTheme:
+                                  Theme.of(context).inputDecorationTheme,
+                            ),
                   ),
-                  child: ScrollConfiguration(
-                    behavior:
-                    ScrollConfiguration.of(context).copyWith(dragDevices: {
-                      PointerDeviceKind.mouse,
-                      PointerDeviceKind.touch,
-                      PointerDeviceKind.trackpad,
-                      PointerDeviceKind.stylus
-                    }),
-                    child: child!,
-                  ),
+                  child: child!,
                 );
               },
               themeMode: state.themeMode,
               restorationScopeId: 'app',
               navigatorKey: navigatorKey,
+              scrollBehavior: ScrollConfiguration.of(context).copyWith(
+                multitouchDragStrategy: MultitouchDragStrategy.sumAllPointers,
+                physics: const BouncingScrollPhysics(
+                  parent: AlwaysScrollableScrollPhysics(),
+                ),
+                dragDevices: {
+                  PointerDeviceKind.mouse,
+                  PointerDeviceKind.touch,
+                  PointerDeviceKind.trackpad,
+                  PointerDeviceKind.stylus
+                },
+              ),
               onGenerateRoute: RouteGenerator.generateRoute,
               initialRoute: RouteName.splashRoute,
               useInheritedMediaQuery: true,

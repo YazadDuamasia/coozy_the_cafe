@@ -54,6 +54,7 @@ dependencies:
 
   bubble_showcase: ^1.1.0
   font_awesome_flutter: ^10.7.0
+  line_icons: ^2.0.3
   material_design_icons_flutter: ^7.0.7296
   fluttertoast: ^8.2.5
   #
@@ -89,7 +90,7 @@ dependencies:
   syncfusion_flutter_core: ^25.1.40
   syncfusion_flutter_sliders: ^25.1.40
   syncfusion_flutter_charts: ^25.1.40
-  syncfusion_flutter_xlsio: 25.1.40
+  syncfusion_flutter_xlsio: ^25.1.40
   #
   geolocator: ^11.1.0
   app_settings: ^5.1.1
