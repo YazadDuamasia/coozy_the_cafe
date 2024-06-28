@@ -242,7 +242,8 @@ class _EmployeeScreenState extends State<EmployeeScreen> {
 
     Country? selectedCountry;
     String? selectedCountryValue = "";
-    InternetStatus? connectionStatus = await InternetConnection().internetStatus;
+    InternetStatus? connectionStatus =
+        await InternetConnection().internetStatus;
     if (connectionStatus == InternetStatus.connected) {
       if (Constants.getIsMobileApp() == true) {
         try {
@@ -265,7 +266,19 @@ class _EmployeeScreenState extends State<EmployeeScreen> {
       selectedCountry = data;
     }
 
-    // var dad=DateUtil.calculateRemainingTime(startWorkingTimeController.text!, endWorkingTimeController.text!);
+    final ValueNotifier<String> totalWorkingTimeNotifier = ValueNotifier<String>('N/A');
+    void _updateTotalWorkingTime() {
+      final totalWorkingTime = DateUtil.calculateRemainingTime(
+        fromTime: startWorkingTimeController.text,
+        toTime: endWorkingTimeController.text,
+      );
+      totalWorkingTimeNotifier.value = totalWorkingTime ?? 'N/A';
+    }
+
+    startWorkingTimeController.addListener(_updateTotalWorkingTime);
+    endWorkingTimeController.addListener(_updateTotalWorkingTime);
+
+
     Navigator.pop(context);
     await showModalBottomSheet(
       context: context,
@@ -845,26 +858,24 @@ class _EmployeeScreenState extends State<EmployeeScreen> {
                                                   ),
                                                   CupertinoButton(
                                                     child: const Text('Done'),
-                                                    onPressed: () {
-                                                      setState(() {
-                                                        endWorkingTime =
-                                                            TimeOfDay(
-                                                          hour:
-                                                              tempPickedDateTime
-                                                                      ?.hour ??
-                                                                  0,
-                                                          minute:
-                                                              tempPickedDateTime
-                                                                      ?.minute ??
-                                                                  0,
-                                                        );
-                                                        endWorkingTimeController
-                                                                .text =
-                                                            DateUtil.formatTimeOfDay(
-                                                                endWorkingTime!,
-                                                                DateUtil
-                                                                    .TIME_FORMAT2);
-                                                      });
+                                                    onPressed: () async {
+                                                      endWorkingTime =
+                                                          TimeOfDay(
+                                                        hour: tempPickedDateTime
+                                                                ?.hour ??
+                                                            0,
+                                                        minute:
+                                                            tempPickedDateTime
+                                                                    ?.minute ??
+                                                                0,
+                                                      );
+                                                      endWorkingTimeController
+                                                              .text =
+                                                          DateUtil.formatTimeOfDay(
+                                                              endWorkingTime!,
+                                                              DateUtil
+                                                                  .TIME_FORMAT2);
+                                                      setState(() {});
 
                                                       Navigator.pop(context);
                                                     },
@@ -904,10 +915,9 @@ class _EmployeeScreenState extends State<EmployeeScreen> {
                                             .text.isNotEmpty,
                                     child: GestureDetector(
                                       onTap: () {
-                                        setState(() {
-                                          endWorkingTime = null;
-                                          endWorkingTimeController.clear();
-                                        });
+                                        endWorkingTime = null;
+                                        endWorkingTimeController.clear();
+                                        setState(() {});
                                       },
                                       child: const Icon(Icons.clear),
                                     ),
@@ -929,31 +939,40 @@ class _EmployeeScreenState extends State<EmployeeScreen> {
                         const SizedBox(
                           height: 10,
                         ),
-                        Row(
-                          mainAxisAlignment: MainAxisAlignment.start,
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          mainAxisSize: MainAxisSize.min,
-                          children: <Widget>[
-                            Expanded(
-                              child:  RichText(
-                                text: TextSpan(
-                                  children: [
-                                    TextSpan(
-                                      text: 'Total Working time: ',
-                                      style: Theme.of(context)
-                                          .textTheme
-                                          .bodyMedium
-                                          ?.copyWith(fontWeight: FontWeight.w700),
+                        ValueListenableBuilder<String>(
+                            valueListenable: totalWorkingTimeNotifier,
+                            builder: (context, totalWorkingTime, child) {
+                            return Row(
+                              mainAxisAlignment: MainAxisAlignment.start,
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              mainAxisSize: MainAxisSize.min,
+                              children: <Widget>[
+                                Expanded(
+                                  child: RichText(
+                                    text: TextSpan(
+                                      children: [
+                                        TextSpan(
+                                          text: 'Total Working time: ',
+                                          style: Theme.of(context)
+                                              .textTheme
+                                              .bodyMedium
+                                              ?.copyWith(
+                                                  fontWeight: FontWeight.w700),
+                                        ),
+                                        TextSpan(
+                                          text:
+                                              '${totalWorkingTime}',
+                                          style: Theme.of(context)
+                                              .textTheme
+                                              .bodyMedium,
+                                        ),
+                                      ],
                                     ),
-                                    TextSpan(
-                                      text: '${""??"N/A"}',
-                                      style: Theme.of(context).textTheme.bodyMedium,
-                                    ),
-                                  ],
-                                ),
-                              ),
-                            )
-                          ],
+                                  ),
+                                )
+                              ],
+                            );
+                          }
                         ),
                         const SizedBox(
                           height: 10,
@@ -966,17 +985,29 @@ class _EmployeeScreenState extends State<EmployeeScreen> {
                             Expanded(
                               child: ElevatedButton(
                                 onPressed: () {
+                                  final isValid =
+                                      _formKey.currentState!.validate();
+                                  if (!isValid) {
+                                    return;
+                                  }
+                                  _formKey.currentState!.save();
                                   final employee = Employee(
-                                    name: nameController.text,
-                                    position: positionController.text,
-                                    phoneNumber: selectedCountryValue,
-                                    joiningDate: joiningDateController.text,
-                                    leavingDate: leavingDateController.text,
-                                    startWorkingTime:
-                                        startWorkingTimeController.text,
-                                    endWorkingTime:
-                                        endWorkingTimeController.text,
-                                  );
+                                      name: nameController.text,
+                                      position: positionController.text,
+                                      phoneNumber: selectedCountryValue,
+                                      joiningDate: joiningDateController.text,
+                                      leavingDate: leavingDateController.text,
+                                      startWorkingTime:
+                                          startWorkingTimeController.text,
+                                      endWorkingTime:
+                                          endWorkingTimeController.text,
+                                      workingHours: DateUtil
+                                          .calculateRemainingTime(
+                                              fromTime:
+                                                  startWorkingTimeController
+                                                      .text,
+                                              toTime: endWorkingTimeController
+                                                  .text));
                                   Constants.debugLog(EmployeeScreen,
                                       "_showAddEmployeeDialog:Add:employee:${employee.toString()}");
                                   context
@@ -1035,7 +1066,6 @@ class _EmployeeScreenState extends State<EmployeeScreen> {
         employee.startWorkingTime ?? "", DateUtil.TIME_FORMAT2);
     TimeOfDay? endWorkingTime = DateUtil.parseTimeOfDay(
         employee.endWorkingTime ?? "", DateUtil.TIME_FORMAT2);
-    ;
 
     var phoneNumberParts =
         employee.phoneNumber == null || employee.phoneNumber!.isEmpty
@@ -1049,6 +1079,24 @@ class _EmployeeScreenState extends State<EmployeeScreen> {
     selectedCountryValue =
         "${selectedCountry.phoneCode} ${phoneNumberParts.last}";
     phoneNumberController.text = "${phoneNumberParts.last ?? ""}";
+
+
+
+    final ValueNotifier<String> totalWorkingTimeNotifier = ValueNotifier<String>( DateUtil.calculateRemainingTime(
+      fromTime:employee.startWorkingTime,
+      toTime: employee.endWorkingTime,
+    )??"N/A");
+    void _updateTotalWorkingTime() {
+      final totalWorkingTime = DateUtil.calculateRemainingTime(
+        fromTime: startWorkingTimeController.text,
+        toTime: endWorkingTimeController.text,
+      );
+      totalWorkingTimeNotifier.value = totalWorkingTime ?? 'N/A';
+    }
+
+    startWorkingTimeController.addListener(_updateTotalWorkingTime);
+    endWorkingTimeController.addListener(_updateTotalWorkingTime);
+
     Navigator.pop(context);
 
     await showModalBottomSheet(
@@ -1066,696 +1114,740 @@ class _EmployeeScreenState extends State<EmployeeScreen> {
         maxHeight: MediaQuery.of(context).size.height * 0.65,
       ),
       builder: (context) {
-        return Column(
-          mainAxisAlignment: MainAxisAlignment.start,
-          crossAxisAlignment: CrossAxisAlignment.start,
-          mainAxisSize: MainAxisSize.min,
-          children: <Widget>[
-            Row(
+        return StatefulBuilder(
+            builder: (context,setSate) {
+            return Column(
               mainAxisAlignment: MainAxisAlignment.start,
               crossAxisAlignment: CrossAxisAlignment.start,
               mainAxisSize: MainAxisSize.min,
               children: <Widget>[
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.start,
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  mainAxisSize: MainAxisSize.min,
+                  children: <Widget>[
+                    Expanded(
+                      child: Padding(
+                        padding: const EdgeInsets.all(10.0),
+                        child: Text(
+                          "Edit Employee",
+                          style: Theme.of(context).textTheme.headlineSmall,
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
                 Expanded(
                   child: Padding(
                     padding: const EdgeInsets.all(10.0),
-                    child: Text(
-                      "Edit Employee",
-                      style: Theme.of(context).textTheme.headlineSmall,
+                    child: SingleChildScrollView(
+                      child: Form(
+                        key: _formKey,
+                        child: Column(
+                          mainAxisAlignment: MainAxisAlignment.start,
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            const SizedBox(
+                              height: 10,
+                            ),
+                            Row(
+                              mainAxisAlignment: MainAxisAlignment.start,
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              mainAxisSize: MainAxisSize.min,
+                              children: <Widget>[
+                                Expanded(
+                                  child: TextFormField(
+                                    controller: nameController,
+                                    focusNode: nameFocusNode,
+                                    validator: (value) {
+                                      if (value == null || value.isEmpty) {
+                                        return "Please enter name";
+                                      }
+                                      return null;
+                                    },
+                                    decoration:
+                                        const InputDecoration(labelText: 'Name'),
+                                  ),
+                                ),
+                              ],
+                            ),
+                            const SizedBox(
+                              height: 10,
+                            ),
+                            Row(
+                              mainAxisAlignment: MainAxisAlignment.start,
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              mainAxisSize: MainAxisSize.min,
+                              children: <Widget>[
+                                Expanded(
+                                  child: TextFormField(
+                                    controller: positionController,
+                                    decoration: const InputDecoration(
+                                        labelText: 'Position'),
+                                    validator: (value) {
+                                      if (value == null || value.isEmpty) {
+                                        return "Please enter position of employee";
+                                      }
+                                      return null;
+                                    },
+                                  ),
+                                ),
+                              ],
+                            ),
+                            const SizedBox(
+                              height: 10,
+                            ),
+                            Row(
+                              mainAxisAlignment: MainAxisAlignment.start,
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              mainAxisSize: MainAxisSize.min,
+                              children: <Widget>[
+                                Expanded(
+                                  child: PhoneNumberTextFormField(
+                                    controller: phoneNumberController,
+                                    focusNode: phoneNumberFocusNode,
+                                    showDropdownIcon: true,
+                                    showCountryFlag: true,
+                                    textInputAction: TextInputAction.done,
+                                    decoration: const InputDecoration(
+                                      contentPadding: EdgeInsets.all(9),
+                                      isDense: true,
+                                      labelText: "Phone Number",
+                                      hintText: "Enter your phone number",
+                                    ),
+                                    onCountryChanged: (Country country) {
+                                      Constants.debugLog(EmployeeScreen,
+                                          'Country changed to: ' + country.name);
+                                      selectedCountryValue =
+                                          "+${country.phoneCode} ${phoneNumberController.text}";
+                                      setState(() {});
+                                    },
+                                    autovalidateMode:
+                                        AutovalidateMode.onUserInteraction,
+                                    invalidNumberMessage: AppLocalizations.of(
+                                                context)
+                                            ?.translate(StringValue
+                                                .common_common_phoneNumber_validator_error_msg) ??
+                                        "Please enter a valid phone number.",
+                                    onChanged: (PhoneNumber? number) {
+                                      Constants.debugLog(
+                                          EmployeeScreen, "number:$number");
+                                      if (number == null ||
+                                          (number.isValidNumber() == false)) {
+                                        selectedCountryValue = "";
+                                      } else {
+                                        Constants.debugLog(
+                                            EmployeeScreen,
+                                            'countryISOCode: ' +
+                                                number.countryISOCode +
+                                                "\ncountryCode: " +
+                                                number.countryCode +
+                                                "\nNumber: " +
+                                                number.number);
+                                        selectedCountryValue =
+                                            "${number.countryCode} ${number.number}";
+
+                                        phoneNumberController.text =
+                                            "${number.number}";
+                                        setState(() {});
+                                      }
+                                    },
+                                    initialCountryCode:
+                                        selectedCountry?.isoCode ?? "IN",
+                                    priorityList: [
+                                      CountryPickerUtils.getCountryByIsoCode('IN'),
+                                      CountryPickerUtils.getCountryByIsoCode('US'),
+                                    ],
+                                    onSubmitted: (String value) {
+                                      Future.microtask(() => FocusScope.of(context)
+                                          .requestFocus(new FocusNode()));
+                                    },
+                                  ),
+                                )
+                              ],
+                            ),
+                            const SizedBox(
+                              height: 10,
+                            ),
+                            Row(
+                              mainAxisAlignment: MainAxisAlignment.start,
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              mainAxisSize: MainAxisSize.min,
+                              children: <Widget>[
+                                Expanded(
+                                  child: TextFormField(
+                                    controller: joiningDateController,
+                                    focusNode: joiningDateFocusNode,
+                                    readOnly: true,
+                                    onTap: () async {
+                                      DateTime? initialDate = joiningDate;
+                                      DateTime? tempPickedDate = initialDate;
+                                      await showCupertinoModalPopup<void>(
+                                        context: context,
+                                        builder: (BuildContext context) {
+                                          return ColoredBox(
+                                            color: Theme.of(context)
+                                                .colorScheme
+                                                .surface,
+                                            child: SizedBox(
+                                              width:
+                                                  MediaQuery.of(context).size.width,
+                                              height: MediaQuery.of(context)
+                                                      .size
+                                                      .height *
+                                                  .40,
+                                              child: Column(
+                                                children: <Widget>[
+                                                  Row(
+                                                    mainAxisAlignment:
+                                                        MainAxisAlignment
+                                                            .spaceBetween,
+                                                    children: <Widget>[
+                                                      CupertinoButton(
+                                                        child: const Text('Cancel'),
+                                                        onPressed: () {
+                                                          Navigator.pop(context);
+                                                        },
+                                                      ),
+                                                      CupertinoButton(
+                                                        child: const Text('Done'),
+                                                        onPressed: () {
+                                                          setState(() {
+                                                            joiningDate =
+                                                                tempPickedDate!;
+                                                            joiningDateController
+                                                                    .text =
+                                                                DateUtil.dateToString(
+                                                                    joiningDate,
+                                                                    DateUtil
+                                                                        .DATE_FORMAT9)!;
+                                                          });
+                                                          Navigator.pop(context);
+                                                        },
+                                                      ),
+                                                    ],
+                                                  ),
+                                                  Expanded(
+                                                    child: CupertinoDatePicker(
+                                                      mode: CupertinoDatePickerMode
+                                                          .date,
+                                                      backgroundColor:
+                                                          Theme.of(context)
+                                                              .colorScheme
+                                                              .surface,
+                                                      dateOrder:
+                                                          DatePickerDateOrder.dmy,
+                                                      initialDateTime: initialDate,
+                                                      onDateTimeChanged:
+                                                          (DateTime newDate) {
+                                                        tempPickedDate = newDate;
+                                                      },
+                                                    ),
+                                                  ),
+                                                ],
+                                              ),
+                                            ),
+                                          );
+                                        },
+                                      );
+                                    },
+                                    decoration: InputDecoration(
+                                      labelText: "Joining Date",
+                                      suffix: Visibility(
+                                        visible: joiningDateController.text !=
+                                                null ||
+                                            joiningDateController.text.isNotEmpty,
+                                        child: GestureDetector(
+                                          onTap: () {
+                                            setState(() {
+                                              joiningDateController.clear();
+                                              joiningDate = null;
+                                            });
+                                          },
+                                          child: const Icon(Icons.clear),
+                                        ),
+                                      ),
+                                    ),
+                                    autovalidateMode:
+                                        AutovalidateMode.onUserInteraction,
+                                    validator: (value) {
+                                      if (value == null) {
+                                        return "Please enter join date";
+                                      } else {
+                                        return null;
+                                      }
+                                    },
+                                  ),
+                                )
+                              ],
+                            ),
+                            const SizedBox(
+                              height: 10,
+                            ),
+                            Row(
+                              mainAxisAlignment: MainAxisAlignment.start,
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              mainAxisSize: MainAxisSize.min,
+                              children: <Widget>[
+                                Expanded(
+                                  child: TextFormField(
+                                    controller: leavingDateController,
+                                    focusNode: leavingDateFocusNode,
+                                    readOnly: true,
+                                    onTap: () async {
+                                      DateTime? initialDate = leavingDate;
+                                      DateTime? tempPickedDate = initialDate;
+                                      await showCupertinoModalPopup<void>(
+                                        context: context,
+                                        builder: (BuildContext context) {
+                                          return ColoredBox(
+                                            color: Theme.of(context)
+                                                .colorScheme
+                                                .surface,
+                                            child: SizedBox(
+                                              width:
+                                                  MediaQuery.of(context).size.width,
+                                              height: MediaQuery.of(context)
+                                                      .size
+                                                      .height *
+                                                  .40,
+                                              child: Column(
+                                                children: <Widget>[
+                                                  Row(
+                                                    mainAxisAlignment:
+                                                        MainAxisAlignment
+                                                            .spaceBetween,
+                                                    children: <Widget>[
+                                                      CupertinoButton(
+                                                        child: const Text('Cancel'),
+                                                        onPressed: () {
+                                                          Navigator.pop(context);
+                                                        },
+                                                      ),
+                                                      CupertinoButton(
+                                                        child: const Text('Done'),
+                                                        onPressed: () {
+                                                          setState(() {
+                                                            leavingDate =
+                                                                tempPickedDate!;
+                                                            leavingDateController
+                                                                    .text =
+                                                                DateUtil.dateToString(
+                                                                    leavingDate,
+                                                                    DateUtil
+                                                                        .DATE_FORMAT9)!;
+                                                          });
+                                                          Navigator.pop(context);
+                                                        },
+                                                      ),
+                                                    ],
+                                                  ),
+                                                  Expanded(
+                                                    child: CupertinoDatePicker(
+                                                      mode: CupertinoDatePickerMode
+                                                          .date,
+                                                      backgroundColor:
+                                                          Theme.of(context)
+                                                              .colorScheme
+                                                              .surface,
+                                                      dateOrder:
+                                                          DatePickerDateOrder.dmy,
+                                                      initialDateTime: initialDate,
+                                                      onDateTimeChanged:
+                                                          (DateTime newDate) {
+                                                        tempPickedDate = newDate;
+                                                      },
+                                                    ),
+                                                  ),
+                                                ],
+                                              ),
+                                            ),
+                                          );
+                                        },
+                                      );
+                                    },
+                                    decoration: InputDecoration(
+                                      labelText: "leaving Date",
+                                      suffix: Visibility(
+                                        visible: leavingDateController.text !=
+                                                null ||
+                                            leavingDateController.text.isNotEmpty,
+                                        child: GestureDetector(
+                                          onTap: () {
+                                            setState(() {
+                                              leavingDateController.clear();
+                                              leavingDate = null;
+                                            });
+                                          },
+                                          child: const Icon(Icons.clear),
+                                        ),
+                                      ),
+                                    ),
+                                    autovalidateMode: AutovalidateMode.disabled,
+                                    validator: (value) {
+                                      if (value == null) {
+                                        return "Please enter leaving date";
+                                      } else {
+                                        return null;
+                                      }
+                                    },
+                                  ),
+                                )
+                              ],
+                            ),
+                            const SizedBox(
+                              height: 10,
+                            ),
+                            Row(
+                              mainAxisAlignment: MainAxisAlignment.start,
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              mainAxisSize: MainAxisSize.min,
+                              children: <Widget>[
+                                Expanded(
+                                  child: TextFormField(
+                                    controller: startWorkingTimeController,
+                                    focusNode: startWorkingTimeFocusNode,
+                                    readOnly: true,
+                                    onTap: () async {
+                                      DateTime now = DateTime.now();
+                                      DateTime initialDateTime = DateTime(
+                                          now.year,
+                                          now.month,
+                                          now.day,
+                                          startWorkingTime!.hour,
+                                          startWorkingTime!.minute);
+                                      DateTime? tempPickedDateTime =
+                                          initialDateTime;
+
+                                      await showCupertinoModalPopup<void>(
+                                        context: context,
+                                        builder: (BuildContext context) {
+                                          return ColoredBox(
+                                            color: Theme.of(context)
+                                                .colorScheme
+                                                .surface,
+                                            child: SizedBox(
+                                              width:
+                                                  MediaQuery.of(context).size.width,
+                                              height: MediaQuery.of(context)
+                                                      .size
+                                                      .height *
+                                                  .40,
+                                              child: Column(
+                                                children: <Widget>[
+                                                  Row(
+                                                    mainAxisAlignment:
+                                                        MainAxisAlignment
+                                                            .spaceBetween,
+                                                    children: <Widget>[
+                                                      CupertinoButton(
+                                                        child: const Text('Cancel'),
+                                                        onPressed: () {
+                                                          setState(() {});
+                                                          Navigator.pop(context);
+                                                        },
+                                                      ),
+                                                      CupertinoButton(
+                                                        child: const Text('Done'),
+                                                        onPressed: () {
+                                                          startWorkingTime =
+                                                              TimeOfDay(
+                                                            hour: tempPickedDateTime
+                                                                    ?.hour ??
+                                                                0,
+                                                            minute:
+                                                                tempPickedDateTime
+                                                                        ?.minute ??
+                                                                    0,
+                                                          );
+                                                          startWorkingTimeController
+                                                                  .text =
+                                                              DateUtil.formatTimeOfDay(
+                                                                  startWorkingTime!,
+                                                                  DateUtil
+                                                                      .TIME_FORMAT2);
+                                                          setState(() {});
+
+                                                          Navigator.pop(context);
+                                                        },
+                                                      ),
+                                                    ],
+                                                  ),
+                                                  Expanded(
+                                                    child: CupertinoDatePicker(
+                                                      mode: CupertinoDatePickerMode
+                                                          .time,
+                                                      backgroundColor:
+                                                          Theme.of(context)
+                                                              .colorScheme
+                                                              .surface,
+                                                      initialDateTime:
+                                                          initialDateTime,
+                                                      onDateTimeChanged:
+                                                          (DateTime newDateTime) {
+                                                        tempPickedDateTime =
+                                                            newDateTime;
+                                                      },
+                                                    ),
+                                                  ),
+                                                ],
+                                              ),
+                                            ),
+                                          );
+                                        },
+                                      );
+                                    },
+                                    decoration: InputDecoration(
+                                      labelText: "Starting Shift Time",
+                                      suffix: Visibility(
+                                        visible: startWorkingTimeController.text !=
+                                                null ||
+                                            startWorkingTimeController
+                                                .text.isNotEmpty,
+                                        child: GestureDetector(
+                                          onTap: () async {
+                                            startWorkingTime = null;
+                                            startWorkingTimeController.clear();
+                                            setState(() {});
+                                          },
+                                          child: const Icon(Icons.clear),
+                                        ),
+                                      ),
+                                    ),
+                                    autovalidateMode:
+                                        AutovalidateMode.onUserInteraction,
+                                    validator: (value) {
+                                      if (value == null) {
+                                        return "Please enter start working time.";
+                                      } else {
+                                        return null;
+                                      }
+                                    },
+                                  ),
+                                )
+                              ],
+                            ),
+                            const SizedBox(
+                              height: 10,
+                            ),
+                            Row(
+                              mainAxisAlignment: MainAxisAlignment.start,
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              mainAxisSize: MainAxisSize.min,
+                              children: <Widget>[
+                                Expanded(
+                                  child: TextFormField(
+                                    controller: endWorkingTimeController,
+                                    focusNode: endWorkingTimeFocusNode,
+                                    readOnly: true,
+                                    onTap: () async {
+                                      DateTime now = DateTime.now();
+                                      DateTime initialDateTime = DateTime(
+                                          now.year,
+                                          now.month,
+                                          now.day,
+                                          endWorkingTime!.hour,
+                                          endWorkingTime!.minute);
+                                      DateTime? tempPickedDateTime =
+                                          initialDateTime;
+
+                                      await showCupertinoModalPopup<void>(
+                                        context: context,
+                                        builder: (BuildContext context) {
+                                          return ColoredBox(
+                                            color: Theme.of(context)
+                                                .colorScheme
+                                                .surface,
+                                            child: SizedBox(
+                                              width:
+                                                  MediaQuery.of(context).size.width,
+                                              height: MediaQuery.of(context)
+                                                      .size
+                                                      .height *
+                                                  .40,
+                                              child: Column(
+                                                children: <Widget>[
+                                                  Row(
+                                                    mainAxisAlignment:
+                                                        MainAxisAlignment
+                                                            .spaceBetween,
+                                                    children: <Widget>[
+                                                      CupertinoButton(
+                                                        child: const Text('Cancel'),
+                                                        onPressed: () {
+                                                          setState(() {});
+                                                          Navigator.pop(context);
+                                                        },
+                                                      ),
+                                                      CupertinoButton(
+                                                        child: const Text('Done'),
+                                                        onPressed: () async {
+                                                          endWorkingTime =
+                                                              TimeOfDay(
+                                                            hour: tempPickedDateTime
+                                                                    ?.hour ??
+                                                                0,
+                                                            minute:
+                                                                tempPickedDateTime
+                                                                        ?.minute ??
+                                                                    0,
+                                                          );
+                                                          endWorkingTimeController
+                                                                  .text =
+                                                              DateUtil.formatTimeOfDay(
+                                                                  endWorkingTime!,
+                                                                  DateUtil
+                                                                      .TIME_FORMAT2);
+                                                          setState(() {});
+
+                                                          Navigator.pop(context);
+                                                        },
+                                                      ),
+                                                    ],
+                                                  ),
+                                                  Expanded(
+                                                    child: CupertinoDatePicker(
+                                                      mode: CupertinoDatePickerMode
+                                                          .time,
+                                                      backgroundColor:
+                                                          Theme.of(context)
+                                                              .colorScheme
+                                                              .surface,
+                                                      initialDateTime:
+                                                          initialDateTime,
+                                                      onDateTimeChanged:
+                                                          (DateTime newDateTime) {
+                                                        tempPickedDateTime =
+                                                            newDateTime;
+                                                      },
+                                                    ),
+                                                  ),
+                                                ],
+                                              ),
+                                            ),
+                                          );
+                                        },
+                                      );
+                                    },
+                                    decoration: InputDecoration(
+                                      labelText: "Ending Shift Time",
+                                      suffix: Visibility(
+                                        visible:
+                                            endWorkingTimeController.text != null ||
+                                                endWorkingTimeController
+                                                    .text.isNotEmpty,
+                                        child: GestureDetector(
+                                          onTap: () async {
+                                            endWorkingTime = null;
+                                            endWorkingTimeController.clear();
+                                            setState(() {});
+                                          },
+                                          child: const Icon(Icons.clear),
+                                        ),
+                                      ),
+                                    ),
+                                    autovalidateMode:
+                                        AutovalidateMode.onUserInteraction,
+                                    validator: (value) {
+                                      if (value == null) {
+                                        return "Please enter end shift time.";
+                                      } else {
+                                        return null;
+                                      }
+                                    },
+                                  ),
+                                )
+                              ],
+                            ),
+                            const SizedBox(
+                              height: 10,
+                            ),
+                            ValueListenableBuilder<String>(
+                                valueListenable: totalWorkingTimeNotifier,
+                                builder: (context, totalWorkingTime, child) {
+                                  return Row(
+                                    mainAxisAlignment: MainAxisAlignment.start,
+                                    crossAxisAlignment: CrossAxisAlignment.start,
+                                    mainAxisSize: MainAxisSize.min,
+                                    children: <Widget>[
+                                      Expanded(
+                                        child: RichText(
+                                          text: TextSpan(
+                                            children: [
+                                              TextSpan(
+                                                text: 'Total Working time: ',
+                                                style: Theme.of(context)
+                                                    .textTheme
+                                                    .bodyMedium
+                                                    ?.copyWith(
+                                                    fontWeight: FontWeight.w700),
+                                              ),
+                                              TextSpan(
+                                                text:
+                                                '${totalWorkingTime}',
+                                                style: Theme.of(context)
+                                                    .textTheme
+                                                    .bodyMedium,
+                                              ),
+                                            ],
+                                          ),
+                                        ),
+                                      )
+                                    ],
+                                  );
+                                }
+                            ),
+                            const SizedBox(
+                              height: 10,
+                            ),
+                            Row(
+                              mainAxisAlignment: MainAxisAlignment.end,
+                              crossAxisAlignment: CrossAxisAlignment.center,
+                              mainAxisSize: MainAxisSize.min,
+                              children: <Widget>[
+                                Expanded(
+                                  child: ElevatedButton(
+                                    onPressed: () {
+                                      final isValid =
+                                          _formKey.currentState!.validate();
+                                      if (!isValid) {
+                                        return;
+                                      }
+                                      _formKey.currentState!.save();
+                                      final updatedEmployee = Employee(
+                                        id: employee.id,
+                                        name: nameController.text,
+                                        position: positionController.text,
+                                        phoneNumber: selectedCountryValue,
+                                        joiningDate: joiningDateController.text,
+                                        leavingDate: leavingDateController.text,
+                                        startWorkingTime:
+                                            startWorkingTimeController.text,
+                                        endWorkingTime:
+                                            endWorkingTimeController.text,
+                                      );
+                                      Constants.debugLog(EmployeeScreen,
+                                          "_showAddEmployeeDialog:Add:employee:${updatedEmployee.toString()}");
+                                      context
+                                          .read<EmployeeCubit>()
+                                          .updateEmployee(updatedEmployee);
+                                      Navigator.of(context).pop();
+                                    },
+                                    child: const Text('Update'),
+                                  ),
+                                )
+                              ],
+                            ),
+                          ],
+                        ),
+                      ),
                     ),
                   ),
                 ),
               ],
-            ),
-            Expanded(
-              child: Padding(
-                padding: const EdgeInsets.all(10.0),
-                child: SingleChildScrollView(
-                  child: Form(
-                    key: _formKey,
-                    child: Column(
-                      mainAxisAlignment: MainAxisAlignment.start,
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      mainAxisSize: MainAxisSize.min,
-                      children: [
-                        const SizedBox(
-                          height: 10,
-                        ),
-                        Row(
-                          mainAxisAlignment: MainAxisAlignment.start,
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          mainAxisSize: MainAxisSize.min,
-                          children: <Widget>[
-                            Expanded(
-                              child: TextFormField(
-                                controller: nameController,
-                                focusNode: nameFocusNode,
-                                validator: (value) {
-                                  if (value == null || value.isEmpty) {
-                                    return "Please enter name";
-                                  }
-                                  return null;
-                                },
-                                decoration:
-                                    const InputDecoration(labelText: 'Name'),
-                              ),
-                            ),
-                          ],
-                        ),
-                        const SizedBox(
-                          height: 10,
-                        ),
-                        Row(
-                          mainAxisAlignment: MainAxisAlignment.start,
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          mainAxisSize: MainAxisSize.min,
-                          children: <Widget>[
-                            Expanded(
-                              child: TextFormField(
-                                controller: positionController,
-                                decoration: const InputDecoration(
-                                    labelText: 'Position'),
-                                validator: (value) {
-                                  if (value == null || value.isEmpty) {
-                                    return "Please enter position of employee";
-                                  }
-                                  return null;
-                                },
-                              ),
-                            ),
-                          ],
-                        ),
-                        const SizedBox(
-                          height: 10,
-                        ),
-                        Row(
-                          mainAxisAlignment: MainAxisAlignment.start,
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          mainAxisSize: MainAxisSize.min,
-                          children: <Widget>[
-                            Expanded(
-                              child: PhoneNumberTextFormField(
-                                controller: phoneNumberController,
-                                focusNode: phoneNumberFocusNode,
-                                showDropdownIcon: true,
-                                showCountryFlag: true,
-                                textInputAction: TextInputAction.done,
-                                decoration: const InputDecoration(
-                                  contentPadding: EdgeInsets.all(9),
-                                  isDense: true,
-                                  labelText: "Phone Number",
-                                  hintText: "Enter your phone number",
-                                ),
-                                onCountryChanged: (Country country) {
-                                  Constants.debugLog(EmployeeScreen,
-                                      'Country changed to: ' + country.name);
-                                  selectedCountryValue =
-                                      "+${country.phoneCode} ${phoneNumberController.text}";
-                                  setState(() {});
-                                },
-                                autovalidateMode:
-                                    AutovalidateMode.onUserInteraction,
-                                invalidNumberMessage: AppLocalizations.of(
-                                            context)
-                                        ?.translate(StringValue
-                                            .common_common_phoneNumber_validator_error_msg) ??
-                                    "Please enter a valid phone number.",
-                                onChanged: (PhoneNumber? number) {
-                                  Constants.debugLog(
-                                      EmployeeScreen, "number:$number");
-                                  if (number == null ||
-                                      (number.isValidNumber() == false)) {
-                                    selectedCountryValue = "";
-                                  } else {
-                                    Constants.debugLog(
-                                        EmployeeScreen,
-                                        'countryISOCode: ' +
-                                            number.countryISOCode +
-                                            "\ncountryCode: " +
-                                            number.countryCode +
-                                            "\nNumber: " +
-                                            number.number);
-                                    selectedCountryValue =
-                                        "${number.countryCode} ${number.number}";
-
-                                    phoneNumberController.text =
-                                        "${number.number}";
-                                    setState(() {});
-                                  }
-                                },
-                                initialCountryCode:
-                                    selectedCountry?.isoCode ?? "IN",
-                                priorityList: [
-                                  CountryPickerUtils.getCountryByIsoCode('IN'),
-                                  CountryPickerUtils.getCountryByIsoCode('US'),
-                                ],
-                                onSubmitted: (String value) {
-                                  Future.microtask(() => FocusScope.of(context)
-                                      .requestFocus(new FocusNode()));
-                                },
-                              ),
-                            )
-                          ],
-                        ),
-                        const SizedBox(
-                          height: 10,
-                        ),
-                        Row(
-                          mainAxisAlignment: MainAxisAlignment.start,
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          mainAxisSize: MainAxisSize.min,
-                          children: <Widget>[
-                            Expanded(
-                              child: TextFormField(
-                                controller: joiningDateController,
-                                focusNode: joiningDateFocusNode,
-                                readOnly: true,
-                                onTap: () async {
-                                  DateTime? initialDate = joiningDate;
-                                  DateTime? tempPickedDate = initialDate;
-                                  await showCupertinoModalPopup<void>(
-                                    context: context,
-                                    builder: (BuildContext context) {
-                                      return ColoredBox(
-                                        color: Theme.of(context)
-                                            .colorScheme
-                                            .surface,
-                                        child: SizedBox(
-                                          width:
-                                              MediaQuery.of(context).size.width,
-                                          height: MediaQuery.of(context)
-                                                  .size
-                                                  .height *
-                                              .40,
-                                          child: Column(
-                                            children: <Widget>[
-                                              Row(
-                                                mainAxisAlignment:
-                                                    MainAxisAlignment
-                                                        .spaceBetween,
-                                                children: <Widget>[
-                                                  CupertinoButton(
-                                                    child: const Text('Cancel'),
-                                                    onPressed: () {
-                                                      Navigator.pop(context);
-                                                    },
-                                                  ),
-                                                  CupertinoButton(
-                                                    child: const Text('Done'),
-                                                    onPressed: () {
-                                                      setState(() {
-                                                        joiningDate =
-                                                            tempPickedDate!;
-                                                        joiningDateController
-                                                                .text =
-                                                            DateUtil.dateToString(
-                                                                joiningDate,
-                                                                DateUtil
-                                                                    .DATE_FORMAT9)!;
-                                                      });
-                                                      Navigator.pop(context);
-                                                    },
-                                                  ),
-                                                ],
-                                              ),
-                                              Expanded(
-                                                child: CupertinoDatePicker(
-                                                  mode: CupertinoDatePickerMode
-                                                      .date,
-                                                  backgroundColor:
-                                                      Theme.of(context)
-                                                          .colorScheme
-                                                          .surface,
-                                                  dateOrder:
-                                                      DatePickerDateOrder.dmy,
-                                                  initialDateTime: initialDate,
-                                                  onDateTimeChanged:
-                                                      (DateTime newDate) {
-                                                    tempPickedDate = newDate;
-                                                  },
-                                                ),
-                                              ),
-                                            ],
-                                          ),
-                                        ),
-                                      );
-                                    },
-                                  );
-                                },
-                                decoration: InputDecoration(
-                                  labelText: "Joining Date",
-                                  suffix: Visibility(
-                                    visible: joiningDateController.text !=
-                                            null ||
-                                        joiningDateController.text.isNotEmpty,
-                                    child: GestureDetector(
-                                      onTap: () {
-                                        setState(() {
-                                          joiningDateController.clear();
-                                          joiningDate = null;
-                                        });
-                                      },
-                                      child: const Icon(Icons.clear),
-                                    ),
-                                  ),
-                                ),
-                                autovalidateMode:
-                                    AutovalidateMode.onUserInteraction,
-                                validator: (value) {
-                                  if (value == null) {
-                                    return "Please enter join date";
-                                  } else {
-                                    return null;
-                                  }
-                                },
-                              ),
-                            )
-                          ],
-                        ),
-                        const SizedBox(
-                          height: 10,
-                        ),
-                        Row(
-                          mainAxisAlignment: MainAxisAlignment.start,
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          mainAxisSize: MainAxisSize.min,
-                          children: <Widget>[
-                            Expanded(
-                              child: TextFormField(
-                                controller: leavingDateController,
-                                focusNode: leavingDateFocusNode,
-                                readOnly: true,
-                                onTap: () async {
-                                  DateTime? initialDate = leavingDate;
-                                  DateTime? tempPickedDate = initialDate;
-                                  await showCupertinoModalPopup<void>(
-                                    context: context,
-                                    builder: (BuildContext context) {
-                                      return ColoredBox(
-                                        color: Theme.of(context)
-                                            .colorScheme
-                                            .surface,
-                                        child: SizedBox(
-                                          width:
-                                              MediaQuery.of(context).size.width,
-                                          height: MediaQuery.of(context)
-                                                  .size
-                                                  .height *
-                                              .40,
-                                          child: Column(
-                                            children: <Widget>[
-                                              Row(
-                                                mainAxisAlignment:
-                                                    MainAxisAlignment
-                                                        .spaceBetween,
-                                                children: <Widget>[
-                                                  CupertinoButton(
-                                                    child: const Text('Cancel'),
-                                                    onPressed: () {
-                                                      Navigator.pop(context);
-                                                    },
-                                                  ),
-                                                  CupertinoButton(
-                                                    child: const Text('Done'),
-                                                    onPressed: () {
-                                                      setState(() {
-                                                        leavingDate =
-                                                            tempPickedDate!;
-                                                        leavingDateController
-                                                                .text =
-                                                            DateUtil.dateToString(
-                                                                leavingDate,
-                                                                DateUtil
-                                                                    .DATE_FORMAT9)!;
-                                                      });
-                                                      Navigator.pop(context);
-                                                    },
-                                                  ),
-                                                ],
-                                              ),
-                                              Expanded(
-                                                child: CupertinoDatePicker(
-                                                  mode: CupertinoDatePickerMode
-                                                      .date,
-                                                  backgroundColor:
-                                                      Theme.of(context)
-                                                          .colorScheme
-                                                          .surface,
-                                                  dateOrder:
-                                                      DatePickerDateOrder.dmy,
-                                                  initialDateTime: initialDate,
-                                                  onDateTimeChanged:
-                                                      (DateTime newDate) {
-                                                    tempPickedDate = newDate;
-                                                  },
-                                                ),
-                                              ),
-                                            ],
-                                          ),
-                                        ),
-                                      );
-                                    },
-                                  );
-                                },
-                                decoration: InputDecoration(
-                                  labelText: "leaving Date",
-                                  suffix: Visibility(
-                                    visible: leavingDateController.text !=
-                                            null ||
-                                        leavingDateController.text.isNotEmpty,
-                                    child: GestureDetector(
-                                      onTap: () {
-                                        setState(() {
-                                          leavingDateController.clear();
-                                          leavingDate = null;
-                                        });
-                                      },
-                                      child: const Icon(Icons.clear),
-                                    ),
-                                  ),
-                                ),
-                                autovalidateMode: AutovalidateMode.disabled,
-                                validator: (value) {
-                                  if (value == null) {
-                                    return "Please enter leaving date";
-                                  } else {
-                                    return null;
-                                  }
-                                },
-                              ),
-                            )
-                          ],
-                        ),
-                        const SizedBox(
-                          height: 10,
-                        ),
-                        Row(
-                          mainAxisAlignment: MainAxisAlignment.start,
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          mainAxisSize: MainAxisSize.min,
-                          children: <Widget>[
-                            Expanded(
-                              child: TextFormField(
-                                controller: startWorkingTimeController,
-                                focusNode: startWorkingTimeFocusNode,
-                                readOnly: true,
-                                onTap: () async {
-                                  DateTime now = DateTime.now();
-                                  DateTime initialDateTime = DateTime(
-                                      now.year,
-                                      now.month,
-                                      now.day,
-                                      startWorkingTime!.hour,
-                                      startWorkingTime!.minute);
-                                  DateTime? tempPickedDateTime =
-                                      initialDateTime;
-
-                                  await showCupertinoModalPopup<void>(
-                                    context: context,
-                                    builder: (BuildContext context) {
-                                      return ColoredBox(
-                                        color: Theme.of(context)
-                                            .colorScheme
-                                            .surface,
-                                        child: SizedBox(
-                                          width:
-                                              MediaQuery.of(context).size.width,
-                                          height: MediaQuery.of(context)
-                                                  .size
-                                                  .height *
-                                              .40,
-                                          child: Column(
-                                            children: <Widget>[
-                                              Row(
-                                                mainAxisAlignment:
-                                                    MainAxisAlignment
-                                                        .spaceBetween,
-                                                children: <Widget>[
-                                                  CupertinoButton(
-                                                    child: const Text('Cancel'),
-                                                    onPressed: () {
-                                                      Navigator.pop(context);
-                                                    },
-                                                  ),
-                                                  CupertinoButton(
-                                                    child: const Text('Done'),
-                                                    onPressed: () {
-                                                      setState(() {
-                                                        startWorkingTime =
-                                                            TimeOfDay(
-                                                          hour:
-                                                              tempPickedDateTime
-                                                                      ?.hour ??
-                                                                  0,
-                                                          minute:
-                                                              tempPickedDateTime
-                                                                      ?.minute ??
-                                                                  0,
-                                                        );
-                                                        startWorkingTimeController
-                                                                .text =
-                                                            DateUtil.formatTimeOfDay(
-                                                                startWorkingTime!,
-                                                                DateUtil
-                                                                    .TIME_FORMAT2);
-                                                      });
-
-                                                      Navigator.pop(context);
-                                                    },
-                                                  ),
-                                                ],
-                                              ),
-                                              Expanded(
-                                                child: CupertinoDatePicker(
-                                                  mode: CupertinoDatePickerMode
-                                                      .time,
-                                                  backgroundColor:
-                                                      Theme.of(context)
-                                                          .colorScheme
-                                                          .surface,
-                                                  initialDateTime:
-                                                      initialDateTime,
-                                                  onDateTimeChanged:
-                                                      (DateTime newDateTime) {
-                                                    tempPickedDateTime =
-                                                        newDateTime;
-                                                  },
-                                                ),
-                                              ),
-                                            ],
-                                          ),
-                                        ),
-                                      );
-                                    },
-                                  );
-                                },
-                                decoration: InputDecoration(
-                                  labelText: "Starting Shift Time",
-                                  suffix: Visibility(
-                                    visible: startWorkingTimeController.text !=
-                                            null ||
-                                        startWorkingTimeController
-                                            .text.isNotEmpty,
-                                    child: GestureDetector(
-                                      onTap: () {
-                                        setState(() {
-                                          startWorkingTime = null;
-                                          startWorkingTimeController.clear();
-                                        });
-                                      },
-                                      child: const Icon(Icons.clear),
-                                    ),
-                                  ),
-                                ),
-                                autovalidateMode:
-                                    AutovalidateMode.onUserInteraction,
-                                validator: (value) {
-                                  if (value == null) {
-                                    return "Please enter start working time.";
-                                  } else {
-                                    return null;
-                                  }
-                                },
-                              ),
-                            )
-                          ],
-                        ),
-                        const SizedBox(
-                          height: 10,
-                        ),
-                        Row(
-                          mainAxisAlignment: MainAxisAlignment.start,
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          mainAxisSize: MainAxisSize.min,
-                          children: <Widget>[
-                            Expanded(
-                              child: TextFormField(
-                                controller: endWorkingTimeController,
-                                focusNode: endWorkingTimeFocusNode,
-                                readOnly: true,
-                                onTap: () async {
-                                  DateTime now = DateTime.now();
-                                  DateTime initialDateTime = DateTime(
-                                      now.year,
-                                      now.month,
-                                      now.day,
-                                      endWorkingTime!.hour,
-                                      endWorkingTime!.minute);
-                                  DateTime? tempPickedDateTime =
-                                      initialDateTime;
-
-                                  await showCupertinoModalPopup<void>(
-                                    context: context,
-                                    builder: (BuildContext context) {
-                                      return ColoredBox(
-                                        color: Theme.of(context)
-                                            .colorScheme
-                                            .surface,
-                                        child: SizedBox(
-                                          width:
-                                              MediaQuery.of(context).size.width,
-                                          height: MediaQuery.of(context)
-                                                  .size
-                                                  .height *
-                                              .40,
-                                          child: Column(
-                                            children: <Widget>[
-                                              Row(
-                                                mainAxisAlignment:
-                                                    MainAxisAlignment
-                                                        .spaceBetween,
-                                                children: <Widget>[
-                                                  CupertinoButton(
-                                                    child: const Text('Cancel'),
-                                                    onPressed: () {
-                                                      Navigator.pop(context);
-                                                    },
-                                                  ),
-                                                  CupertinoButton(
-                                                    child: const Text('Done'),
-                                                    onPressed: () {
-                                                      setState(() {
-                                                        endWorkingTime =
-                                                            TimeOfDay(
-                                                          hour:
-                                                              tempPickedDateTime
-                                                                      ?.hour ??
-                                                                  0,
-                                                          minute:
-                                                              tempPickedDateTime
-                                                                      ?.minute ??
-                                                                  0,
-                                                        );
-                                                        endWorkingTimeController
-                                                                .text =
-                                                            DateUtil.formatTimeOfDay(
-                                                                endWorkingTime!,
-                                                                DateUtil
-                                                                    .TIME_FORMAT2);
-                                                      });
-
-                                                      Navigator.pop(context);
-                                                    },
-                                                  ),
-                                                ],
-                                              ),
-                                              Expanded(
-                                                child: CupertinoDatePicker(
-                                                  mode: CupertinoDatePickerMode
-                                                      .time,
-                                                  backgroundColor:
-                                                      Theme.of(context)
-                                                          .colorScheme
-                                                          .surface,
-                                                  initialDateTime:
-                                                      initialDateTime,
-                                                  onDateTimeChanged:
-                                                      (DateTime newDateTime) {
-                                                    tempPickedDateTime =
-                                                        newDateTime;
-                                                  },
-                                                ),
-                                              ),
-                                            ],
-                                          ),
-                                        ),
-                                      );
-                                    },
-                                  );
-                                },
-                                decoration: InputDecoration(
-                                  labelText: "Ending Shift Time",
-                                  suffix: Visibility(
-                                    visible: startWorkingTimeController.text !=
-                                            null ||
-                                        startWorkingTimeController
-                                            .text.isNotEmpty,
-                                    child: GestureDetector(
-                                      onTap: () {
-                                        setState(() {
-                                          endWorkingTime = null;
-                                          endWorkingTimeController.clear();
-                                        });
-                                      },
-                                      child: const Icon(Icons.clear),
-                                    ),
-                                  ),
-                                ),
-                                autovalidateMode:
-                                    AutovalidateMode.onUserInteraction,
-                                validator: (value) {
-                                  if (value == null) {
-                                    return "Please enter end shift time.";
-                                  } else {
-                                    return null;
-                                  }
-                                },
-                              ),
-                            )
-                          ],
-                        ),
-                        const SizedBox(
-                          height: 10,
-                        ),
-                        Row(
-                          mainAxisAlignment: MainAxisAlignment.end,
-                          crossAxisAlignment: CrossAxisAlignment.center,
-                          mainAxisSize: MainAxisSize.min,
-                          children: <Widget>[
-                            Expanded(
-                              child: ElevatedButton(
-                                onPressed: () {
-                                  final updatedEmployee = Employee(
-                                    id: employee.id,
-                                    name: nameController.text,
-                                    position: positionController.text,
-                                    phoneNumber: selectedCountryValue,
-                                    joiningDate: joiningDateController.text,
-                                    leavingDate: leavingDateController.text,
-                                    startWorkingTime:
-                                        startWorkingTimeController.text,
-                                    endWorkingTime:
-                                        endWorkingTimeController.text,
-                                  );
-                                  Constants.debugLog(EmployeeScreen,
-                                      "_showAddEmployeeDialog:Add:employee:${updatedEmployee.toString()}");
-                                  context
-                                      .read<EmployeeCubit>()
-                                      .updateEmployee(updatedEmployee);
-                                  Navigator.of(context).pop();
-                                },
-                                child: const Text('Update'),
-                              ),
-                            )
-                          ],
-                        ),
-                      ],
-                    ),
-                  ),
-                ),
-              ),
-            ),
-          ],
+            );
+          }
         );
       },
     );

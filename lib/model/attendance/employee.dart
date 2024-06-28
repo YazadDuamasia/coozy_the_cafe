@@ -7,7 +7,7 @@ class Employee {
   String? leavingDate;
   String? startWorkingTime;
   String? endWorkingTime;
-  int? workingHours;
+  String? workingHours;
 
   Employee({
     this.id,

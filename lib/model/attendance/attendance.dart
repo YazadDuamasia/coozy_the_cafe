@@ -4,8 +4,8 @@ class Attendance {
   String? currentDate;
   String? checkIn;
   String? checkOut;
-  String? overTimeEnded;
-  int? overTimeDurationsInSeconds;
+  String? employeeWorkingDurations;
+  String? workingTimeDurations;
 
   Attendance({
     this.id,
@@ -13,8 +13,8 @@ class Attendance {
     this.currentDate,
     this.checkIn,
     this.checkOut,
-    this.overTimeEnded,
-    this.overTimeDurationsInSeconds,
+    this.employeeWorkingDurations,
+    this.workingTimeDurations,
   });
 
   factory Attendance.fromMap(Map<String, dynamic> json) => Attendance(
@@ -23,10 +23,11 @@ class Attendance {
         currentDate: json['currentDate'] != null ? json['currentDate'] : null,
         checkIn: json['checkIn'] != null ? json['checkIn'] : null,
         checkOut: json['checkOut'] != null ? json['checkOut'] : null,
-        overTimeEnded:
-            json['overTimeEnded'] != null ? json['overTimeEnded'] : null,
-        overTimeDurationsInSeconds: json['overTimeDurationsInSeconds'] != null
-            ? json['overTimeDurationsInSeconds']
+        employeeWorkingDurations: json['employeeWorkingDurations'] != null
+            ? json['employeeWorkingDurations']
+            : null,
+        workingTimeDurations: json['workingTimeDurations'] != null
+            ? json['workingTimeDurations']
             : null,
       );
 
@@ -36,12 +37,7 @@ class Attendance {
         'currentDate': currentDate,
         'checkIn': checkIn,
         'checkOut': checkOut,
-        'overTimeEnded': overTimeEnded,
-        'overTimeDurationsInSeconds': overTimeDurationsInSeconds,
+        'employeeWorkingDurations': employeeWorkingDurations,
+        'workingTimeDurations': workingTimeDurations,
       }..removeWhere((key, value) => value == null);
-
-  @override
-  String toString() {
-    return 'Attendance{id: $id, employeeId: $employeeId, currentDate: $currentDate, checkIn: $checkIn, checkOut: $checkOut, overTimeEnded: $overTimeEnded, overTimeDurationsInSeconds: $overTimeDurationsInSeconds}';
-  }
 }

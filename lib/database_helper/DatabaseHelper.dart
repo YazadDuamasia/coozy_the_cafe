@@ -263,7 +263,8 @@ class DatabaseHelper {
       joiningDate TEXT,
       leavingDate TEXT,
       startWorkingTime TEXT,
-      endWorkingTime TEXT
+      endWorkingTime TEXT,
+      workingHours TEXT
     )
   ''');
 
@@ -275,8 +276,8 @@ class DatabaseHelper {
       currentDate TEXT,
       checkIn TEXT,
       checkOut TEXT,
-      overTimeEnded TEXT,
-      overTimeDurationsInSeconds INTEGER,
+      employeeWorkingDurations TEXT,
+      workingTimeDurations TEXT,
       FOREIGN KEY (employeeId) REFERENCES $employeesTable (id)
     )
   ''');
