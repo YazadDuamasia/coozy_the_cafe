@@ -1,5 +1,5 @@
-import 'package:coozy_cafe/widgets/country_pickers/countries.dart';
-import 'package:coozy_cafe/widgets/country_pickers/country.dart';
+import 'package:coozy_the_cafe/widgets/country_pickers/countries.dart';
+import 'package:coozy_the_cafe/widgets/country_pickers/country.dart';
 
 class NumberTooLongException implements Exception {}
 
@@ -73,11 +73,11 @@ class PhoneNumber {
     }
 
     if (phoneNumber.startsWith('+')) {
-      return countryList.firstWhere((country) => phoneNumber
+      return globalCountryList.firstWhere((country) => phoneNumber
           .substring(1)
           .startsWith(country.phoneCode + country.regionCode));
     }
-    return countryList.firstWhere((country) =>
+    return globalCountryList.firstWhere((country) =>
         phoneNumber.startsWith(country.phoneCode + country.regionCode));
   }
 

@@ -1,6 +1,6 @@
-import 'package:coozy_cafe/utlis/components/constants.dart';
-import 'package:coozy_cafe/widgets/fliter_system_widget/props/filter_item_model.dart';
-import 'package:coozy_cafe/widgets/fliter_system_widget/props/filter_props.dart';
+import 'package:coozy_the_cafe/utlis/components/constants.dart';
+import 'package:coozy_the_cafe/widgets/fliter_system_widget/props/filter_item_model.dart';
+import 'package:coozy_the_cafe/widgets/fliter_system_widget/props/filter_props.dart';
 import 'package:flutter/material.dart';
 import 'package:syncfusion_flutter_core/theme.dart';
 import 'package:syncfusion_flutter_sliders/sliders.dart';

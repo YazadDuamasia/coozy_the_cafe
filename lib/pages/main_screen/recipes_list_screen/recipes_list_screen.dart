@@ -1,10 +1,10 @@
-import 'package:coozy_cafe/AppLocalization.dart';
-import 'package:coozy_cafe/bloc/bloc.dart';
-import 'package:coozy_cafe/model/recipe_model.dart';
-import 'package:coozy_cafe/pages/pages.dart';
-import 'package:coozy_cafe/repositories/components/restaurant_repository.dart';
-import 'package:coozy_cafe/utlis/utlis.dart';
-import 'package:coozy_cafe/widgets/pager/src/pager.dart';
+import 'package:coozy_the_cafe/AppLocalization.dart';
+import 'package:coozy_the_cafe/bloc/bloc.dart';
+import 'package:coozy_the_cafe/model/recipe_model.dart';
+import 'package:coozy_the_cafe/pages/pages.dart';
+import 'package:coozy_the_cafe/repositories/components/restaurant_repository.dart';
+import 'package:coozy_the_cafe/utlis/utlis.dart';
+import 'package:coozy_the_cafe/widgets/pager/src/pager.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -710,8 +710,9 @@ class _RecipesListScreenState extends State<RecipesListScreen> {
                         .servingsFilterOptionsList ??
                     [],
                 previousApplied: _getPreviousAppliedFilters(
-                    context.read<RecipesFullListCubit>().appliedFilterList,
-                    'servings'),
+                        context.read<RecipesFullListCubit>().appliedFilterList,
+                        'servings') ??
+                    [],
                 title: 'Servings',
                 filterKey: 'servings',
                 backgroundColor: Theme.of(context).colorScheme.background,
@@ -723,8 +724,9 @@ class _RecipesListScreenState extends State<RecipesListScreen> {
                         .cuisineFilterOptionsList ??
                     [],
                 previousApplied: _getPreviousAppliedFilters(
-                    context.read<RecipesFullListCubit>().appliedFilterList,
-                    'cuisine'),
+                        context.read<RecipesFullListCubit>().appliedFilterList,
+                        'cuisine') ??
+                    [],
                 title: 'Cuisine',
                 filterKey: 'cuisine',
                 backgroundColor: Theme.of(context).colorScheme.background,
@@ -736,8 +738,9 @@ class _RecipesListScreenState extends State<RecipesListScreen> {
                         .courseFilterOptionsList ??
                     [],
                 previousApplied: _getPreviousAppliedFilters(
-                    context.read<RecipesFullListCubit>().appliedFilterList,
-                    'course'),
+                        context.read<RecipesFullListCubit>().appliedFilterList,
+                        'course') ??
+                    [],
                 title: 'Course',
                 filterKey: 'course',
                 backgroundColor: Theme.of(context).colorScheme.background,
@@ -749,8 +752,9 @@ class _RecipesListScreenState extends State<RecipesListScreen> {
                         .dietFilterOptionsList ??
                     [],
                 previousApplied: _getPreviousAppliedFilters(
-                    context.read<RecipesFullListCubit>().appliedFilterList,
-                    'diet'),
+                        context.read<RecipesFullListCubit>().appliedFilterList,
+                        'diet') ??
+                    [],
                 title: 'Diet',
                 filterKey: 'diet',
                 backgroundColor: Theme.of(context).colorScheme.background,
@@ -762,8 +766,9 @@ class _RecipesListScreenState extends State<RecipesListScreen> {
                         .totalCookingTimeFilterOptionsList ??
                     [],
                 previousApplied: _getPreviousAppliedFilters(
-                    context.read<RecipesFullListCubit>().appliedFilterList,
-                    'total_cooking_time'),
+                        context.read<RecipesFullListCubit>().appliedFilterList,
+                        'total_cooking_time') ??
+                    [],
                 title: 'Total cooking time',
                 filterKey: 'total_cooking_time',
                 backgroundColor: Theme.of(context).colorScheme.background,
@@ -780,8 +785,9 @@ class _RecipesListScreenState extends State<RecipesListScreen> {
                         .cookingTimeFilterOptionsList ??
                     [],
                 previousApplied: _getPreviousAppliedFilters(
-                    context.read<RecipesFullListCubit>().appliedFilterList,
-                    'cooking_time'),
+                        context.read<RecipesFullListCubit>().appliedFilterList,
+                        'cooking_time') ??
+                    [],
                 title: 'Cooking Time',
                 filterKey: 'cooking_time',
                 backgroundColor: Theme.of(context).colorScheme.background,
@@ -795,37 +801,54 @@ class _RecipesListScreenState extends State<RecipesListScreen> {
               FilterListModel(
                   type: FilterType.DatePicker,
                   filterOptions: [],
-                  previousApplied: [],
+                  previousApplied: _getPreviousAppliedFilters(
+                          context
+                              .read<RecipesFullListCubit>()
+                              .appliedFilterList,
+                          'cooking_date_time') ??
+                      [],
                   title: 'Date',
-                  filterKey: 'date_time',
-                  backgroundColor: Theme.of(context).colorScheme.background,
-                  datePickerDateOrder: DatePickerDateOrder.dmy,
-                  initialDate: DateUtil.dateToString(
-                      DateTime.now(), DateUtil.DATE_FORMAT9),
+                  filterKey: 'cooking_date_time',
                   inputDateFormat: DateFormat(DateUtil.DATE_FORMAT9),
+                  datePickerDateOrder: DatePickerDateOrder.dmy,
+                  pickerMode: CupertinoDatePickerMode.date,
+                  initialDate:
+                      _getInitialDate("date_time", DateUtil.DATE_FORMAT9),
                   minimumDate: DateUtil.simpleDateFormatChanger(
-                      DateTime.now(), DateUtil.DATE_FORMAT9),
+                      DateTime(DateTime.now().year - 100, 31, 24),
+                      DateUtil.DATE_FORMAT9),
                   maximumDate: DateUtil.simpleDateFormatChanger(
                       DateTime(DateTime.now().year + 100, 31, 24),
                       DateUtil.DATE_FORMAT9),
+                  backgroundColor: Theme.of(context).colorScheme.background,
                   labelText: "Date Picker",
                   hintText: "Please Enter date"),
               FilterListModel(
                   type: FilterType.TimePicker,
                   filterOptions: [],
-                  previousApplied: [],
+                  previousApplied: _getPreviousAppliedFilters(
+                          context
+                              .read<RecipesFullListCubit>()
+                              .appliedFilterList,
+                          'time') ??
+                      [],
                   title: 'Time',
                   filterKey: 'time',
                   backgroundColor: Theme.of(context).colorScheme.background,
-                  initialDate: DateUtil.dateToString(
-                      DateTime.now(), DateUtil.TIME_FORMAT1),
+                  initialDate: _getInitialDate("time", DateUtil.TIME_FORMAT1),
+                  pickerMode: CupertinoDatePickerMode.time,
                   inputDateFormat: DateFormat(DateUtil.TIME_FORMAT1),
                   labelText: "Time Picker",
                   hintText: "Please Enter time"),
               FilterListModel(
                   type: FilterType.RangeDatePicker,
                   filterOptions: [],
-                  previousApplied: [],
+                  previousApplied: _getPreviousAppliedFilters(
+                          context
+                              .read<RecipesFullListCubit>()
+                              .appliedFilterList,
+                          'range_date') ??
+                      [],
                   title: 'RangeDate',
                   filterKey: 'range_date',
                   helpText: "Please select date",
@@ -838,7 +861,12 @@ class _RecipesListScreenState extends State<RecipesListScreen> {
               FilterListModel(
                   type: FilterType.RangeTimePicker,
                   filterOptions: [],
-                  previousApplied: [],
+                  previousApplied: _getPreviousAppliedFilters(
+                          context
+                              .read<RecipesFullListCubit>()
+                              .appliedFilterList,
+                          'range_time') ??
+                      [],
                   title: 'Range Time',
                   filterKey: 'range_time',
                   helpText: "Please select time",
@@ -866,7 +894,7 @@ class _RecipesListScreenState extends State<RecipesListScreen> {
     );
   }
 
-  List<FilterItemModel> _getPreviousAppliedFilters(
+  List<FilterItemModel>? _getPreviousAppliedFilters(
       List<AppliedFilterModel>? appliedFilterList, String filterKey) {
     if (appliedFilterList == null || appliedFilterList.isEmpty) {
       return [];
@@ -880,6 +908,30 @@ class _RecipesListScreenState extends State<RecipesListScreen> {
         return [];
       } else {
         return previousFilter.applied;
+      }
+    }
+  }
+
+  String? _getInitialDate(String? filterKey, String? dateFormat) {
+    List<FilterItemModel>? previousData = _getPreviousAppliedFilters(
+            context.read<RecipesFullListCubit>().appliedFilterList,
+            "$filterKey") ??
+        [];
+
+    if (previousData == null || previousData.isEmpty) {
+      return DateFormat(dateFormat ?? DateUtil.DATE_FORMAT11)
+          .tryParse(DateTime.now().toIso8601String())
+          ?.toIso8601String();
+    } else {
+      var currentData = previousData.first.filterKey;
+      if (currentData == null || currentData.isEmpty) {
+        return DateFormat(dateFormat ?? DateUtil.DATE_FORMAT11)
+            .tryParse(DateTime.now().toIso8601String())
+            ?.toIso8601String();
+      } else {
+        return DateFormat(dateFormat ?? DateUtil.DATE_FORMAT11)
+            .tryParse(previousData.first.filterKey ?? DateTime.now())
+            ?.toIso8601String();
       }
     }
   }

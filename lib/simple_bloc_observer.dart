@@ -1,4 +1,5 @@
-import 'package:coozy_cafe/utlis/components/constants.dart';
+
+import 'package:coozy_the_cafe/utlis/components/constants.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
 class SimpleBlocObserver extends BlocObserver {

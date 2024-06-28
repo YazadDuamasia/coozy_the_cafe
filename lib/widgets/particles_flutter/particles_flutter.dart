@@ -1,5 +1,5 @@
 import 'dart:math';
-import 'package:coozy_cafe/widgets/particles_flutter/component/painter.dart';
+import 'package:coozy_the_cafe/widgets/particles_flutter/component/painter.dart';
 import 'package:flutter/material.dart';
 
 class CircularParticle extends StatefulWidget {

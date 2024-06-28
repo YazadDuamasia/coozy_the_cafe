@@ -1,8 +1,8 @@
-import 'package:coozy_cafe/utlis/components/constants.dart';
-import 'package:coozy_cafe/widgets/fliter_system_widget/props/applied_filter_model.dart';
-import 'package:coozy_cafe/widgets/fliter_system_widget/props/filter_item_model.dart';
-import 'package:coozy_cafe/widgets/fliter_system_widget/props/filter_list_model.dart';
-import 'package:coozy_cafe/widgets/fliter_system_widget/props/filter_props.dart';
+import 'package:coozy_the_cafe/utlis/components/constants.dart';
+import 'package:coozy_the_cafe/widgets/fliter_system_widget/props/applied_filter_model.dart';
+import 'package:coozy_the_cafe/widgets/fliter_system_widget/props/filter_item_model.dart';
+import 'package:coozy_the_cafe/widgets/fliter_system_widget/props/filter_list_model.dart';
+import 'package:coozy_the_cafe/widgets/fliter_system_widget/props/filter_props.dart';
 import 'package:equatable/equatable.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
@@ -231,9 +231,9 @@ class FilterCubit extends Cubit<FilterState> {
 }
 
 /*
-import 'package:coozy_cafe/widgets/fliter_system_widget/props/applied_filter_model.dart';
-import 'package:coozy_cafe/widgets/fliter_system_widget/props/filter_item_model.dart';
-import 'package:coozy_cafe/widgets/fliter_system_widget/props/filter_list_model.dart';
+import 'package:coozy_the_cafe/widgets/fliter_system_widget/props/applied_filter_model.dart';
+import 'package:coozy_the_cafe/widgets/fliter_system_widget/props/filter_item_model.dart';
+import 'package:coozy_the_cafe/widgets/fliter_system_widget/props/filter_list_model.dart';
 import 'package:rxdart/rxdart.dart';
 
 class FilterCubit {

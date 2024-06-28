@@ -1,15 +1,15 @@
 import 'dart:async';
 import 'dart:math';
 
-import 'package:coozy_cafe/AppLocalization.dart';
-import 'package:coozy_cafe/database_helper/DatabaseHelper.dart';
-import 'package:coozy_cafe/model/table_info_model.dart';
-import 'package:coozy_cafe/pages/main_screen/table_screen/table_update_dialog.dart';
-import 'package:coozy_cafe/repositories/components/restaurant_repository.dart';
-import 'package:coozy_cafe/utlis/components/constants.dart';
-import 'package:coozy_cafe/utlis/components/global.dart';
-import 'package:coozy_cafe/utlis/components/string_image_path.dart';
-import 'package:coozy_cafe/utlis/components/string_value.dart';
+import 'package:coozy_the_cafe/AppLocalization.dart';
+import 'package:coozy_the_cafe/database_helper/DatabaseHelper.dart';
+import 'package:coozy_the_cafe/model/table_info_model.dart';
+import 'package:coozy_the_cafe/pages/main_screen/table_screen/table_update_dialog.dart';
+import 'package:coozy_the_cafe/repositories/components/restaurant_repository.dart';
+import 'package:coozy_the_cafe/utlis/components/constants.dart';
+import 'package:coozy_the_cafe/utlis/components/global.dart';
+import 'package:coozy_the_cafe/utlis/components/string_image_path.dart';
+import 'package:coozy_the_cafe/utlis/components/string_value.dart';
 import 'package:equatable/equatable.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';

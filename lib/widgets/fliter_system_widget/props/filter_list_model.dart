@@ -1,5 +1,5 @@
-import 'package:coozy_cafe/widgets/fliter_system_widget/props/filter_item_model.dart';
-import 'package:coozy_cafe/widgets/fliter_system_widget/props/filter_props.dart';
+import 'package:coozy_the_cafe/widgets/fliter_system_widget/props/filter_item_model.dart';
+import 'package:coozy_the_cafe/widgets/fliter_system_widget/props/filter_props.dart';
 import 'package:equatable/equatable.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:intl/intl.dart';
@@ -44,6 +44,7 @@ class FilterListModel extends Equatable {
   String? textButtonCancel;
   String? textButtonOkay;
   String? helpText;
+  CupertinoDatePickerMode? pickerMode;
 
   FilterListModel({
     this.title,
@@ -58,6 +59,7 @@ class FilterListModel extends Equatable {
     this.minimumDate,
     this.maximumDate,
     this.datePickerDateOrder,
+    this.pickerMode,
     this.sliderTileThemeProps,
     this.backgroundColor,
     this.minuteInterval,
@@ -86,7 +88,8 @@ class FilterListModel extends Equatable {
       String? textButtonCancel,
       String? textButtonOkay,
       String? helpText,
-      DatePickerDateOrder? datePickerDateOrder}) {
+      DatePickerDateOrder? datePickerDateOrder,
+      CupertinoDatePickerMode? pickerMode}) {
     return FilterListModel(
         title: title ?? this.title,
         labelText: labelText ?? this.labelText,
@@ -106,6 +109,7 @@ class FilterListModel extends Equatable {
         textButtonCancel: textButtonCancel ?? this.textButtonCancel,
         textButtonOkay: textButtonOkay ?? this.textButtonOkay,
         helpText: helpText ?? this.helpText,
+        pickerMode: pickerMode ?? this.pickerMode,
         datePickerDateOrder: datePickerDateOrder ?? this.datePickerDateOrder);
   }
 
@@ -119,6 +123,7 @@ class FilterListModel extends Equatable {
         previousApplied,
         inputDateFormat,
         datePickerDateOrder,
+        pickerMode,
         initialDate,
         minimumDate,
         maximumDate,

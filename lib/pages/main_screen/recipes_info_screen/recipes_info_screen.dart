@@ -1,8 +1,8 @@
 import 'dart:io';
 
-import 'package:coozy_cafe/model/recipe_model.dart';
-import 'package:coozy_cafe/model/translator_language/translator_language.dart';
-import 'package:coozy_cafe/utlis/components/constants.dart';
+import 'package:coozy_the_cafe/model/recipe_model.dart';
+import 'package:coozy_the_cafe/model/translator_language/translator_language.dart';
+import 'package:coozy_the_cafe/utlis/components/constants.dart';
 import 'package:flutter/material.dart';
 import 'package:translator/translator.dart';
 import 'package:url_launcher/url_launcher.dart';

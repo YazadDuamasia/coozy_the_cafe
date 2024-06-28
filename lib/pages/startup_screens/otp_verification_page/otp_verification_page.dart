@@ -1,9 +1,9 @@
 import 'dart:async';
 import 'dart:convert';
 
-import 'package:coozy_cafe/routing/routs.dart';
-import 'package:coozy_cafe/utlis/utlis.dart';
-import 'package:coozy_cafe/widgets/widgets.dart';
+import 'package:coozy_the_cafe/routing/routs.dart';
+import 'package:coozy_the_cafe/utlis/utlis.dart';
+import 'package:coozy_the_cafe/widgets/widgets.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:pin_code_fields/pin_code_fields.dart';

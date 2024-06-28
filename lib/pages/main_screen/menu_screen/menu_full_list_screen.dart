@@ -1,6 +1,6 @@
-import 'package:coozy_cafe/model/menu_item.dart';
-import 'package:coozy_cafe/repositories/components/restaurant_repository.dart';
-import 'package:coozy_cafe/utlis/utlis.dart';
+import 'package:coozy_the_cafe/model/menu_item.dart';
+import 'package:coozy_the_cafe/repositories/components/restaurant_repository.dart';
+import 'package:coozy_the_cafe/utlis/utlis.dart';
 import 'package:flutter/material.dart';
 
 class MenuFullListScreen extends StatefulWidget {

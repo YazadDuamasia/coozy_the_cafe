@@ -1,20 +1,20 @@
 /// Main widget for filtering data
 /// Required parametter is FilterProps
 
-import 'package:coozy_cafe/utlis/utlis.dart';
-import 'package:coozy_cafe/widgets/datetime_picker_formfield/datetime_picker_formfield.dart';
-import 'package:coozy_cafe/widgets/fliter_system_widget/filter_style_mixin.dart';
-import 'package:coozy_cafe/widgets/fliter_system_widget/props/filter_item_model.dart';
-import 'package:coozy_cafe/widgets/fliter_system_widget/props/filter_list_model.dart';
-import 'package:coozy_cafe/widgets/fliter_system_widget/props/filter_props.dart';
-import 'package:coozy_cafe/widgets/fliter_system_widget/state/filter_cubit.dart';
-import 'package:coozy_cafe/widgets/fliter_system_widget/widgets/filter_checkbox_title.dart';
-import 'package:coozy_cafe/widgets/fliter_system_widget/widgets/filter_radio_box_title.dart';
-import 'package:coozy_cafe/widgets/fliter_system_widget/widgets/filter_range_slider_title.dart';
-import 'package:coozy_cafe/widgets/fliter_system_widget/widgets/filter_range_slider_vertical_title.dart';
-import 'package:coozy_cafe/widgets/fliter_system_widget/widgets/filter_slider_title.dart';
-import 'package:coozy_cafe/widgets/fliter_system_widget/widgets/filter_slider_vertical_title.dart';
-import 'package:coozy_cafe/widgets/fliter_system_widget/widgets/showDatePickerSheet.dart';
+import 'package:coozy_the_cafe/utlis/utlis.dart';
+import 'package:coozy_the_cafe/widgets/fliter_system_widget/filter_style_mixin.dart';
+import 'package:coozy_the_cafe/widgets/fliter_system_widget/props/filter_item_model.dart';
+import 'package:coozy_the_cafe/widgets/fliter_system_widget/props/filter_list_model.dart';
+import 'package:coozy_the_cafe/widgets/fliter_system_widget/props/filter_props.dart';
+import 'package:coozy_the_cafe/widgets/fliter_system_widget/state/filter_cubit.dart';
+import 'package:coozy_the_cafe/widgets/fliter_system_widget/widgets/datetime_picker_formfield.dart';
+import 'package:coozy_the_cafe/widgets/fliter_system_widget/widgets/filter_checkbox_title.dart';
+import 'package:coozy_the_cafe/widgets/fliter_system_widget/widgets/filter_radio_box_title.dart';
+import 'package:coozy_the_cafe/widgets/fliter_system_widget/widgets/filter_range_slider_title.dart';
+import 'package:coozy_the_cafe/widgets/fliter_system_widget/widgets/filter_range_slider_vertical_title.dart';
+import 'package:coozy_the_cafe/widgets/fliter_system_widget/widgets/filter_slider_title.dart';
+import 'package:coozy_the_cafe/widgets/fliter_system_widget/widgets/filter_slider_vertical_title.dart';
+import 'package:coozy_the_cafe/widgets/fliter_system_widget/widgets/showDatePickerSheet.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -470,7 +470,6 @@ class _FilterState extends State<Filter> with FilterStyleMixin {
                               (context, index) {
                                 final item = list[index];
                                 return FilterCheckboxTitle(
-                                  key: UniqueKey(),
                                   checkBoxTileThemeProps:
                                       themeProps?.checkBoxTileThemeProps,
                                   selected: _filterCubit.checked(
@@ -504,12 +503,11 @@ class _FilterState extends State<Filter> with FilterStyleMixin {
   }
 
   radioGroupWidget(FilterState state, ThemeProps? themeProps) {
+    final list = state.filters[state.activeFilterIndex].filterOptions;
     return SizedBox(
       width: MediaQuery.of(context).size.width,
-      child: Builder(
-        builder: (context) {
-          final list = state.filters[state.activeFilterIndex].filterOptions;
-
+      child: StatefulBuilder(
+        builder: (context, setState) {
           return Column(
             mainAxisAlignment: MainAxisAlignment.start,
             crossAxisAlignment: CrossAxisAlignment.start,
@@ -667,7 +665,6 @@ class _FilterState extends State<Filter> with FilterStyleMixin {
       children: <Widget>[
         Expanded(
           child: FilterSliderTitle(
-            key: UniqueKey(),
             sliderTileThemeProps: sliderTileThemeProps,
             filterOptions: filterOptions,
             previousApplied: previousApplied,
@@ -708,7 +705,6 @@ class _FilterState extends State<Filter> with FilterStyleMixin {
       children: <Widget>[
         Expanded(
           child: FilterVerticalSliderTitle(
-            key: UniqueKey(),
             sliderTileThemeProps: sliderTileThemeProps,
             filterOptions: filterOptions,
             previousApplied: previousApplied,
@@ -762,7 +758,6 @@ class _FilterState extends State<Filter> with FilterStyleMixin {
       children: <Widget>[
         Expanded(
           child: FilterRangerSliderTitle(
-            key: UniqueKey(),
             sliderTileThemeProps: sliderTileThemeProps,
             filterOptions: filterOptions,
             previousApplied: previousApplied,
@@ -824,7 +819,6 @@ class _FilterState extends State<Filter> with FilterStyleMixin {
       children: <Widget>[
         Expanded(
           child: FilterVerticalRangerSliderTitle(
-            key: UniqueKey(),
             sliderTileThemeProps: sliderTileThemeProps,
             filterOptions: filterOptions,
             previousApplied: previousApplied,
@@ -852,49 +846,52 @@ class _FilterState extends State<Filter> with FilterStyleMixin {
   }
 
   datePickerWidget(FilterState state, ThemeProps? themeProps) {
-    final filterOptions = state.filters[state.activeFilterIndex].filterOptions;
-    final previousApplied =
+    final List<FilterItemModel>? filterOptions =
+        state.filters[state.activeFilterIndex].filterOptions;
+    List<FilterItemModel>? previousApplied =
         state.filters[state.activeFilterIndex].previousApplied;
-    final title = state.filters[state.activeFilterIndex].title ?? "";
-
-    final DateFormat inputDateFormat =
+    var filterKey = state.filters[state.activeFilterIndex].filterKey ?? "";
+    DateFormat? inputDateFormat =
         state.filters[state.activeFilterIndex].inputDateFormat ??
-            DateFormat("dd-MM-yyyy");
-    DateTime initialDate;
+            DateFormat(DateUtil.DATE_FORMAT9);
+    final title = state.filters[state.activeFilterIndex].title ?? "";
+    final labelText = state.filters[state.activeFilterIndex].labelText ?? "";
+    final hintText = state.filters[state.activeFilterIndex].hintText ?? "";
+    final helpText = state.filters[state.activeFilterIndex].helpText ?? "";
+    final textButtonOkay =
+        state.filters[state.activeFilterIndex].textButtonOkay ?? "Okay";
+    final textButtonCancel =
+        state.filters[state.activeFilterIndex].textButtonCancel ?? "Cancel";
 
     final minimumDate = state.filters[state.activeFilterIndex].minimumDate ??
         DateTime(DateTime.now().year - 150, 1, 1);
     final maximumDate = state.filters[state.activeFilterIndex].maximumDate ??
         DateTime(DateTime.now().year + 150, 1, 1);
-    final datePickerDateOrder =
+
+    final pickerMode = state.filters[state.activeFilterIndex].pickerMode ??
+        CupertinoDatePickerMode.date;
+
+    final backgroundColor =
+        state.filters[state.activeFilterIndex].backgroundColor ??
+            Theme.of(context).colorScheme.surface;
+
+    // final currentValue = filterOptions!.first.filterKey.toString();
+    DatePickerDateOrder? datePickerDateOrder =
         state.filters[state.activeFilterIndex].datePickerDateOrder ??
             DatePickerDateOrder.dmy;
-    final labelText = state.filters[state.activeFilterIndex].labelText ?? "";
-    final hintText = state.filters[state.activeFilterIndex].hintText ?? "";
-    var backgroundColor =
-        state.filters[state.activeFilterIndex].backgroundColor;
-    var textButtonCancel =
-        state.filters[state.activeFilterIndex].textButtonCancel;
-    var textButtonOkay = state.filters[state.activeFilterIndex].textButtonOkay;
 
-    String? initialDateValue;
+    DateTime? previousDate;
 
-    if (previousApplied == null || previousApplied.isEmpty) {
-      initialDate =
-          (state.filters[state.activeFilterIndex].initialDate == null ||
-                  state.filters[state.activeFilterIndex].initialDate!.isEmpty)
-              ? DateTime.now()
-              : DateUtil.stringToDate(
-                  state.filters[state.activeFilterIndex].initialDate!,
-                  inputDateFormat.pattern!);
-      initialDateValue = inputDateFormat.format(initialDate);
+    if(previousApplied == null || previousApplied.isEmpty) {
+      previousDate = inputDateFormat.tryParse(state.filters[state.activeFilterIndex].initialDate ??
+              "${DateTime.now().toIso8601String()}");
     } else {
-      initialDate = DateUtil.stringToDate(
-          previousApplied.first.filterKey!, inputDateFormat.pattern!);
-      initialDateValue = inputDateFormat.format(initialDate);
+      previousDate =
+          previousDate = inputDateFormat.tryParse(
+          "${DateTime.now().toIso8601String()}");
     }
-    Constants.debugLog(FilterWidget, "datePickerWidget");
     TextEditingController? textEditingController = new TextEditingController();
+
     return StatefulBuilder(
       builder: (context, setState) {
         return Column(
@@ -929,21 +926,55 @@ class _FilterState extends State<Filter> with FilterStyleMixin {
                       format: inputDateFormat,
                       autofocus: false,
                       onShowPicker: (context, currentValue) async {
-                        final date = await showDatePickerSheet(
+                        DateTime? selectedDate = await showDatePickerSheet(
                           context: context,
-                          initialDate: initialDate,
-                          pickerMode: CupertinoDatePickerMode.date,
+                          dateFormat: inputDateFormat,
+                          initialDate: previousDate ?? DateTime.now(),
+                          pickerMode: pickerMode,
                           dateOrder: datePickerDateOrder,
-                          backgroundColor: backgroundColor ??
-                              Theme.of(context).colorScheme.background,
-                          maximumDate: maximumDate,
+                          backgroundColor: backgroundColor,
                           minimumDate: minimumDate,
+                          maximumDate: maximumDate,
                           textButtonOkay: textButtonOkay,
                           textButtonCancel: textButtonCancel,
                         );
-                        return date;
+
+                        if (selectedDate == null) {
+                          print('Date selection canceled');
+                          context.read<FilterCubit>().onFilterItemCheck(null);
+                        } else {
+                          print('Selected Date: ${selectedDate.toIso8601String()}');
+                          FilterItemModel model = FilterItemModel(
+                              filterKey: inputDateFormat
+                                  .tryParse(selectedDate.toIso8601String())
+                                  ?.toIso8601String() ??
+                                  "",
+                              filterTitle: inputDateFormat
+                                  .tryParse(selectedDate.toIso8601String())
+                                  ?.toIso8601String() ??
+                                  "");
+                          context.read<FilterCubit>().onFilterItemCheck(model);
+                        }
+                        return selectedDate;
                       },
-                      initialValue: initialDate,
+                      onChanged: (DateTime? value) {
+                        print("datePickerWidget:${value?.toIso8601String()}");
+                        if (value == null) {
+                          context.read<FilterCubit>().onFilterItemCheck(null);
+                        } else {
+                          FilterItemModel model = FilterItemModel(
+                              filterKey: inputDateFormat
+                                      .tryParse(value.toIso8601String())
+                                      ?.toIso8601String() ??
+                                  "",
+                              filterTitle: inputDateFormat
+                                      .tryParse(value.toIso8601String())
+                                      ?.toIso8601String() ??
+                                  "");
+                          context.read<FilterCubit>().onFilterItemCheck(model);
+                        }
+                      },
+                      initialValue: previousDate,
                       autovalidateMode: AutovalidateMode.disabled,
                       controller: textEditingController,
                       decoration: InputDecoration(
@@ -986,22 +1017,6 @@ class _FilterState extends State<Filter> with FilterStyleMixin {
                       validator: (value) {
                         return null;
                       },
-                      onChanged: (DateTime? value) async {
-                        if (value == null) {
-                          context.read<FilterCubit>().onFilterItemCheck(null);
-                        } else {
-                          String? date = DateUtil.dateToString(
-                              value, inputDateFormat.pattern!);
-                          print("datePickerWidget:date:${date?.toString()}");
-
-                          FilterItemModel model = FilterItemModel(
-                              filterKey: date, filterTitle: "${date}");
-                          context.read<FilterCubit>().onFilterItemCheck(model);
-                        }
-                      },
-                      onFieldSubmitted: (value) {
-                        FocusScope.of(context).unfocus();
-                      },
                     ),
                   ),
                 ],
@@ -1040,12 +1055,12 @@ class _FilterState extends State<Filter> with FilterStyleMixin {
 
     if (previousApplied == null || previousApplied.isEmpty) {
       initialDate =
-          (state.filters[state.activeFilterIndex].initialDate == null ||
-                  state.filters[state.activeFilterIndex].initialDate!.isEmpty)
-              ? DateTime.now()
-              : DateUtil.stringToDate(
-                  state.filters[state.activeFilterIndex].initialDate!,
-                  inputDateFormat.pattern!);
+      (state.filters[state.activeFilterIndex].initialDate == null ||
+          state.filters[state.activeFilterIndex].initialDate!.isEmpty)
+          ? DateTime.now()
+          : DateUtil.stringToDate(
+          state.filters[state.activeFilterIndex].initialDate!,
+          inputDateFormat.pattern!);
       initialTime = DateUtil.dateTimeToTimeOfDay(initialDate);
       initialTimeValue = inputDateFormat.format(initialDate);
     } else {
@@ -1098,7 +1113,7 @@ class _FilterState extends State<Filter> with FilterStyleMixin {
                             backgroundColor: backgroundColor ??
                                 Theme.of(context).colorScheme.background,
                             minuteInterval: minuteInterval ?? 1,
-                            use24hFormat: use24hFormat,
+                            use24hFormat: use24hFormat!,
                             textButtonOkay: textButtonOkay,
                             textButtonCancel: textButtonCancel);
                         return DateTimeField.convert(time);
@@ -1162,6 +1177,7 @@ class _FilterState extends State<Filter> with FilterStyleMixin {
       },
     );
   }
+
 
   rangeDatePickerWidget(FilterState state, ThemeProps? themeProps) {
     final filterOptions = state.filters[state.activeFilterIndex].filterOptions;
@@ -1360,7 +1376,7 @@ class _FilterState extends State<Filter> with FilterStyleMixin {
       final initialDate = state.filters[state.activeFilterIndex].initialDate;
       if (initialDate != null && initialDate.isNotEmpty) {
         final startDate =
-            DateUtil.stringToDate(initialDate, inputDateFormat.pattern!);
+        DateUtil.stringToDate(initialDate, inputDateFormat.pattern!);
         initialDateRange = DateTimeRange(
             start: startDate, end: startDate.add(const Duration(hours: 1)));
       } else {
@@ -1419,18 +1435,18 @@ class _FilterState extends State<Filter> with FilterStyleMixin {
                     child: GestureDetector(
                       onTap: () async {
                         final DateTimeRange? picked =
-                            await showTimeRangePickerDialog(
-                                context: context,
-                                initialDateRange: initialDateRange,
-                                firstDate: minimumDate,
-                                lastDate: maximumDate,
-                                cancelText: textButtonCancel,
-                                confirmText: textButtonOkay,
-                                helpText: helpText);
+                        await showTimeRangePickerDialog(
+                            context: context,
+                            initialDateRange: initialDateRange,
+                            firstDate: minimumDate,
+                            lastDate: maximumDate,
+                            cancelText: textButtonCancel,
+                            confirmText: textButtonOkay,
+                            helpText: helpText);
                         if (picked != null && picked != initialDateRange) {
                           initialDateRange = picked;
                           textEditingController.text =
-                              "${inputDateFormat.format(picked.start)} - ${inputDateFormat.format(picked.end)}";
+                          "${inputDateFormat.format(picked.start)} - ${inputDateFormat.format(picked.end)}";
 
                           FilterItemModel startModel = FilterItemModel(
                               filterKey: inputDateFormat.format(picked.start),
@@ -1458,18 +1474,18 @@ class _FilterState extends State<Filter> with FilterStyleMixin {
                             hintText: hintText,
                             suffixIcon: textEditingController.text.isNotEmpty
                                 ? IconButton(
-                                    icon: const Icon(Icons.close),
-                                    onPressed: () async {
-                                      setState(() {
-                                        textEditingController.clear();
-                                        initialDateRange = null;
-                                        context
-                                            .read<FilterCubit>()
-                                            .onFilterItemCheck(null);
-                                      });
-                                      state(() {});
-                                    },
-                                  )
+                              icon: const Icon(Icons.close),
+                              onPressed: () async {
+                                setState(() {
+                                  textEditingController.clear();
+                                  initialDateRange = null;
+                                  context
+                                      .read<FilterCubit>()
+                                      .onFilterItemCheck(null);
+                                });
+                                state(() {});
+                              },
+                            )
                                 : null,
                             border: OutlineInputBorder(
                               borderSide: BorderSide(
@@ -1538,7 +1554,6 @@ class _FilterState extends State<Filter> with FilterStyleMixin {
       helpText: helpText,
     );
   }
-
   Future<DateTimeRange?> showTimeRangePickerDialog({
     required BuildContext context,
     DateTimeRange? initialDateRange,

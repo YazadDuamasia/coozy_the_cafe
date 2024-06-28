@@ -1,7 +1,7 @@
-import 'package:coozy_cafe/widgets/country_pickers/countries.dart';
-import 'package:coozy_cafe/widgets/country_pickers/country.dart';
-import 'package:coozy_cafe/widgets/country_pickers/utils/typedefs.dart';
-import 'package:coozy_cafe/widgets/country_pickers/utils/utils.dart';
+import 'package:coozy_the_cafe/widgets/country_pickers/countries.dart';
+import 'package:coozy_the_cafe/widgets/country_pickers/country.dart';
+import 'package:coozy_the_cafe/widgets/country_pickers/utils/typedefs.dart';
+import 'package:coozy_the_cafe/widgets/country_pickers/utils/utils.dart';
 import 'package:flutter/cupertino.dart';
 import 'dart:core';
 
@@ -112,7 +112,7 @@ class _CupertinoCountryPickerState extends State<CountryPickerCupertino> {
     super.initState();
 
     _countries =
-        countryList.where(widget.itemFilter ?? acceptAllCountries).toList();
+        globalCountryList.where(widget.itemFilter ?? acceptAllCountries).toList();
 
     if (widget.sortComparator != null) {
       _countries.sort(widget.sortComparator);

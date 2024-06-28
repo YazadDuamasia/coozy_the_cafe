@@ -1,13 +1,13 @@
 import 'dart:ui';
 
-import 'package:coozy_cafe/AppLocalization.dart';
-import 'package:coozy_cafe/bloc/bloc.dart';
-import 'package:coozy_cafe/bloc_providers.dart';
-import 'package:coozy_cafe/config/config.dart';
-import 'package:coozy_cafe/model/language_model/language_model.dart';
-import 'package:coozy_cafe/routing/routs.dart';
-import 'package:coozy_cafe/simple_bloc_observer.dart';
-import 'package:coozy_cafe/utlis/utlis.dart';
+import 'package:coozy_the_cafe/AppLocalization.dart';
+import 'package:coozy_the_cafe/bloc/bloc.dart';
+import 'package:coozy_the_cafe/bloc_providers.dart';
+import 'package:coozy_the_cafe/config/config.dart';
+import 'package:coozy_the_cafe/model/language_model/language_model.dart';
+import 'package:coozy_the_cafe/routing/routs.dart';
+import 'package:coozy_the_cafe/simple_bloc_observer.dart';
+import 'package:coozy_the_cafe/utlis/utlis.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -45,7 +45,12 @@ class _MyAppState extends State<MyApp> {
   @override
   Widget build(BuildContext context) {
     final List<LanguageModel> languages = LanguageModel.getLanguages();
+    // Retrieves the default theme for the platform
+    //TextTheme textTheme = Theme.of(context).textTheme;
 
+    // Use with Google Fonts package to use downloadable fonts
+    TextTheme textTheme = createTextTheme(context, "Poppins", "Poppins");
+    MaterialTheme theme = MaterialTheme(textTheme);
     return MultiBlocProvider(
       providers: blocProviders,
       child: BlocConsumer<ThemeCubit, ThemeState>(
@@ -56,74 +61,18 @@ class _MyAppState extends State<MyApp> {
             child: MaterialApp(
               title: Constants.appName,
               debugShowCheckedModeBanner: false,
-              theme: ThemeData(
-                useMaterial3: true,
-                colorScheme: AppColor.lightColorScheme,
-                fontFamily: "Sono",
-                appBarTheme: AppBarTheme(
-                  centerTitle: false,
-                  titleTextStyle:
-                      Theme.of(context).textTheme.titleLarge!.copyWith(
-                            color: Colors.white,
-                          ),
-                  backgroundColor: AppColor.lightColorScheme.primary,
-                  iconTheme: const IconThemeData(
-                    color: Colors.white,
-                    // Set the default color for the leading icon
-                    size: 24.0, // Set the default size for the leading icon
-                  ),
-                  actionsIconTheme: const IconThemeData(
-                    color: Colors.white,
-                    // Set the default color for the leading icon
-                    size: 24.0, // Set the default size for the leading icon
-                  ),
-                ),
-                visualDensity: VisualDensity.adaptivePlatformDensity,
-                brightness: Brightness.light,
-                textSelectionTheme: TextSelectionThemeData(
-                  cursorColor: Theme.of(context).colorScheme.primary,
-                  selectionColor:
-                      Theme.of(context).primaryColor.withOpacity(0.7),
-                  selectionHandleColor: Theme.of(context).primaryColor,
-                ),
-              ),
-              darkTheme: ThemeData(
-                useMaterial3: true,
-                colorScheme: AppColor.darkColorScheme,
-                fontFamily: "Sono",
-                appBarTheme: AppBarTheme(
-                  centerTitle: false,
-                  titleTextStyle:
-                      Theme.of(context).textTheme.headlineSmall!.copyWith(
-                            color: Colors.white,
-                          ),
-                  backgroundColor: AppColor.darkColorScheme.primary,
-                  iconTheme: const IconThemeData(
-                    color: Colors.white,
-                    // Set the default color for the leading icon
-                    size: 24.0, // Set the default size for the leading icon
-                  ),
-                  actionsIconTheme: const IconThemeData(
-                    color: Colors.white,
-                    // Set the default color for the leading icon
-                    size: 24.0, // Set the default size for the leading icon
-                  ),
-                ),
-                visualDensity: VisualDensity.adaptivePlatformDensity,
-                textSelectionTheme: TextSelectionThemeData(
-                  cursorColor: Theme.of(context).colorScheme.primary,
-                  selectionColor:
-                      Theme.of(context).primaryColor.withOpacity(0.7),
-                  selectionHandleColor: Theme.of(context).primaryColor,
-                ),
-                brightness: Brightness.dark,
-              ),
+              theme: theme.light(),
+              darkTheme: theme.dark(),
+              highContrastDarkTheme: theme.darkHighContrast(),
+              highContrastTheme: theme.lightHighContrast(),
+              themeMode: state.themeMode,
               // themeAnimationCurve: Curves.linear,
               // themeAnimationDuration: const Duration(seconds: 2),
               builder: (context, child) {
                 return Theme(
                   data: Theme.of(context).copyWith(
                     inputDecorationTheme: InputDecorationTheme(
+                      contentPadding: const EdgeInsets.only(left: 10, right: 10, bottom: 5, top: 5),
                       border: OutlineInputBorder(
                         borderSide: BorderSide(
                           color: Theme.of(context).colorScheme.primary,
@@ -132,7 +81,7 @@ class _MyAppState extends State<MyApp> {
                       ),
                       disabledBorder: OutlineInputBorder(
                         borderSide: BorderSide(
-                          color: Theme.of(context).disabledColor,
+                            color: Theme.of(context).disabledColor,
                         ),
                         borderRadius: BorderRadius.circular(5),
                       ),
@@ -167,7 +116,6 @@ class _MyAppState extends State<MyApp> {
                   child: child!,
                 );
               },
-              themeMode: state.themeMode,
               restorationScopeId: 'app',
               navigatorKey: navigatorKey,
               scrollBehavior: ScrollConfiguration.of(context).copyWith(

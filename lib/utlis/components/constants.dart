@@ -2,8 +2,8 @@ import 'dart:async';
 import 'dart:math' as math;
 
 import 'package:app_settings/app_settings.dart';
-import 'package:coozy_cafe/model/translator_language/translator_language.dart';
-import 'package:coozy_cafe/utlis/utlis.dart';
+import 'package:coozy_the_cafe/model/translator_language/translator_language.dart';
+import 'package:coozy_the_cafe/utlis/utlis.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/foundation.dart' show kDebugMode;
 import 'package:flutter/material.dart';
@@ -647,7 +647,7 @@ class Constants {
                     Expanded(
                       child: Text(
                         descriptions ?? "",
-                        style: Theme.of(context).textTheme.subtitle2!.copyWith(
+                        style: Theme.of(context).textTheme.titleSmall!.copyWith(
                               color: Theme.of(context).brightness ==
                                       Brightness.light
                                   ? Colors.white
@@ -843,8 +843,9 @@ class Constants {
     bool serviceEnabled;
     serviceEnabled = await Geolocator.isLocationServiceEnabled();
     if (!serviceEnabled) {
-      return await Geolocator.openLocationSettings().then((value) async{
-        return await getCurrentLocation(context: context, desiredAccuracy: desiredAccuracy);
+      return await Geolocator.openLocationSettings().then((value) async {
+        return await getCurrentLocation(
+            context: context, desiredAccuracy: desiredAccuracy);
       });
     }
 
@@ -913,8 +914,8 @@ class Constants {
       .map((data) => TranslatorLanguageModel.fromJson(data))
       .toList();
 
-  static void showLoadingDialog(BuildContext context) {
-    showDialog(
+  static Future<void> showLoadingDialog(BuildContext context) async {
+    await showDialog(
       context: context,
       barrierDismissible: false, // Prevents dismissing dialog on outside tap
       builder: (BuildContext context) {

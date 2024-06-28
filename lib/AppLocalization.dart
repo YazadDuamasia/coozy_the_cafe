@@ -1,8 +1,8 @@
 import 'dart:async' show Future;
 import 'dart:convert';
 
-import 'package:coozy_cafe/model/language_model/language_model.dart';
-import 'package:coozy_cafe/utlis/utlis.dart';
+import 'package:coozy_the_cafe/model/language_model/language_model.dart';
+import 'package:coozy_the_cafe/utlis/utlis.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 

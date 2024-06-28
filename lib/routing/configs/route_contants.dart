@@ -23,4 +23,6 @@ class RouteName {
   static const String recipesListScreenRoute="/RecipesListScreen";
   static const String recipesInfoScreenRoute="/RecipesInfoScreen";
   static const String recipesBookmarkListScreenRoute="/RecipesBookmarkListScreen";
+
+  static const String employeeAttendanceScreenRoute="/EmployeeAttendanceScreen";
 }

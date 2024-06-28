@@ -1,11 +1,11 @@
 import 'dart:async';
 
-import 'package:coozy_cafe/widgets/country_pickers/countries.dart';
-import 'package:coozy_cafe/widgets/country_pickers/country.dart';
-import 'package:coozy_cafe/widgets/country_pickers/country_picker_dialog.dart';
-import 'package:coozy_cafe/widgets/country_pickers/utils/utils.dart';
-import 'package:coozy_cafe/widgets/phone_number_text_form_widget/helpers.dart';
-import 'package:coozy_cafe/widgets/phone_number_text_form_widget/phone_number.dart';
+import 'package:coozy_the_cafe/widgets/country_pickers/countries.dart';
+import 'package:coozy_the_cafe/widgets/country_pickers/country.dart';
+import 'package:coozy_the_cafe/widgets/country_pickers/country_picker_dialog.dart';
+import 'package:coozy_the_cafe/widgets/country_pickers/utils/utils.dart';
+import 'package:coozy_the_cafe/widgets/phone_number_text_form_widget/helpers.dart';
+import 'package:coozy_the_cafe/widgets/phone_number_text_form_widget/phone_number.dart';
 import 'package:flutter/foundation.dart' show kIsWeb;
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -55,8 +55,8 @@ class PhoneNumberTextFormField extends StatefulWidget {
   /// But, if `disableLengthCheck` is set to `true`, your validator will have to check phone number length itself.
   final FutureOr<String?> Function(PhoneNumber?)? validator;
 
-  /// {@macro flutter.widgets.editableText.keyboardType}
-  final TextInputType? keyboardType;
+  // /// {@macro flutter.widgets.editableText.keyboardType}
+  // final TextInputType? keyboardType;
 
   /// Controls the text being edited.
   ///
@@ -170,9 +170,6 @@ class PhoneNumberTextFormField extends StatefulWidget {
   /// The style use for the country dial code.
   final TextStyle? dropdownTextStyle;
 
-  /// {@macro flutter.widgets.editableText.inputFormatters}
-  final List<TextInputFormatter>? inputFormatters;
-
   /// The text that describes the search input field.
   ///
   /// When the input field is empty and unfocused, the label is displayed on top of the input field (i.e., at the same location on the screen where text may be entered in the input field).
@@ -255,7 +252,6 @@ class PhoneNumberTextFormField extends StatefulWidget {
     this.onTap,
     this.readOnly = false,
     this.initialValue,
-    this.keyboardType = TextInputType.phone,
     this.controller,
     this.focusNode,
     this.decoration = const InputDecoration(),
@@ -269,7 +265,6 @@ class PhoneNumberTextFormField extends StatefulWidget {
     this.onSaved,
     this.showDropdownIcon = true,
     this.dropdownDecoration = const BoxDecoration(),
-    this.inputFormatters,
     this.enabled = true,
     this.keyboardAppearance,
     this.searchText = 'Search country',
@@ -307,51 +302,55 @@ class _PhoneNumberTextFormFieldState extends State<PhoneNumberTextFormField> {
   @override
   void initState() {
     super.initState();
-    // _countryList = widget.countries ?? countryList;
-    _countryList = countryList;
+    // _countryList = widget.countryList ?? countryList;
+    if (widget.countryList == null || widget.countryList!.isEmpty) {
+      _countryList = globalCountryList;
+    } else {
+      _countryList =  widget.countryList!;
+    }
     filteredCountries = _countryList;
     number = widget.initialValue ?? '';
     if (widget.initialCountryCode == null && number.startsWith('+')) {
-      number = number.substring(1);
-      // parse initial value
-      _selectedCountry = countryList.firstWhere(
-          (country) => number.startsWith(country.fullCountryCode),
-          orElse: () => _countryList.first);
+    number = number.substring(1);
+    // parse initial value
+    _selectedCountry = globalCountryList.firstWhere(
+    (country) => number.startsWith(country.fullCountryCode),
+    orElse: () => _countryList.first);
 
-      // remove country code from the initial number value
-      number = number.replaceFirst(
-          RegExp("^${_selectedCountry.fullCountryCode}"), "");
+    // remove country code from the initial number value
+    number = number.replaceFirst(
+    RegExp("^${_selectedCountry.fullCountryCode}"), "");
     } else {
-      _selectedCountry = _countryList.firstWhere(
-          (item) => item.isoCode == (widget.initialCountryCode ?? 'US'),
-          orElse: () => _countryList.first);
+    _selectedCountry = _countryList.firstWhere(
+    (item) => item.isoCode == (widget.initialCountryCode ?? 'US'),
+    orElse: () => _countryList.first);
 
-      // remove country code from the initial number value
-      if (number.startsWith('+')) {
-        number = number.replaceFirst(
-            RegExp("^\\+${_selectedCountry.fullCountryCode}"), "");
-      } else {
-        number = number.replaceFirst(
-            RegExp("^${_selectedCountry.fullCountryCode}"), "");
-      }
+    // remove country code from the initial number value
+    if (number.startsWith('+')) {
+    number = number.replaceFirst(
+    RegExp("^\\+${_selectedCountry.fullCountryCode}"), "");
+    } else {
+    number = number.replaceFirst(
+    RegExp("^${_selectedCountry.fullCountryCode}"), "");
+    }
     }
 
     if (widget.autovalidateMode == AutovalidateMode.always) {
-      final initialPhoneNumber = PhoneNumber(
-        countryISOCode: _selectedCountry.isoCode,
-        countryCode: '+${_selectedCountry.phoneCode}',
-        number: widget.initialValue ?? '',
-      );
+    final initialPhoneNumber = PhoneNumber(
+    countryISOCode: _selectedCountry.isoCode,
+    countryCode: '+${_selectedCountry.phoneCode}',
+    number: widget.initialValue ?? '',
+    );
 
-      final value = widget.validator?.call(initialPhoneNumber);
+    final value = widget.validator?.call(initialPhoneNumber);
 
-      if (value is String) {
-        validatorMessage = value;
-      } else {
-        (value as Future).then((msg) {
-          validatorMessage = msg;
-        });
-      }
+    if (value is String) {
+    validatorMessage = value;
+    } else {
+    (value as Future).then((msg) {
+    validatorMessage = msg;
+    });
+    }
     }
   }
 
@@ -382,121 +381,149 @@ class _PhoneNumberTextFormFieldState extends State<PhoneNumberTextFormField> {
   Future<void> _openCountryPickerDialog() async {
     showDialog(
       context: context,
-      builder: (context) => Theme(
-        data: Theme.of(context),
-        child: CountryPickerDialog(
-          contentPadding: const EdgeInsets.all(8.0),
-          titlePadding: const EdgeInsets.all(8.0),
-          searchCursorColor: Theme.of(context).primaryColorLight,
-          searchInputDecoration: InputDecoration(
-            hintText: 'Search...',
-            label: const Text("Search"),
-            isDense: true,
-            prefixIcon: const Icon(
-              Icons.search,
-              size: 24,
-            ),
-            border: OutlineInputBorder(
-              borderSide: BorderSide(
-                color: Theme.of(context).colorScheme.primary,
-                width: 2,
-              ),
-              borderRadius: BorderRadius.circular(5),
-            ),
-            disabledBorder: OutlineInputBorder(
-              borderSide: BorderSide(
-                color: Theme.of(context).disabledColor,
-              ),
-              borderRadius: BorderRadius.circular(5),
-            ),
-            enabledBorder: OutlineInputBorder(
-              borderSide: BorderSide(
-                color: Theme.of(context).colorScheme.primary,
-              ),
-              borderRadius: BorderRadius.circular(5),
-            ),
-            focusedBorder: OutlineInputBorder(
-              borderSide: BorderSide(
-                color: Theme.of(context).colorScheme.primary,
-                width: 2,
-              ),
-              borderRadius: BorderRadius.circular(5),
-            ),
-            errorBorder: OutlineInputBorder(
-              borderSide:
-                  BorderSide(color: Theme.of(context).colorScheme.error),
-              borderRadius: BorderRadius.circular(5),
-            ),
-            focusedErrorBorder: OutlineInputBorder(
-              borderSide:
-                  BorderSide(color: Theme.of(context).colorScheme.error),
-              borderRadius: BorderRadius.circular(5),
-            ),
-          ),
-          isSearchable: true,
-          searchEmptyView: Padding(
-            padding: const EdgeInsets.only(
-                left: 20.0, right: 20.0, top: 10, bottom: 10),
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              crossAxisAlignment: CrossAxisAlignment.center,
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                Center(
-                  child: Container(
-                    child: Lottie.asset(
-                      "assets/lottie/country_location.json",
-                      repeat: true,
-                      alignment: Alignment.center,
-                      fit: BoxFit.fitHeight,
-                      height: MediaQuery.of(context).size.height * 0.30,
-                    ),
-                  ),
+      builder: (context) =>
+          Theme(
+            data: Theme.of(context),
+            child: CountryPickerDialog(
+              contentPadding: const EdgeInsets.all(8.0),
+              titlePadding: const EdgeInsets.all(8.0),
+              searchCursorColor: Theme
+                  .of(context)
+                  .primaryColorLight,
+              searchInputDecoration: InputDecoration(
+                hintText: 'Search...',
+                label: const Text("Search"),
+                isDense: true,
+                prefixIcon: const Icon(
+                  Icons.search,
+                  size: 24,
                 ),
-                const Row(
-                  mainAxisAlignment: MainAxisAlignment.start,
+                border: OutlineInputBorder(
+                  borderSide: BorderSide(
+                    color: Theme
+                        .of(context)
+                        .colorScheme
+                        .primary,
+                    width: 2,
+                  ),
+                  borderRadius: BorderRadius.circular(5),
+                ),
+                disabledBorder: OutlineInputBorder(
+                  borderSide: BorderSide(
+                    color: Theme
+                        .of(context)
+                        .disabledColor,
+                  ),
+                  borderRadius: BorderRadius.circular(5),
+                ),
+                enabledBorder: OutlineInputBorder(
+                  borderSide: BorderSide(
+                    color: Theme
+                        .of(context)
+                        .colorScheme
+                        .primary,
+                  ),
+                  borderRadius: BorderRadius.circular(5),
+                ),
+                focusedBorder: OutlineInputBorder(
+                  borderSide: BorderSide(
+                    color: Theme
+                        .of(context)
+                        .colorScheme
+                        .primary,
+                    width: 2,
+                  ),
+                  borderRadius: BorderRadius.circular(5),
+                ),
+                errorBorder: OutlineInputBorder(
+                  borderSide:
+                  BorderSide(color: Theme
+                      .of(context)
+                      .colorScheme
+                      .error),
+                  borderRadius: BorderRadius.circular(5),
+                ),
+                focusedErrorBorder: OutlineInputBorder(
+                  borderSide:
+                  BorderSide(color: Theme
+                      .of(context)
+                      .colorScheme
+                      .error),
+                  borderRadius: BorderRadius.circular(5),
+                ),
+              ),
+              isSearchable: true,
+              searchEmptyView: Padding(
+                padding: const EdgeInsets.only(
+                    left: 20.0, right: 20.0, top: 10, bottom: 10),
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
                   crossAxisAlignment: CrossAxisAlignment.center,
                   mainAxisSize: MainAxisSize.min,
                   children: [
-                    Expanded(
-                      child: Text("Please enter proper world name..",
-                          textAlign: TextAlign.center),
+                    Center(
+                      child: Container(
+                        child: Lottie.asset(
+                          "assets/lottie/country_location.json",
+                          repeat: true,
+                          alignment: Alignment.center,
+                          fit: BoxFit.fitHeight,
+                          height: MediaQuery
+                              .of(context)
+                              .size
+                              .height * 0.30,
+                        ),
+                      ),
+                    ),
+                    const Row(
+                      mainAxisAlignment: MainAxisAlignment.start,
+                      crossAxisAlignment: CrossAxisAlignment.center,
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        Expanded(
+                          child: Text("Please enter proper world name..",
+                              textAlign: TextAlign.center),
+                        ),
+                      ],
                     ),
                   ],
                 ),
-              ],
+              ),
+              title: Row(
+                children: [
+                  Flexible(
+                      child: Text('Select your phone code',
+                          textAlign: TextAlign.start,
+                          style: Theme
+                              .of(context)
+                              .textTheme
+                              .bodyMedium)),
+                ],
+              ),
+              onValuePicked: (country) async {
+                _selectedCountry = country;
+                widget.onCountryChanged?.call(country);
+                setState(() {});
+              },
+              itemBuilder: _buildDialogItem,
+              priorityList: widget.priorityList,
+              itemFilter: (country) {
+                // Check if widget.countryList is not null and contains the country
+                if (_countryList != null &&
+                    _countryList!.contains(country)) {
+                  return true;
+                }
+                // If neither widget.countryList nor widget.countries contains the country, exclude it
+                return false;
+              },
             ),
           ),
-          title: Row(
-            children: [
-              Flexible(
-                  child: Text('Select your phone code',
-                      textAlign: TextAlign.start,
-                      style: Theme.of(context).textTheme.bodyMedium)),
-            ],
-          ),
-          onValuePicked: (country) async {
-            _selectedCountry = country;
-            widget.onCountryChanged?.call(country);
-            setState(() {});
-          },
-          itemBuilder: _buildDialogItem,
-          priorityList: widget.priorityList,
-          itemFilter: (country) {
-            // Check if widget.countryList is not null and contains the country
-            if (widget.countryList != null && widget.countryList!.contains(country)) {
-              return true;
-            }
-            // If neither widget.countryList nor widget.countries contains the country, exclude it
-            return false;
-          },
-        ),
-      ),
     );
     if (mounted) setState(() {});
   }
 
-  Widget _buildDialogItem(Country country) => Row(
+  Widget _buildDialogItem(Country country) =>
+      Row(
         mainAxisAlignment: MainAxisAlignment.center,
         crossAxisAlignment: CrossAxisAlignment.center,
         mainAxisSize: MainAxisSize.min,
@@ -506,7 +533,10 @@ class _PhoneNumberTextFormFieldState extends State<PhoneNumberTextFormField> {
           Expanded(
             child: Text(
               country.name,
-              style: Theme.of(context).textTheme.titleMedium,
+              style: Theme
+                  .of(context)
+                  .textTheme
+                  .titleMedium,
             ),
           ),
           const SizedBox(width: 8.0),
@@ -518,7 +548,10 @@ class _PhoneNumberTextFormFieldState extends State<PhoneNumberTextFormField> {
   Widget build(BuildContext context) {
     return TextFormField(
       initialValue: (widget.controller == null) ? number : null,
-      keyboardType: widget.keyboardType ?? TextInputType.phone,
+      keyboardType:TextInputType.phone,
+      inputFormatters: <TextInputFormatter>[
+        FilteringTextInputFormatter.digitsOnly
+      ],
       autofillHints: widget.disableAutoFillHints
           ? null
           : [AutofillHints.telephoneNumberNational],
@@ -545,7 +578,7 @@ class _PhoneNumberTextFormFieldState extends State<PhoneNumberTextFormField> {
           PhoneNumber(
             countryISOCode: _selectedCountry.isoCode,
             countryCode:
-                '+${_selectedCountry.phoneCode}${_selectedCountry.regionCode}',
+            '+${_selectedCountry.phoneCode}${_selectedCountry.regionCode}',
             number: value!,
           ),
         );
@@ -567,7 +600,7 @@ class _PhoneNumberTextFormFieldState extends State<PhoneNumberTextFormField> {
         if (value == null || !isNumeric(value)) return validatorMessage;
         if (!widget.disableLengthCheck) {
           return value.length >= _selectedCountry.minLength &&
-                  value.length <= _selectedCountry.maxLength
+              value.length <= _selectedCountry.maxLength
               ? null
               : widget.invalidNumberMessage;
         }
@@ -575,7 +608,6 @@ class _PhoneNumberTextFormFieldState extends State<PhoneNumberTextFormField> {
         return validatorMessage;
       },
       maxLength: widget.disableLengthCheck ? null : _selectedCountry.maxLength,
-      inputFormatters: widget.inputFormatters,
       enabled: widget.enabled,
       keyboardAppearance: widget.keyboardAppearance,
       autofocus: widget.autofocus,
@@ -610,13 +642,15 @@ class _PhoneNumberTextFormFieldState extends State<PhoneNumberTextFormField> {
                 if (widget.showCountryFlag) ...[
                   kIsWeb
                       ? Image.asset(
-                          'assets/images/flags/${_selectedCountry.isoCode.toLowerCase()}.png',
-                          width: 32,
-                        )
+                    'assets/images/flags/${_selectedCountry.isoCode
+                        .toLowerCase()}.png',
+                    width: 32,
+                  )
                       : Image.asset(
-                          'assets/images/flags/${_selectedCountry.isoCode.toLowerCase()}.png',
-                          width: 32,
-                        ),
+                    'assets/images/flags/${_selectedCountry.isoCode
+                        .toLowerCase()}.png',
+                    width: 32,
+                  ),
                   const SizedBox(width: 10),
                 ],
                 FittedBox(

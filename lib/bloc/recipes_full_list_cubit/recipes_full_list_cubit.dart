@@ -1,10 +1,10 @@
 import 'dart:convert';
 
 import 'package:collection/collection.dart';
-import 'package:coozy_cafe/model/recipe_model.dart';
-import 'package:coozy_cafe/repositories/components/restaurant_repository.dart';
-import 'package:coozy_cafe/utlis/utlis.dart';
-import 'package:coozy_cafe/widgets/fliter_system_widget/filter_system.dart';
+import 'package:coozy_the_cafe/model/recipe_model.dart';
+import 'package:coozy_the_cafe/repositories/components/restaurant_repository.dart';
+import 'package:coozy_the_cafe/utlis/utlis.dart';
+import 'package:coozy_the_cafe/widgets/fliter_system_widget/filter_system.dart';
 import 'package:equatable/equatable.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -40,6 +40,13 @@ class RecipesFullListCubit extends Cubit<RecipesFullListState> {
   List<int?>? uniqueTotalCookingTime = [];
   List<FilterItemModel>? totalCookingTimeFilterOptionsList = [];
 
+  List<dynamic>? uniqueDate = [];
+  List<FilterItemModel>? dateFilterOptionsList = [];
+
+  List<dynamic>? uniqueTime = [];
+  List<FilterItemModel>? timeFilterOptionsList = [];
+
+
   List<AppliedFilterModel>? appliedFilterList = [];
 
   int? currentPage;
@@ -62,6 +69,12 @@ class RecipesFullListCubit extends Cubit<RecipesFullListState> {
       cookingTimeFilterOptionsList = [];
       uniqueTotalCookingTime = [];
       totalCookingTimeFilterOptionsList = [];
+
+      uniqueDate = [];
+      dateFilterOptionsList = [];
+
+      uniqueTime = [];
+      timeFilterOptionsList = [];
 
       // Replace this with your actual data loading logic
       List<RecipeModel>? data;
@@ -86,6 +99,11 @@ class RecipesFullListCubit extends Cubit<RecipesFullListState> {
         cookingTimeFilterOptionsList = [];
         uniqueTotalCookingTime = [];
         totalCookingTimeFilterOptionsList = [];
+        uniqueDate = [];
+        dateFilterOptionsList = [];
+
+        uniqueTime = [];
+        timeFilterOptionsList = [];
 
         currentPage = 1;
         currentItemsPerPage = 0;
@@ -555,6 +573,11 @@ class RecipesFullListCubit extends Cubit<RecipesFullListState> {
         cookingTimeFilterOptionsList = [];
         uniqueTotalCookingTime = [];
         totalCookingTimeFilterOptionsList = [];
+        uniqueDate = [];
+        dateFilterOptionsList = [];
+
+        uniqueTime = [];
+        timeFilterOptionsList = [];
         // Replace this with your actual data loading logic
         List<RecipeModel>? data = await RestaurantRepository().recipeList();
         recipeList = data;
@@ -573,6 +596,11 @@ class RecipesFullListCubit extends Cubit<RecipesFullListState> {
           cookingTimeFilterOptionsList = [];
           uniqueTotalCookingTime = [];
           totalCookingTimeFilterOptionsList = [];
+          uniqueDate = [];
+          dateFilterOptionsList = [];
+
+          uniqueTime = [];
+          timeFilterOptionsList = [];
 
           currentPage = 1;
           currentItemsPerPage = 0;
@@ -930,12 +958,7 @@ class RecipesFullListCubit extends Cubit<RecipesFullListState> {
                 _filterRecipesByCookingTime(filteredRecipes, filter.applied);
           }
           break;
-        case 'total_cooking_time':
-          if (filter.applied.isNotEmpty) {
-            filteredRecipes = _filterRecipesByCookingTotalTime(
-                filteredRecipes, filter.applied);
-          }
-          break;
+
         default:
           break;
       }

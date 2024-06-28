@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
-import 'package:coozy_cafe/widgets/country_pickers/country.dart';
-import 'package:coozy_cafe/widgets/country_pickers/utils/my_alert_dialog.dart';
-import 'package:coozy_cafe/widgets/country_pickers/utils/typedefs.dart';
-import 'package:coozy_cafe/widgets/country_pickers/countries.dart';
+import 'package:coozy_the_cafe/widgets/country_pickers/country.dart';
+import 'package:coozy_the_cafe/widgets/country_pickers/utils/my_alert_dialog.dart';
+import 'package:coozy_the_cafe/widgets/country_pickers/utils/typedefs.dart';
+import 'package:coozy_the_cafe/widgets/country_pickers/countries.dart';
 
 ///Provides a customizable [Dialog] which displays all countries
 /// with optional search feature
@@ -126,7 +126,7 @@ class SingleChoiceDialogState extends State<CountryPickerDialog> {
   @override
   void initState() {
     _allCountries =
-        countryList.where(widget.itemFilter ?? acceptAllCountries).toList();
+        globalCountryList.where(widget.itemFilter ?? acceptAllCountries).toList();
 
     if (widget.sortComparator != null) {
       _allCountries.sort(widget.sortComparator);

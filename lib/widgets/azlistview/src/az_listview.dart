@@ -1,7 +1,7 @@
 
-import 'package:coozy_cafe/widgets/azlistview/src/az_common.dart';
-import 'package:coozy_cafe/widgets/azlistview/src/index_bar.dart';
-import 'package:coozy_cafe/widgets/azlistview/src/suspension_view.dart';
+import 'package:coozy_the_cafe/widgets/azlistview/src/az_common.dart';
+import 'package:coozy_the_cafe/widgets/azlistview/src/index_bar.dart';
+import 'package:coozy_the_cafe/widgets/azlistview/src/suspension_view.dart';
 import 'package:flutter/material.dart';
 import 'package:scrollable_positioned_list/scrollable_positioned_list.dart';
 

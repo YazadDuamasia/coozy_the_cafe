@@ -1,21 +1,21 @@
 import 'dart:async';
 import 'dart:ui';
 import 'dart:convert';
-import 'package:coozy_cafe/routing/routs.dart';
+import 'package:coozy_the_cafe/routing/routs.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:lottie/lottie.dart';
 import 'package:sms_autofill/sms_autofill.dart';
 import 'package:carousel_slider/carousel_slider.dart';
-import 'package:coozy_cafe/AppLocalization.dart';
-import 'package:coozy_cafe/bloc/bloc.dart';
-import 'package:coozy_cafe/config/app_asset_paths/app_asset_paths.dart';
-import 'package:coozy_cafe/pages/pages.dart';
-import 'package:coozy_cafe/utlis/utlis.dart';
-import 'package:coozy_cafe/widgets/country_pickers/country.dart';
-import 'package:coozy_cafe/widgets/phone_number_text_form_widget/phone_number_text_form_field.dart';
-import 'package:coozy_cafe/widgets/widgets.dart';
+import 'package:coozy_the_cafe/AppLocalization.dart';
+import 'package:coozy_the_cafe/bloc/bloc.dart';
+import 'package:coozy_the_cafe/config/app_asset_paths/app_asset_paths.dart';
+import 'package:coozy_the_cafe/pages/pages.dart';
+import 'package:coozy_the_cafe/utlis/utlis.dart';
+import 'package:coozy_the_cafe/widgets/country_pickers/country.dart';
+import 'package:coozy_the_cafe/widgets/phone_number_text_form_widget/phone_number_text_form_field.dart';
+import 'package:coozy_the_cafe/widgets/widgets.dart';
 
 class LoginViaPhoneNumberPage extends StatefulWidget {
   final bool isUseForLogin;

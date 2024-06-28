@@ -2,11 +2,11 @@ import 'dart:async';
 import 'dart:convert';
 import 'dart:io';
 
-import 'package:coozy_cafe/bloc/bloc.dart';
-import 'package:coozy_cafe/model/recipe_model.dart';
-import 'package:coozy_cafe/pages/pages.dart';
-import 'package:coozy_cafe/routing/routs.dart';
-import 'package:coozy_cafe/widgets/widgets.dart';
+import 'package:coozy_the_cafe/bloc/bloc.dart';
+import 'package:coozy_the_cafe/model/recipe_model.dart';
+import 'package:coozy_the_cafe/pages/pages.dart';
+import 'package:coozy_the_cafe/routing/routs.dart';
+import 'package:coozy_the_cafe/widgets/widgets.dart';
 import 'package:csv/csv.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';

@@ -1,10 +1,10 @@
 import 'dart:math';
 
-import 'package:coozy_cafe/AppLocalization.dart';
-import 'package:coozy_cafe/bloc/menu_category_full_list_cubit/menu_category_full_list_cubit.dart';
-import 'package:coozy_cafe/model/sub_category.dart';
-import 'package:coozy_cafe/utlis/components/string_value.dart';
-import 'package:coozy_cafe/widgets/post_time_text_widget/post_time_text_widget.dart';
+import 'package:coozy_the_cafe/AppLocalization.dart';
+import 'package:coozy_the_cafe/bloc/menu_category_full_list_cubit/menu_category_full_list_cubit.dart';
+import 'package:coozy_the_cafe/model/sub_category.dart';
+import 'package:coozy_the_cafe/utlis/components/string_value.dart';
+import 'package:coozy_the_cafe/widgets/post_time_text_widget/post_time_text_widget.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:material_design_icons_flutter/material_design_icons_flutter.dart';

@@ -1,9 +1,9 @@
 import 'dart:convert';
 import 'dart:io';
-import 'package:coozy_cafe/AppLocalization.dart';
-import 'package:coozy_cafe/utlis/utlis.dart';
-import 'package:coozy_cafe/widgets/country_pickers/country.dart';
-import 'package:coozy_cafe/widgets/widgets.dart';
+import 'package:coozy_the_cafe/AppLocalization.dart';
+import 'package:coozy_the_cafe/utlis/utlis.dart';
+import 'package:coozy_the_cafe/widgets/country_pickers/country.dart';
+import 'package:coozy_the_cafe/widgets/widgets.dart';
 import 'package:equatable/equatable.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -21,8 +21,7 @@ class LoginWithPhoneCubit extends Cubit<LoginWithPhoneState> {
   void fetchInitialInfo() async {
     emit(LoginWithPhoneLoadingState());
 
-    InternetStatus? connectionStatus =
-    await InternetConnection().internetStatus;
+    InternetStatus? connectionStatus = await InternetConnection().internetStatus;
     if (connectionStatus == InternetStatus.connected) {
       if (Constants.getIsMobileApp() == true) {
         try {

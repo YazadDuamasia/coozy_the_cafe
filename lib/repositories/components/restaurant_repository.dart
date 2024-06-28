@@ -1,12 +1,12 @@
-import 'package:coozy_cafe/database_helper/DatabaseHelper.dart';
-import 'package:coozy_cafe/model/category.dart';
-import 'package:coozy_cafe/model/customer.dart';
-import 'package:coozy_cafe/model/menu_item.dart';
-import 'package:coozy_cafe/model/order_model.dart';
-import 'package:coozy_cafe/model/recipe_model.dart';
-import 'package:coozy_cafe/model/sub_category.dart';
-import 'package:coozy_cafe/model/table_info_model.dart';
-import 'package:coozy_cafe/utlis/components/constants.dart';
+import 'package:coozy_the_cafe/database_helper/DatabaseHelper.dart';
+import 'package:coozy_the_cafe/model/category.dart';
+import 'package:coozy_the_cafe/model/customer.dart';
+import 'package:coozy_the_cafe/model/menu_item.dart';
+import 'package:coozy_the_cafe/model/order_model.dart';
+import 'package:coozy_the_cafe/model/recipe_model.dart';
+import 'package:coozy_the_cafe/model/sub_category.dart';
+import 'package:coozy_the_cafe/model/table_info_model.dart';
+import 'package:coozy_the_cafe/utlis/components/constants.dart';
 import 'package:flutter/services.dart';
 import 'package:translator/translator.dart';
 

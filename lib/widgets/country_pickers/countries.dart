@@ -1,6 +1,6 @@
-import 'package:coozy_cafe/widgets/country_pickers/country.dart';
+import 'package:coozy_the_cafe/widgets/country_pickers/country.dart';
 
-final List<Country> countryList = [
+final List<Country> globalCountryList = [
   Country(
     isoCode: "AF",
     phoneCode: "93",
@@ -64,6 +64,14 @@ final List<Country> countryList = [
     iso3Code: "ATA",
     minLength: 6,
     maxLength: 6,
+  ),
+  Country(
+    isoCode: "IC",
+    phoneCode: "928",
+    name: "Canary Islands",
+    iso3Code: "IC_",
+    maxLength: 9,
+    minLength: 9,
   ),
   Country(
     isoCode: "AG",

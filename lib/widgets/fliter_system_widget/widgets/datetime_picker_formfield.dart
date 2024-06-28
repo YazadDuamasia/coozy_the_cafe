@@ -1,4 +1,5 @@
 import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:intl/intl.dart' show DateFormat;
@@ -54,8 +55,8 @@ class DateTimeField extends FormField<DateTime> {
       onSaved: onSaved,
       builder: (field) {
         final _DateTimeFieldState state = field as _DateTimeFieldState;
-        final InputDecoration effectiveDecoration =
-        (decoration ?? const InputDecoration())
+        final InputDecoration effectiveDecoration = (decoration ??
+            const InputDecoration())
             .applyDefaults(Theme.of(field.context).inputDecorationTheme);
         return TextField(
           controller: state._effectiveController,
@@ -105,7 +106,8 @@ class DateTimeField extends FormField<DateTime> {
       });
 
   final DateFormat format;
-  final Future<DateTime?> Function(BuildContext context, DateTime? currentValue) onShowPicker;
+  final Future<DateTime?> Function(BuildContext context, DateTime? currentValue)
+  onShowPicker;
   final Icon? resetIcon;
   final TextEditingController? controller;
   final FocusNode? focusNode;
@@ -137,8 +139,8 @@ class DateTimeField extends FormField<DateTime> {
     return null;
   }
 
-  static DateTime combine(DateTime date, TimeOfDay? time) =>
-      DateTime(date.year, date.month, date.day, time?.hour ?? 0, time?.minute ?? 0);
+  static DateTime combine(DateTime date, TimeOfDay? time) => DateTime(
+      date.year, date.month, date.day, time?.hour ?? 0, time?.minute ?? 0);
 
   static DateTime? convert(TimeOfDay? time) =>
       time == null ? null : DateTime(1, 1, 1, time.hour, time.minute);
@@ -153,7 +155,8 @@ class _DateTimeFieldState extends FormFieldState<DateTime> {
   @override
   DateTimeField get widget => super.widget as DateTimeField;
 
-  TextEditingController? get _effectiveController => widget.controller ?? _controller;
+  TextEditingController? get _effectiveController =>
+      widget.controller ?? _controller;
 
   FocusNode? get _effectiveFocusNode => widget.focusNode ?? _focusNode;
 
@@ -184,7 +187,8 @@ class _DateTimeFieldState extends FormFieldState<DateTime> {
       widget.controller?.addListener(_handleControllerChanged);
 
       if (oldWidget.controller != null && widget.controller == null) {
-        _controller = TextEditingController.fromValue(oldWidget.controller!.value);
+        _controller =
+            TextEditingController.fromValue(oldWidget.controller!.value);
         _controller!.addListener(_handleControllerChanged);
       }
       if (widget.controller != null) {
@@ -233,7 +237,8 @@ class _DateTimeFieldState extends FormFieldState<DateTime> {
   }
 
   void _handleControllerChanged() {
-    if (_effectiveController!.text != format(value)) didChange(parse(_effectiveController!.text));
+    if (_effectiveController!.text != format(value))
+      didChange(parse(_effectiveController!.text));
   }
 
   String format(DateTime? date) => DateTimeField.tryFormat(date, widget.format);
@@ -248,6 +253,7 @@ class _DateTimeFieldState extends FormFieldState<DateTime> {
       isShowingDialog = false;
       if (newValue != null) {
         _effectiveController!.text = format(newValue);
+        didChange(newValue); // Update the value
       }
     }
   }
@@ -270,6 +276,7 @@ class _DateTimeFieldState extends FormFieldState<DateTime> {
     _hideKeyboard();
     WidgetsBinding.instance.addPostFrameCallback((_) {
       setState(() => _effectiveController!.clear());
+      didChange(null); // Update the value to null
     });
   }
 

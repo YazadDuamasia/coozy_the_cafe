@@ -1,4 +1,4 @@
-import 'package:coozy_cafe/widgets/country_pickers/country.dart';
+import 'package:coozy_the_cafe/widgets/country_pickers/country.dart';
 
 bool isNumeric(String s) =>
     s.isNotEmpty && int.tryParse(s.replaceAll("+", "")) != null;

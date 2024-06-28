@@ -1,6 +1,6 @@
 {
-    "name": "coozy_cafe",
-    "short_name": "coozy_cafe",
+    "name": "coozy_the_cafe",
+    "short_name": "coozy_the_cafe",
     "start_url": ".",
     "display": "standalone",
     "background_color": "#0175C2",

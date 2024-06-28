@@ -1,4 +1,4 @@
-import 'package:coozy_cafe/widgets/widgets.dart';
+import 'package:coozy_the_cafe/widgets/widgets.dart';
 
 class SubCategory extends ISuspensionBean {
   int? id;

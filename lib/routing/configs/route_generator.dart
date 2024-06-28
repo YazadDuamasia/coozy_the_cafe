@@ -1,21 +1,22 @@
-import 'package:coozy_cafe/model/recipe_model.dart';
-import 'package:coozy_cafe/pages/main_screen/menu_all_sub_category_screen/menu_all_sub_category_screen.dart';
-import 'package:coozy_cafe/pages/main_screen/menu_category_screen/add_menu_category_screen/add_new_menu_category_screen.dart';
-import 'package:coozy_cafe/pages/main_screen/menu_category_screen/edit_menu_category/edit_menu_category_screen.dart';
-import 'package:coozy_cafe/pages/main_screen/menu_category_screen/menu_category_full_list_screen.dart';
-import 'package:coozy_cafe/pages/main_screen/menu_screen/add_edit_menu_item_screen.dart';
-import 'package:coozy_cafe/pages/main_screen/menu_screen/menu_full_list_screen.dart';
-import 'package:coozy_cafe/pages/main_screen/recipes_bookmark_list_screen/recipes_bookmark_list_screen.dart';
-import 'package:coozy_cafe/pages/main_screen/recipes_info_screen/recipes_info_screen.dart';
-import 'package:coozy_cafe/pages/main_screen/recipes_list_screen/recipes_list_screen.dart';
-import 'package:coozy_cafe/pages/main_screen/table_screen/table_screen.dart';
-import 'package:coozy_cafe/pages/pages.dart';
-import 'package:coozy_cafe/pages/startup_screens/login_screen/login_screen.dart';
-import 'package:coozy_cafe/pages/startup_screens/login_via_phone_number_page/login_via_phone_number_page.dart';
-import 'package:coozy_cafe/pages/startup_screens/otp_verification_page/otp_verification_page.dart';
-import 'package:coozy_cafe/pages/startup_screens/sign_up_page/sign_up_page.dart';
-import 'package:coozy_cafe/routing/routs.dart';
-import 'package:coozy_cafe/utlis/utlis.dart';
+import 'package:coozy_the_cafe/model/recipe_model.dart';
+import 'package:coozy_the_cafe/pages/main_screen/employee_attendance_screen/employee_attendance_screen.dart';
+import 'package:coozy_the_cafe/pages/main_screen/menu_all_sub_category_screen/menu_all_sub_category_screen.dart';
+import 'package:coozy_the_cafe/pages/main_screen/menu_category_screen/add_menu_category_screen/add_new_menu_category_screen.dart';
+import 'package:coozy_the_cafe/pages/main_screen/menu_category_screen/edit_menu_category/edit_menu_category_screen.dart';
+import 'package:coozy_the_cafe/pages/main_screen/menu_category_screen/menu_category_full_list_screen.dart';
+import 'package:coozy_the_cafe/pages/main_screen/menu_screen/add_edit_menu_item_screen.dart';
+import 'package:coozy_the_cafe/pages/main_screen/menu_screen/menu_full_list_screen.dart';
+import 'package:coozy_the_cafe/pages/main_screen/recipes_bookmark_list_screen/recipes_bookmark_list_screen.dart';
+import 'package:coozy_the_cafe/pages/main_screen/recipes_info_screen/recipes_info_screen.dart';
+import 'package:coozy_the_cafe/pages/main_screen/recipes_list_screen/recipes_list_screen.dart';
+import 'package:coozy_the_cafe/pages/main_screen/table_screen/table_screen.dart';
+import 'package:coozy_the_cafe/pages/pages.dart';
+import 'package:coozy_the_cafe/pages/startup_screens/login_screen/login_screen.dart';
+import 'package:coozy_the_cafe/pages/startup_screens/login_via_phone_number_page/login_via_phone_number_page.dart';
+import 'package:coozy_the_cafe/pages/startup_screens/otp_verification_page/otp_verification_page.dart';
+import 'package:coozy_the_cafe/pages/startup_screens/sign_up_page/sign_up_page.dart';
+import 'package:coozy_the_cafe/routing/routs.dart';
+import 'package:coozy_the_cafe/utlis/utlis.dart';
 import 'package:flutter/material.dart';
 
 class RouteGenerator {
@@ -75,7 +76,7 @@ class RouteGenerator {
 
       case RouteName.otpVerificationRoute:
         OtpVerificationScreenArgument otpVerificationScreenArgument =
-            otpVerificationScreenArgumentFromMap(args.toString());
+        otpVerificationScreenArgumentFromMap(args.toString());
         return PageTransition(
           type: PageTransitionType.rightToLeftWithFade,
           settings: settings,
@@ -128,7 +129,7 @@ class RouteGenerator {
           type: PageTransitionType.rightToLeftWithFade,
           settings: settings,
           curve: Curves.easeInOut,
-          child:  AddEditMenuItemScreen(),
+          child: AddEditMenuItemScreen(),
         );
 
       case RouteName.menuCategoryFullListRoute:
@@ -147,7 +148,7 @@ class RouteGenerator {
         );
       case RouteName.updateMenuCategoryScreenRoute:
         UpdateMenuCategoryScreenArgument argument =
-            updateMenuCategoryScreenArgumentFromMap(args.toString());
+        updateMenuCategoryScreenArgumentFromMap(args.toString());
         return PageTransition(
           type: PageTransitionType.rightToLeftWithFade,
           settings: settings,
@@ -193,6 +194,13 @@ class RouteGenerator {
           settings: settings,
           curve: Curves.easeInOut,
           child: RecipesBookmarkListScreen(list: args as List<RecipeModel>?),
+        );
+      case RouteName.employeeAttendanceScreenRoute:
+        return PageTransition(
+          type: PageTransitionType.rightToLeftWithFade,
+          settings: settings,
+          curve: Curves.easeInOut,
+          child:EmployeeAttendanceScreen(),
         );
 
       default:

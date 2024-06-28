@@ -1,6 +1,7 @@
-import 'package:coozy_cafe/AppLocalization.dart';
-import 'package:coozy_cafe/utlis/utlis.dart';
+import 'package:coozy_the_cafe/AppLocalization.dart';
+import 'package:coozy_the_cafe/utlis/utlis.dart';
 import 'package:flutter/material.dart';
+import 'package:line_icons/line_icons.dart';
 import 'package:material_design_icons_flutter/material_design_icons_flutter.dart';
 
 class HomeScreenDrawer extends StatelessWidget {
@@ -87,6 +88,14 @@ class HomeScreenDrawer extends StatelessWidget {
             onTap: () {
               Navigator.pop(context);
               navigationRoutes.navigateToRecipesScreen();
+            },
+          ),
+          ListTile(
+            leading: Icon(LineIcons.paperHandAlt),
+            title: const Text('Staff Attendance'),
+            onTap: () {
+              Navigator.pop(context);
+              navigationRoutes.navigateToEmployeeAttendanceScreen();
             },
           ),
           ListTile(

@@ -1,5 +1,5 @@
-import 'package:coozy_cafe/AppLocalization.dart';
-import 'package:coozy_cafe/utlis/components/string_value.dart';
+import 'package:coozy_the_cafe/AppLocalization.dart';
+import 'package:coozy_the_cafe/utlis/components/string_value.dart';
 import 'package:flutter/material.dart';
 
 class DynamicTextFormFieldForEditSubCategoryWidget extends StatefulWidget {

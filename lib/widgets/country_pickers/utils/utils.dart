@@ -1,11 +1,11 @@
-import 'package:coozy_cafe/widgets/country_pickers/countries.dart';
-import 'package:coozy_cafe/widgets/country_pickers/country.dart';
+import 'package:coozy_the_cafe/widgets/country_pickers/countries.dart';
+import 'package:coozy_the_cafe/widgets/country_pickers/country.dart';
 import 'package:flutter/widgets.dart';
 
 class CountryPickerUtils {
   static Country getCountryByIso3Code(String iso3Code) {
     try {
-      return countryList.firstWhere(
+      return globalCountryList.firstWhere(
         (country) => country.iso3Code.toLowerCase() == iso3Code.toLowerCase(),
       );
     } catch (error) {
@@ -16,7 +16,7 @@ class CountryPickerUtils {
 
   static Country getCountryByIsoCode(String isoCode) {
     try {
-      return countryList.firstWhere(
+      return globalCountryList.firstWhere(
         (country) => country.isoCode.toLowerCase() == isoCode.toLowerCase(),
       );
     } catch (error) {
@@ -26,7 +26,7 @@ class CountryPickerUtils {
 
   static Country getCountryByName(String name) {
     try {
-      return countryList.firstWhere(
+      return globalCountryList.firstWhere(
         (country) => country.name.toLowerCase() == name.toLowerCase(),
       );
     } catch (error) {
@@ -49,7 +49,7 @@ class CountryPickerUtils {
 
   static Country getCountryByPhoneCode(String phoneCode) {
     try {
-      return countryList.firstWhere(
+      return globalCountryList.firstWhere(
         (country) => country.phoneCode.toLowerCase() == phoneCode.toLowerCase(),
       );
     } catch (error) {

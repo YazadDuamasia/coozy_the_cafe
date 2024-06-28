@@ -1,4 +1,4 @@
-import 'package:coozy_cafe/bloc/theme_cubit/theme_state.dart';
+import 'package:coozy_the_cafe/bloc/theme_cubit/theme_state.dart';
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';

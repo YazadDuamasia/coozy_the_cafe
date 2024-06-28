@@ -1,5 +1,5 @@
-import 'package:coozy_cafe/model/customer.dart';
-import 'package:coozy_cafe/model/order_item.dart';
+import 'package:coozy_the_cafe/model/customer.dart';
+import 'package:coozy_the_cafe/model/order_item.dart';
 
 enum OrderStatus {
   newOrder, // 0

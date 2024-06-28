@@ -1,6 +1,6 @@
-import 'package:coozy_cafe/utlis/utlis.dart';
-import 'package:coozy_cafe/widgets/fliter_system_widget/props/filter_item_model.dart';
-import 'package:coozy_cafe/widgets/fliter_system_widget/props/filter_props.dart';
+import 'package:coozy_the_cafe/utlis/utlis.dart';
+import 'package:coozy_the_cafe/widgets/fliter_system_widget/props/filter_item_model.dart';
+import 'package:coozy_the_cafe/widgets/fliter_system_widget/props/filter_props.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:syncfusion_flutter_core/theme.dart';
@@ -99,7 +99,6 @@ class _FilterVerticalRangerSliderTitleState
 
   Widget slider() {
     return SfRangeSlider.vertical(
-      key: UniqueKey(),
       tooltipTextFormatterCallback: (value, formattedText) =>
       '${(widget.sliderTileThemeProps?.tooltip_prefix_str == null || widget.sliderTileThemeProps!.tooltip_prefix_str!.isEmpty) ? "" : "${widget.sliderTileThemeProps?.tooltip_prefix_str.toString()} "}${double.tryParse("$value")?.toStringAsFixed(widget.sliderTileThemeProps?.fractionDigits ?? 0) ?? 0}${(widget.sliderTileThemeProps?.tooltip_suffix_str == null || widget.sliderTileThemeProps!.tooltip_suffix_str!.isEmpty) ? "" : " ${widget.sliderTileThemeProps?.tooltip_suffix_str}"}',
       min: widget.minValue,

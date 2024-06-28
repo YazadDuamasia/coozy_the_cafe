@@ -1,12 +1,12 @@
 import 'dart:ui';
 
-import 'package:coozy_cafe/AppLocalization.dart';
-import 'package:coozy_cafe/bloc/bloc.dart';
-import 'package:coozy_cafe/model/table_info_model.dart';
-import 'package:coozy_cafe/pages/main_screen/table_screen/new_table_info_dialog.dart';
-import 'package:coozy_cafe/pages/pages.dart';
-import 'package:coozy_cafe/repositories/components/restaurant_repository.dart';
-import 'package:coozy_cafe/utlis/utlis.dart';
+import 'package:coozy_the_cafe/AppLocalization.dart';
+import 'package:coozy_the_cafe/bloc/bloc.dart';
+import 'package:coozy_the_cafe/model/table_info_model.dart';
+import 'package:coozy_the_cafe/pages/main_screen/table_screen/new_table_info_dialog.dart';
+import 'package:coozy_the_cafe/pages/pages.dart';
+import 'package:coozy_the_cafe/repositories/components/restaurant_repository.dart';
+import 'package:coozy_the_cafe/utlis/utlis.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:lottie/lottie.dart';

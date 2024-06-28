@@ -179,6 +179,21 @@ class DateUtil {
     return null;
   }
 
+  static DateTime? stringToDateTime(String? date, String dateFormat) {
+    try {
+      if (date != null) {
+        // Parse the input string using the provided date format
+        var parsedDateTime = DateFormat(dateFormat).tryParse(date);
+
+        // Convert the parsed UTC DateTime to local DateTime
+        return parsedDateTime;
+      }
+    } catch (e) {
+      Constants.debugLog(DateUtil, "stringToDateTime: error - ${e.toString()}");
+    }
+    return null;
+  }
+
   // Convert DateTime to TimeOfDay
   static TimeOfDay dateTimeToTimeOfDay(DateTime dateTime) {
     return TimeOfDay(hour: dateTime.hour, minute: dateTime.minute);
@@ -187,12 +202,90 @@ class DateUtil {
   // Convert TimeOfDay to DateTime
   static DateTime timeOfDayToDateTime(TimeOfDay timeOfDay) {
     final now = DateTime.now();
-    return DateTime(now.year, now.month, now.day, timeOfDay.hour, timeOfDay.minute);
+    return DateTime(
+        now.year, now.month, now.day, timeOfDay.hour, timeOfDay.minute);
   }
 
   // Format TimeOfDay as string
   static String formatTimeOfDay(TimeOfDay timeOfDay, String pattern) {
     final dateTime = timeOfDayToDateTime(timeOfDay);
     return DateFormat(pattern).format(dateTime);
+  }
+
+  static TimeOfDay parseTimeOfDay(String time, String format) {
+    DateTime? dateTime =
+        DateFormat(format ?? DateUtil.TIME_FORMAT2).tryParse(time);
+    return TimeOfDay(hour: dateTime?.hour ?? 0, minute: dateTime?.minute ?? 0);
+  }
+
+  String formatDuration(Duration duration) {
+    // Format duration into "HH:mm"
+    String hours = (duration.inHours % 24).toString().padLeft(2, '0');
+    String minutes = (duration.inMinutes % 60).toString().padLeft(2, '0');
+
+    return '$hours:$minutes';
+  }
+
+  static String? calculateRemainingTime(
+      {String? currentTime, String? targetTime}) {
+    try {
+      // Parse current time
+      DateTime? currentDateTime = DateFormat.jm().tryParse(currentTime!);
+
+      // Parse target time
+      DateTime? targetDateTime = DateFormat.jm().tryParse(targetTime!);
+
+      // Adjust the target time to today's date
+      targetDateTime = DateTime(
+        currentDateTime!.year,
+        currentDateTime.month,
+        currentDateTime.day,
+        currentDateTime.hour,
+        currentDateTime.minute,
+      );
+
+      // If the target time is before the current time, adjust to the next day
+      if (targetDateTime.isBefore(currentDateTime)) {
+        targetDateTime = targetDateTime.add(Duration(days: 1));
+      }
+
+      // Calculate the difference
+      Duration difference = targetDateTime.difference(currentDateTime);
+
+      // Convert the difference to hours and minutes
+      int hours = difference.inHours;
+      int minutes = difference.inMinutes % 60;
+
+      // Return formatted string
+      return "${hours}h ${minutes}m";
+    } catch (e) {
+      // Handle parsing errors
+      return null;
+    }
+  }
+
+  static int? calculateTimeDifferenceInSeconds(
+      String checkInTime, String checkOutTime) {
+    try {
+      // Parse check-in time
+      DateTime checkInDateTime = DateFormat.jm().parse(checkInTime);
+      // Parse check-out time
+      DateTime checkOutDateTime = DateFormat.jm().parse(checkOutTime);
+
+      // Adjust the date if check-out time is before check-in time (indicating next day)
+      if (checkOutDateTime.isBefore(checkInDateTime)) {
+        checkOutDateTime = checkOutDateTime.add(Duration(days: 1));
+      }
+
+      // Calculate the difference
+      Duration? difference = checkOutDateTime.difference(checkInDateTime);
+      Constants.debugLog(DateUtil,
+          "calculateTimeDifferenceInMinutes:difference:${difference.inMinutes.toString()}");
+      return difference.inSeconds;
+    } catch (error) {
+      Constants.debugLog(
+          DateUtil, "calculateTimeDifferenceInMinutes:Error:${error}");
+      return null;
+    }
   }
 }

@@ -1,4 +1,4 @@
-import 'package:coozy_cafe/routing/routs.dart';
+import 'package:coozy_the_cafe/routing/routs.dart';
 import 'package:flutter/material.dart';
 
 final navigationRoutes = NavigationRoutes.getInstance();

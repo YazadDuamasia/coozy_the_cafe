@@ -1,17 +1,20 @@
 import 'dart:io';
 
-import 'package:coozy_cafe/model/category.dart';
-import 'package:coozy_cafe/model/customer.dart';
-import 'package:coozy_cafe/model/daily_sales_report_entry.dart';
-import 'package:coozy_cafe/model/invoice.dart';
-import 'package:coozy_cafe/model/menu_item.dart';
-import 'package:coozy_cafe/model/menu_item_review.dart';
-import 'package:coozy_cafe/model/order_item.dart';
-import 'package:coozy_cafe/model/order_model.dart';
-import 'package:coozy_cafe/model/recipe_model.dart';
-import 'package:coozy_cafe/model/sub_category.dart';
-import 'package:coozy_cafe/model/table_info_model.dart';
-import 'package:coozy_cafe/utlis/utlis.dart';
+import 'package:coozy_the_cafe/model/attendance/attendance.dart';
+import 'package:coozy_the_cafe/model/attendance/employee.dart';
+import 'package:coozy_the_cafe/model/attendance/leave.dart';
+import 'package:coozy_the_cafe/model/category.dart';
+import 'package:coozy_the_cafe/model/customer.dart';
+import 'package:coozy_the_cafe/model/daily_sales_report_entry.dart';
+import 'package:coozy_the_cafe/model/invoice.dart';
+import 'package:coozy_the_cafe/model/menu_item.dart';
+import 'package:coozy_the_cafe/model/menu_item_review.dart';
+import 'package:coozy_the_cafe/model/order_item.dart';
+import 'package:coozy_the_cafe/model/order_model.dart';
+import 'package:coozy_the_cafe/model/recipe_model.dart';
+import 'package:coozy_the_cafe/model/sub_category.dart';
+import 'package:coozy_the_cafe/model/table_info_model.dart';
+import 'package:coozy_the_cafe/utlis/utlis.dart';
 import 'package:intl/intl.dart';
 import 'package:path/path.dart';
 import 'package:sqflite/sqflite.dart';
@@ -31,6 +34,9 @@ class DatabaseHelper {
   final String invoicesTable = 'invoices';
   final String paymentModeTable = 'payment_modes';
   final String recipeModelTable = 'recipes';
+  final String employeesTable = 'employees';
+  final String attendanceTable = 'attendance';
+  final String leavesTable = 'leaves';
 
   factory DatabaseHelper() => _instance;
 
@@ -46,7 +52,7 @@ class DatabaseHelper {
 
   Future<Database> _initDatabase() async {
     final databasePath = await getDatabasesPath();
-    final path = join(databasePath, 'restaurant.db');
+    final path = join(databasePath, 'coozy_the_cafe.db');
 
     return await openDatabase(
       path,
@@ -58,182 +64,234 @@ class DatabaseHelper {
   Future<void> _onCreate(Database db, int version) async {
     // Create the 'categories' table
     await db.execute('''
-      CREATE TABLE $categoriesTable(
-        id INTEGER PRIMARY KEY AUTOINCREMENT,
-        name TEXT,
-        isActive INTEGER,
-        createdDate TEXT
-      )
-    ''');
+    CREATE TABLE $categoriesTable(
+      id INTEGER PRIMARY KEY AUTOINCREMENT,
+      name TEXT,
+      isActive INTEGER,
+      createdDate TEXT
+    )
+  ''');
 
     // Create the 'subcategories' table
     await db.execute('''
     CREATE TABLE $subcategoriesTable (
-    id INTEGER PRIMARY KEY AUTOINCREMENT,
-    name TEXT,
-    createdDate TEXT,
-    categoryId INTEGER,
-    isActive INTEGER,
-    FOREIGN KEY(categoryId) REFERENCES $categoriesTable(id)
+      id INTEGER PRIMARY KEY AUTOINCREMENT,
+      name TEXT,
+      createdDate TEXT,
+      categoryId INTEGER,
+      isActive INTEGER,
+      FOREIGN KEY(categoryId) REFERENCES $categoriesTable(id)
     )
-    ''');
+  ''');
 
     // Create the '$menuItemsTable' table
     await db.execute('''
     CREATE TABLE $menuItemsTable (
-    id INTEGER PRIMARY KEY AUTOINCREMENT,
-    name TEXT NOT NULL,
-    description TEXT NOT NULL,
-    creationDate TEXT,
-    duration INTEGER,
-    categoryId INTEGER,
-    subcategoryId INTEGER,
-    isTodayAvailable INTEGER,
-    isSimpleVariation INTEGER,
-    costPrice REAL,
-    sellingPrice REAL,
-    stockQuantity REAL,
-    quantity TEXT,
-    purchaseUnit TEXT
+      id INTEGER PRIMARY KEY AUTOINCREMENT,
+      name TEXT NOT NULL,
+      description TEXT NOT NULL,
+      creationDate TEXT,
+      duration INTEGER,
+      categoryId INTEGER,
+      subcategoryId INTEGER,
+      isTodayAvailable INTEGER,
+      isSimpleVariation INTEGER,
+      costPrice REAL,
+      sellingPrice REAL,
+      stockQuantity REAL,
+      quantity TEXT,
+      purchaseUnit TEXT
     )
-    ''');
+  ''');
 
     // Create the 'menuItemVariationsTable' table
     await db.execute('''
     CREATE TABLE $menuItemVariationsTable (
-    id INTEGER PRIMARY KEY AUTOINCREMENT,
-    menuItemId INTEGER,
-    quantity INTEGER,
-    purchaseUnit TEXT,
-    isTodayAvailable INTEGER,
-    costPrice REAL,
-    sellingPrice REAL,
-    stockQuantity INTEGER,
-    FOREIGN KEY(menuItemId) REFERENCES $menuItemsTable(id)
+      id INTEGER PRIMARY KEY AUTOINCREMENT,
+      menuItemId INTEGER,
+      quantity INTEGER,
+      purchaseUnit TEXT,
+      isTodayAvailable INTEGER,
+      costPrice REAL,
+      sellingPrice REAL,
+      stockQuantity INTEGER,
+      FOREIGN KEY(menuItemId) REFERENCES $menuItemsTable(id)
     )
-    ''');
+  ''');
 
     // Create the 'customers' table
     await db.execute('''
-  CREATE TABLE $customersTable(
-    id INTEGER PRIMARY KEY AUTOINCREMENT,
-    name TEXT,
-    phoneNumber TEXT,
-    createdDate TEXT
-  )
-''');
+    CREATE TABLE $customersTable(
+      id INTEGER PRIMARY KEY AUTOINCREMENT,
+      name TEXT,
+      phoneNumber TEXT,
+      createdDate TEXT
+    )
+  ''');
+
     // Create the 'TableInfo' table
-    await db.execute(
-        '''CREATE TABLE $tableInfoTable ( id INTEGER PRIMARY KEY AUTOINCREMENT,  name TEXT, colorValue TEXT,  sortOrderIndex INTEGER,  nosOfChairs INTEGER ) ''');
+    await db.execute('''
+    CREATE TABLE $tableInfoTable (
+      id INTEGER PRIMARY KEY AUTOINCREMENT,
+      name TEXT,
+      colorValue TEXT,
+      sortOrderIndex INTEGER,
+      nosOfChairs INTEGER
+    )
+  ''');
+
     // Create the 'orders' table
     await db.execute('''
-      CREATE TABLE $ordersTable (
-        id INTEGER PRIMARY KEY AUTOINCREMENT,
-        tableInfoId INTEGER,
-        creationDate TEXT NULL,
-        modificationDate TEXT NULL,
-        isCanceled INTEGER,
-        isDeleted INTEGER,
-        status TEXT,
-        paymentMethodName TEXT NULL,
-        paymentMethodDetails TEXT NULL,
-        deliveryAddress TEXT NULL,
-        customerId INTEGER NULL,
-        customerName TEXT,
-        phoneNumber TEXT,
-        FOREIGN KEY (tableInfoId) REFERENCES $tableInfoTable (id),
-        FOREIGN KEY (customerId) REFERENCES $customersTable (id)
-      )
-    ''');
+    CREATE TABLE $ordersTable (
+      id INTEGER PRIMARY KEY AUTOINCREMENT,
+      tableInfoId INTEGER,
+      creationDate TEXT NULL,
+      modificationDate TEXT NULL,
+      isCanceled INTEGER,
+      isDeleted INTEGER,
+      status TEXT,
+      paymentMethodName TEXT NULL,
+      paymentMethodDetails TEXT NULL,
+      deliveryAddress TEXT NULL,
+      customerId INTEGER NULL,
+      customerName TEXT,
+      phoneNumber TEXT,
+      FOREIGN KEY (tableInfoId) REFERENCES $tableInfoTable (id),
+      FOREIGN KEY (customerId) REFERENCES $customersTable (id)
+    )
+  ''');
 
     // Create the 'orderItems' table
-    await db.execute('''CREATE TABLE $orderItemsTable (
-    id INTEGER PRIMARY KEY AUTOINCREMENT,
-    orderId INTEGER,
-    itemId INTEGER,
-    quantity INTEGER,
-    sellingPrice REAL,
-    costPrice REAL,
-    status TEXT,
-    isMenuItem INTEGER,
-    menuItemId INTEGER,
-    selectedVariationId INTEGER,
-    FOREIGN KEY (orderId) REFERENCES $ordersTable (id),
-    FOREIGN KEY (itemId) REFERENCES $menuItemsTable (id),
-    FOREIGN KEY (menuItemId) REFERENCES $menuItemsTable (id),
-    FOREIGN KEY (selectedVariationId) REFERENCES $menuItemVariationsTable (id)
+    await db.execute('''
+    CREATE TABLE $orderItemsTable (
+      id INTEGER PRIMARY KEY AUTOINCREMENT,
+      orderId INTEGER,
+      itemId INTEGER,
+      quantity INTEGER,
+      sellingPrice REAL,
+      costPrice REAL,
+      status TEXT,
+      isMenuItem INTEGER,
+      menuItemId INTEGER,
+      selectedVariationId INTEGER,
+      FOREIGN KEY (orderId) REFERENCES $ordersTable (id),
+      FOREIGN KEY (itemId) REFERENCES $menuItemsTable (id),
+      FOREIGN KEY (menuItemId) REFERENCES $menuItemsTable (id),
+      FOREIGN KEY (selectedVariationId) REFERENCES $menuItemVariationsTable (id)
     )
-    ''');
+  ''');
+
     // Create the 'MenuItemReviews' table for storing reviews
     await db.execute('''
-      CREATE TABLE MenuItemReviews (
-        id INTEGER PRIMARY KEY,
-        itemId INTEGER,
-        customerId INTEGER,
-        rating FLOAT,
-        reviewText TEXT,
-        reviewDate DATETIME
-      )
-    ''');
+    CREATE TABLE $menuItemReviewsTable (
+      id INTEGER PRIMARY KEY,
+      itemId INTEGER,
+      customerId INTEGER,
+      rating FLOAT,
+      reviewText TEXT,
+      reviewDate DATETIME
+    )
+  ''');
+
     // Create the 'paymentModeTable' table for storing payment Methods
     await db.execute('''
     CREATE TABLE $paymentModeTable ( 
-    id INTEGER PRIMARY KEY AUTOINCREMENT, 
-    paymentMethodName TEXT, 
-    uniqueHashId TEXT UNIQUE 
+      id INTEGER PRIMARY KEY AUTOINCREMENT, 
+      paymentMethodName TEXT, 
+      uniqueHashId TEXT UNIQUE 
     )
-     ''');
+  ''');
 
-// Create the 'invoices' table
-//     discountType INTEGER,   -- 0 for percentage, 1 for flat
+    // Create the 'invoices' table
     await db.execute('''
     CREATE TABLE $invoicesTable (
-    id INTEGER PRIMARY KEY AUTOINCREMENT,
-    orderId INTEGER,  -- Reference to the ordersTable id
-    invoiceHashId TEXT,
-    taxPercentage REAL,
-    discountType INTEGER,
-    discountAmount REAL,
-    totalCost REAL,
-    taxCost REAL,
-    taxableAmount REAL,
-    netPaymentAmount REAL,
-    createdDate TEXT,
-    modifiedDate TEXT,
-    customerId INTEGER,
-    customerName TEXT,
-    phoneNumber TEXT,
-    paymentModeId INTEGER,
-    paymentMethodName TEXT,
-    recordAmountPaid REAL,
-    paymentMethodDetails TEXT NULL,
-    FOREIGN KEY (orderId) REFERENCES $ordersTable (id),
-    FOREIGN KEY (customerId) REFERENCES $customersTable (id)
-    FOREIGN KEY (paymentModeId) REFERENCES $paymentModeTable (id)
-  )
-''');
+      id INTEGER PRIMARY KEY AUTOINCREMENT,
+      orderId INTEGER,  -- Reference to the ordersTable id
+      invoiceHashId TEXT,
+      taxPercentage REAL,
+      discountType INTEGER,
+      discountAmount REAL,
+      totalCost REAL,
+      taxCost REAL,
+      taxableAmount REAL,
+      netPaymentAmount REAL,
+      createdDate TEXT,
+      modifiedDate TEXT,
+      customerId INTEGER,
+      customerName TEXT,
+      phoneNumber TEXT,
+      paymentModeId INTEGER,
+      paymentMethodName TEXT,
+      recordAmountPaid REAL,
+      paymentMethodDetails TEXT NULL,
+      FOREIGN KEY (orderId) REFERENCES $ordersTable (id),
+      FOREIGN KEY (customerId) REFERENCES $customersTable (id),
+      FOREIGN KEY (paymentModeId) REFERENCES $paymentModeTable (id)
+    )
+  ''');
 
+    // Create the 'recipeModelTable'
     await db.execute('''
-      CREATE TABLE $recipeModelTable(
-        recipe_id INTEGER PRIMARY KEY AUTOINCREMENT,
-        id INTEGER,
-        recipe_name TEXT,
-        translated_recipe_name TEXT,
-        recipe_ingredients TEXT,
-        recipe_translated_ingredients TEXT,
-        recipe_preparation_time_in_mins INTEGER,
-        recipe_cooking_time_in_mins INTEGER,
-        recipe_total_time_in_mins INTEGER,
-        recipe_servings INTEGER,
-        recipe_cuisine TEXT,
-        recipe_course TEXT,
-        recipe_diet TEXT,
-        recipe_instructions TEXT,
-        recipe_translated_instructions TEXT,
-        recipe_reference_url TEXT,
-        isBookmark INTEGER
-      )
-    ''');
+    CREATE TABLE $recipeModelTable(
+      recipe_id INTEGER PRIMARY KEY AUTOINCREMENT,
+      id INTEGER,
+      recipe_name TEXT,
+      translated_recipe_name TEXT,
+      recipe_ingredients TEXT,
+      recipe_translated_ingredients TEXT,
+      recipe_preparation_time_in_mins INTEGER,
+      recipe_cooking_time_in_mins INTEGER,
+      recipe_total_time_in_mins INTEGER,
+      recipe_servings INTEGER,
+      recipe_cuisine TEXT,
+      recipe_course TEXT,
+      recipe_diet TEXT,
+      recipe_instructions TEXT,
+      recipe_translated_instructions TEXT,
+      recipe_reference_url TEXT,
+      isBookmark INTEGER
+    )
+  ''');
+
+    // Create the 'employeesTable'
+    await db.execute('''
+    CREATE TABLE $employeesTable (
+      id INTEGER PRIMARY KEY AUTOINCREMENT,
+      name TEXT,
+      phoneNumber TEXT,
+      position TEXT,
+      joiningDate TEXT,
+      leavingDate TEXT,
+      startWorkingTime TEXT,
+      endWorkingTime TEXT
+    )
+  ''');
+
+    // Create the 'attendanceTable'
+    await db.execute('''
+    CREATE TABLE $attendanceTable (
+      id INTEGER PRIMARY KEY AUTOINCREMENT,
+      employeeId INTEGER,
+      currentDate TEXT,
+      checkIn TEXT,
+      checkOut TEXT,
+      overTimeEnded TEXT,
+      overTimeDurationsInSeconds INTEGER,
+      FOREIGN KEY (employeeId) REFERENCES $employeesTable (id)
+    )
+  ''');
+
+    // Create the 'leavesTable'
+    await db.execute('''
+    CREATE TABLE $leavesTable (
+      id INTEGER PRIMARY KEY AUTOINCREMENT,
+      employeeId INTEGER,
+      startDate TEXT,
+      endDate TEXT,
+      reason TEXT,
+      FOREIGN KEY (employeeId) REFERENCES $employeesTable (id)
+    )
+  ''');
   }
 
   Future<void> insertRecipes(List<RecipeModel> recipes) async {
@@ -2103,5 +2161,76 @@ class DatabaseHelper {
     final totalRating = reviews.fold(
         0, (sum, review) => sum + (review.rating == null ? 0 : review.rating!));
     return totalRating / reviews.length;
+  }
+
+  // Employee CRUD operations
+  Future<List<Employee>> getEmployees() async {
+    final db = await database;
+    var res = await db!.query('$employeesTable');
+    return res.isNotEmpty ? res.map((c) => Employee.fromMap(c)).toList() : [];
+  }
+
+  Future<int> addEmployee(Employee employee) async {
+    final db = await database;
+    return await db!.insert('$employeesTable', employee.toMap());
+  }
+
+  Future<int> updateEmployee(Employee employee) async {
+    final db = await database;
+    return await db!.update('$employeesTable', employee.toMap(),
+        where: 'id = ?', whereArgs: [employee.id]);
+  }
+
+  Future<int> deleteEmployee(int id) async {
+    final db = await database;
+    return await db!
+        .delete('$employeesTable', where: 'id = ?', whereArgs: [id]);
+  }
+
+  // Attendance CRUD operations
+  Future<List<Attendance>> getAttendance() async {
+    final db = await database;
+    var res = await db!.query('$attendanceTable');
+    return res.isNotEmpty ? res.map((c) => Attendance.fromMap(c)).toList() : [];
+  }
+
+  Future<int> addAttendance(Attendance attendance) async {
+    final db = await database;
+    return await db!.insert('$attendanceTable', attendance.toMap());
+  }
+
+  Future<int> updateAttendance(Attendance attendance) async {
+    final db = await database;
+    return await db!.update('$attendanceTable', attendance.toMap(),
+        where: 'id = ?', whereArgs: [attendance.id]);
+  }
+
+  Future<int> deleteAttendance(int id) async {
+    final db = await database;
+    return await db!
+        .delete('$attendanceTable', where: 'id = ?', whereArgs: [id]);
+  }
+
+  // Leave CRUD operations
+  Future<List<Leave>> getLeaves() async {
+    final db = await database;
+    var res = await db!.query('$leavesTable');
+    return res.isNotEmpty ? res.map((c) => Leave.fromMap(c)).toList() : [];
+  }
+
+  Future<int> addLeave(Leave leave) async {
+    final db = await database;
+    return await db!.insert('$leavesTable', leave.toMap());
+  }
+
+  Future<int> updateLeave(Leave leave) async {
+    final db = await database;
+    return await db!.update('$leavesTable', leave.toMap(),
+        where: 'id = ?', whereArgs: [leave.id]);
+  }
+
+  Future<int> deleteLeave(int id) async {
+    final db = await database;
+    return await db!.delete('$leavesTable', where: 'id = ?', whereArgs: [id]);
   }
 }

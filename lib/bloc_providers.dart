@@ -1,4 +1,5 @@
-import 'package:coozy_cafe/bloc/bloc.dart';
+import 'package:coozy_the_cafe/bloc/bloc.dart';
+import 'package:coozy_the_cafe/database_helper/DatabaseHelper.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
 List<BlocProvider> blocProviders = [
@@ -21,7 +22,17 @@ List<BlocProvider> blocProviders = [
   ),
   BlocProvider<EditMenuCategoryBloc>(
     create: (context) => EditMenuCategoryBloc(),
-  ),  BlocProvider<RecipesFullListCubit>(
+  ),
+  BlocProvider<RecipesFullListCubit>(
     create: (context) => RecipesFullListCubit(),
   ),
+  BlocProvider<EmployeeCubit>(
+    create: (context) => EmployeeCubit(DatabaseHelper())..fetchEmployees(),
+  ),
+  BlocProvider<AttendanceCubit>(
+      create: (context) =>
+          AttendanceCubit(DatabaseHelper())..fetchAttendance()),
+  BlocProvider<LeaveCubit>(
+      create: (context) =>
+      LeaveCubit(DatabaseHelper())..fetchLeaves()),
 ];

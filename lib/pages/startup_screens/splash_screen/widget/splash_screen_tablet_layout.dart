@@ -1,8 +1,8 @@
 import 'dart:math';
-import 'package:coozy_cafe/widgets/widgets.dart';
+import 'package:coozy_the_cafe/widgets/widgets.dart';
 import 'package:flutter/material.dart';
-import 'package:coozy_cafe/utlis/utlis.dart';
-import 'package:coozy_cafe/config/config.dart';
+import 'package:coozy_the_cafe/utlis/utlis.dart';
+import 'package:coozy_the_cafe/config/config.dart';
 
 class SplashScreenTabletLayout extends StatefulWidget {
   const SplashScreenTabletLayout({super.key});

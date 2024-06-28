@@ -1,4 +1,4 @@
-import 'package:coozy_cafe/utlis/components/constants.dart';
+import 'package:coozy_the_cafe/utlis/components/constants.dart';
 
 class AnalyticsService {
   static void trackEvent(String eventName) {

@@ -1,5 +1,5 @@
-import 'package:coozy_cafe/model/order_item.dart';
-import 'package:coozy_cafe/utlis/utlis.dart';
+import 'package:coozy_the_cafe/model/order_item.dart';
+import 'package:coozy_the_cafe/utlis/utlis.dart';
 
 class PaymentMode {
   int? id;

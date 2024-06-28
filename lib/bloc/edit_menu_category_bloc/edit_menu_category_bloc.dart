@@ -2,11 +2,11 @@ import 'dart:async';
 import 'dart:convert';
 
 import 'package:bloc/bloc.dart';
-import 'package:coozy_cafe/AppLocalization.dart';
-import 'package:coozy_cafe/model/category.dart';
-import 'package:coozy_cafe/model/sub_category.dart';
-import 'package:coozy_cafe/repositories/repositories.dart';
-import 'package:coozy_cafe/utlis/utlis.dart';
+import 'package:coozy_the_cafe/AppLocalization.dart';
+import 'package:coozy_the_cafe/model/category.dart';
+import 'package:coozy_the_cafe/model/sub_category.dart';
+import 'package:coozy_the_cafe/repositories/repositories.dart';
+import 'package:coozy_the_cafe/utlis/utlis.dart';
 import 'package:equatable/equatable.dart';
 import 'package:flutter/material.dart';
 import 'package:lottie/lottie.dart';

@@ -1,4 +1,4 @@
-import 'package:coozy_cafe/widgets/azlistview/src/az_common.dart';
+import 'package:coozy_the_cafe/widgets/azlistview/src/az_common.dart';
 import 'package:flutter/material.dart';
 import 'package:scrollable_positioned_list/scrollable_positioned_list.dart';
 import 'dart:math' as math;

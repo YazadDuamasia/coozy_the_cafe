@@ -1,7 +1,7 @@
 import 'dart:convert';
 
-import 'package:coozy_cafe/model/category.dart';
-import 'package:coozy_cafe/model/sub_category.dart';
+import 'package:coozy_the_cafe/model/category.dart';
+import 'package:coozy_the_cafe/model/sub_category.dart';
 
 //-------------------------------------------------------------------------------------------------------------------//
 

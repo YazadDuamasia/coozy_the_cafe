@@ -2,10 +2,10 @@
 This piece of code for that retrun the user interface for CheckboxTileView names as FilterCheckboxTitle.
 */
 
-import 'package:coozy_cafe/widgets/fliter_system_widget/filter_style_mixin.dart';
-import 'package:coozy_cafe/widgets/fliter_system_widget/props/filter_item_model.dart';
-import 'package:coozy_cafe/widgets/fliter_system_widget/props/filter_props.dart';
-import 'package:coozy_cafe/widgets/fliter_system_widget/widgets/filter_text.dart';
+import 'package:coozy_the_cafe/widgets/fliter_system_widget/filter_style_mixin.dart';
+import 'package:coozy_the_cafe/widgets/fliter_system_widget/props/filter_item_model.dart';
+import 'package:coozy_the_cafe/widgets/fliter_system_widget/props/filter_props.dart';
+import 'package:coozy_the_cafe/widgets/fliter_system_widget/widgets/filter_text.dart';
 import 'package:flutter/material.dart';
 
 class FilterRadioBoxTitle extends StatelessWidget with FilterStyleMixin {

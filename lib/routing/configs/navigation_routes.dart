@@ -1,6 +1,6 @@
-import 'package:coozy_cafe/model/recipe_model.dart';
-import 'package:coozy_cafe/routing/routs.dart';
-import 'package:coozy_cafe/utlis/utlis.dart';
+import 'package:coozy_the_cafe/model/recipe_model.dart';
+import 'package:coozy_the_cafe/routing/routs.dart';
+import 'package:coozy_the_cafe/utlis/utlis.dart';
 import 'package:flutter/services.dart';
 
 class NavigationRoutes {
@@ -113,6 +113,9 @@ class NavigationRoutes {
 
   void navigateToRecipesScreen() {
     navigatorKey.currentState!.pushNamed(RouteName.recipesListScreenRoute);
+  }
+  void navigateToEmployeeAttendanceScreen() {
+    navigatorKey.currentState!.pushNamed(RouteName.employeeAttendanceScreenRoute);
   }
 
   void navigateToRecipesInfoScreen(RecipeModel arguments) {

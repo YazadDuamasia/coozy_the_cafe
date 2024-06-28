@@ -1,4 +1,4 @@
-import 'package:coozy_cafe/widgets/progress_button/button_stagger_animation.dart';
+import 'package:coozy_the_cafe/widgets/progress_button/button_stagger_animation.dart';
 import 'package:flutter/material.dart';
 
 class ProgressButton extends StatefulWidget {

@@ -1,12 +1,12 @@
 import 'dart:convert';
 
-import 'package:coozy_cafe/AppLocalization.dart';
-import 'package:coozy_cafe/bloc/bloc.dart';
-import 'package:coozy_cafe/model/category.dart';
-import 'package:coozy_cafe/model/sub_category.dart';
-import 'package:coozy_cafe/pages/pages.dart';
-import 'package:coozy_cafe/repositories/repositories.dart';
-import 'package:coozy_cafe/utlis/utlis.dart';
+import 'package:coozy_the_cafe/AppLocalization.dart';
+import 'package:coozy_the_cafe/bloc/bloc.dart';
+import 'package:coozy_the_cafe/model/category.dart';
+import 'package:coozy_the_cafe/model/sub_category.dart';
+import 'package:coozy_the_cafe/pages/pages.dart';
+import 'package:coozy_the_cafe/repositories/repositories.dart';
+import 'package:coozy_the_cafe/utlis/utlis.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:material_design_icons_flutter/material_design_icons_flutter.dart';

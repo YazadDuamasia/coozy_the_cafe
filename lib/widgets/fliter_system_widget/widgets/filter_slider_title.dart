@@ -1,6 +1,6 @@
-import 'package:coozy_cafe/utlis/components/constants.dart';
-import 'package:coozy_cafe/widgets/fliter_system_widget/props/filter_item_model.dart';
-import 'package:coozy_cafe/widgets/fliter_system_widget/props/filter_props.dart';
+import 'package:coozy_the_cafe/utlis/components/constants.dart';
+import 'package:coozy_the_cafe/widgets/fliter_system_widget/props/filter_item_model.dart';
+import 'package:coozy_the_cafe/widgets/fliter_system_widget/props/filter_props.dart';
 import 'package:flutter/material.dart';
 import 'package:syncfusion_flutter_core/theme.dart';
 import 'package:syncfusion_flutter_sliders/sliders.dart';
@@ -39,7 +39,8 @@ class _FilterSliderTitleState extends State<FilterSliderTitle> {
   void initState() {
     super.initState();
     _values = widget.values ?? 0;
-    Constants.debugLog(FilterSliderTitle, "sliderTileThemeProps:${widget.sliderTileThemeProps.toString()}");
+    Constants.debugLog(FilterSliderTitle,
+        "sliderTileThemeProps:${widget.sliderTileThemeProps.toString()}");
   }
 
   @override
@@ -64,11 +65,21 @@ class _FilterSliderTitleState extends State<FilterSliderTitle> {
     return Column(
       mainAxisAlignment: MainAxisAlignment.start,
       crossAxisAlignment: CrossAxisAlignment.start,
-      mainAxisSize: MainAxisSize.min,
+      mainAxisSize: MainAxisSize.max,
       children: [
-        Padding(
-          padding: const EdgeInsets.symmetric(vertical: 10, horizontal: 10),
-          child: Text(widget.title),
+        Row(
+          mainAxisAlignment: MainAxisAlignment.start,
+          crossAxisAlignment: CrossAxisAlignment.start,
+          mainAxisSize: MainAxisSize.min,
+          children: <Widget>[
+            Expanded(
+              child: Padding(
+                padding:
+                    const EdgeInsets.symmetric(vertical: 10, horizontal: 10),
+                child: Text(widget.title),
+              ),
+            )
+          ],
         ),
         Row(
           mainAxisAlignment: MainAxisAlignment.start,
@@ -99,14 +110,13 @@ class _FilterSliderTitleState extends State<FilterSliderTitle> {
   slider() {
     return StatefulBuilder(builder: (context, state) {
       return SfSlider(
-        key: UniqueKey(),
         tooltipTextFormatterCallback: (value, formattedText) =>
-        '${(widget.sliderTileThemeProps?.tooltip_prefix_str == null || widget.sliderTileThemeProps!.tooltip_prefix_str!.isEmpty) ? "" : "${widget.sliderTileThemeProps?.tooltip_prefix_str.toString()} "}${double.tryParse("$value")?.toStringAsFixed(widget.sliderTileThemeProps?.fractionDigits ?? 0) ?? 0}${(widget.sliderTileThemeProps?.tooltip_suffix_str == null || widget.sliderTileThemeProps!.tooltip_suffix_str!.isEmpty) ? "" : " ${widget.sliderTileThemeProps?.tooltip_suffix_str}"}',
+            '${(widget.sliderTileThemeProps?.tooltip_prefix_str == null || widget.sliderTileThemeProps!.tooltip_prefix_str!.isEmpty) ? "" : "${widget.sliderTileThemeProps?.tooltip_prefix_str.toString()} "}${double.tryParse("$value")?.toStringAsFixed(widget.sliderTileThemeProps?.fractionDigits ?? 0) ?? 0}${(widget.sliderTileThemeProps?.tooltip_suffix_str == null || widget.sliderTileThemeProps!.tooltip_suffix_str!.isEmpty) ? "" : " ${widget.sliderTileThemeProps?.tooltip_suffix_str}"}',
         min: widget.minValue,
         max: widget.maxValue,
         value: _values ?? 0.0,
         stepSize: double.tryParse(
-            "${widget.sliderTileThemeProps?.stepSize ?? 1.0}") ??
+                "${widget.sliderTileThemeProps?.stepSize ?? 1.0}") ??
             1.0,
         showLabels: true,
         enableTooltip: true,
@@ -114,7 +124,8 @@ class _FilterSliderTitleState extends State<FilterSliderTitle> {
           return '${(widget.sliderTileThemeProps?.label_prefix_str == null || widget.sliderTileThemeProps!.label_prefix_str!.isEmpty) ? "" : "${widget.sliderTileThemeProps?.label_prefix_str.toString()} "}${double.tryParse("$value")?.toStringAsFixed(widget.sliderTileThemeProps?.fractionDigits ?? 0) ?? 0}${(widget.sliderTileThemeProps?.label_suffix_str == null || widget.sliderTileThemeProps!.label_suffix_str!.isEmpty) ? "" : " ${widget.sliderTileThemeProps?.label_suffix_str.toString()}"}';
         },
         onChanged: (newValues) async {
-          Constants.debugLog(FilterSliderTitle, "onChanged:newValues:${newValues}");
+          Constants.debugLog(
+              FilterSliderTitle, "onChanged:newValues:${newValues}");
           _values = newValues;
           widget.onChanged(newValues);
           state(() {});

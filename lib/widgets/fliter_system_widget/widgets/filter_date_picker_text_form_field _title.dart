@@ -1,6 +1,6 @@
-import 'package:coozy_cafe/pages/startup_screens/sign_up_page/sign_up_page.dart';
-import 'package:coozy_cafe/utlis/utlis.dart';
-import 'package:coozy_cafe/widgets/fliter_system_widget/props/filter_item_model.dart';
+import 'package:coozy_the_cafe/pages/startup_screens/sign_up_page/sign_up_page.dart';
+import 'package:coozy_the_cafe/utlis/utlis.dart';
+import 'package:coozy_the_cafe/widgets/fliter_system_widget/props/filter_item_model.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 

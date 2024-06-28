@@ -1,7 +1,7 @@
-import 'package:coozy_cafe/model/category.dart';
-import 'package:coozy_cafe/model/menu_item.dart';
-import 'package:coozy_cafe/model/sub_category.dart';
-import 'package:coozy_cafe/repositories/components/restaurant_repository.dart';
+import 'package:coozy_the_cafe/model/category.dart';
+import 'package:coozy_the_cafe/model/menu_item.dart';
+import 'package:coozy_the_cafe/model/sub_category.dart';
+import 'package:coozy_the_cafe/repositories/components/restaurant_repository.dart';
 import 'package:flutter/material.dart';
 
 class MenuItemForm extends StatefulWidget {

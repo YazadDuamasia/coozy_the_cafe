@@ -1,4 +1,4 @@
-# coozy_cafe
+# coozy_the_cafe
 
 A new Flutter project.
 

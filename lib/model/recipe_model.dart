@@ -4,7 +4,7 @@
 
 import 'dart:convert';
 
-import 'package:coozy_cafe/widgets/widgets.dart';
+import 'package:coozy_the_cafe/widgets/widgets.dart';
 
 List<RecipeModel> recipeModelFromJson(String str) => List<RecipeModel>.from(
     json.decode(str).map((x) => RecipeModel.fromJson(x)));

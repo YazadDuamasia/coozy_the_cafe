@@ -1,6 +1,6 @@
-import 'package:coozy_cafe/AppLocalization.dart';
-import 'package:coozy_cafe/model/table_info_model.dart';
-import 'package:coozy_cafe/utlis/components/string_value.dart';
+import 'package:coozy_the_cafe/AppLocalization.dart';
+import 'package:coozy_the_cafe/model/table_info_model.dart';
+import 'package:coozy_the_cafe/utlis/components/string_value.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_colorpicker/flutter_colorpicker.dart';

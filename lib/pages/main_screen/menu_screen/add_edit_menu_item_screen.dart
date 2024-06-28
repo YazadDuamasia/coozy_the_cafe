@@ -1,9 +1,9 @@
 import 'dart:core';
 
-import 'package:coozy_cafe/model/category.dart';
-import 'package:coozy_cafe/model/sub_category.dart';
-import 'package:coozy_cafe/repositories/components/restaurant_repository.dart';
-import 'package:coozy_cafe/utlis/utlis.dart';
+import 'package:coozy_the_cafe/model/category.dart';
+import 'package:coozy_the_cafe/model/sub_category.dart';
+import 'package:coozy_the_cafe/repositories/components/restaurant_repository.dart';
+import 'package:coozy_the_cafe/utlis/utlis.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
@@ -216,7 +216,7 @@ class _AddEditMenuItemScreenState extends State<AddEditMenuItemScreen> {
                         child: subCategoryDropdownWidget(),
                       ),
                       measuringUnitsWidget(),
-                      buildRow(),
+                      toogle_simple_widget(),
                     ],
                   ),
                 ),
@@ -228,7 +228,7 @@ class _AddEditMenuItemScreenState extends State<AddEditMenuItemScreen> {
     );
   }
 
-  buildRow() {
+  toogle_simple_widget() {
     return Padding(
       padding: const EdgeInsets.only(top: 10),
       child: Row(
@@ -250,7 +250,7 @@ class _AddEditMenuItemScreenState extends State<AddEditMenuItemScreen> {
                       }
                     });
                   },
-                  textStyle: Theme.of(context).textTheme.titleLarge,
+                  textStyle: Theme.of(context).textTheme.titleLarge!.copyWith(fontWeight: FontWeight.w600),
                   children: [
                     Row(
                       mainAxisAlignment: MainAxisAlignment.center,
@@ -258,13 +258,16 @@ class _AddEditMenuItemScreenState extends State<AddEditMenuItemScreen> {
                       mainAxisSize: MainAxisSize.min,
                       children: [
                         Expanded(
-                          child: Text(
-                            'Simple',
-                            textAlign: TextAlign.center,
-                            style: TextStyle(
-                              color: isSimpleSelected![0]
-                                  ? Colors.white
-                                  : Theme.of(context).colorScheme.primary,
+                          child: Padding(
+                            padding: const EdgeInsets.all(10.0),
+                            child: Text(
+                              'Simple',
+                              textAlign: TextAlign.center,
+                              style: TextStyle(
+                                color: isSimpleSelected![0]
+                                    ? Colors.white
+                                    : Theme.of(context).colorScheme.primary,
+                              ),
                             ),
                           ),
                         ),
@@ -276,13 +279,16 @@ class _AddEditMenuItemScreenState extends State<AddEditMenuItemScreen> {
                       mainAxisSize: MainAxisSize.min,
                       children: [
                         Expanded(
-                          child: Text(
-                            'Advance',
-                            textAlign: TextAlign.center,
-                            style: TextStyle(
-                              color: isSimpleSelected![1]
-                                  ? Colors.white
-                                  : Theme.of(context).colorScheme.primary,
+                          child: Padding(
+                            padding: const EdgeInsets.all(10.0),
+                            child: Text(
+                              'Advance',
+                              textAlign: TextAlign.center,
+                              style: TextStyle(
+                                color: isSimpleSelected![1]
+                                    ? Colors.white
+                                    : Theme.of(context).colorScheme.primary,
+                              ),
                             ),
                           ),
                         ),

@@ -1,1 +1,1 @@
-export 'package:coozy_cafe/parser/services/http_call_generator.dart';
+export 'package:coozy_the_cafe/parser/services/http_call_generator.dart';

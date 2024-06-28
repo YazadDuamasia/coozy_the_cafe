@@ -1,6 +1,5 @@
 import 'package:cached_network_image/cached_network_image.dart';
-import 'package:coozy_cafe/config/app_color/app_color.dart';
-import 'package:coozy_cafe/utlis/components/string_image_path.dart';
+import 'package:coozy_the_cafe/utlis/components/string_image_path.dart';
 import 'package:flutter/material.dart';
 import 'package:shimmer/shimmer.dart';
 

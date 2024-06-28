@@ -1,6 +1,6 @@
 import 'dart:async';
 
-import 'package:coozy_cafe/utlis/utlis.dart';
+import 'package:coozy_the_cafe/utlis/utlis.dart';
 import 'package:flutter/material.dart';
 import 'package:timeago/timeago.dart' as timeago;
 
