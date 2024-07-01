@@ -230,96 +230,98 @@ class _HomeScreenState extends State<HomeScreen>
       child: SafeArea(
         child: WillPopScope(
           onWillPop: onWillPop,
-          child: Scaffold(
-            key: _scaffoldKey,
-            resizeToAvoidBottomInset: true,
-            appBar: AppBar(
-              title: const Text(Constants.appName),
-              leading: IconButton(
-                icon: const Icon(
-                  Icons.menu,
-                ),
-                onPressed: () {
-                  if (_scaffoldKey.currentState!.isDrawerOpen) {
-                    _scaffoldKey.currentState!.closeDrawer();
-                    //close drawer, if drawer is open
-                  } else {
-                    _scaffoldKey.currentState!.openDrawer();
-                    //open drawer, if drawer is closed
-                  }
-                },
-              ),
-              bottom: TabBar(
-                tabs: const <Widget>[
-                  Tab(
-                    text: 'Waiter',
+          child: SafeArea(
+            child: Scaffold(
+              key: _scaffoldKey,
+              resizeToAvoidBottomInset: true,
+              appBar: AppBar(
+                title: const Text(Constants.appName),
+                leading: IconButton(
+                  icon: const Icon(
+                    Icons.menu,
                   ),
-                  Tab(text: 'kitchen'),
-                  Tab(text: 'more'),
-                ],
-                indicatorColor: Theme.of(context).dividerColor,
-                labelColor: Colors.white,
-                unselectedLabelColor: Colors.black,
-                unselectedLabelStyle: Theme.of(context)
-                    .textTheme
-                    .titleMedium!
-                    .copyWith(fontWeight: FontWeight.bold),
-                labelStyle: Theme.of(context)
-                    .textTheme
-                    .titleMedium!
-                    .copyWith(fontWeight: FontWeight.bold),
-              ),
-              actions: [
-                Theme(
-                  data: Theme.of(context),
-                  child: PopupMenuButton(
-                    onSelected: (value) async {
-                      print(value);
-                      if(value=="clear_data"){
-                        final prefs = await SharedPreferences.getInstance();
-                        prefs.clear();
+                  onPressed: () {
+                    if (_scaffoldKey.currentState!.isDrawerOpen) {
+                      _scaffoldKey.currentState!.closeDrawer();
+                      //close drawer, if drawer is open
+                    } else {
+                      _scaffoldKey.currentState!.openDrawer();
+                      //open drawer, if drawer is closed
+                    }
+                  },
+                ),
+                bottom: TabBar(
+                  tabs: const <Widget>[
+                    Tab(
+                      text: 'Waiter',
+                    ),
+                    Tab(text: 'kitchen'),
+                    Tab(text: 'more'),
+                  ],
+                  indicatorColor: Theme.of(context).dividerColor,
+                  labelColor: Colors.white,
+                  unselectedLabelColor: Colors.black,
+                  unselectedLabelStyle: Theme.of(context)
+                      .textTheme
+                      .titleMedium!
+                      .copyWith(fontWeight: FontWeight.bold),
+                  labelStyle: Theme.of(context)
+                      .textTheme
+                      .titleMedium!
+                      .copyWith(fontWeight: FontWeight.bold),
+                ),
+                actions: [
+                  Theme(
+                    data: Theme.of(context),
+                    child: PopupMenuButton(
+                      onSelected: (value) async {
+                        print(value);
+                        if(value=="clear_data"){
+                          final prefs = await SharedPreferences.getInstance();
+                          prefs.clear();
 
-                      }
-                    },
-                    itemBuilder: (BuildContext bc) {
-                      return const [
-                        PopupMenuItem(
-                          value: 'backup',
-                          child: Text("Backup"),
-                        ),
-                        PopupMenuItem(
-                          value: 'export',
-                          child: Text("Export"),
-                        ),
-                        PopupMenuItem(
-                          value: 'restore',
-                          child: Text("Restore"),
-                        ),
-                        PopupMenuItem(
-                          value: 'clear_data',
-                          child: Text("clear data"),
-                        )
-                      ];
-                    },
-                    icon: Icon(
-                      Icons.more_vert_rounded,
-                      size: Theme.of(context).appBarTheme.iconTheme?.size,
-                      color: Theme.of(context).appBarTheme.iconTheme?.color,
+                        }
+                      },
+                      itemBuilder: (BuildContext bc) {
+                        return const [
+                          PopupMenuItem(
+                            value: 'backup',
+                            child: Text("Backup"),
+                          ),
+                          PopupMenuItem(
+                            value: 'export',
+                            child: Text("Export"),
+                          ),
+                          PopupMenuItem(
+                            value: 'restore',
+                            child: Text("Restore"),
+                          ),
+                          PopupMenuItem(
+                            value: 'clear_data',
+                            child: Text("clear data"),
+                          )
+                        ];
+                      },
+                      icon: Icon(
+                        Icons.more_vert_rounded,
+                        size: Theme.of(context).appBarTheme.iconTheme?.size,
+                        color: Theme.of(context).appBarTheme.iconTheme?.color,
+                      ),
                     ),
                   ),
-                ),
-              ],
-            ),
-            drawer: const HomeScreenDrawer(),
-            body: TabBarView(
-              children: [
-                buildPageTransitionSwitcher(
-                    list: mobileListView, currentIndex: 0),
-                buildPageTransitionSwitcher(
-                    list: mobileListView, currentIndex: 1),
-                buildPageTransitionSwitcher(
-                    list: mobileListView, currentIndex: 2),
-              ],
+                ],
+              ),
+              drawer: const HomeScreenDrawer(),
+              body: TabBarView(
+                children: [
+                  buildPageTransitionSwitcher(
+                      list: mobileListView, currentIndex: 0),
+                  buildPageTransitionSwitcher(
+                      list: mobileListView, currentIndex: 1),
+                  buildPageTransitionSwitcher(
+                      list: mobileListView, currentIndex: 2),
+                ],
+              ),
             ),
           ),
         ),

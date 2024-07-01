@@ -8,6 +8,8 @@ class Employee {
   String? startWorkingTime;
   String? endWorkingTime;
   String? workingHours;
+  String? creationDate;
+  String? modificationDate;
 
   Employee({
     this.id,
@@ -19,6 +21,8 @@ class Employee {
     this.startWorkingTime,
     this.endWorkingTime,
     this.workingHours,
+    this.creationDate,
+    this.modificationDate,
   });
 
   factory Employee.fromMap(Map<String, dynamic> json) => Employee(
@@ -34,11 +38,17 @@ class Employee {
             json['endWorkingTime'] != null ? json['endWorkingTime'] : null,
         workingHours:
             json['workingHours'] != null ? json['workingHours'] : null,
+        creationDate:
+            json['creationDate'] != null ? json['creationDate'] : null,
+        modificationDate:
+            json['modificationDate'] != null ? json['modificationDate'] : null,
       );
 
   Map<String, dynamic> toMap() => {
         'id': id,
         'name': name,
+        'creationDate': creationDate,
+        'modificationDate': modificationDate,
         'phoneNumber': phoneNumber,
         'position': position,
         'joiningDate': joiningDate,
@@ -50,6 +60,6 @@ class Employee {
 
   @override
   String toString() {
-    return 'Employee{id: $id, name: $name, phoneNumber: $phoneNumber, position: $position, joiningDate: $joiningDate, leavingDate: $leavingDate, startWorkingTime: $startWorkingTime, endWorkingTime: $endWorkingTime, workingHours: $workingHours}';
+    return 'Employee{id: $id, name: $name, phoneNumber: $phoneNumber, position: $position, joiningDate: $joiningDate, leavingDate: $leavingDate, startWorkingTime: $startWorkingTime, endWorkingTime: $endWorkingTime, workingHours: $workingHours, creationDate: $creationDate, modificationDate: $modificationDate}';
   }
 }

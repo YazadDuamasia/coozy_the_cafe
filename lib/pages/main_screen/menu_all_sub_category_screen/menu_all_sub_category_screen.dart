@@ -34,41 +34,43 @@ class _MenuAllSubCategoryScreenState extends State<MenuAllSubCategoryScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: const Text('All Subcategories'),
-      ),
-      body: BlocConsumer<MenuSubCategoryBloc, MenuSubCategoryState>(
-        listener: (context, state) {},
-        builder: (context, state) {
-          if (state is MenuSubCategoryLoadingState) {
-            return const LoadingPage();
-          } else if (state is MenuSubCategoryLoadedState) {
-            return Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              mainAxisAlignment: MainAxisAlignment.start,
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                _buildSearchField(context, state),
-                Expanded(
-                  child: _buildSubCategoryList(state),
-                ),
-              ],
-            );
-          } else if (state is MenuSubCategoryErrorState) {
-            Constants.debugLog(MenuAllSubCategoryScreen,
-                "MenuSubCategoryErrorState:error:${state.errorMessage}");
-            return ErrorPage(
-              onPressedRetryButton: () async {
-                context
-                    .read<MenuSubCategoryBloc>()
-                    .add(InitialLoadingDataEvent());
-              },
-            );
-          } else {
-            return Container(); // Placeholder for other states
-          }
-        },
+    return SafeArea(
+      child: Scaffold(
+        appBar: AppBar(
+          title: const Text('All Subcategories'),
+        ),
+        body: BlocConsumer<MenuSubCategoryBloc, MenuSubCategoryState>(
+          listener: (context, state) {},
+          builder: (context, state) {
+            if (state is MenuSubCategoryLoadingState) {
+              return const LoadingPage();
+            } else if (state is MenuSubCategoryLoadedState) {
+              return Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                mainAxisAlignment: MainAxisAlignment.start,
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  _buildSearchField(context, state),
+                  Expanded(
+                    child: _buildSubCategoryList(state),
+                  ),
+                ],
+              );
+            } else if (state is MenuSubCategoryErrorState) {
+              Constants.debugLog(MenuAllSubCategoryScreen,
+                  "MenuSubCategoryErrorState:error:${state.errorMessage}");
+              return ErrorPage(
+                onPressedRetryButton: () async {
+                  context
+                      .read<MenuSubCategoryBloc>()
+                      .add(InitialLoadingDataEvent());
+                },
+              );
+            } else {
+              return Container(); // Placeholder for other states
+            }
+          },
+        ),
       ),
     );
   }

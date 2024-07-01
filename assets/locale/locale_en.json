@@ -108,5 +108,9 @@
   "common_common_phoneNumber_validator_error_msg": "Please enter a valid phone number.",
   "recipes_list_screen_no_data_title_msg": "No data founded",
   "recipes_bookmark_no_record_title": "No data founded",
-  "recipes_bookmark_no_record_sub_title": "Please try to add some new bookmarks from recipes list."
+  "recipes_bookmark_no_record_sub_title": "Please try to add some new bookmarks from recipes list.",
+  "employee_screen_delete_title_dialog":  "Are you sure ?",
+  "employee_screen_delete_dialog_subTitle": "Do you really want to delete this employee information? You will not be able to undo this action.",
+  "attendace_screen_delete_title_dialog": "Are you sure ?",
+  "attendace_screen_delete_title_dialog": "Do you really want to delete this attendance information? You will not be able to undo this action."
 }

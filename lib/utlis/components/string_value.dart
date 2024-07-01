@@ -162,4 +162,10 @@ abstract class StringValue {
 
   static String recipes_bookmark_no_record_title="recipes_bookmark_no_record_title";
   static String recipes_bookmark_no_record_sub_title="recipes_bookmark_no_record_sub_title";
+
+  static String employee_screen_delete_title_dialog="employee_screen_delete_title_dialog";
+  static String employee_screen_delete_dialog_subTitle="employee_screen_delete_dialog_subTitle";
+
+  static String attendace_screen_delete_title_dialog="attendace_screen_delete_title_dialog";
+  static String attendace_screen_delete_dialog_subTitle="attendace_screen_delete_dialog_subTitle";
 }

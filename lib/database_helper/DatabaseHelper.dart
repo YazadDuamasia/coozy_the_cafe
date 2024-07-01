@@ -258,6 +258,8 @@ class DatabaseHelper {
     CREATE TABLE $employeesTable (
       id INTEGER PRIMARY KEY AUTOINCREMENT,
       name TEXT,
+      creationDate TEXT,
+      modificationDate TEXT,
       phoneNumber TEXT,
       position TEXT,
       joiningDate TEXT,
@@ -273,7 +275,8 @@ class DatabaseHelper {
     CREATE TABLE $attendanceTable (
       id INTEGER PRIMARY KEY AUTOINCREMENT,
       employeeId INTEGER,
-      currentDate TEXT,
+      creationDate TEXT,
+      modificationDate TEXT,
       checkIn TEXT,
       checkOut TEXT,
       employeeWorkingDurations TEXT,
@@ -287,6 +290,8 @@ class DatabaseHelper {
     CREATE TABLE $leavesTable (
       id INTEGER PRIMARY KEY AUTOINCREMENT,
       employeeId INTEGER,
+      creationDate TEXT,
+      modificationDate TEXT,
       startDate TEXT,
       endDate TEXT,
       reason TEXT,
@@ -2167,7 +2172,7 @@ class DatabaseHelper {
   // Employee CRUD operations
   Future<List<Employee>> getEmployees() async {
     final db = await database;
-    var res = await db!.query('$employeesTable');
+    var res = await db!.query('$employeesTable',orderBy: 'id DESC', );
     return res.isNotEmpty ? res.map((c) => Employee.fromMap(c)).toList() : [];
   }
 
@@ -2189,9 +2194,9 @@ class DatabaseHelper {
   }
 
   // Attendance CRUD operations
-  Future<List<Attendance>> getAttendance() async {
+  Future<List<Attendance>?> getAttendance() async {
     final db = await database;
-    var res = await db!.query('$attendanceTable');
+    var res = await db!.query('$attendanceTable',orderBy: 'id DESC', );
     return res.isNotEmpty ? res.map((c) => Attendance.fromMap(c)).toList() : [];
   }
 
@@ -2213,9 +2218,9 @@ class DatabaseHelper {
   }
 
   // Leave CRUD operations
-  Future<List<Leave>> getLeaves() async {
+  Future<List<Leave>?> getLeaves() async {
     final db = await database;
-    var res = await db!.query('$leavesTable');
+    var res = await db!.query('$leavesTable',orderBy: 'id DESC', );
     return res.isNotEmpty ? res.map((c) => Leave.fromMap(c)).toList() : [];
   }
 

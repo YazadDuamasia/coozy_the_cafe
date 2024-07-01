@@ -104,12 +104,14 @@ class _SplashScreenState extends State<SplashScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return const Scaffold(
-      resizeToAvoidBottomInset: true,
-      body: ResponsiveLayout(
-        mobile: SplashScreenMobileLayout(),
-        tablet: SplashScreenTabletLayout(),
-        desktop: SplashScreenDesktopLayout(),
+    return const SafeArea(
+      child: Scaffold(
+        resizeToAvoidBottomInset: true,
+        body: ResponsiveLayout(
+          mobile: SplashScreenMobileLayout(),
+          tablet: SplashScreenTabletLayout(),
+          desktop: SplashScreenDesktopLayout(),
+        ),
       ),
     );
   }

@@ -50,6 +50,9 @@ class DateUtil {
   // 'MMMM'=>"February"
   static const DATE_FORMAT14 = 'MMMM';
 
+  // 'dd-MM-yyyy hh:mm:ss aaa =>"11-02-2022 04:16:58 AM"
+  static const DATE_FORMAT15 = 'dd-MM-yyyy hh:mm:ss aaa';
+
   // 'hh:mm:ss aaa'=>"04:16:58 AM"
   static const TIME_FORMAT1 = 'hh:mm:ss aaa';
 
@@ -226,24 +229,33 @@ class DateUtil {
     return '$hours:$minutes';
   }
 
-  static String? calculateRemainingTime(
-      {String? fromTime, String? toTime}) {
+  static String? calculateRemainingTime({String? fromTime, String? toTime}) {
     try {
-      // Parse current time
-      DateTime? fromDateTime = DateFormat.jm().tryParse(fromTime!);
-
-      // Parse target time
-      DateTime? toDateTime = DateFormat.jm().tryParse(toTime!);
+      DateTime? startDateTime =
+          DateFormat("dd-MM-yy hh:mm:ss aaa").tryParse(fromTime!);
+      DateTime? endDateTime =
+          DateFormat("dd-MM-yy hh:mm:ss aaa").tryParse(toTime!);
 
       // Calculate the difference
-      Duration difference = toDateTime!.difference(fromDateTime!);
+      Duration difference = startDateTime!.difference(endDateTime!);
 
       // Convert the difference to hours and minutes
-      int hours = difference.inHours;
+      int days = difference.inDays;
+      int hours = difference.inHours % 24;
       int minutes = difference.inMinutes % 60;
+      StringBuffer stringBuffer = StringBuffer("");
+      if (days != 0) {
+        stringBuffer.write("$days days,");
+      }
+      if (hours != 0) {
+        stringBuffer.write(" $hours hours,");
+      }
+      if (minutes != 0) {
+        stringBuffer.write(" $minutes minutes");
+      }
 
       // Return formatted string
-      return "${hours}h ${minutes}m";
+      return stringBuffer.toString();
     } catch (e) {
       // Handle parsing errors
       print("error:${e}");
