@@ -266,7 +266,8 @@ class DatabaseHelper {
       leavingDate TEXT,
       startWorkingTime TEXT,
       endWorkingTime TEXT,
-      workingHours TEXT
+      workingHours TEXT,
+      isDeleted INTEGER
     )
   ''');
 
@@ -275,12 +276,14 @@ class DatabaseHelper {
     CREATE TABLE $attendanceTable (
       id INTEGER PRIMARY KEY AUTOINCREMENT,
       employeeId INTEGER,
+      currentStatus INTEGER,
       creationDate TEXT,
       modificationDate TEXT,
       checkIn TEXT,
       checkOut TEXT,
       employeeWorkingDurations TEXT,
       workingTimeDurations TEXT,
+      isDeleted INTEGER,
       FOREIGN KEY (employeeId) REFERENCES $employeesTable (id)
     )
   ''');
@@ -290,11 +293,13 @@ class DatabaseHelper {
     CREATE TABLE $leavesTable (
       id INTEGER PRIMARY KEY AUTOINCREMENT,
       employeeId INTEGER,
+      currentStatus INTEGER,
       creationDate TEXT,
       modificationDate TEXT,
       startDate TEXT,
       endDate TEXT,
       reason TEXT,
+      isDeleted INTEGER,
       FOREIGN KEY (employeeId) REFERENCES $employeesTable (id)
     )
   ''');
@@ -639,7 +644,7 @@ class DatabaseHelper {
         whereArgs: [categoryId],
       );
       // Commit the batch
-      await batch.commit();
+      await batch.commit(noResult: true);
     });
   }
 
@@ -655,7 +660,7 @@ class DatabaseHelper {
         for (SubCategory subCategory in subCategories) {
           batch.insert(subcategoriesTable, subCategory.toJson());
         }
-        await batch.commit();
+        await batch.commit(noResult: true);
       });
     }
   }
@@ -745,7 +750,7 @@ class DatabaseHelper {
       }
 
       // Commit the batch
-      await batch.commit();
+      await batch.commit(noResult: true);
     });
   }
 
@@ -835,7 +840,7 @@ class DatabaseHelper {
             },
           );
         }
-        await batch.commit();
+        await batch.commit(noResult: true);
       }
     });
   }
@@ -1324,7 +1329,7 @@ class DatabaseHelper {
           },
         );
       }
-      await batch.commit();
+      await batch.commit(noResult: true);
     } catch (e) {
       print("Error updating order: $e");
     }
@@ -2172,7 +2177,12 @@ class DatabaseHelper {
   // Employee CRUD operations
   Future<List<Employee>> getEmployees() async {
     final db = await database;
-    var res = await db!.query('$employeesTable',orderBy: 'id DESC', );
+    var res = await db!.query(
+      '$employeesTable',
+      where: 'isDeleted = ?',
+      whereArgs: [0], // 0 for false
+      orderBy: 'id DESC',
+    );
     return res.isNotEmpty ? res.map((c) => Employee.fromMap(c)).toList() : [];
   }
 
@@ -2189,14 +2199,27 @@ class DatabaseHelper {
 
   Future<int> deleteEmployee(int id) async {
     final db = await database;
-    return await db!
-        .delete('$employeesTable', where: 'id = ?', whereArgs: [id]);
+    return await db!.update(
+      '$employeesTable',
+      {
+        'isDeleted': 1,
+        'modificationDate':
+            DateUtil.dateToString(DateTime.now(), DateUtil.DATE_FORMAT15)
+      },
+      where: 'id = ?',
+      whereArgs: [id],
+    );
   }
 
   // Attendance CRUD operations
   Future<List<Attendance>?> getAttendance() async {
     final db = await database;
-    var res = await db!.query('$attendanceTable',orderBy: 'id DESC', );
+    var res = await db!.query(
+      '$attendanceTable',
+      where: 'isDeleted = ?',
+      whereArgs: [0], // 0 for false
+      orderBy: 'id DESC',
+    );
     return res.isNotEmpty ? res.map((c) => Attendance.fromMap(c)).toList() : [];
   }
 
@@ -2213,14 +2236,27 @@ class DatabaseHelper {
 
   Future<int> deleteAttendance(int id) async {
     final db = await database;
-    return await db!
-        .delete('$attendanceTable', where: 'id = ?', whereArgs: [id]);
+    return await db!.update(
+      '$attendanceTable',
+      {
+        'isDeleted': 1,
+        'modificationDate':
+            DateUtil.dateToString(DateTime.now(), DateUtil.DATE_FORMAT15)
+      },
+      where: 'id = ?',
+      whereArgs: [id],
+    );
   }
 
   // Leave CRUD operations
   Future<List<Leave>?> getLeaves() async {
     final db = await database;
-    var res = await db!.query('$leavesTable',orderBy: 'id DESC', );
+    var res = await db!.query(
+      '$leavesTable',
+      where: 'isDeleted = ?',
+      whereArgs: [0], // 0 for false
+      orderBy: 'id DESC',
+    );
     return res.isNotEmpty ? res.map((c) => Leave.fromMap(c)).toList() : [];
   }
 
@@ -2235,8 +2271,33 @@ class DatabaseHelper {
         where: 'id = ?', whereArgs: [leave.id]);
   }
 
+  Future<void> updateLeavesBatch(List<Leave> leaves) async {
+    final db = await database;
+    final batch = db!.batch();
+
+    for (Leave leave in leaves) {
+      batch.update(
+        '$leavesTable',
+        leave.toMap(),
+        where: 'id = ?',
+        whereArgs: [leave.id],
+      );
+    }
+
+    await batch.commit(noResult: true);
+  }
+
   Future<int> deleteLeave(int id) async {
     final db = await database;
-    return await db!.delete('$leavesTable', where: 'id = ?', whereArgs: [id]);
+    return await db!.update(
+      '$leavesTable',
+      {
+        'isDeleted': 1,
+        'modificationDate':
+            DateUtil.dateToString(DateTime.now(), DateUtil.DATE_FORMAT15)
+      },
+      where: 'id = ?',
+      whereArgs: [id],
+    );
   }
 }

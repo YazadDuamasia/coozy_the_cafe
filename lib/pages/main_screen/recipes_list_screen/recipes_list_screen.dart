@@ -919,17 +919,17 @@ class _RecipesListScreenState extends State<RecipesListScreen> {
         [];
 
     if (previousData == null || previousData.isEmpty) {
-      return DateFormat(dateFormat ?? DateUtil.DATE_FORMAT11)
+      return DateFormat(dateFormat ?? DateUtil.DATE_FORMAT15)
           .tryParse(DateTime.now().toIso8601String())
           ?.toIso8601String();
     } else {
       var currentData = previousData.first.filterKey;
       if (currentData == null || currentData.isEmpty) {
-        return DateFormat(dateFormat ?? DateUtil.DATE_FORMAT11)
+        return DateFormat(dateFormat ?? DateUtil.DATE_FORMAT15)
             .tryParse(DateTime.now().toIso8601String())
             ?.toIso8601String();
       } else {
-        return DateFormat(dateFormat ?? DateUtil.DATE_FORMAT11)
+        return DateFormat(dateFormat ?? DateUtil.DATE_FORMAT15)
             .tryParse(previousData.first.filterKey ?? DateTime.now())
             ?.toIso8601String();
       }

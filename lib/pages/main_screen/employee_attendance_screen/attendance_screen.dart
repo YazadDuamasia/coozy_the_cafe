@@ -85,14 +85,24 @@ class _AttendanceScreenState extends State<AttendanceScreen> {
                                 backgroundColor: Colors.lightBlueAccent,
                                 foregroundColor: Colors.white,
                                 icon: MdiIcons.circleEditOutline,
-                                borderRadius: BorderRadius.circular(10),
+                                borderRadius: BorderRadius.only(
+                                  topLeft: Radius.circular(10),
+                                  bottomLeft: Radius.circular(10),
+                                  bottomRight: Radius.circular(0),
+                                  topRight: Radius.circular(0),
+                                ),
                                 label: 'Edit',
                               ),
                               SlidableAction(
                                 backgroundColor: Colors.red,
                                 foregroundColor: Colors.white,
                                 autoClose: true,
-                                borderRadius: BorderRadius.circular(10),
+                                borderRadius: BorderRadius.only(
+                                  topRight: Radius.circular(10),
+                                  bottomRight: Radius.circular(10),
+                                  topLeft: Radius.circular(0),
+                                  bottomLeft: Radius.circular(0),
+                                ),
                                 icon: Icons.delete,
                                 label: 'Delete',
                                 onPressed: (BuildContext ctx) {
@@ -466,9 +476,9 @@ class _AttendanceScreenState extends State<AttendanceScreen> {
 
     void _updateTotalWorkingTime() {
       final totalWorkingTime = DateUtil.calculateRemainingTime(
-        fromTime: checkInController.text,
-        toTime: checkOutController.text,
-      );
+          fromTime: checkInController.text,
+          toTime: checkOutController.text,
+          format: DateUtil.TIME_FORMAT2);
       totalWorkingTimeNotifier.value = totalWorkingTime ?? 'N/A';
     }
 
@@ -514,445 +524,448 @@ class _AttendanceScreenState extends State<AttendanceScreen> {
                 ),
               ],
             ),
-            Padding(
-              padding: const EdgeInsets.all(10.0),
-              child: SingleChildScrollView(
-                child: Form(
-                  key: _formKey,
-                  child: Column(
-                    mainAxisAlignment: MainAxisAlignment.start,
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    mainAxisSize: MainAxisSize.min,
-                    children: <Widget>[
-                      const SizedBox(height: 10),
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.start,
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        mainAxisSize: MainAxisSize.min,
-                        children: <Widget>[
-                          Expanded(
-                            child: DropdownButtonFormField<Employee>(
-                              value: selectedEmployee,
-                              onChanged: (newValue) {
-                                selectedEmployee = newValue;
-                                employeeWorkingHoursNotifier.value =
-                                    selectedEmployee;
-                              },
-                              items: employeeList
-                                  ?.map<DropdownMenuItem<Employee>>(
-                                      (Employee employee) {
-                                return DropdownMenuItem<Employee>(
-                                  value: employee,
-                                  child: RichText(
-                                    text: TextSpan(
-                                      children: [
-                                        TextSpan(
-                                          text: employee.name ?? "",
-                                          style: Theme.of(context)
-                                              .textTheme
-                                              .bodyMedium,
-                                        ),
-                                        TextSpan(
-                                          text: "\nPosition: ",
-                                          style: Theme.of(context)
-                                              .textTheme
-                                              .bodyMedium!
-                                              .copyWith(
-                                                  fontWeight: FontWeight.w700),
-                                        ),
-                                        TextSpan(
-                                          text: "${employee.position ?? ""}",
-                                          style: Theme.of(context)
-                                              .textTheme
-                                              .bodyMedium,
-                                        ),
-                                      ],
-                                    ),
-                                  ),
-                                );
-                              }).toList(),
-                              decoration: const InputDecoration(
-                                labelText: 'Employee name',
-                                border: OutlineInputBorder(),
-                              ),
-                              validator: (value) {
-                                if (value == null) {
-                                  return 'Please select an employee name.';
-                                }
-                                return null;
-                              },
-                            ),
-                          ),
-                        ],
-                      ),
-                      const SizedBox(height: 10),
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.start,
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        mainAxisSize: MainAxisSize.min,
-                        children: <Widget>[
-                          Expanded(
-                            child: TextFormField(
-                              controller: checkInController,
-                              focusNode: checkInFocusNode,
-                              readOnly: true,
-                              onTap: () async {
-                                DateTime now = DateTime.now();
-                                DateTime initialDateTime = DateTime(
-                                  now.year,
-                                  now.month,
-                                  now.day,
-                                  checkInTime!.hour,
-                                  checkInTime!.minute,
-                                );
-                                DateTime? tempPickedDateTime = initialDateTime;
-
-                                await showCupertinoModalPopup<void>(
-                                  context: context,
-                                  builder: (BuildContext context) {
-                                    return ColoredBox(
-                                      color:
-                                          Theme.of(context).colorScheme.surface,
-                                      child: SizedBox(
-                                        width:
-                                            MediaQuery.of(context).size.width,
-                                        height:
-                                            MediaQuery.of(context).size.height *
-                                                .40,
-                                        child: Column(
-                                          children: <Widget>[
-                                            Row(
-                                              mainAxisAlignment:
-                                                  MainAxisAlignment
-                                                      .spaceBetween,
-                                              children: <Widget>[
-                                                CupertinoButton(
-                                                  child: const Text('Cancel'),
-                                                  onPressed: () {
-                                                    Navigator.pop(context);
-                                                  },
-                                                ),
-                                                CupertinoButton(
-                                                  child: const Text('Done'),
-                                                  onPressed: () {
-                                                    checkInTime = TimeOfDay(
-                                                      hour: tempPickedDateTime
-                                                              ?.hour ??
-                                                          0,
-                                                      minute: tempPickedDateTime
-                                                              ?.minute ??
-                                                          0,
-                                                    );
-                                                    checkInController.text =
-                                                        DateUtil
-                                                            .formatTimeOfDay(
-                                                      checkInTime!,
-                                                      DateUtil.TIME_FORMAT2,
-                                                    );
-                                                    Navigator.pop(context);
-                                                  },
-                                                ),
-                                              ],
-                                            ),
-                                            Expanded(
-                                              child: CupertinoDatePicker(
-                                                mode: CupertinoDatePickerMode
-                                                    .time,
-                                                backgroundColor:
-                                                    Theme.of(context)
-                                                        .colorScheme
-                                                        .surface,
-                                                initialDateTime:
-                                                    initialDateTime,
-                                                onDateTimeChanged:
-                                                    (DateTime newDateTime) {
-                                                  tempPickedDateTime =
-                                                      newDateTime;
-                                                },
-                                              ),
-                                            ),
-                                          ],
-                                        ),
+            Expanded(
+              child: Padding(
+                padding: const EdgeInsets.all(10.0),
+                child: SingleChildScrollView(
+                  child: Form(
+                    key: _formKey,
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.start,
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      mainAxisSize: MainAxisSize.min,
+                      children: <Widget>[
+                        const SizedBox(height: 10),
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.start,
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          mainAxisSize: MainAxisSize.min,
+                          children: <Widget>[
+                            Expanded(
+                              child: DropdownButtonFormField<Employee>(
+                                value: selectedEmployee,
+                                onChanged: (newValue) {
+                                  selectedEmployee = newValue;
+                                  employeeWorkingHoursNotifier.value =
+                                      selectedEmployee;
+                                },
+                                items: employeeList
+                                    ?.map<DropdownMenuItem<Employee>>(
+                                        (Employee employee) {
+                                  return DropdownMenuItem<Employee>(
+                                    value: employee,
+                                    child: RichText(
+                                      text: TextSpan(
+                                        children: [
+                                          TextSpan(
+                                            text: employee.name ?? "",
+                                            style: Theme.of(context)
+                                                .textTheme
+                                                .bodyMedium,
+                                          ),
+                                          TextSpan(
+                                            text: "\nPosition: ",
+                                            style: Theme.of(context)
+                                                .textTheme
+                                                .bodyMedium!
+                                                .copyWith(
+                                                    fontWeight: FontWeight.w700),
+                                          ),
+                                          TextSpan(
+                                            text: "${employee.position ?? ""}",
+                                            style: Theme.of(context)
+                                                .textTheme
+                                                .bodyMedium,
+                                          ),
+                                        ],
                                       ),
-                                    );
-                                  },
-                                );
-                              },
-                              decoration: InputDecoration(
-                                labelText: "Starting Shift Time",
-                                suffix: Visibility(
-                                  visible: checkInController.text.isNotEmpty,
-                                  child: GestureDetector(
-                                    onTap: () {
-                                      checkInTime = null;
-                                      checkInController.clear();
-                                    },
-                                    child: const Icon(Icons.clear),
-                                  ),
+                                    ),
+                                  );
+                                }).toList(),
+                                decoration: const InputDecoration(
+                                  labelText: 'Employee name',
+                                  border: OutlineInputBorder(),
                                 ),
-                              ),
-                              autovalidateMode:
-                                  AutovalidateMode.onUserInteraction,
-                              validator: (value) {
-                                if (value == null || value.isEmpty) {
-                                  return "Please enter start working time.";
-                                } else {
+                                validator: (value) {
+                                  if (value == null) {
+                                    return 'Please select an employee name.';
+                                  }
                                   return null;
-                                }
-                              },
+                                },
+                              ),
                             ),
-                          ),
-                        ],
-                      ),
-                      const SizedBox(height: 10),
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.start,
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        mainAxisSize: MainAxisSize.min,
-                        children: <Widget>[
-                          Expanded(
-                            child: TextFormField(
-                              controller: checkOutController,
-                              focusNode: checkOutFocusNode,
-                              readOnly: true,
-                              onTap: () async {
-                                DateTime now = DateTime.now();
-                                DateTime initialDateTime = DateTime(
-                                  now.year,
-                                  now.month,
-                                  now.day,
-                                  checkOutTime!.hour,
-                                  checkOutTime!.minute,
-                                );
-                                DateTime? tempPickedDateTime = initialDateTime;
+                          ],
+                        ),
+                        const SizedBox(height: 10),
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.start,
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          mainAxisSize: MainAxisSize.min,
+                          children: <Widget>[
+                            Expanded(
+                              child: TextFormField(
+                                controller: checkInController,
+                                focusNode: checkInFocusNode,
+                                readOnly: true,
+                                onTap: () async {
+                                  DateTime now = DateTime.now();
+                                  DateTime initialDateTime = DateTime(
+                                    now.year,
+                                    now.month,
+                                    now.day,
+                                    checkInTime!.hour,
+                                    checkInTime!.minute,
+                                  );
+                                  DateTime? tempPickedDateTime = initialDateTime;
 
-                                await showCupertinoModalPopup<void>(
-                                  context: context,
-                                  builder: (BuildContext context) {
-                                    return ColoredBox(
-                                      color:
-                                          Theme.of(context).colorScheme.surface,
-                                      child: SizedBox(
-                                        width:
-                                            MediaQuery.of(context).size.width,
-                                        height:
-                                            MediaQuery.of(context).size.height *
-                                                .40,
-                                        child: Column(
-                                          children: <Widget>[
-                                            Row(
-                                              mainAxisAlignment:
-                                                  MainAxisAlignment
-                                                      .spaceBetween,
-                                              children: <Widget>[
-                                                CupertinoButton(
-                                                  child: const Text('Cancel'),
-                                                  onPressed: () {
-                                                    Navigator.pop(context);
-                                                  },
-                                                ),
-                                                CupertinoButton(
-                                                  child: const Text('Done'),
-                                                  onPressed: () {
-                                                    checkOutTime = TimeOfDay(
-                                                      hour: tempPickedDateTime
-                                                              ?.hour ??
-                                                          0,
-                                                      minute: tempPickedDateTime
-                                                              ?.minute ??
-                                                          0,
-                                                    );
-                                                    checkOutController.text =
-                                                        DateUtil
-                                                            .formatTimeOfDay(
-                                                      checkOutTime!,
-                                                      DateUtil.TIME_FORMAT2,
-                                                    );
-                                                    Navigator.pop(context);
-                                                  },
-                                                ),
-                                              ],
-                                            ),
-                                            Expanded(
-                                              child: CupertinoDatePicker(
-                                                mode: CupertinoDatePickerMode
-                                                    .time,
-                                                backgroundColor:
-                                                    Theme.of(context)
-                                                        .colorScheme
-                                                        .surface,
-                                                initialDateTime:
-                                                    initialDateTime,
-                                                onDateTimeChanged:
-                                                    (DateTime newDateTime) {
-                                                  tempPickedDateTime =
-                                                      newDateTime;
-                                                },
+                                  await showCupertinoModalPopup<void>(
+                                    context: context,
+                                    builder: (BuildContext context) {
+                                      return ColoredBox(
+                                        color:
+                                            Theme.of(context).colorScheme.surface,
+                                        child: SizedBox(
+                                          width:
+                                              MediaQuery.of(context).size.width,
+                                          height:
+                                              MediaQuery.of(context).size.height *
+                                                  .40,
+                                          child: Column(
+                                            children: <Widget>[
+                                              Row(
+                                                mainAxisAlignment:
+                                                    MainAxisAlignment
+                                                        .spaceBetween,
+                                                children: <Widget>[
+                                                  CupertinoButton(
+                                                    child: const Text('Cancel'),
+                                                    onPressed: () {
+                                                      Navigator.pop(context);
+                                                    },
+                                                  ),
+                                                  CupertinoButton(
+                                                    child: const Text('Done'),
+                                                    onPressed: () {
+                                                      checkInTime = TimeOfDay(
+                                                        hour: tempPickedDateTime
+                                                                ?.hour ??
+                                                            0,
+                                                        minute: tempPickedDateTime
+                                                                ?.minute ??
+                                                            0,
+                                                      );
+                                                      checkInController.text =
+                                                          DateUtil
+                                                              .formatTimeOfDay(
+                                                        checkInTime!,
+                                                        DateUtil.TIME_FORMAT2,
+                                                      );
+                                                      Navigator.pop(context);
+                                                    },
+                                                  ),
+                                                ],
                                               ),
-                                            ),
-                                          ],
+                                              Expanded(
+                                                child: CupertinoDatePicker(
+                                                  mode: CupertinoDatePickerMode
+                                                      .time,
+                                                  backgroundColor:
+                                                      Theme.of(context)
+                                                          .colorScheme
+                                                          .surface,
+                                                  initialDateTime:
+                                                      initialDateTime,
+                                                  onDateTimeChanged:
+                                                      (DateTime newDateTime) {
+                                                    tempPickedDateTime =
+                                                        newDateTime;
+                                                  },
+                                                ),
+                                              ),
+                                            ],
+                                          ),
                                         ),
-                                      ),
-                                    );
-                                  },
-                                );
-                              },
-                              decoration: InputDecoration(
-                                labelText: "Ending Shift Time",
-                                suffix: Visibility(
-                                  visible: checkOutController.text.isNotEmpty,
-                                  child: GestureDetector(
-                                    onTap: () {
-                                      checkOutTime = null;
-                                      checkOutController.clear();
+                                      );
                                     },
-                                    child: const Icon(Icons.clear),
+                                  );
+                                },
+                                decoration: InputDecoration(
+                                  labelText: "Starting Shift Time",
+                                  suffix: Visibility(
+                                    visible: checkInController.text.isNotEmpty,
+                                    child: GestureDetector(
+                                      onTap: () {
+                                        checkInTime = null;
+                                        checkInController.clear();
+                                      },
+                                      child: const Icon(Icons.clear),
+                                    ),
                                   ),
                                 ),
+                                autovalidateMode:
+                                    AutovalidateMode.onUserInteraction,
+                                validator: (value) {
+                                  if (value == null || value.isEmpty) {
+                                    return "Please enter start working time.";
+                                  } else {
+                                    return null;
+                                  }
+                                },
                               ),
-                              autovalidateMode: AutovalidateMode.disabled,
-                              onChanged: (value) {
-                                if (checkInController.text.isEmpty ||
-                                    checkOutController.text.isEmpty) {
-                                  overTimeEndedValue = null;
-                                  overTimeDurationsInSeconds = 0;
-                                } else {
-                                  overTimeEndedValue =
+                            ),
+                          ],
+                        ),
+                        const SizedBox(height: 10),
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.start,
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          mainAxisSize: MainAxisSize.min,
+                          children: <Widget>[
+                            Expanded(
+                              child: TextFormField(
+                                controller: checkOutController,
+                                focusNode: checkOutFocusNode,
+                                readOnly: true,
+                                onTap: () async {
+                                  DateTime now = DateTime.now();
+                                  DateTime initialDateTime = DateTime(
+                                    now.year,
+                                    now.month,
+                                    now.day,
+                                    checkOutTime!.hour,
+                                    checkOutTime!.minute,
+                                  );
+                                  DateTime? tempPickedDateTime = initialDateTime;
+
+                                  await showCupertinoModalPopup<void>(
+                                    context: context,
+                                    builder: (BuildContext context) {
+                                      return ColoredBox(
+                                        color:
+                                            Theme.of(context).colorScheme.surface,
+                                        child: SizedBox(
+                                          width:
+                                              MediaQuery.of(context).size.width,
+                                          height:
+                                              MediaQuery.of(context).size.height *
+                                                  .40,
+                                          child: Column(
+                                            children: <Widget>[
+                                              Row(
+                                                mainAxisAlignment:
+                                                    MainAxisAlignment
+                                                        .spaceBetween,
+                                                children: <Widget>[
+                                                  CupertinoButton(
+                                                    child: const Text('Cancel'),
+                                                    onPressed: () {
+                                                      Navigator.pop(context);
+                                                    },
+                                                  ),
+                                                  CupertinoButton(
+                                                    child: const Text('Done'),
+                                                    onPressed: () {
+                                                      checkOutTime = TimeOfDay(
+                                                        hour: tempPickedDateTime
+                                                                ?.hour ??
+                                                            0,
+                                                        minute: tempPickedDateTime
+                                                                ?.minute ??
+                                                            0,
+                                                      );
+                                                      checkOutController.text =
+                                                          DateUtil
+                                                              .formatTimeOfDay(
+                                                        checkOutTime!,
+                                                        DateUtil.TIME_FORMAT2,
+                                                      );
+                                                      Navigator.pop(context);
+                                                    },
+                                                  ),
+                                                ],
+                                              ),
+                                              Expanded(
+                                                child: CupertinoDatePicker(
+                                                  mode: CupertinoDatePickerMode
+                                                      .time,
+                                                  backgroundColor:
+                                                      Theme.of(context)
+                                                          .colorScheme
+                                                          .surface,
+                                                  initialDateTime:
+                                                      initialDateTime,
+                                                  onDateTimeChanged:
+                                                      (DateTime newDateTime) {
+                                                    tempPickedDateTime =
+                                                        newDateTime;
+                                                  },
+                                                ),
+                                              ),
+                                            ],
+                                          ),
+                                        ),
+                                      );
+                                    },
+                                  );
+                                },
+                                decoration: InputDecoration(
+                                  labelText: "Ending Shift Time",
+                                  suffix: Visibility(
+                                    visible: checkOutController.text.isNotEmpty,
+                                    child: GestureDetector(
+                                      onTap: () {
+                                        checkOutTime = null;
+                                        checkOutController.clear();
+                                      },
+                                      child: const Icon(Icons.clear),
+                                    ),
+                                  ),
+                                ),
+                                autovalidateMode: AutovalidateMode.disabled,
+                                onChanged: (value) {
+                                  if (checkInController.text.isEmpty ||
+                                      checkOutController.text.isEmpty) {
+                                    overTimeEndedValue = null;
+                                    overTimeDurationsInSeconds = 0;
+                                  } else {
+                                    overTimeEndedValue =
+                                        DateUtil.calculateRemainingTime(
+                                            fromTime:
+                                                selectedEmployee?.endWorkingTime,
+                                            toTime: checkOutController.text,
+                                            format: DateUtil.TIME_FORMAT2);
+                                    overTimeDurationsInSeconds =
+                                        DateUtil.calculateTimeDifferenceInSeconds(
+                                      checkInController.text,
+                                      checkOutController.text,
+                                    );
+                                  }
+                                },
+                                // validator: (value) {
+                                //   if (value == null || value.isEmpty) {
+                                //     return "Please enter check out shift time.";
+                                //   } else {
+                                //     return null;
+                                //   }
+                                // },
+                              ),
+                            ),
+                          ],
+                        ),
+                        const SizedBox(
+                          height: 10,
+                        ),
+                        ValueListenableBuilder<String>(
+                            valueListenable: totalWorkingTimeNotifier,
+                            builder: (context, totalWorkingTime, child) {
+                              return Row(
+                                mainAxisAlignment: MainAxisAlignment.start,
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                mainAxisSize: MainAxisSize.min,
+                                children: <Widget>[
+                                  Expanded(
+                                    child: RichText(
+                                      text: TextSpan(
+                                        children: [
+                                          TextSpan(
+                                            text: 'Total Working time: ',
+                                            style: Theme.of(context)
+                                                .textTheme
+                                                .bodyMedium
+                                                ?.copyWith(
+                                                    fontWeight: FontWeight.w700),
+                                          ),
+                                          TextSpan(
+                                            text: totalWorkingTime,
+                                            style: Theme.of(context)
+                                                .textTheme
+                                                .bodyMedium,
+                                          ),
+                                        ],
+                                      ),
+                                    ),
+                                  )
+                                ],
+                              );
+                            }),
+                        const SizedBox(height: 10),
+                        ValueListenableBuilder<Employee?>(
+                            valueListenable: employeeWorkingHoursNotifier,
+                            builder: (context, employee, child) {
+                              return Row(
+                                mainAxisAlignment: MainAxisAlignment.start,
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                mainAxisSize: MainAxisSize.min,
+                                children: <Widget>[
+                                  Expanded(
+                                    child: RichText(
+                                      text: TextSpan(
+                                        children: [
+                                          TextSpan(
+                                            text: 'Employee Working Durations: ',
+                                            style: Theme.of(context)
+                                                .textTheme
+                                                .bodyMedium
+                                                ?.copyWith(
+                                                    fontWeight: FontWeight.w700),
+                                          ),
+                                          TextSpan(
+                                            text: employee?.workingHours ?? "N/A",
+                                            style: Theme.of(context)
+                                                .textTheme
+                                                .bodyMedium,
+                                          ),
+                                        ],
+                                      ),
+                                    ),
+                                  )
+                                ],
+                              );
+                            }),
+                        const SizedBox(height: 10),
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.end,
+                          crossAxisAlignment: CrossAxisAlignment.center,
+                          mainAxisSize: MainAxisSize.min,
+                          children: <Widget>[
+                            Expanded(
+                              child: ElevatedButton(
+                                onPressed: () {
+                                  final isValid =
+                                      _formKey.currentState?.validate();
+                                  if (!isValid!) {
+                                    return;
+                                  }
+                                  _formKey.currentState?.save();
+                                  final workingTimeDurations =
                                       DateUtil.calculateRemainingTime(
-                                    fromTime: selectedEmployee?.endWorkingTime,
-                                    toTime: checkOutController.text,
+                                          fromTime: checkInController.text,
+                                          toTime: checkOutController.text,
+                                          format: DateUtil.TIME_FORMAT2);
+                                  final attendance = Attendance(
+                                    id: null,
+                                    employeeId: selectedEmployee?.id,
+                                    employeeWorkingDurations:
+                                        selectedEmployee?.workingHours,
+                                    creationDate: DateUtil.dateToString(
+                                        DateTime.now(), DateUtil.DATE_FORMAT15),
+                                    checkIn: checkInController.text,
+                                    checkOut: checkOutController.text,
+                                    workingTimeDurations: workingTimeDurations,
                                   );
-                                  overTimeDurationsInSeconds =
-                                      DateUtil.calculateTimeDifferenceInSeconds(
-                                    checkInController.text,
-                                    checkOutController.text,
-                                  );
-                                }
-                              },
-                              // validator: (value) {
-                              //   if (value == null || value.isEmpty) {
-                              //     return "Please enter check out shift time.";
-                              //   } else {
-                              //     return null;
-                              //   }
-                              // },
+                                  context
+                                      .read<AttendanceCubit>()
+                                      .addAttendance(attendance);
+                                  Navigator.of(context).pop();
+                                },
+                                child: const Text('Add'),
+                              ),
                             ),
-                          ),
-                        ],
-                      ),
-                      const SizedBox(
-                        height: 10,
-                      ),
-                      ValueListenableBuilder<String>(
-                          valueListenable: totalWorkingTimeNotifier,
-                          builder: (context, totalWorkingTime, child) {
-                            return Row(
-                              mainAxisAlignment: MainAxisAlignment.start,
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              mainAxisSize: MainAxisSize.min,
-                              children: <Widget>[
-                                Expanded(
-                                  child: RichText(
-                                    text: TextSpan(
-                                      children: [
-                                        TextSpan(
-                                          text: 'Total Working time: ',
-                                          style: Theme.of(context)
-                                              .textTheme
-                                              .bodyMedium
-                                              ?.copyWith(
-                                                  fontWeight: FontWeight.w700),
-                                        ),
-                                        TextSpan(
-                                          text: totalWorkingTime,
-                                          style: Theme.of(context)
-                                              .textTheme
-                                              .bodyMedium,
-                                        ),
-                                      ],
-                                    ),
-                                  ),
-                                )
-                              ],
-                            );
-                          }),
-                      const SizedBox(height: 10),
-                      ValueListenableBuilder<Employee?>(
-                          valueListenable: employeeWorkingHoursNotifier,
-                          builder: (context, employee, child) {
-                            return Row(
-                              mainAxisAlignment: MainAxisAlignment.start,
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              mainAxisSize: MainAxisSize.min,
-                              children: <Widget>[
-                                Expanded(
-                                  child: RichText(
-                                    text: TextSpan(
-                                      children: [
-                                        TextSpan(
-                                          text: 'Employee Working Durations: ',
-                                          style: Theme.of(context)
-                                              .textTheme
-                                              .bodyMedium
-                                              ?.copyWith(
-                                                  fontWeight: FontWeight.w700),
-                                        ),
-                                        TextSpan(
-                                          text: employee?.workingHours ?? "N/A",
-                                          style: Theme.of(context)
-                                              .textTheme
-                                              .bodyMedium,
-                                        ),
-                                      ],
-                                    ),
-                                  ),
-                                )
-                              ],
-                            );
-                          }),
-                      const SizedBox(height: 10),
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.end,
-                        crossAxisAlignment: CrossAxisAlignment.center,
-                        mainAxisSize: MainAxisSize.min,
-                        children: <Widget>[
-                          Expanded(
-                            child: ElevatedButton(
-                              onPressed: () {
-                                final isValid =
-                                    _formKey.currentState?.validate();
-                                if (!isValid!) {
-                                  return;
-                                }
-                                _formKey.currentState?.save();
-                                final workingTimeDurations =
-                                    DateUtil.calculateRemainingTime(
-                                  fromTime: checkInController.text,
-                                  toTime: checkOutController.text,
-                                );
-                                final attendance = Attendance(
-                                  id: null,
-                                  employeeId: selectedEmployee?.id,
-                                  employeeWorkingDurations:
-                                      selectedEmployee?.workingHours,
-                                  creationDate: DateUtil.dateToString(
-                                      DateTime.now(), DateUtil.DATE_FORMAT11),
-                                  checkIn: checkInController.text,
-                                  checkOut: checkOutController.text,
-                                  workingTimeDurations: workingTimeDurations,
-                                );
-                                context
-                                    .read<AttendanceCubit>()
-                                    .addAttendance(attendance);
-                                Navigator.of(context).pop();
-                              },
-                              child: const Text('Add'),
-                            ),
-                          ),
-                        ],
-                      ),
-                      const SizedBox(height: 10),
-                    ],
+                          ],
+                        ),
+                        const SizedBox(height: 10),
+                      ],
+                    ),
                   ),
                 ),
               ),
@@ -981,15 +994,15 @@ class _AttendanceScreenState extends State<AttendanceScreen> {
 
     final ValueNotifier<String> totalWorkingTimeNotifier =
         ValueNotifier<String>(DateUtil.calculateRemainingTime(
-              fromTime: attendance.checkIn,
-              toTime: attendance.checkOut,
-            ) ??
+                fromTime: attendance.checkIn,
+                toTime: attendance.checkOut,
+                format: DateUtil.TIME_FORMAT2) ??
             "N/A");
     void _updateTotalWorkingTime() {
       final totalWorkingTime = DateUtil.calculateRemainingTime(
-        fromTime: checkInController.text,
-        toTime: checkOutController.text,
-      );
+          fromTime: checkInController.text,
+          toTime: checkOutController.text,
+          format: DateUtil.TIME_FORMAT2);
       totalWorkingTimeNotifier.value = totalWorkingTime ?? 'N/A';
     }
 
@@ -1213,24 +1226,23 @@ class _AttendanceScreenState extends State<AttendanceScreen> {
                       child: ElevatedButton(
                         child: const Text('Save'),
                         onPressed: () async {
-                          final isValid =
-                          _formKey.currentState?.validate();
+                          final isValid = _formKey.currentState?.validate();
                           if (!isValid!) {
                             return;
                           }
                           _formKey.currentState?.save();
                           final workingTimeDurations =
                               DateUtil.calculateRemainingTime(
-                            fromTime: checkInController.text,
-                            toTime: checkOutController.text,
-                          );
+                                  fromTime: checkInController.text,
+                                  toTime: checkOutController.text,
+                                  format: DateUtil.TIME_FORMAT2);
                           final updatedAttendance = Attendance(
                             id: attendance.id,
                             employeeId: attendance.employeeId,
                             checkIn: checkInController.text,
                             checkOut: checkOutController.text,
                             modificationDate: DateUtil.dateToString(
-                                DateTime.now(), DateUtil.DATE_FORMAT11),
+                                DateTime.now(), DateUtil.DATE_FORMAT15),
                             workingTimeDurations: workingTimeDurations,
                           );
 
@@ -1250,6 +1262,7 @@ class _AttendanceScreenState extends State<AttendanceScreen> {
       },
     );
   }
+
   @override
   void dispose() {
     scrollController?.dispose();

@@ -35,11 +35,11 @@ class _EmployeeScreenState extends State<EmployeeScreen>
   @override
   void initState() {
     super.initState();
-    scrollController = ScrollController(debugLabel: "employeeScreenScrollController");
+    scrollController =
+        ScrollController(debugLabel: "employeeScreenScrollController");
     WidgetsBinding.instance.addPostFrameCallback((_) {
       BlocProvider.of<EmployeeCubit>(context).fetchEmployees();
     });
-
   }
 
   @override
@@ -95,14 +95,24 @@ class _EmployeeScreenState extends State<EmployeeScreen>
                                   backgroundColor: Colors.lightBlueAccent,
                                   foregroundColor: Colors.white,
                                   icon: MdiIcons.circleEditOutline,
-                                  borderRadius: BorderRadius.circular(10),
+                                  borderRadius: BorderRadius.only(
+                                    topLeft: Radius.circular(10),
+                                    bottomLeft: Radius.circular(10),
+                                    bottomRight: Radius.circular(0),
+                                    topRight: Radius.circular(0),
+                                  ),
                                   label: 'Edit',
                                 ),
                                 SlidableAction(
                                   backgroundColor: Colors.red,
                                   foregroundColor: Colors.white,
                                   autoClose: true,
-                                  borderRadius: BorderRadius.circular(10),
+                                  borderRadius: BorderRadius.only(
+                                    topLeft: Radius.circular(0),
+                                    bottomLeft: Radius.circular(0),
+                                    bottomRight: Radius.circular(10),
+                                    topRight: Radius.circular(10),
+                                  ),
                                   icon: Icons.delete,
                                   label: 'Delete',
                                   onPressed: (BuildContext ctx) {
@@ -389,6 +399,43 @@ class _EmployeeScreenState extends State<EmployeeScreen>
                                         ),
                                       ],
                                     ),
+                                    const SizedBox(
+                                      height: 5,
+                                    ),
+                                    Row(
+                                      mainAxisAlignment: MainAxisAlignment.start,
+                                      crossAxisAlignment: CrossAxisAlignment.start,
+                                      mainAxisSize: MainAxisSize.min,
+                                      children: <Widget>[
+                                        Expanded(
+                                          child: RichText(
+                                            text: TextSpan(
+                                              children: [
+                                                TextSpan(
+                                                  text: 'Total Working time: ',
+                                                  style: Theme.of(context)
+                                                      .textTheme
+                                                      .bodyMedium
+                                                      ?.copyWith(
+                                                      fontWeight:
+                                                      FontWeight.w700),
+                                                ),
+                                                TextSpan(
+                                                  text: '${ DateUtil.calculateRemainingTime(
+                                                      fromTime: employee.startWorkingTime,
+                                                      toTime: employee.endWorkingTime,
+                                                      format: DateUtil.TIME_FORMAT2) ??
+                                                      "N/A"}',
+                                                  style: Theme.of(context)
+                                                      .textTheme
+                                                      .bodyMedium,
+                                                ),
+                                              ],
+                                            ),
+                                          ),
+                                        )
+                                      ],
+                                    ),
                                     Visibility(
                                       visible: employee.creationDate != null,
                                       child: Padding(
@@ -555,16 +602,18 @@ class _EmployeeScreenState extends State<EmployeeScreen>
         ValueNotifier<String>('N/A');
     void _updateTotalWorkingTime() {
       final totalWorkingTime = DateUtil.calculateRemainingTime(
-        fromTime: startWorkingTimeController.text,
-        toTime: endWorkingTimeController.text,
-      );
+          toTime: startWorkingTimeController.text,
+          fromTime: endWorkingTimeController.text,
+          format: DateUtil.TIME_FORMAT2);
       totalWorkingTimeNotifier.value = totalWorkingTime ?? 'N/A';
+      setState(() {});
     }
+
+    Navigator.pop(context);
 
     startWorkingTimeController.addListener(_updateTotalWorkingTime);
     endWorkingTimeController.addListener(_updateTotalWorkingTime);
 
-    Navigator.pop(context);
     await showModalBottomSheet(
       context: context,
       elevation: 5,
@@ -1283,13 +1332,14 @@ class _EmployeeScreenState extends State<EmployeeScreen>
                                       leavingDate: leavingDateController.text,
                                       creationDate: DateUtil.dateToString(
                                           DateTime.now(),
-                                          DateUtil.DATE_FORMAT11),
+                                          DateUtil.DATE_FORMAT15),
                                       startWorkingTime:
                                           startWorkingTimeController.text,
                                       endWorkingTime:
                                           endWorkingTimeController.text,
                                       workingHours: DateUtil
                                           .calculateRemainingTime(
+                                              format: DateUtil.DATE_FORMAT15,
                                               fromTime:
                                                   startWorkingTimeController
                                                       .text,
@@ -1368,16 +1418,17 @@ class _EmployeeScreenState extends State<EmployeeScreen>
     phoneNumberController.text = "${phoneNumberParts.last ?? ""}";
 
     final ValueNotifier<String> totalWorkingTimeNotifier =
-        ValueNotifier<String>(DateUtil.calculateRemainingTime(
-              fromTime: employee.startWorkingTime,
-              toTime: employee.endWorkingTime,
-            ) ??
+        ValueNotifier<String>(
+            DateUtil.calculateRemainingTime(
+                fromTime: employee.startWorkingTime,
+                toTime: employee.endWorkingTime,
+                format: DateUtil.TIME_FORMAT2) ??
             "N/A");
     void _updateTotalWorkingTime() {
       final totalWorkingTime = DateUtil.calculateRemainingTime(
-        fromTime: startWorkingTimeController.text,
-        toTime: endWorkingTimeController.text,
-      );
+          fromTime: startWorkingTimeController.text,
+          toTime: endWorkingTimeController.text,
+          format: DateUtil.TIME_FORMAT2);
       totalWorkingTimeNotifier.value = totalWorkingTime ?? 'N/A';
     }
 
@@ -2133,7 +2184,7 @@ class _EmployeeScreenState extends State<EmployeeScreen>
                                           endWorkingTimeController.text,
                                       modificationDate: DateUtil.dateToString(
                                           DateTime.now(),
-                                          DateUtil.DATE_FORMAT11),
+                                          DateUtil.DATE_FORMAT15),
                                     );
                                     Constants.debugLog(EmployeeScreen,
                                         "_showAddEmployeeDialog:Add:employee:${updatedEmployee.toString()}");

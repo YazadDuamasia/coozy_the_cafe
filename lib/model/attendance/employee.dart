@@ -10,6 +10,7 @@ class Employee {
   String? workingHours;
   String? creationDate;
   String? modificationDate;
+  int? isDeleted; // 0 is false and 1 is for true
 
   Employee({
     this.id,
@@ -23,6 +24,7 @@ class Employee {
     this.workingHours,
     this.creationDate,
     this.modificationDate,
+    this.isDeleted,
   });
 
   factory Employee.fromMap(Map<String, dynamic> json) => Employee(
@@ -42,6 +44,7 @@ class Employee {
             json['creationDate'] != null ? json['creationDate'] : null,
         modificationDate:
             json['modificationDate'] != null ? json['modificationDate'] : null,
+        isDeleted: json['isDeleted'] != null ? json['isDeleted'] : 0,
       );
 
   Map<String, dynamic> toMap() => {
@@ -56,10 +59,11 @@ class Employee {
         'startWorkingTime': startWorkingTime,
         'endWorkingTime': endWorkingTime,
         'workingHours': workingHours,
+        'isDeleted': isDeleted??0,
       }..removeWhere((key, value) => value == null);
 
   @override
   String toString() {
-    return 'Employee{id: $id, name: $name, phoneNumber: $phoneNumber, position: $position, joiningDate: $joiningDate, leavingDate: $leavingDate, startWorkingTime: $startWorkingTime, endWorkingTime: $endWorkingTime, workingHours: $workingHours, creationDate: $creationDate, modificationDate: $modificationDate}';
+    return 'Employee{id: $id, name: $name, phoneNumber: $phoneNumber, position: $position, joiningDate: $joiningDate, leavingDate: $leavingDate, startWorkingTime: $startWorkingTime, endWorkingTime: $endWorkingTime, workingHours: $workingHours, creationDate: $creationDate, modificationDate: $modificationDate, isDeleted: $isDeleted}';
   }
 }

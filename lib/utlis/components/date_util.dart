@@ -229,12 +229,13 @@ class DateUtil {
     return '$hours:$minutes';
   }
 
-  static String? calculateRemainingTime({String? fromTime, String? toTime}) {
+  static String? calculateRemainingTime(
+      {String? fromTime, String? toTime, required String? format}) {
     try {
       DateTime? startDateTime =
-          DateFormat("dd-MM-yy hh:mm:ss aaa").tryParse(fromTime!);
+          DateFormat(format).tryParse(fromTime!);
       DateTime? endDateTime =
-          DateFormat("dd-MM-yy hh:mm:ss aaa").tryParse(toTime!);
+          DateFormat(format).tryParse(toTime!);
 
       // Calculate the difference
       Duration difference = startDateTime!.difference(endDateTime!);
@@ -245,17 +246,25 @@ class DateUtil {
       int minutes = difference.inMinutes % 60;
       StringBuffer stringBuffer = StringBuffer("");
       if (days != 0) {
-        stringBuffer.write("$days days,");
-      }
-      if (hours != 0) {
-        stringBuffer.write(" $hours hours,");
+        stringBuffer.write("$days days");
+      } else if (hours != 0) {
+        if (days != 0) {
+          stringBuffer.write(", $hours hours");
+        } else {
+          stringBuffer.write("$hours hours");
+        }
       }
       if (minutes != 0) {
-        stringBuffer.write(" $minutes minutes");
+        if (hours != 0) {
+          stringBuffer.write(", $minutes minutes");
+        } else {
+          stringBuffer.write("$minutes minutes");
+        }
       }
 
+      String? dateValue = stringBuffer.toString();
       // Return formatted string
-      return stringBuffer.toString();
+      return dateValue;
     } catch (e) {
       // Handle parsing errors
       print("error:${e}");
