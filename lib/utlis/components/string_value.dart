@@ -168,4 +168,9 @@ abstract class StringValue {
 
   static String attendace_screen_delete_title_dialog="attendace_screen_delete_title_dialog";
   static String attendace_screen_delete_dialog_subTitle="attendace_screen_delete_dialog_subTitle";
+
+  static String leave_screen_option_new="leave_screen_option_new";
+  static String leave_screen_option_in_progress="leave_screen_option_in_progress";
+  static String leave_screen_option_completed="leave_screen_option_completed";
+  static String leave_screen_option_canceled="leave_screen_option_canceled";
 }

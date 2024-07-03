@@ -21,15 +21,49 @@ class AttendanceScreen extends StatefulWidget {
 
 class _AttendanceScreenState extends State<AttendanceScreen> {
   ScrollController? scrollController;
+  TextEditingController? _searchController;
+  FocusNode? _searchFocusNode;
+  List<Employee>? employeeList = [];
+  List<Employee>? _filteredEmployees = [];
+  List<Attendance>? attendance = [];
+  List<Attendance>? _filteredAttendance = [];
 
   @override
   void initState() {
     super.initState();
     scrollController =
         ScrollController(debugLabel: "attendanceScreenScrollController");
+    _searchController = TextEditingController(text: "");
+    _searchFocusNode = FocusNode();
     WidgetsBinding.instance.addPostFrameCallback((_) {
+      BlocProvider.of<EmployeeCubit>(context).fetchEmployees();
       BlocProvider.of<AttendanceCubit>(context).fetchAttendance();
     });
+    _searchController!.addListener(_filterAttendance);
+  }
+
+  void _filterAttendance() {
+    String query = _searchController!.text.toLowerCase();
+
+    try {
+      _filteredEmployees = employeeList?.where((employee) {
+        return employee.name!.toLowerCase().contains(query) ||
+            employee.phoneNumber!.toLowerCase().contains(query) ||
+            employee.position!.toLowerCase().contains(query);
+      }).toList();
+
+      // Create a set of employee IDs for faster lookup
+      Set<int?>? employeeIds = _filteredEmployees?.map((e) => e.id).toSet();
+
+      // Filter attendance based on the filtered employees' employeeId
+      _filteredAttendance = attendance?.where((attendance) {
+        return employeeIds!.contains(attendance.employeeId);
+      }).toList();
+    } catch (e) {
+      print(e);
+    }
+
+    setState(() {});
   }
 
   @override
@@ -42,396 +76,468 @@ class _AttendanceScreenState extends State<AttendanceScreen> {
               ScaffoldMessenger.of(context)
                   .showSnackBar(SnackBar(content: Text(state.message ?? "")));
             }
+            if (state is AttendanceLoaded) {
+              final employeeCubitState =
+                  context.read<EmployeeCubit>().state as EmployeeLoaded;
+              employeeList = employeeCubitState.employees;
+              _filteredEmployees = employeeList;
+              attendance = state.attendance;
+              _filteredAttendance = attendance;
+              setState(() {});
+            }
           },
           builder: (context, state) {
             if (state is AttendanceLoading) {
               return const Center(child: CircularProgressIndicator());
             } else if (state is AttendanceLoaded) {
-              final employeeCubitState =
-                  context.read<EmployeeCubit>().state as EmployeeLoaded;
-              List<Employee>? employeeList = employeeCubitState.employees;
-              return Scrollbar(
-                thumbVisibility: true,
-                interactive: true,
-                radius: const Radius.circular(10.0),
-                controller: scrollController,
-                child: RefreshIndicator(
-                  onRefresh: () async {
-                    BlocProvider.of<AttendanceCubit>(context).fetchAttendance();
-                  },
-                  child: SlidableAutoCloseBehavior(
-                    child: ListView.builder(
-                      itemCount: state.attendance?.length ?? 0,
-                      addRepaintBoundaries: true,
-                      addAutomaticKeepAlives: false,
-                      itemBuilder: (context, index) {
-                        final attendance = state.attendance![index];
-                        Employee? selectedEmployee = employeeList?.firstWhere(
-                            (element) => element.id == attendance.employeeId);
-                        return Slidable(
-                          key: ValueKey(index),
-                          closeOnScroll: true,
-
-                          // The end action pane is the one at the right or the bottom side.
-                          endActionPane: ActionPane(
-                            motion: const DrawerMotion(),
-                            children: [
-                              SlidableAction(
-                                onPressed: (BuildContext context) async {
-                                  Constants.showLoadingDialog(context);
-                                  _showEditAttendanceDialog(
-                                      context, attendance);
-                                },
-                                backgroundColor: Colors.lightBlueAccent,
-                                foregroundColor: Colors.white,
-                                icon: MdiIcons.circleEditOutline,
-                                borderRadius: BorderRadius.only(
-                                  topLeft: Radius.circular(10),
-                                  bottomLeft: Radius.circular(10),
-                                  bottomRight: Radius.circular(0),
-                                  topRight: Radius.circular(0),
-                                ),
-                                label: 'Edit',
-                              ),
-                              SlidableAction(
-                                backgroundColor: Colors.red,
-                                foregroundColor: Colors.white,
-                                autoClose: true,
-                                borderRadius: BorderRadius.only(
-                                  topRight: Radius.circular(10),
-                                  bottomRight: Radius.circular(10),
-                                  topLeft: Radius.circular(0),
-                                  bottomLeft: Radius.circular(0),
-                                ),
-                                icon: Icons.delete,
-                                label: 'Delete',
-                                onPressed: (BuildContext ctx) {
-                                  Constants.customPopUpDialogMessage(
-                                    classObject: AttendanceScreen,
-                                    context: this.context,
-                                    titleIcon: Icon(
-                                      Icons.info_outline,
-                                      size: 40,
-                                      color: Theme.of(context).primaryColor,
-                                    ),
-                                    title:
-                                        "${AppLocalizations.of(context)?.translate(StringValue.attendace_screen_delete_title_dialog) ?? "Are you sure ?"}",
-                                    descriptions:
-                                        "${AppLocalizations.of(context)?.translate(StringValue.attendace_screen_delete_dialog_subTitle) ?? "Do you really want to delete this attendance information? You will not be able to undo this action."}",
-                                    actions: Row(
-                                      mainAxisAlignment:
-                                          MainAxisAlignment.center,
-                                      crossAxisAlignment:
-                                          CrossAxisAlignment.center,
-                                      mainAxisSize: MainAxisSize.max,
-                                      children: [
-                                        TextButton(
-                                          child: Text(
-                                            "${AppLocalizations.of(context)!.translate(StringValue.common_cancel)}",
-                                            style: Theme.of(context)
-                                                .textTheme
-                                                .titleSmall!
-                                                .copyWith(
-                                                  color: Theme.of(context)
-                                                              .brightness ==
-                                                          Brightness.light
-                                                      ? Colors.white
-                                                      : null,
-                                                  fontWeight: FontWeight.w700,
-                                                ),
-                                          ),
-                                          onPressed: () =>
-                                              Navigator.pop(this.context),
-                                        ),
-                                        TextButton(
-                                          child: Text(
-                                            "${AppLocalizations.of(context)!.translate(StringValue.common_okay)}",
-                                            style: Theme.of(context)
-                                                .textTheme
-                                                .titleSmall!
-                                                .copyWith(
-                                                  color: Theme.of(context)
-                                                              .brightness ==
-                                                          Brightness.light
-                                                      ? Colors.white
-                                                      : null,
-                                                  fontWeight: FontWeight.w700,
-                                                ),
-                                          ),
-                                          onPressed: () {
-                                            Navigator.pop(this.context);
-                                            BlocProvider.of<AttendanceCubit>(
-                                                    this.context)
-                                                .deleteAttendance(
-                                                    attendance.id!);
-                                          },
-                                        )
-                                      ],
-                                    ),
-                                  );
-                                },
-                              ),
-                            ],
+              return Column(
+                mainAxisAlignment: MainAxisAlignment.start,
+                crossAxisAlignment: CrossAxisAlignment.start,
+                mainAxisSize: MainAxisSize.max,
+                children: [
+                  Padding(
+                    padding: const EdgeInsets.all(10.0),
+                    child: TextField(
+                      controller: _searchController,
+                      focusNode: _searchFocusNode,
+                      decoration: InputDecoration(
+                        hintText: 'Search employees...',
+                        prefixIcon: const Icon(Icons.search),
+                        suffixIcon: Visibility(
+                          visible: (_searchController!.text == null ||
+                                  _searchController!.text == "" ||
+                                  _searchController!.text.isEmpty)
+                              ? false
+                              : true,
+                          child: GestureDetector(
+                            onTap: () {
+                              setState(() {
+                                _searchController!.clear();
+                                FocusManager.instance.primaryFocus?.unfocus();
+                              });
+                            },
+                            child: const Icon(Icons.clear),
                           ),
-                          child: Card(
-                            elevation: 3,
-                            child: ListTile(
-                              title: Row(
-                                children: [
-                                  Expanded(
-                                    child: RichText(
-                                      text: TextSpan(
-                                        children: [
-                                          TextSpan(
-                                            text: 'Employee: ',
-                                            style: Theme.of(context)
-                                                .textTheme
-                                                .bodyLarge
-                                                ?.copyWith(
-                                                    fontWeight:
-                                                        FontWeight.w700),
-                                          ),
-                                          TextSpan(
-                                            text: selectedEmployee?.name ?? "",
-                                            style: Theme.of(context)
-                                                .textTheme
-                                                .bodyLarge,
-                                          ),
-                                        ],
-                                      ),
-                                    ),
-                                  ),
-                                ],
-                              ),
-                              contentPadding: const EdgeInsets.all(10),
-                              subtitle: Column(
-                                mainAxisAlignment: MainAxisAlignment.start,
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                mainAxisSize: MainAxisSize.min,
-                                children: <Widget>[
-                                  const SizedBox(
-                                    height: 10,
-                                  ),
-                                  Row(
-                                    mainAxisAlignment: MainAxisAlignment.start,
-                                    crossAxisAlignment:
-                                        CrossAxisAlignment.start,
-                                    mainAxisSize: MainAxisSize.min,
-                                    children: <Widget>[
-                                      Expanded(
-                                        child: RichText(
-                                          text: TextSpan(
-                                            children: [
-                                              TextSpan(
-                                                text: 'Check-in Time: ',
-                                                style: Theme.of(context)
-                                                    .textTheme
-                                                    .bodyMedium
-                                                    ?.copyWith(
-                                                        fontWeight:
-                                                            FontWeight.w700),
-                                              ),
-                                              TextSpan(
-                                                text: attendance.checkIn ==
-                                                            null ||
-                                                        attendance
-                                                            .checkIn!.isEmpty
-                                                    ? "N/A"
-                                                    : attendance.checkIn,
-                                                style: Theme.of(context)
-                                                    .textTheme
-                                                    .bodyMedium,
-                                              ),
-                                            ],
-                                          ),
-                                        ),
-                                      ),
-                                    ],
-                                  ),
-                                  const SizedBox(
-                                    height: 10,
-                                  ),
-                                  Row(
-                                    mainAxisAlignment: MainAxisAlignment.start,
-                                    crossAxisAlignment:
-                                        CrossAxisAlignment.start,
-                                    mainAxisSize: MainAxisSize.min,
-                                    children: <Widget>[
-                                      Expanded(
-                                        child: RichText(
-                                          text: TextSpan(
-                                            children: [
-                                              TextSpan(
-                                                text: 'Check-out Time: ',
-                                                style: Theme.of(context)
-                                                    .textTheme
-                                                    .bodyMedium
-                                                    ?.copyWith(
-                                                        fontWeight:
-                                                            FontWeight.w700),
-                                              ),
-                                              TextSpan(
-                                                text: attendance.checkOut ==
-                                                            null ||
-                                                        attendance
-                                                            .checkOut!.isEmpty
-                                                    ? "N/A"
-                                                    : attendance.checkOut,
-                                                style: Theme.of(context)
-                                                    .textTheme
-                                                    .bodyMedium,
-                                              ),
-                                            ],
-                                          ),
-                                        ),
-                                      ),
-                                    ],
-                                  ),
-                                  const SizedBox(
-                                    height: 10,
-                                  ),
-                                  Row(
-                                    mainAxisAlignment: MainAxisAlignment.start,
-                                    crossAxisAlignment:
-                                        CrossAxisAlignment.start,
-                                    mainAxisSize: MainAxisSize.min,
-                                    children: <Widget>[
-                                      Expanded(
-                                        child: RichText(
-                                          text: TextSpan(
-                                            children: [
-                                              TextSpan(
-                                                text:
-                                                    'working Time Durations: ',
-                                                style: Theme.of(context)
-                                                    .textTheme
-                                                    .bodyMedium
-                                                    ?.copyWith(
-                                                        fontWeight:
-                                                            FontWeight.w700),
-                                              ),
-                                              TextSpan(
-                                                text: attendance.workingTimeDurations ==
-                                                            null ||
-                                                        attendance
-                                                            .workingTimeDurations!
-                                                            .isEmpty
-                                                    ? "N/A"
-                                                    : attendance
-                                                        .workingTimeDurations,
-                                                style: Theme.of(context)
-                                                    .textTheme
-                                                    .bodyMedium,
-                                              ),
-                                            ],
-                                          ),
-                                        ),
-                                      ),
-                                    ],
-                                  ),
-                                  Visibility(
-                                    visible: attendance.creationDate != null,
-                                    child: Padding(
-                                      padding: const EdgeInsets.only(top: 10),
-                                      child: Row(
-                                        mainAxisAlignment:
-                                            MainAxisAlignment.start,
-                                        crossAxisAlignment:
-                                            CrossAxisAlignment.start,
-                                        mainAxisSize: MainAxisSize.min,
-                                        children: <Widget>[
-                                          Expanded(
-                                            child: RichText(
-                                              text: TextSpan(
-                                                children: [
-                                                  TextSpan(
-                                                    text: 'Creation on: ',
-                                                    style: Theme.of(context)
-                                                        .textTheme
-                                                        .bodyMedium
-                                                        ?.copyWith(
-                                                            fontWeight:
-                                                                FontWeight
-                                                                    .w700),
-                                                  ),
-                                                  TextSpan(
-                                                    text: attendance.creationDate ==
-                                                                null ||
-                                                            attendance
-                                                                .creationDate!
-                                                                .isEmpty
-                                                        ? "N/A"
-                                                        : attendance
-                                                            .creationDate,
-                                                    style: Theme.of(context)
-                                                        .textTheme
-                                                        .bodyMedium,
-                                                  ),
-                                                ],
-                                              ),
-                                            ),
-                                          ),
-                                        ],
-                                      ),
-                                    ),
-                                  ),
-                                  Visibility(
-                                    visible:
-                                        attendance.modificationDate != null,
-                                    child: Padding(
-                                      padding: const EdgeInsets.only(top: 10),
-                                      child: Row(
-                                        mainAxisAlignment:
-                                            MainAxisAlignment.start,
-                                        crossAxisAlignment:
-                                            CrossAxisAlignment.start,
-                                        mainAxisSize: MainAxisSize.min,
-                                        children: <Widget>[
-                                          Expanded(
-                                            child: RichText(
-                                              text: TextSpan(
-                                                children: [
-                                                  TextSpan(
-                                                    text:
-                                                        'Last modification on: ',
-                                                    style: Theme.of(context)
-                                                        .textTheme
-                                                        .bodyMedium
-                                                        ?.copyWith(
-                                                            fontWeight:
-                                                                FontWeight
-                                                                    .w700),
-                                                  ),
-                                                  TextSpan(
-                                                    text: attendance.modificationDate ==
-                                                                null ||
-                                                            attendance
-                                                                .modificationDate!
-                                                                .isEmpty
-                                                        ? "N/A"
-                                                        : attendance
-                                                            .modificationDate,
-                                                    style: Theme.of(context)
-                                                        .textTheme
-                                                        .bodyMedium,
-                                                  ),
-                                                ],
-                                              ),
-                                            ),
-                                          ),
-                                        ],
-                                      ),
-                                    ),
-                                  ),
-                                ],
-                              ),
-                            ),
-                          ),
-                        );
-                      },
+                        ),
+                      ),
                     ),
                   ),
-                ),
+                  Expanded(
+                    child: Scrollbar(
+                      thumbVisibility: true,
+                      interactive: true,
+                      radius: const Radius.circular(10.0),
+                      controller: scrollController,
+                      child: RefreshIndicator(
+                        onRefresh: () async {
+                          BlocProvider.of<AttendanceCubit>(context)
+                              .fetchAttendance();
+                        },
+                        child: SlidableAutoCloseBehavior(
+                          child: ListView.builder(
+                            itemCount: _filteredAttendance?.length ?? 0,
+                            addRepaintBoundaries: true,
+                            addAutomaticKeepAlives: false,
+                            itemBuilder: (context, index) {
+                              final attendance = _filteredAttendance![index];
+                              Employee? selectedEmployee =
+                                  employeeList?.firstWhere((element) =>
+                                      element.id == attendance.employeeId);
+                              return Slidable(
+                                key: ValueKey(index),
+                                closeOnScroll: true,
+
+                                // The end action pane is the one at the right or the bottom side.
+                                endActionPane: ActionPane(
+                                  motion: const DrawerMotion(),
+                                  children: [
+                                    SlidableAction(
+                                      onPressed: (BuildContext context) async {
+                                        Constants.showLoadingDialog(context);
+                                        _showEditAttendanceDialog(
+                                            context, attendance);
+                                      },
+                                      backgroundColor: Colors.lightBlueAccent,
+                                      foregroundColor: Colors.white,
+                                      icon: MdiIcons.circleEditOutline,
+                                      borderRadius: BorderRadius.only(
+                                        topLeft: Radius.circular(10),
+                                        bottomLeft: Radius.circular(10),
+                                        bottomRight: Radius.circular(0),
+                                        topRight: Radius.circular(0),
+                                      ),
+                                      label: 'Edit',
+                                    ),
+                                    SlidableAction(
+                                      backgroundColor: Colors.red,
+                                      foregroundColor: Colors.white,
+                                      autoClose: true,
+                                      borderRadius: BorderRadius.only(
+                                        topRight: Radius.circular(10),
+                                        bottomRight: Radius.circular(10),
+                                        topLeft: Radius.circular(0),
+                                        bottomLeft: Radius.circular(0),
+                                      ),
+                                      icon: Icons.delete,
+                                      label: 'Delete',
+                                      onPressed: (BuildContext ctx) {
+                                        Constants.customPopUpDialogMessage(
+                                          classObject: AttendanceScreen,
+                                          context: this.context,
+                                          titleIcon: Icon(
+                                            Icons.info_outline,
+                                            size: 40,
+                                            color:
+                                                Theme.of(context).primaryColor,
+                                          ),
+                                          title:
+                                              "${AppLocalizations.of(context)?.translate(StringValue.attendace_screen_delete_title_dialog) ?? "Are you sure ?"}",
+                                          descriptions:
+                                              "${AppLocalizations.of(context)?.translate(StringValue.attendace_screen_delete_dialog_subTitle) ?? "Do you really want to delete this attendance information? You will not be able to undo this action."}",
+                                          actions: Row(
+                                            mainAxisAlignment:
+                                                MainAxisAlignment.center,
+                                            crossAxisAlignment:
+                                                CrossAxisAlignment.center,
+                                            mainAxisSize: MainAxisSize.max,
+                                            children: [
+                                              TextButton(
+                                                child: Text(
+                                                  "${AppLocalizations.of(context)!.translate(StringValue.common_cancel)}",
+                                                  style: Theme.of(context)
+                                                      .textTheme
+                                                      .titleSmall!
+                                                      .copyWith(
+                                                        color: Theme.of(context)
+                                                                    .brightness ==
+                                                                Brightness.light
+                                                            ? Colors.white
+                                                            : null,
+                                                        fontWeight:
+                                                            FontWeight.w700,
+                                                      ),
+                                                ),
+                                                onPressed: () =>
+                                                    Navigator.pop(this.context),
+                                              ),
+                                              TextButton(
+                                                child: Text(
+                                                  "${AppLocalizations.of(context)!.translate(StringValue.common_okay)}",
+                                                  style: Theme.of(context)
+                                                      .textTheme
+                                                      .titleSmall!
+                                                      .copyWith(
+                                                        color: Theme.of(context)
+                                                                    .brightness ==
+                                                                Brightness.light
+                                                            ? Colors.white
+                                                            : null,
+                                                        fontWeight:
+                                                            FontWeight.w700,
+                                                      ),
+                                                ),
+                                                onPressed: () {
+                                                  Navigator.pop(this.context);
+                                                  BlocProvider.of<
+                                                              AttendanceCubit>(
+                                                          this.context)
+                                                      .deleteAttendance(
+                                                          attendance.id!);
+                                                },
+                                              )
+                                            ],
+                                          ),
+                                        );
+                                      },
+                                    ),
+                                  ],
+                                ),
+                                child: Card(
+                                  elevation: 3,
+                                  child: ListTile(
+                                    title: Row(
+                                      children: [
+                                        Expanded(
+                                          child: RichText(
+                                            text: TextSpan(
+                                              children: [
+                                                TextSpan(
+                                                  text: 'Employee: ',
+                                                  style: Theme.of(context)
+                                                      .textTheme
+                                                      .bodyLarge
+                                                      ?.copyWith(
+                                                          fontWeight:
+                                                              FontWeight.w700),
+                                                ),
+                                                TextSpan(
+                                                  text:
+                                                      selectedEmployee?.name ??
+                                                          "",
+                                                  style: Theme.of(context)
+                                                      .textTheme
+                                                      .bodyLarge,
+                                                ),
+                                              ],
+                                            ),
+                                          ),
+                                        ),
+                                      ],
+                                    ),
+                                    contentPadding: const EdgeInsets.all(10),
+                                    subtitle: Column(
+                                      mainAxisAlignment:
+                                          MainAxisAlignment.start,
+                                      crossAxisAlignment:
+                                          CrossAxisAlignment.start,
+                                      mainAxisSize: MainAxisSize.min,
+                                      children: <Widget>[
+                                        const SizedBox(
+                                          height: 10,
+                                        ),
+                                        Row(
+                                          mainAxisAlignment:
+                                              MainAxisAlignment.start,
+                                          crossAxisAlignment:
+                                              CrossAxisAlignment.start,
+                                          mainAxisSize: MainAxisSize.min,
+                                          children: <Widget>[
+                                            Expanded(
+                                              child: RichText(
+                                                text: TextSpan(
+                                                  children: [
+                                                    TextSpan(
+                                                      text: 'Check-in Time: ',
+                                                      style: Theme.of(context)
+                                                          .textTheme
+                                                          .bodyMedium
+                                                          ?.copyWith(
+                                                              fontWeight:
+                                                                  FontWeight
+                                                                      .w700),
+                                                    ),
+                                                    TextSpan(
+                                                      text:
+                                                          attendance.checkIn ==
+                                                                      null ||
+                                                                  attendance
+                                                                      .checkIn!
+                                                                      .isEmpty
+                                                              ? "N/A"
+                                                              : attendance
+                                                                  .checkIn,
+                                                      style: Theme.of(context)
+                                                          .textTheme
+                                                          .bodyMedium,
+                                                    ),
+                                                  ],
+                                                ),
+                                              ),
+                                            ),
+                                          ],
+                                        ),
+                                        const SizedBox(
+                                          height: 10,
+                                        ),
+                                        Row(
+                                          mainAxisAlignment:
+                                              MainAxisAlignment.start,
+                                          crossAxisAlignment:
+                                              CrossAxisAlignment.start,
+                                          mainAxisSize: MainAxisSize.min,
+                                          children: <Widget>[
+                                            Expanded(
+                                              child: RichText(
+                                                text: TextSpan(
+                                                  children: [
+                                                    TextSpan(
+                                                      text: 'Check-out Time: ',
+                                                      style: Theme.of(context)
+                                                          .textTheme
+                                                          .bodyMedium
+                                                          ?.copyWith(
+                                                              fontWeight:
+                                                                  FontWeight
+                                                                      .w700),
+                                                    ),
+                                                    TextSpan(
+                                                      text:
+                                                          attendance.checkOut ==
+                                                                      null ||
+                                                                  attendance
+                                                                      .checkOut!
+                                                                      .isEmpty
+                                                              ? "N/A"
+                                                              : attendance
+                                                                  .checkOut,
+                                                      style: Theme.of(context)
+                                                          .textTheme
+                                                          .bodyMedium,
+                                                    ),
+                                                  ],
+                                                ),
+                                              ),
+                                            ),
+                                          ],
+                                        ),
+                                        const SizedBox(
+                                          height: 10,
+                                        ),
+                                        Row(
+                                          mainAxisAlignment:
+                                              MainAxisAlignment.start,
+                                          crossAxisAlignment:
+                                              CrossAxisAlignment.start,
+                                          mainAxisSize: MainAxisSize.min,
+                                          children: <Widget>[
+                                            Expanded(
+                                              child: RichText(
+                                                text: TextSpan(
+                                                  children: [
+                                                    TextSpan(
+                                                      text:
+                                                          'working Time Durations: ',
+                                                      style: Theme.of(context)
+                                                          .textTheme
+                                                          .bodyMedium
+                                                          ?.copyWith(
+                                                              fontWeight:
+                                                                  FontWeight
+                                                                      .w700),
+                                                    ),
+                                                    TextSpan(
+                                                      text: attendance.workingTimeDurations ==
+                                                                  null ||
+                                                              attendance
+                                                                  .workingTimeDurations!
+                                                                  .isEmpty
+                                                          ? "N/A"
+                                                          : attendance
+                                                              .workingTimeDurations,
+                                                      style: Theme.of(context)
+                                                          .textTheme
+                                                          .bodyMedium,
+                                                    ),
+                                                  ],
+                                                ),
+                                              ),
+                                            ),
+                                          ],
+                                        ),
+                                        Visibility(
+                                          visible:
+                                              attendance.creationDate != null,
+                                          child: Padding(
+                                            padding:
+                                                const EdgeInsets.only(top: 10),
+                                            child: Row(
+                                              mainAxisAlignment:
+                                                  MainAxisAlignment.start,
+                                              crossAxisAlignment:
+                                                  CrossAxisAlignment.start,
+                                              mainAxisSize: MainAxisSize.min,
+                                              children: <Widget>[
+                                                Expanded(
+                                                  child: RichText(
+                                                    text: TextSpan(
+                                                      children: [
+                                                        TextSpan(
+                                                          text: 'Creation on: ',
+                                                          style: Theme.of(
+                                                                  context)
+                                                              .textTheme
+                                                              .bodyMedium
+                                                              ?.copyWith(
+                                                                  fontWeight:
+                                                                      FontWeight
+                                                                          .w700),
+                                                        ),
+                                                        TextSpan(
+                                                          text: attendance.creationDate ==
+                                                                      null ||
+                                                                  attendance
+                                                                      .creationDate!
+                                                                      .isEmpty
+                                                              ? "N/A"
+                                                              : attendance
+                                                                  .creationDate,
+                                                          style:
+                                                              Theme.of(context)
+                                                                  .textTheme
+                                                                  .bodyMedium,
+                                                        ),
+                                                      ],
+                                                    ),
+                                                  ),
+                                                ),
+                                              ],
+                                            ),
+                                          ),
+                                        ),
+                                        Visibility(
+                                          visible:
+                                              attendance.modificationDate !=
+                                                  null,
+                                          child: Padding(
+                                            padding:
+                                                const EdgeInsets.only(top: 10),
+                                            child: Row(
+                                              mainAxisAlignment:
+                                                  MainAxisAlignment.start,
+                                              crossAxisAlignment:
+                                                  CrossAxisAlignment.start,
+                                              mainAxisSize: MainAxisSize.min,
+                                              children: <Widget>[
+                                                Expanded(
+                                                  child: RichText(
+                                                    text: TextSpan(
+                                                      children: [
+                                                        TextSpan(
+                                                          text:
+                                                              'Last modification on: ',
+                                                          style: Theme.of(
+                                                                  context)
+                                                              .textTheme
+                                                              .bodyMedium
+                                                              ?.copyWith(
+                                                                  fontWeight:
+                                                                      FontWeight
+                                                                          .w700),
+                                                        ),
+                                                        TextSpan(
+                                                          text: attendance.modificationDate ==
+                                                                      null ||
+                                                                  attendance
+                                                                      .modificationDate!
+                                                                      .isEmpty
+                                                              ? "N/A"
+                                                              : attendance
+                                                                  .modificationDate,
+                                                          style:
+                                                              Theme.of(context)
+                                                                  .textTheme
+                                                                  .bodyMedium,
+                                                        ),
+                                                      ],
+                                                    ),
+                                                  ),
+                                                ),
+                                              ],
+                                            ),
+                                          ),
+                                        ),
+                                      ],
+                                    ),
+                                  ),
+                                ),
+                              );
+                            },
+                          ),
+                        ),
+                      ),
+                    ),
+                  ),
+                ],
               );
             }
             return const Center(child: Text('No Attendance Records'));
@@ -569,7 +675,8 @@ class _AttendanceScreenState extends State<AttendanceScreen> {
                                                 .textTheme
                                                 .bodyMedium!
                                                 .copyWith(
-                                                    fontWeight: FontWeight.w700),
+                                                    fontWeight:
+                                                        FontWeight.w700),
                                           ),
                                           TextSpan(
                                             text: "${employee.position ?? ""}",
@@ -616,20 +723,23 @@ class _AttendanceScreenState extends State<AttendanceScreen> {
                                     checkInTime!.hour,
                                     checkInTime!.minute,
                                   );
-                                  DateTime? tempPickedDateTime = initialDateTime;
+                                  DateTime? tempPickedDateTime =
+                                      initialDateTime;
 
                                   await showCupertinoModalPopup<void>(
                                     context: context,
                                     builder: (BuildContext context) {
                                       return ColoredBox(
-                                        color:
-                                            Theme.of(context).colorScheme.surface,
+                                        color: Theme.of(context)
+                                            .colorScheme
+                                            .surface,
                                         child: SizedBox(
                                           width:
                                               MediaQuery.of(context).size.width,
-                                          height:
-                                              MediaQuery.of(context).size.height *
-                                                  .40,
+                                          height: MediaQuery.of(context)
+                                                  .size
+                                                  .height *
+                                              .40,
                                           child: Column(
                                             children: <Widget>[
                                               Row(
@@ -650,9 +760,10 @@ class _AttendanceScreenState extends State<AttendanceScreen> {
                                                         hour: tempPickedDateTime
                                                                 ?.hour ??
                                                             0,
-                                                        minute: tempPickedDateTime
-                                                                ?.minute ??
-                                                            0,
+                                                        minute:
+                                                            tempPickedDateTime
+                                                                    ?.minute ??
+                                                                0,
                                                       );
                                                       checkInController.text =
                                                           DateUtil
@@ -735,20 +846,23 @@ class _AttendanceScreenState extends State<AttendanceScreen> {
                                     checkOutTime!.hour,
                                     checkOutTime!.minute,
                                   );
-                                  DateTime? tempPickedDateTime = initialDateTime;
+                                  DateTime? tempPickedDateTime =
+                                      initialDateTime;
 
                                   await showCupertinoModalPopup<void>(
                                     context: context,
                                     builder: (BuildContext context) {
                                       return ColoredBox(
-                                        color:
-                                            Theme.of(context).colorScheme.surface,
+                                        color: Theme.of(context)
+                                            .colorScheme
+                                            .surface,
                                         child: SizedBox(
                                           width:
                                               MediaQuery.of(context).size.width,
-                                          height:
-                                              MediaQuery.of(context).size.height *
-                                                  .40,
+                                          height: MediaQuery.of(context)
+                                                  .size
+                                                  .height *
+                                              .40,
                                           child: Column(
                                             children: <Widget>[
                                               Row(
@@ -769,9 +883,10 @@ class _AttendanceScreenState extends State<AttendanceScreen> {
                                                         hour: tempPickedDateTime
                                                                 ?.hour ??
                                                             0,
-                                                        minute: tempPickedDateTime
-                                                                ?.minute ??
-                                                            0,
+                                                        minute:
+                                                            tempPickedDateTime
+                                                                    ?.minute ??
+                                                                0,
                                                       );
                                                       checkOutController.text =
                                                           DateUtil
@@ -830,12 +945,12 @@ class _AttendanceScreenState extends State<AttendanceScreen> {
                                   } else {
                                     overTimeEndedValue =
                                         DateUtil.calculateRemainingTime(
-                                            fromTime:
-                                                selectedEmployee?.endWorkingTime,
+                                            fromTime: selectedEmployee
+                                                ?.endWorkingTime,
                                             toTime: checkOutController.text,
                                             format: DateUtil.TIME_FORMAT2);
-                                    overTimeDurationsInSeconds =
-                                        DateUtil.calculateTimeDifferenceInSeconds(
+                                    overTimeDurationsInSeconds = DateUtil
+                                        .calculateTimeDifferenceInSeconds(
                                       checkInController.text,
                                       checkOutController.text,
                                     );
@@ -873,7 +988,8 @@ class _AttendanceScreenState extends State<AttendanceScreen> {
                                                 .textTheme
                                                 .bodyMedium
                                                 ?.copyWith(
-                                                    fontWeight: FontWeight.w700),
+                                                    fontWeight:
+                                                        FontWeight.w700),
                                           ),
                                           TextSpan(
                                             text: totalWorkingTime,
@@ -902,15 +1018,18 @@ class _AttendanceScreenState extends State<AttendanceScreen> {
                                       text: TextSpan(
                                         children: [
                                           TextSpan(
-                                            text: 'Employee Working Durations: ',
+                                            text:
+                                                'Employee Working Durations: ',
                                             style: Theme.of(context)
                                                 .textTheme
                                                 .bodyMedium
                                                 ?.copyWith(
-                                                    fontWeight: FontWeight.w700),
+                                                    fontWeight:
+                                                        FontWeight.w700),
                                           ),
                                           TextSpan(
-                                            text: employee?.workingHours ?? "N/A",
+                                            text:
+                                                employee?.workingHours ?? "N/A",
                                             style: Theme.of(context)
                                                 .textTheme
                                                 .bodyMedium,
@@ -1266,6 +1385,8 @@ class _AttendanceScreenState extends State<AttendanceScreen> {
   @override
   void dispose() {
     scrollController?.dispose();
+    _searchFocusNode?.dispose();
+    _searchController?.dispose();
     super.dispose();
   }
 }

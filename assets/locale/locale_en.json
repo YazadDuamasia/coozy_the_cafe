@@ -112,5 +112,11 @@
   "employee_screen_delete_title_dialog":  "Are you sure ?",
   "employee_screen_delete_dialog_subTitle": "Do you really want to delete this employee information? You will not be able to undo this action.",
   "attendace_screen_delete_title_dialog": "Are you sure ?",
-  "attendace_screen_delete_title_dialog": "Do you really want to delete this attendance information? You will not be able to undo this action."
+  "leave_screen_option_new": "New",
+  "leave_screen_option_in_progress": "In progress",
+  "leave_screen_option_completed": "Completed",
+  "leave_screen_option_canceled": "Canceled"
+
+
+
 }
