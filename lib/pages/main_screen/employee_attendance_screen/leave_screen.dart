@@ -281,9 +281,18 @@ class _LeaveScreenState extends State<LeaveScreen> {
                                                   ),
                                                   onPressed: () {
                                                     Navigator.pop(this.context);
+                                                    Constants.showLoadingDialog(
+                                                        context);
+
                                                     BlocProvider.of<LeaveCubit>(
                                                             this.context)
-                                                        .deleteLeave(leave.id!);
+                                                        .deleteLeave(leave.id!)
+                                                        .then(
+                                                      (value) {
+                                                        Navigator.pop(
+                                                            this.context);
+                                                      },
+                                                    );
                                                   },
                                                 )
                                               ],
