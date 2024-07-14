@@ -90,7 +90,8 @@ class DatabaseHelper {
       id INTEGER PRIMARY KEY AUTOINCREMENT,
       name TEXT NOT NULL,
       description TEXT NOT NULL,
-      creationDate TEXT,
+      creationDate TEXT NULL,
+      modificationDate TEXT NULL,
       duration INTEGER,
       categoryId INTEGER,
       subcategoryId INTEGER,
@@ -115,6 +116,9 @@ class DatabaseHelper {
       costPrice REAL,
       sellingPrice REAL,
       stockQuantity INTEGER,
+      sortOrderIndex INTEGER,
+      creationDate TEXT NULL,
+      modificationDate TEXT NULL,
       FOREIGN KEY(menuItemId) REFERENCES $menuItemsTable(id)
     )
   ''');
@@ -701,7 +705,7 @@ class DatabaseHelper {
       {
         'name': menuItem.name,
         'description': menuItem.description,
-        'creationDate': menuItem.creationDate?.toIso8601String(),
+        'creationDate': menuItem.creationDate,
         'duration': menuItem.duration,
         'categoryId': menuItem.categoryId,
         'subcategoryId': menuItem.subcategoryId,
@@ -723,28 +727,30 @@ class DatabaseHelper {
       // Create a batch
       Batch batch = txn.batch();
 
-      for (MenuItemVariation variation in variations) {
+      for (int i = 0; i < variations.length; i++) {
         // Set isTodayAvailable to 0 if not provided (false) or 1 if true
-        int isTodayAvailableVariation = variation.isTodayAvailable != null
-            ? variation.isTodayAvailable!
+        int isTodayAvailableVariation = variations[i].isTodayAvailable != null
+            ? variations[i].isTodayAvailable!
                 ? 1
                 : 0
             : 0;
 
         // Set menuItemId for the variation
-        variation.menuItemId = menuItemId;
+        variations[i].menuItemId = menuItemId;
 
         // Insert the MenuItemVariation into the menuItemVariationsTable
         batch.insert(
-          menuItemVariationsTable,
+          '$MenuItemVariation',
           {
-            'menuItemId': variation.menuItemId,
-            'quantity': variation.quantity,
-            'purchaseUnit': variation.purchaseUnit,
+            'menuItemId': variations[i].menuItemId,
+            'quantity': variations[i].quantity,
+            'purchaseUnit': variations[i].purchaseUnit,
             'isTodayAvailable': isTodayAvailableVariation,
-            'costPrice': variation.costPrice,
-            'sellingPrice': variation.sellingPrice,
-            'stockQuantity': variation.stockQuantity,
+            'costPrice': variations[i].costPrice,
+            'sellingPrice': variations[i].sellingPrice,
+            'stockQuantity': variations[i].stockQuantity,
+            'sortOrderIndex': i,
+            'creationDate': variations[i].creationDate,
           },
         );
       }
@@ -790,7 +796,8 @@ class DatabaseHelper {
       {
         'name': updatedMenuItem.name,
         'description': updatedMenuItem.description,
-        'creationDate': updatedMenuItem.creationDate?.toIso8601String(),
+        'creationDate': updatedMenuItem.creationDate,
+        'modificationDate': updatedMenuItem.modificationDate,
         'duration': updatedMenuItem.duration,
         'categoryId': updatedMenuItem.categoryId,
         'subcategoryId': updatedMenuItem.subcategoryId,
@@ -801,6 +808,7 @@ class DatabaseHelper {
         'stockQuantity': updatedMenuItem.stockQuantity,
         'quantity': updatedMenuItem.quantity,
         'purchaseUnit': updatedMenuItem.purchaseUnit,
+
       },
       where: 'id = ?',
       whereArgs: [updatedMenuItem.id],
@@ -837,6 +845,8 @@ class DatabaseHelper {
               'costPrice': variation.costPrice,
               'sellingPrice': variation.sellingPrice,
               'stockQuantity': variation.stockQuantity,
+              'creationDate': variation.creationDate,
+              'modificationDate': variation.modificationDate,
             },
           );
         }
@@ -853,7 +863,8 @@ class DatabaseHelper {
         id: map['id'] as int?,
         name: map['name'] as String?,
         description: map['description'] as String?,
-        creationDate: DateTime.parse(map['creationDate'] as String),
+        creationDate: map['creationDate'] as String?,
+        modificationDate: map['modificationDate'] as String?,
         duration: map['duration'] as int?,
         categoryId: map['categoryId'] as int?,
         subcategoryId: map['subcategoryId'] as int?,
@@ -868,23 +879,27 @@ class DatabaseHelper {
     } else {
       // Fetch variations for the current menu item
       List<Map<String, dynamic>> variationsMaps = await db.query(
-          menuItemVariationsTable,
-          where: 'menuItemId = ?',
-          whereArgs: [map['id']]);
+        menuItemVariationsTable,
+        orderBy: 'sortOrderIndex ASC',
+        where: 'menuItemId = ?',
+        whereArgs: [map['id']],
+      );
 
       // Convert the List<Map> to a List<MenuItemVariation>
       List<MenuItemVariation> variations = [];
       for (var j = 0; j < variationsMaps.length; j++) {
         final variation = MenuItemVariation(
-          id: variationsMaps[j]['id'] as int?,
-          menuItemId: variationsMaps[j]['menuItemId'] as int?,
-          isTodayAvailable: variationsMaps[j]['isTodayAvailable'] == 1,
-          quantity: variationsMaps[j]['quantity'] as int?,
-          purchaseUnit: variationsMaps[j]['purchaseUnit'] as String?,
-          costPrice: variationsMaps[j]['costPrice'] as double?,
-          sellingPrice: variationsMaps[j]['sellingPrice'] as double?,
-          stockQuantity: variationsMaps[j]['stockQuantity'] as int?,
-        );
+            id: variationsMaps[j]['id'] as int?,
+            menuItemId: variationsMaps[j]['menuItemId'] as int?,
+            isTodayAvailable: variationsMaps[j]['isTodayAvailable'] == 1,
+            quantity: variationsMaps[j]['quantity'] as int?,
+            purchaseUnit: variationsMaps[j]['purchaseUnit'] as String?,
+            costPrice: variationsMaps[j]['costPrice'] as double?,
+            sellingPrice: variationsMaps[j]['sellingPrice'] as double?,
+            stockQuantity: variationsMaps[j]['stockQuantity'] as int?,
+            sortOrderIndex: variationsMaps[j]['sortOrderIndex'] as int?,
+            creationDate: variationsMaps[j]['creationDate'] as String?,
+            modificationDate: variationsMaps[j]['modificationDate'] as String?);
         variations.add(variation);
       }
 
@@ -893,7 +908,8 @@ class DatabaseHelper {
         id: map['id'] as int?,
         name: map['name'] as String?,
         description: map['description'] as String?,
-        creationDate: DateTime.parse(map['creationDate'] as String),
+        creationDate: map['creationDate'] as String?,
+        modificationDate: map['modificationDate'] as String?,
         duration: map['duration'] as int?,
         categoryId: map['categoryId'] as int?,
         subcategoryId: map['subcategoryId'] as int?,
@@ -959,6 +975,7 @@ class DatabaseHelper {
       int menuItemId = map['id'];
       List<Map<String, dynamic>> variationsMap = await db.query(
           menuItemVariationsTable,
+          orderBy: 'sortOrderIndex ASC',
           where: 'menuItemId = ?',
           whereArgs: [menuItemId]);
 
@@ -970,7 +987,8 @@ class DatabaseHelper {
         id: map['id'],
         name: map['name'],
         description: map['description'],
-        creationDate: DateTime.parse(map['creationDate'] ?? ''),
+        creationDate: map['creationDate'] ?? '',
+        modificationDate: map['modificationDate'] ?? '',
         duration: map['duration'],
         categoryId: map['categoryId'],
         subcategoryId: map['subcategoryId'],
@@ -1020,6 +1038,7 @@ class DatabaseHelper {
     final db = await database;
     final maps = await db!.query(
       menuItemVariationsTable,
+      orderBy: 'sortOrderIndex ASC',
       where: 'menuItemId = ?',
       whereArgs: [menuItemId],
     );
@@ -1035,8 +1054,7 @@ class DatabaseHelper {
 
     await db!.transaction((txn) async {
       // Delete variations first
-      await txn.delete(menuItemVariationsTable,
-          where: 'menuItemId = ?', whereArgs: [menuItemId]);
+      await txn.delete(menuItemVariationsTable, where: 'menuItemId = ?', whereArgs: [menuItemId]);
 
       // Delete the menu item
       await txn

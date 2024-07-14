@@ -2,13 +2,13 @@ class MenuItem {
   int? id;
   String? name;
   String? description;
-  DateTime? creationDate;
+  String? creationDate;
+  String? modificationDate;
   int? duration = 0;
   int? categoryId;
   int? subcategoryId;
   bool? isTodayAvailable;
-  bool?
-      isSimpleVariation; //If it true then add field like unitPrice,sellingPrice,stockQuantity,purchaseUnit else false go for MenuItemVariation list
+  bool? isSimpleVariation; //If it true then add field like unitPrice,sellingPrice,stockQuantity,purchaseUnit else false go for MenuItemVariation list
   double? costPrice; // Added unit price property
   double? sellingPrice; // Added selling price property
   double? stockQuantity;
@@ -23,6 +23,7 @@ class MenuItem {
       this.name,
       this.description,
       this.creationDate,
+      this.modificationDate,
       this.duration,
       this.categoryId,
       this.subcategoryId,
@@ -45,12 +46,18 @@ class MenuItem {
       id: json['id'],
       name: json['name'],
       description: json['description'],
-      creationDate: DateTime.parse(json['creationDate']),
+      creationDate: json['creationDate'] != null ? json['creationDate'] : null,
+      modificationDate:
+          json['modificationDate'] != null ? json['modificationDate'] : null,
       duration: json['duration'],
       categoryId: json['categoryId'],
       subcategoryId: json['subcategoryId'],
-      isTodayAvailable: json['isTodayAvailable'],
-      isSimpleVariation: json['isSimpleVariation'],
+      isTodayAvailable: json["isTodayAvailable"] == null
+          ? false
+          : json["isTodayAvailable"] == 1,
+      isSimpleVariation: json["isSimpleVariation"] == null
+          ? false
+          : json["isSimpleVariation"] == 1,
       costPrice: json['costPrice'],
       sellingPrice: json['sellingPrice'],
       stockQuantity: json['stockQuantity'],
@@ -64,7 +71,8 @@ class MenuItem {
       'id': id,
       'name': name,
       'description': description,
-      'creationDate': creationDate?.toIso8601String(),
+      'creationDate': creationDate,
+      'modificationDate': modificationDate,
       'duration': duration,
       'categoryId': categoryId,
       'subcategoryId': subcategoryId,
@@ -82,7 +90,8 @@ class MenuItem {
     int? id,
     String? name,
     String? description,
-    DateTime? creationDate,
+    String? creationDate,
+    String? modificationDate,
     int? duration,
     int? categoryId,
     int? subcategoryId,
@@ -100,6 +109,7 @@ class MenuItem {
       name: name ?? this.name,
       description: description ?? this.description,
       creationDate: creationDate ?? this.creationDate,
+      modificationDate: modificationDate ?? this.modificationDate,
       duration: duration ?? this.duration,
       categoryId: categoryId ?? this.categoryId,
       subcategoryId: subcategoryId ?? this.subcategoryId,
@@ -116,7 +126,7 @@ class MenuItem {
 
   @override
   String toString() {
-    return 'MenuItem(id: $id, name: $name, variations: $variations, ...)';
+    return 'MenuItem{id: $id, name: $name, description: $description, creationDate: $creationDate, modificationDate: $modificationDate, duration: $duration, categoryId: $categoryId, subcategoryId: $subcategoryId, isTodayAvailable: $isTodayAvailable, isSimpleVariation: $isSimpleVariation, costPrice: $costPrice, sellingPrice: $sellingPrice, stockQuantity: $stockQuantity, quantity: $quantity, purchaseUnit: $purchaseUnit, variations: $variations}';
   }
 }
 
@@ -129,6 +139,9 @@ class MenuItemVariation {
   double? costPrice;
   double? sellingPrice;
   int? stockQuantity;
+  int? sortOrderIndex;
+  String? creationDate;
+  String? modificationDate;
 
   MenuItemVariation({
     this.id,
@@ -139,6 +152,9 @@ class MenuItemVariation {
     this.sellingPrice,
     this.stockQuantity,
     this.isTodayAvailable,
+    this.sortOrderIndex,
+    this.creationDate,
+    this.modificationDate,
   });
 
   factory MenuItemVariation.fromJson(Map<String, dynamic> json) {
@@ -150,7 +166,13 @@ class MenuItemVariation {
       costPrice: json['costPrice'],
       sellingPrice: json['sellingPrice'],
       stockQuantity: json['stockQuantity'],
-      isTodayAvailable: json['isTodayAvailable'],
+      isTodayAvailable: json["isTodayAvailable"] == null
+          ? false
+          : json["isTodayAvailable"] == 1,
+      sortOrderIndex: json['sortOrderIndex'],
+      creationDate: json['creationDate'] != null ? json['creationDate'] : null,
+      modificationDate:
+          json['modificationDate'] != null ? json['modificationDate'] : null,
     );
   }
 
@@ -164,6 +186,9 @@ class MenuItemVariation {
       'sellingPrice': sellingPrice,
       'stockQuantity': stockQuantity,
       'isTodayAvailable': isTodayAvailable,
+      'sortOrderIndex': sortOrderIndex,
+      'creationDate': creationDate,
+      'modificationDate': modificationDate,
     }..removeWhere((key, value) => value == null);
   }
 
@@ -176,6 +201,9 @@ class MenuItemVariation {
     double? costPrice,
     double? sellingPrice,
     int? stockQuantity,
+    int? sortOrderIndex,
+    String? creationDate,
+    String? modificationDate,
   }) {
     return MenuItemVariation(
       id: id ?? this.id,
@@ -186,48 +214,14 @@ class MenuItemVariation {
       costPrice: costPrice ?? this.costPrice,
       sellingPrice: sellingPrice ?? this.sellingPrice,
       stockQuantity: stockQuantity ?? this.stockQuantity,
+      sortOrderIndex: sortOrderIndex ?? this.sortOrderIndex,
+      creationDate: creationDate ?? this.creationDate,
+      modificationDate: modificationDate ?? this.modificationDate,
     );
   }
 
   @override
   String toString() {
-    return 'MenuItemVariation{id: $id, menuItemId: $menuItemId, isTodayAvailable: $isTodayAvailable, quantity: $quantity, purchaseUnit: $purchaseUnit, costPrice: $costPrice, sellingPrice: $sellingPrice, stockQuantity: $stockQuantity}';
+    return 'MenuItemVariation{id: $id, menuItemId: $menuItemId, isTodayAvailable: $isTodayAvailable, quantity: $quantity, purchaseUnit: $purchaseUnit, costPrice: $costPrice, sellingPrice: $sellingPrice, stockQuantity: $stockQuantity, sortOrderIndex: $sortOrderIndex, creationDate: $creationDate, modificationDate: $modificationDate}';
   }
 }
-
-//
-MenuItem newMenuItem = MenuItem(
-  name: 'Wheat Bread',
-  description: 'Description of the new menu item with variations',
-  isTodayAvailable: true,
-  isSimpleVariation: false,
-  variations: [
-    MenuItemVariation(
-      quantity: 150,
-      purchaseUnit: 'grams',
-      costPrice: 3.99,
-      sellingPrice: 7.99,
-      stockQuantity: 50,
-    ),
-    MenuItemVariation(
-      quantity: 250,
-      purchaseUnit: 'grams',
-      costPrice: 6.99,
-      sellingPrice: 12.99,
-      stockQuantity: 30,
-    ),
-    // Add more variations as needed
-  ],
-);
-
-MenuItem newMenuItem1 = MenuItem(
-  name: 'Strawberry pastry',
-  description: 'Description of the new menu item with variations',
-  isTodayAvailable: true,
-  isSimpleVariation: true,
-  purchaseUnit: "pieces",
-  quantity: "1",
-  sellingPrice: 100,
-  costPrice: 80,
-  stockQuantity: 10,
-);

@@ -3,6 +3,7 @@ import 'package:coozy_the_cafe/bloc/staff_management_bloc/attendance_cubit/atten
 import 'package:coozy_the_cafe/model/attendance/attendance.dart';
 import 'package:coozy_the_cafe/model/attendance/employee.dart';
 import 'package:coozy_the_cafe/utlis/utlis.dart';
+import 'package:coozy_the_cafe/widgets/animated_hint_textfield/animated_hint_textfield.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -36,7 +37,7 @@ class _AttendanceScreenState extends State<AttendanceScreen> {
     _searchController = TextEditingController(text: "");
     _searchFocusNode = FocusNode();
     WidgetsBinding.instance.addPostFrameCallback((_) {
-      BlocProvider.of<EmployeeCubit>(context).fetchEmployees();
+      // BlocProvider.of<EmployeeCubit>(context).fetchEmployees();
       BlocProvider.of<AttendanceCubit>(context).fetchAttendance();
     });
     _searchController!.addListener(_filterAttendance);
@@ -95,31 +96,117 @@ class _AttendanceScreenState extends State<AttendanceScreen> {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 mainAxisSize: MainAxisSize.max,
                 children: [
+                  // Padding(
+                  //   padding: const EdgeInsets.all(10.0),
+                  //   child: TextField(
+                  //     controller: _searchController,
+                  //     focusNode: _searchFocusNode,
+                  //     decoration: InputDecoration(
+                  //       hintText: 'Search employees...',
+                  //       prefixIcon: const Icon(Icons.search),
+                  //       suffixIcon: Visibility(
+                  //         visible: (_searchController!.text == null ||
+                  //                 _searchController!.text == "" ||
+                  //                 _searchController!.text.isEmpty)
+                  //             ? false
+                  //             : true,
+                  //         child: GestureDetector(
+                  //           onTap: () {
+                  //             setState(() {
+                  //               _searchController!.clear();
+                  //               FocusManager.instance.primaryFocus?.unfocus();
+                  //             });
+                  //           },
+                  //           child: const Icon(Icons.clear),
+                  //         ),
+                  //       ),
+                  //     ),
+                  //   ),
+                  // ),
                   Padding(
                     padding: const EdgeInsets.all(10.0),
-                    child: TextField(
-                      controller: _searchController,
-                      focusNode: _searchFocusNode,
-                      decoration: InputDecoration(
-                        hintText: 'Search employees...',
-                        prefixIcon: const Icon(Icons.search),
-                        suffixIcon: Visibility(
-                          visible: (_searchController!.text == null ||
-                                  _searchController!.text == "" ||
-                                  _searchController!.text.isEmpty)
-                              ? false
-                              : true,
-                          child: GestureDetector(
-                            onTap: () {
-                              setState(() {
-                                _searchController!.clear();
-                                FocusManager.instance.primaryFocus?.unfocus();
-                              });
-                            },
-                            child: const Icon(Icons.clear),
+                    child: Row(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      mainAxisAlignment: MainAxisAlignment.start,
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        Expanded(
+                          child: AnimatedHintTextField(
+                            controller: _searchController,
+                            focusNode: _searchFocusNode,
+                            animationType: AnimationType.typer,
+                            hintTextStyle: TextStyle(
+                              color: Theme.of(context)
+                                  .colorScheme
+                                  .secondaryContainer,
+                              overflow: TextOverflow.ellipsis,
+                            ),
+                            textInputAction: TextInputAction.done,
+
+                            hintTexts: const [
+                              'Search employees by name',
+                              'Search employees by mobile number',
+                              'Search employees by position'
+                            ],
+                            decoration: InputDecoration(
+                              prefixIcon: const Icon(Icons.search),
+                              suffixIcon: Visibility(
+                                visible: (_searchController!.text == null ||
+                                        _searchController!.text == "" ||
+                                        _searchController!.text.isEmpty)
+                                    ? false
+                                    : true,
+                                child: GestureDetector(
+                                  onTap: () {
+                                    setState(() {
+                                      _searchController!.clear();
+                                      FocusManager.instance.primaryFocus
+                                          ?.unfocus();
+                                    });
+                                  },
+                                  child: const Icon(Icons.clear),
+                                ),
+                              ),
+                              contentPadding: const EdgeInsets.only(
+                                  left: 10, right: 10, bottom: 5, top: 5),
+                              border: OutlineInputBorder(
+                                borderSide: BorderSide(
+                                  color: Theme.of(context).colorScheme.primary,
+                                ),
+                                borderRadius: BorderRadius.circular(5),
+                              ),
+                              disabledBorder: OutlineInputBorder(
+                                borderSide: BorderSide(
+                                  color: Theme.of(context).disabledColor,
+                                ),
+                                borderRadius: BorderRadius.circular(5),
+                              ),
+                              enabledBorder: OutlineInputBorder(
+                                borderSide: BorderSide(
+                                  color: Theme.of(context).colorScheme.primary,
+                                ),
+                                borderRadius: BorderRadius.circular(5),
+                              ),
+                              focusedBorder: OutlineInputBorder(
+                                borderSide: BorderSide(
+                                    color:
+                                        Theme.of(context).colorScheme.primary),
+                                borderRadius: BorderRadius.circular(5),
+                              ),
+                              errorBorder: OutlineInputBorder(
+                                borderSide: BorderSide(
+                                    color: Theme.of(context).colorScheme.error),
+                                borderRadius: BorderRadius.circular(5),
+                              ),
+                              focusedErrorBorder: OutlineInputBorder(
+                                borderSide: BorderSide(
+                                    color: Theme.of(context).colorScheme.error),
+                                borderRadius: BorderRadius.circular(5),
+                              ),
+                            ),
                           ),
                         ),
-                      ),
+                      ],
                     ),
                   ),
                   Expanded(

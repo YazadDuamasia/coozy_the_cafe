@@ -3,7 +3,7 @@ import 'dart:convert';
 
 import 'package:coozy_the_cafe/routing/routs.dart';
 import 'package:coozy_the_cafe/utlis/utlis.dart';
-import 'package:coozy_the_cafe/widgets/widgets.dart';
+import 'package:coozy_the_cafe/widgets/count_down_timer/count_down_timer.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:pin_code_fields/pin_code_fields.dart';

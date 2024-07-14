@@ -1,4 +1,6 @@
-class Employee {
+import 'package:coozy_the_cafe/widgets/widgets.dart';
+
+class Employee extends ISuspensionBean {
   final int? id;
   final String? name;
   final String? phoneNumber;
@@ -66,4 +68,10 @@ class Employee {
   String toString() {
     return 'Employee{id: $id, name: $name, phoneNumber: $phoneNumber, position: $position, joiningDate: $joiningDate, leavingDate: $leavingDate, startWorkingTime: $startWorkingTime, endWorkingTime: $endWorkingTime, workingHours: $workingHours, creationDate: $creationDate, modificationDate: $modificationDate, isDeleted: $isDeleted}';
   }
+
+  @override
+  String getSuspensionTag() {
+    return name != null && name!.isNotEmpty ? name![0].toUpperCase() : '';
+  }
+
 }

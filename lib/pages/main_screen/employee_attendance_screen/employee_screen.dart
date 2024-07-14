@@ -36,6 +36,7 @@ class _EmployeeScreenState extends State<EmployeeScreen>
   FocusNode? _searchFocusNode;
   List<Employee>? _employees = [];
   List<Employee>? _filteredEmployees = [];
+  List<String>? indexBarData = [];
 
   @override
   void initState() {
@@ -59,6 +60,10 @@ class _EmployeeScreenState extends State<EmployeeScreen>
             employee.phoneNumber!.toLowerCase().contains(query) ||
             employee.position!.toLowerCase().contains(query);
       }).toList();
+      indexBarData = _filteredEmployees
+          ?.map((model) => model.name?[0] ?? '')
+          .toSet()
+          .toList();
     });
   }
 
@@ -75,7 +80,12 @@ class _EmployeeScreenState extends State<EmployeeScreen>
             if (state is EmployeeLoaded) {
               setState(() {
                 _employees = state.employees;
+
                 _filteredEmployees = _employees;
+                indexBarData = _filteredEmployees
+                    ?.map((model) => model.name?[0] ?? '')
+                    .toSet()
+                    .toList();
               });
             }
           },
@@ -90,545 +100,613 @@ class _EmployeeScreenState extends State<EmployeeScreen>
                 children: [
                   Padding(
                     padding: const EdgeInsets.all(10.0),
-                    child: TextField(
-                      controller: _searchController,
-                      focusNode: _searchFocusNode,
-                      decoration: InputDecoration(
-                        hintText: 'Search employees...',
-                        prefixIcon: const Icon(Icons.search),
-                        suffixIcon: Visibility(
-                          visible: (_searchController!.text == null ||
-                                  _searchController!.text == "" ||
-                                  _searchController!.text.isEmpty)
-                              ? false
-                              : true,
-                          child: GestureDetector(
-                            onTap: () {
-                              setState(() {
-                                _searchController!.clear();
-                                FocusManager.instance.primaryFocus?.unfocus();
-
-                              });
-                            },
-                            child: const Icon(Icons.clear),
+                    child: Row(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      mainAxisAlignment: MainAxisAlignment.start,
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        Expanded(
+                          child: AnimatedHintTextField(
+                            controller: _searchController,
+                            focusNode: _searchFocusNode,
+                            animationType: AnimationType.typer,
+                            hintTextStyle: TextStyle(
+                              color: Theme.of(context).colorScheme.secondaryContainer,
+                              overflow: TextOverflow.ellipsis,
+                            ),
+                            textInputAction: TextInputAction.done,
+                            hintTexts: const [
+                              'Search employees by name',
+                              'Search employees by mobile number',
+                              'Search employees by position'
+                            ],
+                            decoration: InputDecoration(
+                              prefixIcon: const Icon(Icons.search),
+                              suffixIcon: Visibility(
+                                visible: (_searchController!.text == null ||
+                                        _searchController!.text == "" ||
+                                        _searchController!.text.isEmpty)
+                                    ? false
+                                    : true,
+                                child: GestureDetector(
+                                  onTap: () {
+                                    setState(() {
+                                      _searchController!.clear();
+                                      FocusManager.instance.primaryFocus?.unfocus();
+                                    });
+                                  },
+                                  child: const Icon(Icons.clear),
+                                ),
+                              ),
+                              contentPadding: const EdgeInsets.only(
+                                  left: 10, right: 10, bottom: 5, top: 5),
+                              border: OutlineInputBorder(
+                                borderSide: BorderSide(
+                                  color: Theme.of(context).colorScheme.primary,
+                                ),
+                                borderRadius: BorderRadius.circular(5),
+                              ),
+                              disabledBorder: OutlineInputBorder(
+                                borderSide: BorderSide(
+                                  color: Theme.of(context).disabledColor,
+                                ),
+                                borderRadius: BorderRadius.circular(5),
+                              ),
+                              enabledBorder: OutlineInputBorder(
+                                borderSide: BorderSide(
+                                  color: Theme.of(context).colorScheme.primary,
+                                ),
+                                borderRadius: BorderRadius.circular(5),
+                              ),
+                              focusedBorder: OutlineInputBorder(
+                                borderSide: BorderSide(
+                                    color: Theme.of(context).colorScheme.primary),
+                                borderRadius: BorderRadius.circular(5),
+                              ),
+                              errorBorder: OutlineInputBorder(
+                                borderSide: BorderSide(
+                                    color: Theme.of(context).colorScheme.error),
+                                borderRadius: BorderRadius.circular(5),
+                              ),
+                              focusedErrorBorder: OutlineInputBorder(
+                                borderSide: BorderSide(
+                                    color: Theme.of(context).colorScheme.error),
+                                borderRadius: BorderRadius.circular(5),
+                              ),
+                            ),
                           ),
                         ),
-                      ),
+                      ],
                     ),
                   ),
                   Expanded(
-                    child: Scrollbar(
-                      thumbVisibility: true,
-                      interactive: true,
-                      radius: const Radius.circular(10.0),
-                      controller: scrollController,
-                      child: RefreshIndicator(
-                        onRefresh: () async {
-                          BlocProvider.of<EmployeeCubit>(context)
-                              .fetchEmployees();
-                        },
-                        child: SlidableAutoCloseBehavior(
-                          child: ListView.builder(
-                            itemCount: _filteredEmployees?.length ?? 0,
-                            addAutomaticKeepAlives: false,
-                            addRepaintBoundaries: true,
-                            physics: const BouncingScrollPhysics(),
-                            itemBuilder: (context, index) {
-                              Employee? employee = _filteredEmployees![index];
-                              Constants.debugLog(EmployeeScreen,
-                                  "Employee$index:${employee.toString()}");
-                              return Padding(
-                                padding: const EdgeInsets.only(
-                                    left: 5, right: 10, top: 5),
-                                child: Slidable(
-                                  key: ValueKey(index),
-                                  closeOnScroll: true,
+                    child: RefreshIndicator(
+                      onRefresh: () async {
+                        BlocProvider.of<EmployeeCubit>(context)
+                            .fetchEmployees();
+                      },
+                      child: SlidableAutoCloseBehavior(
+                        child: AzListView(
+                          indexBarData: indexBarData ?? [],
+                          data: _filteredEmployees ?? [],
+                          itemCount: _filteredEmployees?.length ?? 0,
+                          physics: const BouncingScrollPhysics(
+                            parent: AlwaysScrollableScrollPhysics(),
+                          ),
+                          padding: const EdgeInsets.only(right: 40),
+                          indexBarOptions: IndexBarOptions(
+                            needRebuild: true,
+                            color: Colors.grey.shade300,
+                            downColor:
+                                Theme.of(context).primaryColor.withOpacity(0.5),
+                            indexHintWidth: 50.0,
+                          ),
+                          indexHintBuilder:
+                              (BuildContext context, String hint) {
+                            return Container(
+                              alignment: Alignment.center,
+                              width: 80.0,
+                              height: 80.0,
+                              decoration: BoxDecoration(
+                                color: Theme.of(context)
+                                    .primaryColor
+                                    .withOpacity(0.5),
+                                shape: BoxShape.circle,
+                              ),
+                              child: Text(
+                                hint.toUpperCase(),
+                                style: Theme.of(context)
+                                    .textTheme
+                                    .displaySmall!
+                                    .copyWith(color: Colors.white),
+                              ),
+                            );
+                          },
+                          itemBuilder: (context, index) {
+                            Employee? employee = _filteredEmployees![index];
+                            Constants.debugLog(EmployeeScreen,
+                                "Employee$index:${employee.toString()}");
+                            return Padding(
+                              padding: const EdgeInsets.only(
+                                  left: 5, right: 10, top: 5),
+                              child: Slidable(
+                                key: ValueKey(index),
+                                closeOnScroll: true,
 
-                                  // The end action pane is the one at the right or the bottom side.
-                                  endActionPane: ActionPane(
-                                    motion: const DrawerMotion(),
-                                    children: [
-                                      SlidableAction(
-                                        onPressed:
-                                            (BuildContext context) async {
-                                          Constants.showLoadingDialog(context);
-                                          _showEditEmployeeDialog(
-                                              context, employee);
-                                        },
-                                        backgroundColor: Colors.lightBlueAccent,
-                                        foregroundColor: Colors.white,
-                                        icon: MdiIcons.circleEditOutline,
-                                        borderRadius: const BorderRadius.only(
-                                          topLeft: Radius.circular(10),
-                                          bottomLeft: Radius.circular(10),
-                                          bottomRight: Radius.circular(0),
-                                          topRight: Radius.circular(0),
-                                        ),
-                                        label: 'Edit',
+                                // The end action pane is the one at the right or the bottom side.
+                                endActionPane: ActionPane(
+                                  motion: const DrawerMotion(),
+                                  children: [
+                                    SlidableAction(
+                                      onPressed: (BuildContext context) async {
+                                        Constants.showLoadingDialog(context);
+                                        _showEditEmployeeDialog(
+                                            context, employee);
+                                      },
+                                      backgroundColor: Colors.lightBlueAccent,
+                                      foregroundColor: Colors.white,
+                                      icon: MdiIcons.circleEditOutline,
+                                      borderRadius: const BorderRadius.only(
+                                        topLeft: Radius.circular(10),
+                                        bottomLeft: Radius.circular(10),
+                                        bottomRight: Radius.circular(0),
+                                        topRight: Radius.circular(0),
                                       ),
-                                      SlidableAction(
-                                        backgroundColor: Colors.red,
-                                        foregroundColor: Colors.white,
-                                        autoClose: true,
-                                        borderRadius: const BorderRadius.only(
-                                          topLeft: Radius.circular(0),
-                                          bottomLeft: Radius.circular(0),
-                                          bottomRight: Radius.circular(10),
-                                          topRight: Radius.circular(10),
-                                        ),
-                                        icon: Icons.delete,
-                                        label: 'Delete',
-                                        onPressed: (BuildContext ctx) {
-                                          Constants.customPopUpDialogMessage(
-                                            classObject: EmployeeScreen,
-                                            context: this.context,
-                                            titleIcon: Icon(
-                                              Icons.info_outline,
-                                              size: 40,
-                                              color: Theme.of(context)
-                                                  .primaryColor,
-                                            ),
-                                            title:
-                                                "${AppLocalizations.of(context)?.translate(StringValue.employee_screen_delete_title_dialog) ?? "Are you sure ?"}",
-                                            descriptions:
-                                                "${AppLocalizations.of(context)?.translate(StringValue.employee_screen_delete_dialog_subTitle) ?? "Do you really want to delete this employee information? You will not be able to undo this action."}",
-                                            actions: Row(
-                                              mainAxisAlignment:
-                                                  MainAxisAlignment.center,
-                                              crossAxisAlignment:
-                                                  CrossAxisAlignment.center,
-                                              mainAxisSize: MainAxisSize.max,
-                                              children: [
-                                                TextButton(
-                                                  child: Text(
-                                                    "${AppLocalizations.of(context)!.translate(StringValue.common_cancel)}",
-                                                    style: Theme.of(context)
-                                                        .textTheme
-                                                        .titleSmall!
-                                                        .copyWith(
-                                                          color: Theme.of(context)
-                                                                      .brightness ==
-                                                                  Brightness
-                                                                      .light
-                                                              ? Colors.white
-                                                              : null,
-                                                          fontWeight:
-                                                              FontWeight.w700,
-                                                        ),
-                                                  ),
-                                                  onPressed: () =>
-                                                      Navigator.pop(
-                                                          this.context),
-                                                ),
-                                                TextButton(
-                                                  child: Text(
-                                                    "${AppLocalizations.of(context)!.translate(StringValue.common_okay)}",
-                                                    style: Theme.of(context)
-                                                        .textTheme
-                                                        .titleSmall!
-                                                        .copyWith(
-                                                          color: Theme.of(context)
-                                                                      .brightness ==
-                                                                  Brightness
-                                                                      .light
-                                                              ? Colors.white
-                                                              : null,
-                                                          fontWeight:
-                                                              FontWeight.w700,
-                                                        ),
-                                                  ),
-                                                  onPressed: () {
-                                                    Navigator.pop(this.context);
-                                                    BlocProvider.of<
-                                                                EmployeeCubit>(
-                                                            this.context)
-                                                        .deleteEmployee(
-                                                            employee.id!);
-                                                  },
-                                                )
-                                              ],
-                                            ),
-                                          );
-                                        },
+                                      label: 'Edit',
+                                    ),
+                                    SlidableAction(
+                                      backgroundColor: Colors.red,
+                                      foregroundColor: Colors.white,
+                                      autoClose: true,
+                                      borderRadius: const BorderRadius.only(
+                                        topLeft: Radius.circular(0),
+                                        bottomLeft: Radius.circular(0),
+                                        bottomRight: Radius.circular(10),
+                                        topRight: Radius.circular(10),
                                       ),
-                                    ],
-                                  ),
-
-                                  child: Card(
-                                    elevation: 3,
-                                    child: ListTile(
-                                      title: Row(
-                                        mainAxisAlignment:
-                                            MainAxisAlignment.start,
-                                        crossAxisAlignment:
-                                            CrossAxisAlignment.start,
-                                        mainAxisSize: MainAxisSize.min,
-                                        children: <Widget>[
-                                          Expanded(
-                                            child: Text(
-                                              employee.name ?? '',
-                                              style: Theme.of(context)
-                                                  .textTheme
-                                                  .bodyLarge!
-                                                  .copyWith(
-                                                      fontWeight:
-                                                          FontWeight.w700),
-                                            ),
+                                      icon: Icons.delete,
+                                      label: 'Delete',
+                                      onPressed: (BuildContext ctx) {
+                                        Constants.customPopUpDialogMessage(
+                                          classObject: EmployeeScreen,
+                                          context: this.context,
+                                          titleIcon: Icon(
+                                            Icons.info_outline,
+                                            size: 40,
+                                            color:
+                                                Theme.of(context).primaryColor,
                                           ),
-                                        ],
-                                      ),
-                                      subtitle: Column(
-                                        mainAxisAlignment:
-                                            MainAxisAlignment.start,
-                                        crossAxisAlignment:
-                                            CrossAxisAlignment.start,
-                                        mainAxisSize: MainAxisSize.min,
-                                        children: <Widget>[
-                                          const SizedBox(
-                                            height: 5,
-                                          ),
-                                          Row(
+                                          title:
+                                              "${AppLocalizations.of(context)?.translate(StringValue.employee_screen_delete_title_dialog) ?? "Are you sure ?"}",
+                                          descriptions:
+                                              "${AppLocalizations.of(context)?.translate(StringValue.employee_screen_delete_dialog_subTitle) ?? "Do you really want to delete this employee information? You will not be able to undo this action."}",
+                                          actions: Row(
                                             mainAxisAlignment:
-                                                MainAxisAlignment.start,
+                                                MainAxisAlignment.center,
                                             crossAxisAlignment:
-                                                CrossAxisAlignment.start,
-                                            mainAxisSize: MainAxisSize.min,
-                                            children: <Widget>[
-                                              Expanded(
-                                                child: RichText(
-                                                  text: TextSpan(
-                                                    children: [
-                                                      TextSpan(
-                                                        text: 'Position: ',
-                                                        style: Theme.of(context)
-                                                            .textTheme
-                                                            .bodyMedium
-                                                            ?.copyWith(
-                                                                fontWeight:
-                                                                    FontWeight
-                                                                        .w700),
+                                                CrossAxisAlignment.center,
+                                            mainAxisSize: MainAxisSize.max,
+                                            children: [
+                                              TextButton(
+                                                child: Text(
+                                                  "${AppLocalizations.of(context)!.translate(StringValue.common_cancel)}",
+                                                  style: Theme.of(context)
+                                                      .textTheme
+                                                      .titleSmall!
+                                                      .copyWith(
+                                                        color: Theme.of(context)
+                                                                    .brightness ==
+                                                                Brightness.light
+                                                            ? Colors.white
+                                                            : null,
+                                                        fontWeight:
+                                                            FontWeight.w700,
                                                       ),
-                                                      TextSpan(
-                                                        text:
-                                                            employee.position ??
-                                                                "",
-                                                        style: Theme.of(context)
-                                                            .textTheme
-                                                            .bodyMedium,
-                                                      ),
-                                                    ],
-                                                  ),
                                                 ),
+                                                onPressed: () =>
+                                                    Navigator.pop(this.context),
                                               ),
-                                            ],
-                                          ),
-                                          const SizedBox(
-                                            height: 5,
-                                          ),
-                                          InkWell(
-                                            borderRadius:
-                                                BorderRadius.circular(10),
-                                            onTap: () async {
-                                              Uri? uri = Uri.tryParse(
-                                                  'tel:${employee.phoneNumber?.trim() ?? ''}');
-                                              try {
-                                                if (await UrlLauncher
-                                                    .canLaunchUrl(uri!)) {
-                                                  await UrlLauncher.launchUrl(
-                                                      uri);
-                                                } else {
-                                                  throw 'Could not launch ${uri.data.toString()}';
-                                                }
-                                              } catch (e) {
-                                                Flushbar(
-                                                  message:
-                                                      "Failed to make call.Please try again.",
-                                                  icon: const Icon(
-                                                    Icons.error,
-                                                    size: 28.0,
-                                                    color: Colors.red,
-                                                  ),
-                                                  margin:
-                                                      const EdgeInsets.all(5.0),
-                                                  flushbarStyle:
-                                                      FlushbarStyle.FLOATING,
-                                                  flushbarPosition:
-                                                      FlushbarPosition.BOTTOM,
-                                                  textDirection:
-                                                      Directionality.of(
-                                                          context),
-                                                  borderRadius:
-                                                      BorderRadius.circular(12),
-                                                  duration: const Duration(
-                                                      seconds: 3),
-                                                  leftBarIndicatorColor:
-                                                      Theme.of(context)
-                                                          .colorScheme
-                                                          .primary,
-                                                ).show(context);
-
-                                                Clipboard.setData(ClipboardData(
-                                                        text:
-                                                            "${employee.phoneNumber?.trim()}"))
-                                                    .then((value) {
-                                                  ScaffoldMessenger.of(context)
-                                                      .showSnackBar(
-                                                    SnackBar(
-                                                      content: Text(
-                                                          '${employee.phoneNumber?.trim()} has been copy to your Clipboard.'),
-                                                    ),
-                                                  );
-                                                  print(
-                                                      'Error launching phone call: $e');
-                                                });
-                                              }
-                                            },
-                                            child: Padding(
-                                              padding: const EdgeInsets.only(
-                                                  top: 5, bottom: 5),
-                                              child: Row(
-                                                mainAxisAlignment:
-                                                    MainAxisAlignment.start,
-                                                crossAxisAlignment:
-                                                    CrossAxisAlignment.start,
-                                                mainAxisSize: MainAxisSize.min,
-                                                children: <Widget>[
-                                                  Icon(
-                                                    MdiIcons.phone,
-                                                    size: 20,
-                                                  ),
-                                                  const SizedBox(
-                                                    width: 5,
-                                                  ),
-                                                  Expanded(
-                                                    child: Text(employee
-                                                            .phoneNumber
-                                                            ?.trim() ??
-                                                        ''),
-                                                  ),
-                                                ],
-                                              ),
-                                            ),
-                                          ),
-                                          const SizedBox(
-                                            height: 5,
-                                          ),
-                                          Row(
-                                            mainAxisAlignment:
-                                                MainAxisAlignment.spaceEvenly,
-                                            crossAxisAlignment:
-                                                CrossAxisAlignment.start,
-                                            mainAxisSize: MainAxisSize.min,
-                                            children: <Widget>[
-                                              Expanded(
-                                                child: RichText(
-                                                  text: TextSpan(
-                                                    children: [
-                                                      TextSpan(
-                                                        text:
-                                                            'Start Shift Time: ',
-                                                        style: Theme.of(context)
-                                                            .textTheme
-                                                            .bodyMedium
-                                                            ?.copyWith(
-                                                                fontWeight:
-                                                                    FontWeight
-                                                                        .w700),
+                                              TextButton(
+                                                child: Text(
+                                                  "${AppLocalizations.of(context)!.translate(StringValue.common_okay)}",
+                                                  style: Theme.of(context)
+                                                      .textTheme
+                                                      .titleSmall!
+                                                      .copyWith(
+                                                        color: Theme.of(context)
+                                                                    .brightness ==
+                                                                Brightness.light
+                                                            ? Colors.white
+                                                            : null,
+                                                        fontWeight:
+                                                            FontWeight.w700,
                                                       ),
-                                                      TextSpan(
-                                                        text: employee
-                                                                .startWorkingTime ??
-                                                            "",
-                                                        style: Theme.of(context)
-                                                            .textTheme
-                                                            .bodyMedium,
-                                                      ),
-                                                    ],
-                                                  ),
                                                 ),
-                                              ),
-                                            ],
-                                          ),
-                                          const SizedBox(
-                                            height: 5,
-                                          ),
-                                          Row(
-                                            mainAxisAlignment:
-                                                MainAxisAlignment.spaceEvenly,
-                                            crossAxisAlignment:
-                                                CrossAxisAlignment.start,
-                                            mainAxisSize: MainAxisSize.min,
-                                            children: <Widget>[
-                                              Expanded(
-                                                child: RichText(
-                                                  text: TextSpan(
-                                                    children: [
-                                                      TextSpan(
-                                                        text:
-                                                            'End Shift Time: ',
-                                                        style: Theme.of(context)
-                                                            .textTheme
-                                                            .bodyMedium
-                                                            ?.copyWith(
-                                                                fontWeight:
-                                                                    FontWeight
-                                                                        .w700),
-                                                      ),
-                                                      TextSpan(
-                                                        text: employee
-                                                                .endWorkingTime ??
-                                                            "",
-                                                        style: Theme.of(context)
-                                                            .textTheme
-                                                            .bodyMedium,
-                                                      ),
-                                                    ],
-                                                  ),
-                                                ),
-                                              ),
-                                            ],
-                                          ),
-                                          const SizedBox(
-                                            height: 5,
-                                          ),
-                                          Row(
-                                            mainAxisAlignment:
-                                                MainAxisAlignment.start,
-                                            crossAxisAlignment:
-                                                CrossAxisAlignment.start,
-                                            mainAxisSize: MainAxisSize.min,
-                                            children: <Widget>[
-                                              Expanded(
-                                                child: RichText(
-                                                  text: TextSpan(
-                                                    children: [
-                                                      TextSpan(
-                                                        text:
-                                                            'Total Working time: ',
-                                                        style: Theme.of(context)
-                                                            .textTheme
-                                                            .bodyMedium
-                                                            ?.copyWith(
-                                                                fontWeight:
-                                                                    FontWeight
-                                                                        .w700),
-                                                      ),
-                                                      TextSpan(
-                                                        text:
-                                                            '${DateUtil.calculateRemainingTime(fromTime: employee.startWorkingTime, toTime: employee.endWorkingTime, format: DateUtil.TIME_FORMAT2) ?? "N/A"}',
-                                                        style: Theme.of(context)
-                                                            .textTheme
-                                                            .bodyMedium,
-                                                      ),
-                                                    ],
-                                                  ),
-                                                ),
+                                                onPressed: () {
+                                                  Navigator.pop(this.context);
+                                                  BlocProvider.of<
+                                                              EmployeeCubit>(
+                                                          this.context)
+                                                      .deleteEmployee(
+                                                          employee.id!);
+                                                },
                                               )
                                             ],
                                           ),
-                                          Visibility(
-                                            visible:
-                                                employee.creationDate != null,
-                                            child: Padding(
-                                              padding: const EdgeInsets.only(
-                                                  top: 5.0),
-                                              child: Row(
-                                                mainAxisAlignment:
-                                                    MainAxisAlignment
-                                                        .spaceEvenly,
-                                                crossAxisAlignment:
-                                                    CrossAxisAlignment.start,
-                                                mainAxisSize: MainAxisSize.min,
-                                                children: <Widget>[
-                                                  Expanded(
-                                                    child: RichText(
-                                                      text: TextSpan(
-                                                        children: [
-                                                          TextSpan(
-                                                            text:
-                                                                'Creation Date: ',
-                                                            style: Theme.of(
-                                                                    context)
-                                                                .textTheme
-                                                                .bodyMedium
-                                                                ?.copyWith(
-                                                                    fontWeight:
-                                                                        FontWeight
-                                                                            .w700),
-                                                          ),
-                                                          TextSpan(
-                                                            text: employee
-                                                                    .creationDate ??
-                                                                "",
-                                                            style: Theme.of(
-                                                                    context)
-                                                                .textTheme
-                                                                .bodyMedium,
-                                                          ),
-                                                        ],
-                                                      ),
+                                        );
+                                      },
+                                    ),
+                                  ],
+                                ),
+
+                                child: Card(
+                                  elevation: 3,
+                                  child: ListTile(
+                                    title: Row(
+                                      mainAxisAlignment:
+                                          MainAxisAlignment.start,
+                                      crossAxisAlignment:
+                                          CrossAxisAlignment.start,
+                                      mainAxisSize: MainAxisSize.min,
+                                      children: <Widget>[
+                                        Expanded(
+                                          child: Text(
+                                            employee.name ?? '',
+                                            style: Theme.of(context)
+                                                .textTheme
+                                                .bodyLarge!
+                                                .copyWith(
+                                                    fontWeight:
+                                                        FontWeight.w700),
+                                          ),
+                                        ),
+                                      ],
+                                    ),
+                                    subtitle: Column(
+                                      mainAxisAlignment:
+                                          MainAxisAlignment.start,
+                                      crossAxisAlignment:
+                                          CrossAxisAlignment.start,
+                                      mainAxisSize: MainAxisSize.min,
+                                      children: <Widget>[
+                                        const SizedBox(
+                                          height: 5,
+                                        ),
+                                        Row(
+                                          mainAxisAlignment:
+                                              MainAxisAlignment.start,
+                                          crossAxisAlignment:
+                                              CrossAxisAlignment.start,
+                                          mainAxisSize: MainAxisSize.min,
+                                          children: <Widget>[
+                                            Expanded(
+                                              child: RichText(
+                                                text: TextSpan(
+                                                  children: [
+                                                    TextSpan(
+                                                      text: 'Position: ',
+                                                      style: Theme.of(context)
+                                                          .textTheme
+                                                          .bodyMedium
+                                                          ?.copyWith(
+                                                              fontWeight:
+                                                                  FontWeight
+                                                                      .w700),
                                                     ),
-                                                  ),
-                                                ],
+                                                    TextSpan(
+                                                      text: employee.position ??
+                                                          "",
+                                                      style: Theme.of(context)
+                                                          .textTheme
+                                                          .bodyMedium,
+                                                    ),
+                                                  ],
+                                                ),
                                               ),
                                             ),
-                                          ),
-                                          Visibility(
-                                            visible:
-                                                employee.modificationDate !=
-                                                    null,
-                                            child: Padding(
-                                              padding: const EdgeInsets.only(
-                                                  top: 5.0),
-                                              child: Row(
-                                                mainAxisAlignment:
-                                                    MainAxisAlignment
-                                                        .spaceEvenly,
-                                                crossAxisAlignment:
-                                                    CrossAxisAlignment.start,
-                                                mainAxisSize: MainAxisSize.min,
-                                                children: <Widget>[
-                                                  Expanded(
-                                                    child: RichText(
-                                                      text: TextSpan(
-                                                        children: [
-                                                          TextSpan(
-                                                            text:
-                                                                'Modification date: ',
-                                                            style: Theme.of(
-                                                                    context)
-                                                                .textTheme
-                                                                .bodyMedium
-                                                                ?.copyWith(
-                                                                    fontWeight:
-                                                                        FontWeight
-                                                                            .w700),
-                                                          ),
-                                                          TextSpan(
-                                                            text: employee
-                                                                    .modificationDate ??
-                                                                "",
-                                                            style: Theme.of(
-                                                                    context)
-                                                                .textTheme
-                                                                .bodyMedium,
-                                                          ),
-                                                        ],
-                                                      ),
-                                                    ),
+                                          ],
+                                        ),
+                                        const SizedBox(
+                                          height: 5,
+                                        ),
+                                        InkWell(
+                                          borderRadius:
+                                              BorderRadius.circular(10),
+                                          onTap: () async {
+                                            Uri? uri = Uri.tryParse(
+                                                'tel:${employee.phoneNumber?.trim() ?? ''}');
+                                            try {
+                                              if (await UrlLauncher
+                                                  .canLaunchUrl(uri!)) {
+                                                await UrlLauncher.launchUrl(
+                                                    uri);
+                                              } else {
+                                                throw 'Could not launch ${uri.data.toString()}';
+                                              }
+                                            } catch (e) {
+                                              Flushbar(
+                                                message:
+                                                    "Failed to make call.Please try again.",
+                                                icon: const Icon(
+                                                  Icons.error,
+                                                  size: 28.0,
+                                                  color: Colors.red,
+                                                ),
+                                                margin:
+                                                    const EdgeInsets.all(5.0),
+                                                flushbarStyle:
+                                                    FlushbarStyle.FLOATING,
+                                                flushbarPosition:
+                                                    FlushbarPosition.BOTTOM,
+                                                textDirection:
+                                                    Directionality.of(context),
+                                                borderRadius:
+                                                    BorderRadius.circular(12),
+                                                duration:
+                                                    const Duration(seconds: 3),
+                                                leftBarIndicatorColor:
+                                                    Theme.of(context)
+                                                        .colorScheme
+                                                        .primary,
+                                              ).show(context);
+
+                                              Clipboard.setData(ClipboardData(
+                                                      text:
+                                                          "${employee.phoneNumber?.trim()}"))
+                                                  .then((value) {
+                                                ScaffoldMessenger.of(context)
+                                                    .showSnackBar(
+                                                  SnackBar(
+                                                    content: Text(
+                                                        '${employee.phoneNumber?.trim()} has been copy to your Clipboard.'),
                                                   ),
-                                                ],
-                                              ),
+                                                );
+                                                print(
+                                                    'Error launching phone call: $e');
+                                              });
+                                            }
+                                          },
+                                          child: Padding(
+                                            padding: const EdgeInsets.only(
+                                                top: 5, bottom: 5),
+                                            child: Row(
+                                              mainAxisAlignment:
+                                                  MainAxisAlignment.start,
+                                              crossAxisAlignment:
+                                                  CrossAxisAlignment.start,
+                                              mainAxisSize: MainAxisSize.min,
+                                              children: <Widget>[
+                                                Icon(
+                                                  MdiIcons.phone,
+                                                  size: 20,
+                                                ),
+                                                const SizedBox(
+                                                  width: 5,
+                                                ),
+                                                Expanded(
+                                                  child: Text(employee
+                                                          .phoneNumber
+                                                          ?.trim() ??
+                                                      ''),
+                                                ),
+                                              ],
                                             ),
                                           ),
-                                        ],
-                                      ),
+                                        ),
+                                        const SizedBox(
+                                          height: 5,
+                                        ),
+                                        Row(
+                                          mainAxisAlignment:
+                                              MainAxisAlignment.spaceEvenly,
+                                          crossAxisAlignment:
+                                              CrossAxisAlignment.start,
+                                          mainAxisSize: MainAxisSize.min,
+                                          children: <Widget>[
+                                            Expanded(
+                                              child: RichText(
+                                                text: TextSpan(
+                                                  children: [
+                                                    TextSpan(
+                                                      text:
+                                                          'Start Shift Time: ',
+                                                      style: Theme.of(context)
+                                                          .textTheme
+                                                          .bodyMedium
+                                                          ?.copyWith(
+                                                              fontWeight:
+                                                                  FontWeight
+                                                                      .w700),
+                                                    ),
+                                                    TextSpan(
+                                                      text: employee
+                                                              .startWorkingTime ??
+                                                          "",
+                                                      style: Theme.of(context)
+                                                          .textTheme
+                                                          .bodyMedium,
+                                                    ),
+                                                  ],
+                                                ),
+                                              ),
+                                            ),
+                                          ],
+                                        ),
+                                        const SizedBox(
+                                          height: 5,
+                                        ),
+                                        Row(
+                                          mainAxisAlignment:
+                                              MainAxisAlignment.spaceEvenly,
+                                          crossAxisAlignment:
+                                              CrossAxisAlignment.start,
+                                          mainAxisSize: MainAxisSize.min,
+                                          children: <Widget>[
+                                            Expanded(
+                                              child: RichText(
+                                                text: TextSpan(
+                                                  children: [
+                                                    TextSpan(
+                                                      text: 'End Shift Time: ',
+                                                      style: Theme.of(context)
+                                                          .textTheme
+                                                          .bodyMedium
+                                                          ?.copyWith(
+                                                              fontWeight:
+                                                                  FontWeight
+                                                                      .w700),
+                                                    ),
+                                                    TextSpan(
+                                                      text: employee
+                                                              .endWorkingTime ??
+                                                          "",
+                                                      style: Theme.of(context)
+                                                          .textTheme
+                                                          .bodyMedium,
+                                                    ),
+                                                  ],
+                                                ),
+                                              ),
+                                            ),
+                                          ],
+                                        ),
+                                        const SizedBox(
+                                          height: 5,
+                                        ),
+                                        Row(
+                                          mainAxisAlignment:
+                                              MainAxisAlignment.start,
+                                          crossAxisAlignment:
+                                              CrossAxisAlignment.start,
+                                          mainAxisSize: MainAxisSize.min,
+                                          children: <Widget>[
+                                            Expanded(
+                                              child: RichText(
+                                                text: TextSpan(
+                                                  children: [
+                                                    TextSpan(
+                                                      text:
+                                                          'Total Working time: ',
+                                                      style: Theme.of(context)
+                                                          .textTheme
+                                                          .bodyMedium
+                                                          ?.copyWith(
+                                                              fontWeight:
+                                                                  FontWeight
+                                                                      .w700),
+                                                    ),
+                                                    TextSpan(
+                                                      text:
+                                                          '${DateUtil.calculateRemainingTime(fromTime: employee.startWorkingTime, toTime: employee.endWorkingTime, format: DateUtil.TIME_FORMAT2) ?? "N/A"}',
+                                                      style: Theme.of(context)
+                                                          .textTheme
+                                                          .bodyMedium,
+                                                    ),
+                                                  ],
+                                                ),
+                                              ),
+                                            )
+                                          ],
+                                        ),
+                                        Visibility(
+                                          visible:
+                                              employee.creationDate != null,
+                                          child: Padding(
+                                            padding:
+                                                const EdgeInsets.only(top: 5.0),
+                                            child: Row(
+                                              mainAxisAlignment:
+                                                  MainAxisAlignment.spaceEvenly,
+                                              crossAxisAlignment:
+                                                  CrossAxisAlignment.start,
+                                              mainAxisSize: MainAxisSize.min,
+                                              children: <Widget>[
+                                                Expanded(
+                                                  child: RichText(
+                                                    text: TextSpan(
+                                                      children: [
+                                                        TextSpan(
+                                                          text:
+                                                              'Creation Date: ',
+                                                          style: Theme.of(
+                                                                  context)
+                                                              .textTheme
+                                                              .bodyMedium
+                                                              ?.copyWith(
+                                                                  fontWeight:
+                                                                      FontWeight
+                                                                          .w700),
+                                                        ),
+                                                        TextSpan(
+                                                          text: employee
+                                                                  .creationDate ??
+                                                              "",
+                                                          style:
+                                                              Theme.of(context)
+                                                                  .textTheme
+                                                                  .bodyMedium,
+                                                        ),
+                                                      ],
+                                                    ),
+                                                  ),
+                                                ),
+                                              ],
+                                            ),
+                                          ),
+                                        ),
+                                        Visibility(
+                                          visible:
+                                              employee.modificationDate != null,
+                                          child: Padding(
+                                            padding:
+                                                const EdgeInsets.only(top: 5.0),
+                                            child: Row(
+                                              mainAxisAlignment:
+                                                  MainAxisAlignment.spaceEvenly,
+                                              crossAxisAlignment:
+                                                  CrossAxisAlignment.start,
+                                              mainAxisSize: MainAxisSize.min,
+                                              children: <Widget>[
+                                                Expanded(
+                                                  child: RichText(
+                                                    text: TextSpan(
+                                                      children: [
+                                                        TextSpan(
+                                                          text:
+                                                              'Modification date: ',
+                                                          style: Theme.of(
+                                                                  context)
+                                                              .textTheme
+                                                              .bodyMedium
+                                                              ?.copyWith(
+                                                                  fontWeight:
+                                                                      FontWeight
+                                                                          .w700),
+                                                        ),
+                                                        TextSpan(
+                                                          text: employee
+                                                                  .modificationDate ??
+                                                              "",
+                                                          style:
+                                                              Theme.of(context)
+                                                                  .textTheme
+                                                                  .bodyMedium,
+                                                        ),
+                                                      ],
+                                                    ),
+                                                  ),
+                                                ),
+                                              ],
+                                            ),
+                                          ),
+                                        ),
+                                      ],
                                     ),
                                   ),
                                 ),
-                              );
-                            },
-                          ),
+                              ),
+                            );
+                          },
                         ),
                       ),
                     ),

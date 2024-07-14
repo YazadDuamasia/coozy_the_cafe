@@ -12,12 +12,7 @@
 *            </intent-filter>
 *        </receiver>
 *
-*      <activity
-*           android:name="com.letsconnect.letsconnect123.MainActivity"
-*           android:showWhenLocked="true"
-*           android:turnScreenOn="true"
-*
-*
+*   *
 */
 
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
@@ -44,8 +39,7 @@ class NotificationApi {
       defaultPresentSound: true,
     );
 
-    var andriodSetting =
-        const AndroidInitializationSettings("@mipmap/ic_launcher");
+    var andriodSetting = const AndroidInitializationSettings("@mipmap/ic_launcher");
     InitializationSettings settings =
         InitializationSettings(android: andriodSetting, iOS: IOSSetting);
     await _notifications.initialize(
@@ -127,6 +121,7 @@ class NotificationApi {
       await _notificationDetails(),
       payload: payload,
       androidAllowWhileIdle: true,
+      androidScheduleMode: AndroidScheduleMode.exactAllowWhileIdle,
       uiLocalNotificationDateInterpretation:
           UILocalNotificationDateInterpretation.absoluteTime,
     );
@@ -178,12 +173,12 @@ class NotificationApi {
         presentAlert: true,
         presentBadge: true,
         presentSound: true,
-        threadIdentifier: 'coozy_cafe_Shop',
+        threadIdentifier: 'coozy_the_cafe_app',
       ),
       android: AndroidNotificationDetails(
-        'coozy_cafe_Shop', //channel id
-        'coozy_cafe_Shop',
-        channelDescription: 'coozy_cafe_Shop',
+        'coozy_the_cafe_app', //channel id
+        'coozy_the_cafe_app',
+        channelDescription: 'coozy_the_cafe_app',
         priority: Priority.high,
         category: AndroidNotificationCategory.service,
         importance: Importance.max,

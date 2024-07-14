@@ -4,6 +4,7 @@ import 'package:coozy_the_cafe/bloc/staff_management_bloc/leave_cubit/leave_cubi
 import 'package:coozy_the_cafe/model/attendance/employee.dart';
 import 'package:coozy_the_cafe/model/attendance/leave.dart';
 import 'package:coozy_the_cafe/utlis/utlis.dart';
+import 'package:coozy_the_cafe/widgets/animated_hint_textfield/animated_hint_textfield.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_slidable/flutter_slidable.dart';
@@ -42,7 +43,7 @@ class _LeaveScreenState extends State<LeaveScreen> {
     _searchController = TextEditingController(text: "");
     _searchFocusNode = FocusNode();
     WidgetsBinding.instance.addPostFrameCallback((_) {
-      BlocProvider.of<EmployeeCubit>(context).fetchEmployees();
+      // BlocProvider.of<EmployeeCubit>(context).fetchEmployees();
       BlocProvider.of<LeaveCubit>(context).fetchLeaves();
     });
     _searchController!.addListener(_filterLeave);
@@ -106,33 +107,78 @@ class _LeaveScreenState extends State<LeaveScreen> {
                   Padding(
                     padding: const EdgeInsets.all(10.0),
                     child: Row(
-                      mainAxisAlignment: MainAxisAlignment.start,
                       crossAxisAlignment: CrossAxisAlignment.start,
+                      mainAxisAlignment: MainAxisAlignment.start,
                       mainAxisSize: MainAxisSize.min,
-                      children: <Widget>[
+                      children: [
                         Expanded(
-                          child: TextField(
+                          child: AnimatedHintTextField(
                             controller: _searchController,
                             focusNode: _searchFocusNode,
+                            animationType: AnimationType.typer,
+                            hintTextStyle: Theme.of(context).textTheme.bodySmall!.copyWith(
+                              color: Theme.of(context).colorScheme.secondaryContainer,
+                              overflow: TextOverflow.ellipsis,
+                            ),
+                            textInputAction: TextInputAction.done,
+                            hintTexts: const [
+                              'Search employees by name',
+                              'Search employees by mobile number',
+                              'Search employees by position',
+                              'Search leave by reason'
+                            ],
                             decoration: InputDecoration(
-                              hintText: 'Search employees...',
                               prefixIcon: const Icon(Icons.search),
                               suffixIcon: Visibility(
                                 visible: (_searchController!.text == null ||
-                                        _searchController!.text == "" ||
-                                        _searchController!.text.isEmpty)
+                                    _searchController!.text == "" ||
+                                    _searchController!.text.isEmpty)
                                     ? false
                                     : true,
                                 child: GestureDetector(
                                   onTap: () {
                                     setState(() {
                                       _searchController!.clear();
-                                      FocusManager.instance.primaryFocus
-                                          ?.unfocus();
+                                      FocusManager.instance.primaryFocus?.unfocus();
                                     });
                                   },
                                   child: const Icon(Icons.clear),
                                 ),
+                              ),
+                              contentPadding: const EdgeInsets.only(
+                                  left: 10, right: 10, bottom: 5, top: 5),
+                              border: OutlineInputBorder(
+                                borderSide: BorderSide(
+                                  color: Theme.of(context).colorScheme.primary,
+                                ),
+                                borderRadius: BorderRadius.circular(5),
+                              ),
+                              disabledBorder: OutlineInputBorder(
+                                borderSide: BorderSide(
+                                  color: Theme.of(context).disabledColor,
+                                ),
+                                borderRadius: BorderRadius.circular(5),
+                              ),
+                              enabledBorder: OutlineInputBorder(
+                                borderSide: BorderSide(
+                                  color: Theme.of(context).colorScheme.primary,
+                                ),
+                                borderRadius: BorderRadius.circular(5),
+                              ),
+                              focusedBorder: OutlineInputBorder(
+                                borderSide: BorderSide(
+                                    color: Theme.of(context).colorScheme.primary),
+                                borderRadius: BorderRadius.circular(5),
+                              ),
+                              errorBorder: OutlineInputBorder(
+                                borderSide: BorderSide(
+                                    color: Theme.of(context).colorScheme.error),
+                                borderRadius: BorderRadius.circular(5),
+                              ),
+                              focusedErrorBorder: OutlineInputBorder(
+                                borderSide: BorderSide(
+                                    color: Theme.of(context).colorScheme.error),
+                                borderRadius: BorderRadius.circular(5),
                               ),
                             ),
                           ),

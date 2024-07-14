@@ -2,6 +2,7 @@ import 'package:coozy_the_cafe/model/category.dart';
 import 'package:coozy_the_cafe/model/menu_item.dart';
 import 'package:coozy_the_cafe/model/sub_category.dart';
 import 'package:coozy_the_cafe/repositories/components/restaurant_repository.dart';
+import 'package:coozy_the_cafe/utlis/utlis.dart';
 import 'package:flutter/material.dart';
 
 class MenuItemForm extends StatefulWidget {
@@ -203,23 +204,27 @@ class _MenuItemFormState extends State<MenuItemForm> {
                 MenuItem menuItem;
                 if (widget.menuItem != null) {
                   menuItem = MenuItem(
-                      name: name,
-                      description: description,
-                      categoryId: selectedCategoryId,
-                      subcategoryId: selectedSubcategoryId,
-                      isTodayAvailable: isAvailable,
-                      id: widget.menuItem!.id,
-                      duration: duration?.inSeconds ?? 0,
-                      creationDate: DateTime.now().toUtc());
+                    name: name,
+                    description: description,
+                    categoryId: selectedCategoryId,
+                    subcategoryId: selectedSubcategoryId,
+                    isTodayAvailable: isAvailable,
+                    id: widget.menuItem!.id,
+                    duration: duration?.inSeconds ?? 0,
+                    creationDate: widget.menuItem?.creationDate ?? "",
+                    modificationDate: DateUtil.dateToString(DateTime.now(), DateUtil.DATE_FORMAT15),
+                  );
                 } else {
                   menuItem = MenuItem(
-                      name: name,
-                      description: description,
-                      categoryId: selectedCategoryId,
-                      subcategoryId: selectedSubcategoryId,
-                      isTodayAvailable: isAvailable,
-                      duration: duration?.inSeconds ?? 0,
-                      creationDate: DateTime.now().toUtc());
+                    name: name,
+                    description: description,
+                    categoryId: selectedCategoryId,
+                    subcategoryId: selectedSubcategoryId,
+                    isTodayAvailable: isAvailable,
+                    duration: duration?.inSeconds ?? 0,
+                    creationDate: DateUtil.dateToString(
+                        DateTime.now(), DateUtil.DATE_FORMAT15),
+                  );
                 }
                 widget.onSubmit(menuItem);
               }

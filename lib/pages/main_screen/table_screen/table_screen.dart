@@ -287,6 +287,7 @@ class _TableScreenState extends State<TableScreen>
         key: UniqueKey(),
         itemCount: list == null ? 0 : list!.length ?? 0,
         padding: const EdgeInsets.fromLTRB(10, 10, 10, 10),
+        shrinkWrap: true,
         itemBuilder: (context, index) =>
             buildListItem(list![index], index, list),
         onReorder: (oldIndex, newIndex) async {

@@ -71,6 +71,19 @@ class _MyAppState extends State<MyApp> {
               builder: (context, child) {
                 return Theme(
                   data: Theme.of(context).copyWith(
+                    elevatedButtonTheme: ElevatedButtonThemeData(
+                      style: ElevatedButton.styleFrom(
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(10.0),
+                        ),
+                      ),
+                    ),
+                    floatingActionButtonTheme: FloatingActionButtonThemeData(
+                      iconSize: 25,
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(50.0),
+                      ),
+                    ),
                     inputDecorationTheme: InputDecorationTheme(
                       contentPadding: const EdgeInsets.only(left: 10, right: 10, bottom: 5, top: 5),
                       border: OutlineInputBorder(

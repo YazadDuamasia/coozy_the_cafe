@@ -319,8 +319,7 @@ class _MenuCategoryFullListScreenState
     List<dynamic>? dynamicSubCategories =
         model["subCategories"] as List<dynamic>?;
 
-    List<SubCategory>? subCategoryList =
-        SubCategory.convertDynamicListToSubCategoryList(dynamicSubCategories);
+    List<SubCategory>? subCategoryList = SubCategory.convertDynamicListToSubCategoryList(dynamicSubCategories);
     final theme = Theme.of(context);
     return Theme(
       data: theme.copyWith(dividerColor: Colors.transparent),

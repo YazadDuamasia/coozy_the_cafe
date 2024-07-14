@@ -1,17 +1,11 @@
 import 'dart:async';
-import 'dart:convert';
-import 'dart:io';
 
 import 'package:coozy_the_cafe/bloc/bloc.dart';
-import 'package:coozy_the_cafe/model/recipe_model.dart';
 import 'package:coozy_the_cafe/pages/pages.dart';
 import 'package:coozy_the_cafe/routing/routs.dart';
 import 'package:coozy_the_cafe/widgets/widgets.dart';
-import 'package:csv/csv.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:path_provider/path_provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class SplashScreen extends StatefulWidget {
@@ -85,10 +79,16 @@ class _SplashScreenState extends State<SplashScreen> {
     bool isFirstTime = prefs.getBool('isFirstTime') ?? true;
     print("isFirstTime: $isFirstTime");
     if (isFirstTime) {
-      await prefs.setBool('isFirstTime', false);
-      Future.delayed(const Duration(seconds: 5)).then(
-        (value) => Navigator.pushNamedAndRemoveUntil(
-            context, RouteName.loginRoute, arguments: true, (route) => false),
+      prefs.setBool('isFirstTime', false).then(
+        (value) {
+          Future.delayed(const Duration(seconds: 5)).then(
+            (value) => Navigator.pushNamedAndRemoveUntil(
+                context,
+                RouteName.loginRoute,
+                arguments: true,
+                (route) => false),
+          );
+        },
       );
     } else {
       Future.delayed(const Duration(seconds: 5)).then(
@@ -100,7 +100,6 @@ class _SplashScreenState extends State<SplashScreen> {
       );
     }
   }
-
 
   @override
   Widget build(BuildContext context) {

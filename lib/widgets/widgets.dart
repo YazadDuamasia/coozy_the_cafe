@@ -23,9 +23,5 @@ export 'package:coozy_the_cafe/widgets/azlistview/src/index_bar.dart';
 export 'package:coozy_the_cafe/widgets/azlistview/src/suspension_view.dart';
 export 'package:coozy_the_cafe/widgets/azlistview/src/az_listview.dart';
 
-
 export 'package:coozy_the_cafe/widgets/pager/pager.dart';
-
-
-
-
+export 'package:coozy_the_cafe/widgets/animated_hint_textfield/animated_hint_textfield.dart';
