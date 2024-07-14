@@ -124,9 +124,9 @@ dependencies:
   syncfusion_flutter_charts: ^26.1.39
   syncfusion_flutter_xlsio: ^26.1.39
   #
-  flutter_local_notifications: ^17.2.1
+  flutter_local_notifications: ^17.2.1+2
   flutter_timezone: ^2.0.1
-  timezone: ^0.9.3
+  timezone: ^0.9.4
   flutter_slidable: ^3.1.0
 
 dependency_overrides:

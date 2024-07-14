@@ -12,7 +12,11 @@
 *            </intent-filter>
 *        </receiver>
 *
-*   *
+*
+*  flutter_local_notifications: ^17.2.1+2
+*  flutter_timezone: ^2.0.1
+*  timezone: ^0.9.4
+*
 */
 
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
