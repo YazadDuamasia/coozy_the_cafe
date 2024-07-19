@@ -4,22 +4,27 @@ class MenuItem {
   String? description;
   String? creationDate;
   String? modificationDate;
+  String? foodType;
   int? duration = 0;
   int? categoryId;
   int? subcategoryId;
   bool? isTodayAvailable;
-  bool? isSimpleVariation; //If it true then add field like unitPrice,sellingPrice,stockQuantity,purchaseUnit else false go for MenuItemVariation list
+  bool?
+      isSimpleVariation; //If it true then add field like unitPrice,sellingPrice,stockQuantity,purchaseUnit else false go for MenuItemVariation list
   double? costPrice; // Added unit price property
   double? sellingPrice; // Added selling price property
   double? stockQuantity;
-  String? purchaseUnit; // New property for purchase unit (e.g., "grams", "kilo", "per piece")
-  String?quantity; // New property for purchase unit (e.g., "500 grams", "500 kilo", "500 per piece")
+  String?
+      purchaseUnit; // New property for purchase unit (e.g., "grams", "kilo", "per piece")
+  String?
+      quantity; // New property for purchase unit (e.g., "500 grams", "500 kilo", "500 per piece")
   List<MenuItemVariation>? variations;
 
   MenuItem(
       {this.id,
       this.name,
       this.description,
+      this.foodType,
       this.creationDate,
       this.modificationDate,
       this.duration,
@@ -44,6 +49,7 @@ class MenuItem {
       id: json['id'],
       name: json['name'],
       description: json['description'],
+      foodType: json['foodType'] != null ? json['foodType'] : null,
       creationDate: json['creationDate'] != null ? json['creationDate'] : null,
       modificationDate:
           json['modificationDate'] != null ? json['modificationDate'] : null,
@@ -69,6 +75,7 @@ class MenuItem {
       'id': id,
       'name': name,
       'description': description,
+      'foodType': foodType,
       'creationDate': creationDate,
       'modificationDate': modificationDate,
       'duration': duration,
@@ -88,6 +95,7 @@ class MenuItem {
     int? id,
     String? name,
     String? description,
+    String? foodType,
     String? creationDate,
     String? modificationDate,
     int? duration,
@@ -106,6 +114,7 @@ class MenuItem {
       id: id ?? this.id,
       name: name ?? this.name,
       description: description ?? this.description,
+      foodType: foodType ?? this.foodType,
       creationDate: creationDate ?? this.creationDate,
       modificationDate: modificationDate ?? this.modificationDate,
       duration: duration ?? this.duration,
@@ -122,10 +131,9 @@ class MenuItem {
     );
   }
 
-
   @override
   String toString() {
-    return 'MenuItem{id: $id, name: $name, description: $description, creationDate: $creationDate, modificationDate: $modificationDate, duration: $duration, categoryId: $categoryId, subcategoryId: $subcategoryId, isTodayAvailable: $isTodayAvailable, isSimpleVariation: $isSimpleVariation, costPrice: $costPrice, sellingPrice: $sellingPrice, stockQuantity: $stockQuantity, purchaseUnit: $purchaseUnit, quantity: $quantity, variations: $variations}';
+    return 'MenuItem{id: $id, name: $name, description: $description, creationDate: $creationDate, modificationDate: $modificationDate, foodType: $foodType, duration: $duration, categoryId: $categoryId, subcategoryId: $subcategoryId, isTodayAvailable: $isTodayAvailable, isSimpleVariation: $isSimpleVariation, costPrice: $costPrice, sellingPrice: $sellingPrice, stockQuantity: $stockQuantity, purchaseUnit: $purchaseUnit, quantity: $quantity, variations: $variations}';
   }
 }
 

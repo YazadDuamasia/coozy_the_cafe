@@ -169,6 +169,7 @@ class _EditMenuCategoryScreenState extends State<EditMenuCategoryScreen> {
       );
     } else {
       return SingleChildScrollView(
+       keyboardDismissBehavior: ScrollViewKeyboardDismissBehavior.onDrag,
         padding: const EdgeInsets.all(10),
         child: Form(
           key: _formKey,
@@ -466,6 +467,7 @@ class _EditMenuCategoryScreenState extends State<EditMenuCategoryScreen> {
 
   Widget body() {
     return SingleChildScrollView(
+      keyboardDismissBehavior: ScrollViewKeyboardDismissBehavior.onDrag,
       padding: const EdgeInsets.all(10),
       child: Form(
         key: _formKey,

@@ -90,6 +90,7 @@ class DatabaseHelper {
       id INTEGER PRIMARY KEY AUTOINCREMENT,
       name TEXT NOT NULL,
       description TEXT NOT NULL,
+      foodType TEXT NULL,
       creationDate TEXT NULL,
       modificationDate TEXT NULL,
       duration INTEGER,
@@ -677,12 +678,17 @@ class DatabaseHelper {
             ? 1
             : 0
         : 0;
+    int isSimpleVariation =
+        menuItem.isSimpleVariation == null || menuItem.isSimpleVariation == true
+            ? 1
+            : 0;
 
     try {
       final db = await database;
 
       // Insert the MenuItem into the menuItemsTable
-      int menuItemId = await _insertMenuItem(db!, menuItem, isTodayAvailable);
+      int menuItemId = await _insertMenuItem(
+          db!, menuItem, isTodayAvailable, isSimpleVariation);
 
       // If the MenuItem has variations and isSimpleVariation is true, insert them into the menuItemVariationsTable
       if (menuItem.isSimpleVariation == true &&
@@ -698,19 +704,20 @@ class DatabaseHelper {
     }
   }
 
-  Future<int> _insertMenuItem(
-      Database db, MenuItem menuItem, int isTodayAvailable) async {
+  Future<int> _insertMenuItem(Database db, MenuItem menuItem,
+      int isTodayAvailable, int isSimpleVariation) async {
     return await db.insert(
       menuItemsTable,
       {
         'name': menuItem.name,
         'description': menuItem.description,
+        'foodType': menuItem.foodType,
         'creationDate': menuItem.creationDate,
         'duration': menuItem.duration,
         'categoryId': menuItem.categoryId,
         'subcategoryId': menuItem.subcategoryId,
         'isTodayAvailable': isTodayAvailable,
-        'isSimpleVariation': menuItem.isSimpleVariation,
+        'isSimpleVariation': isSimpleVariation,
         'costPrice': menuItem.costPrice,
         'sellingPrice': menuItem.sellingPrice,
         'stockQuantity': menuItem.stockQuantity,
@@ -722,12 +729,12 @@ class DatabaseHelper {
   }
 
   Future<void> _insertVariations(
-      Database db, List<MenuItemVariation> variations, int menuItemId) async {
+      Database db, List<MenuItemVariation>? variations, int menuItemId) async {
     await db.transaction((txn) async {
       // Create a batch
       Batch batch = txn.batch();
 
-      for (int i = 0; i < variations.length; i++) {
+      for (int i = 0; i < variations!.length; i++) {
         // Set isTodayAvailable to 0 if not provided (false) or 1 if true
         int isTodayAvailableVariation = variations[i].isTodayAvailable != null
             ? variations[i].isTodayAvailable!
@@ -797,6 +804,7 @@ class DatabaseHelper {
         'name': updatedMenuItem.name,
         'description': updatedMenuItem.description,
         'creationDate': updatedMenuItem.creationDate,
+        'foodType': updatedMenuItem.foodType,
         'modificationDate': updatedMenuItem.modificationDate,
         'duration': updatedMenuItem.duration,
         'categoryId': updatedMenuItem.categoryId,
@@ -808,7 +816,6 @@ class DatabaseHelper {
         'stockQuantity': updatedMenuItem.stockQuantity,
         'quantity': updatedMenuItem.quantity,
         'purchaseUnit': updatedMenuItem.purchaseUnit,
-
       },
       where: 'id = ?',
       whereArgs: [updatedMenuItem.id],
@@ -1054,7 +1061,8 @@ class DatabaseHelper {
 
     await db!.transaction((txn) async {
       // Delete variations first
-      await txn.delete(menuItemVariationsTable, where: 'menuItemId = ?', whereArgs: [menuItemId]);
+      await txn.delete(menuItemVariationsTable,
+          where: 'menuItemId = ?', whereArgs: [menuItemId]);
 
       // Delete the menu item
       await txn

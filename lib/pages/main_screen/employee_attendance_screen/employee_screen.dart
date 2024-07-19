@@ -838,6 +838,7 @@ class _EmployeeScreenState extends State<EmployeeScreen>
               child: Padding(
                 padding: const EdgeInsets.all(10.0),
                 child: SingleChildScrollView(
+                  keyboardDismissBehavior: ScrollViewKeyboardDismissBehavior.onDrag,
                   child: Form(
                     key: _formKey,
                     child: Column(
@@ -1689,6 +1690,7 @@ class _EmployeeScreenState extends State<EmployeeScreen>
                 child: Padding(
                   padding: const EdgeInsets.all(10.0),
                   child: SingleChildScrollView(
+                    keyboardDismissBehavior: ScrollViewKeyboardDismissBehavior.onDrag,
                     child: Form(
                       key: _formKey,
                       child: Column(

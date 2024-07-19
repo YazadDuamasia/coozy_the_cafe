@@ -118,6 +118,7 @@ class DateUtil {
     try {
       return DateFormat(dateFormat).format(time);
     } catch (e) {
+      Constants.debugLog(DateUtil, "dateToString:error:${e.toString()}");
       return null;
     }
   }

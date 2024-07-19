@@ -113,7 +113,8 @@ class _OtpVerificationPageState extends State<OtpVerificationPage>
                   Expanded(
                     child: Center(
                       child: SingleChildScrollView(
-                        physics: const ClampingScrollPhysics(),
+                        keyboardDismissBehavior: ScrollViewKeyboardDismissBehavior.onDrag,
+                        physics: const ClampingScrollPhysics(parent: AlwaysScrollableScrollPhysics()),
                         child: Column(
                           mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                           crossAxisAlignment: CrossAxisAlignment.start,

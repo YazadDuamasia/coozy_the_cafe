@@ -176,4 +176,6 @@ abstract class StringValue {
   static String leave_screen_option_canceled="leave_screen_option_canceled";
 
   static String today_available="today_available";
+
+  static String add_edit_menu_item_screen_create_successfully="add_edit_menu_item_screen_create_successfully";
 }

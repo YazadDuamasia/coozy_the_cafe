@@ -71,6 +71,7 @@ class _RecipesInfoScreenState extends State<RecipesInfoScreen> {
             centerTitle: false,
           ),
           body: SingleChildScrollView(
+            keyboardDismissBehavior: ScrollViewKeyboardDismissBehavior.onDrag,
             child: Column(
               mainAxisAlignment: MainAxisAlignment.start,
               crossAxisAlignment: CrossAxisAlignment.start,

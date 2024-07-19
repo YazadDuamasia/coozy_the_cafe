@@ -49,6 +49,7 @@ class _NewTableDialogState extends State<NewTableDialog> {
               ?.translate(StringValue.add_new_table_title) ??
           'Create New Table'),
       content: SingleChildScrollView(
+        keyboardDismissBehavior: ScrollViewKeyboardDismissBehavior.onDrag,
         child: Form(
           key: _formKey,
           child: Column(

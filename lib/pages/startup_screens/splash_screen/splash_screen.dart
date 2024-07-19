@@ -103,13 +103,16 @@ class _SplashScreenState extends State<SplashScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return const SafeArea(
-      child: Scaffold(
-        resizeToAvoidBottomInset: true,
-        body: ResponsiveLayout(
-          mobile: SplashScreenMobileLayout(),
-          tablet: SplashScreenTabletLayout(),
-          desktop: SplashScreenDesktopLayout(),
+    return GestureDetector(
+      onTap: () => FocusManager.instance.primaryFocus?.unfocus(),
+      child: const SafeArea(
+        child: Scaffold(
+          resizeToAvoidBottomInset: true,
+          body: ResponsiveLayout(
+            mobile: SplashScreenMobileLayout(),
+            tablet: SplashScreenTabletLayout(),
+            desktop: SplashScreenDesktopLayout(),
+          ),
         ),
       ),
     );

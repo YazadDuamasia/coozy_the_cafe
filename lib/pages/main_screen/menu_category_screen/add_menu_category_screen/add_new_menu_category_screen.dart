@@ -64,6 +64,7 @@ class _AddNewMenuCategoryScreenState extends State<AddNewMenuCategoryScreen> {
             },
             builder: (context, state) {
               return SingleChildScrollView(
+                keyboardDismissBehavior: ScrollViewKeyboardDismissBehavior.onDrag,
                 controller: primaryScrollController,
                 physics: const ClampingScrollPhysics(
                     parent: AlwaysScrollableScrollPhysics()),

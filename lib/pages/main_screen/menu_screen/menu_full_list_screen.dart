@@ -59,6 +59,7 @@ class _MenuFullListScreenState extends State<MenuFullListScreen>
           body: RefreshIndicator(
             onRefresh: _refreshData,
             child: SingleChildScrollView(
+              keyboardDismissBehavior: ScrollViewKeyboardDismissBehavior.onDrag,
               primary: true,
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.start,

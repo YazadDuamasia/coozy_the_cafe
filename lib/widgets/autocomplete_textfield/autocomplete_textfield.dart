@@ -359,6 +359,8 @@ class AutoCompleteTextFieldState<T> extends State<AutoCompleteTextField<T>> {
                 child: Scrollbar(
                   interactive: true,
                   child: SingleChildScrollView(
+                    keyboardDismissBehavior: ScrollViewKeyboardDismissBehavior.onDrag,
+                    physics: const ClampingScrollPhysics(parent: AlwaysScrollableScrollPhysics()),
                     controller: _scrollController,
                     child: Column(
                       children: filteredSuggestions.map((suggestion) {

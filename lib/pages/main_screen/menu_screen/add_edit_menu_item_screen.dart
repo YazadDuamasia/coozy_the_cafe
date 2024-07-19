@@ -11,6 +11,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:lottie/lottie.dart';
 
 enum MenuVariations { simple, advance }
 
@@ -31,10 +32,7 @@ class _AddEditMenuItemScreenState extends State<AddEditMenuItemScreen> {
       TextEditingController(text: "");
   FocusNode? disDescriptionFocusNode =
       FocusNode(debugLabel: "dish_description_focus_node");
-  TextEditingController? dishPriceTextController =
-      TextEditingController(text: "");
-  FocusNode? dishPriceFocusNode =
-      FocusNode(debugLabel: "dish_price_focus_node");
+
   FocusNode? foodTypeFocusNode = FocusNode(debugLabel: "food_type_focus_node");
   FocusNode? foodMeasuringUnitsFocusNode =
       FocusNode(debugLabel: "food_measuring_units_focus_node");
@@ -43,6 +41,11 @@ class _AddEditMenuItemScreenState extends State<AddEditMenuItemScreen> {
       TextEditingController(text: "");
   FocusNode? dishSellingUnitFocusNode =
       FocusNode(debugLabel: "dish_selling_unit_focus_node");
+
+  TextEditingController? dishPriceTextController =
+      TextEditingController(text: "");
+  FocusNode? dishPriceFocusNode =
+      FocusNode(debugLabel: "dish_price_focus_node");
 
   TextEditingController? dishSellingAmountTextController =
       TextEditingController(text: "");
@@ -221,6 +224,7 @@ class _AddEditMenuItemScreenState extends State<AddEditMenuItemScreen> {
             actions: <Widget>[
               TextButton(
                 onPressed: () async {
+                  FocusManager.instance.primaryFocus?.unfocus();
                   final isValid = _formKey.currentState?.validate();
                   if (!isValid!) {
                     return;
@@ -235,8 +239,9 @@ class _AddEditMenuItemScreenState extends State<AddEditMenuItemScreen> {
                         inputMenuVariationsValue.value == MenuVariations.simple
                             ? true
                             : false,
-                    name: dishNameTextController?.text ?? null,
-                    description: dishDescriptionTextController?.text ?? null,
+                    name: dishNameTextController?.text.toString() ?? null,
+                    description:
+                        dishDescriptionTextController?.text.toString() ?? null,
                     sellingPrice: dishSellingAmountTextController!.text == null
                         ? null
                         : double.tryParse(
@@ -251,10 +256,11 @@ class _AddEditMenuItemScreenState extends State<AddEditMenuItemScreen> {
                         : dishSellingUnitTextController?.text ?? null,
                     costPrice:
                         inputMenuVariationsValue.value == MenuVariations.simple
-                            ? null
-                            : double.tryParse(
-                                dishSellingAmountTextController?.text ?? "0.0"),
-                    isTodayAvailable: true,
+                            ? double.tryParse(
+                                dishPriceTextController?.text ?? "0.0")
+                            : null,
+                    isTodayAvailable: _isTodayAvailableValue.value,
+                    foodType: selectedFoodType ?? "",
                     duration: _selectedDuration == null
                         ? 0
                         : _selectedDuration.inSeconds,
@@ -262,6 +268,27 @@ class _AddEditMenuItemScreenState extends State<AddEditMenuItemScreen> {
 
                   Constants.debugLog(AddEditMenuItemScreen,
                       "Add:menuItem:${menuItem.toJson()}");
+
+                  final res = await RestaurantRepository().createMenuItem(menuItem);
+
+                  Constants.customAutoDismissAlertDialog(
+                      classObject: AddEditMenuItemScreen,
+                      context: context,
+                      descriptions: AppLocalizations.of(context)
+                          ?.translate(StringValue.add_edit_menu_item_screen_create_successfully) ??
+                          "Menu item has been created successfully.",
+                      title: "",
+                      titleIcon: Lottie.asset(
+                        MediaQuery.of(context).platformBrightness ==
+                            Brightness.light
+                            ? StringImagePath.done_light_brown_color_lottie
+                            : StringImagePath.done_brown_color_lottie,
+                        repeat: false,
+                      ),
+                      navigatorKey: navigatorKey);
+
+                  Constants.debugLog(AddEditMenuItemScreen,
+                      "res:${res}");
                 },
                 style: TextButton.styleFrom(
                   shape: RoundedRectangleBorder(
@@ -277,6 +304,7 @@ class _AddEditMenuItemScreenState extends State<AddEditMenuItemScreen> {
             ],
           ),
           body: SingleChildScrollView(
+            keyboardDismissBehavior: ScrollViewKeyboardDismissBehavior.onDrag,
             physics: const BouncingScrollPhysics(
                 parent: AlwaysScrollableScrollPhysics()),
             child: Theme(
@@ -285,7 +313,6 @@ class _AddEditMenuItemScreenState extends State<AddEditMenuItemScreen> {
                 padding: const EdgeInsets.all(10.0),
                 child: Form(
                   key: _formKey,
-                  autovalidateMode: AutovalidateMode.onUserInteraction,
                   child: Column(
                     mainAxisAlignment: MainAxisAlignment.start,
                     crossAxisAlignment: CrossAxisAlignment.start,
@@ -393,9 +420,6 @@ class _AddEditMenuItemScreenState extends State<AddEditMenuItemScreen> {
                         visible: selectedCategory != null,
                         child: subCategoryDropdownWidget(),
                       ),
-                      const SizedBox(
-                        height: 5,
-                      ),
                       Row(
                         mainAxisAlignment: MainAxisAlignment.start,
                         crossAxisAlignment: CrossAxisAlignment.start,
@@ -406,16 +430,27 @@ class _AddEditMenuItemScreenState extends State<AddEditMenuItemScreen> {
                               valueListenable: _isTodayAvailableValue,
                               builder: (context, value, child) {
                                 return Container(
+                                  margin: const EdgeInsets.only(top: 10),
                                   decoration: BoxDecoration(
                                     borderRadius: BorderRadius.circular(5.0),
                                     border: Border.all(
-                                      color:Theme.of(context).colorScheme.primary,
+                                      color:
+                                          Theme.of(context).colorScheme.primary,
                                     ),
                                   ),
                                   child: ClipRRect(
                                     borderRadius: BorderRadius.circular(5.0),
-                                    child: SwitchListTile.adaptive(
-                                      title: Text("${AppLocalizations.of(context)!.translate(StringValue.today_available)??"Today Available"} : "),
+                                    child: SwitchListTile(
+                                      contentPadding: const EdgeInsets.only(
+                                          left: 10, right: 5),
+                                      visualDensity:
+                                          VisualDensity.adaptivePlatformDensity,
+                                      title: Text(
+                                        "${AppLocalizations.of(context)!.translate(StringValue.today_available) ?? "Today Available"}",
+                                        style: Theme.of(context)
+                                            .textTheme
+                                            .bodyLarge,
+                                      ),
                                       value: value,
                                       onChanged: (newValue) {
                                         _isTodayAvailableValue.value = newValue;
@@ -545,7 +580,6 @@ class _AddEditMenuItemScreenState extends State<AddEditMenuItemScreen> {
               child: Theme(
                 data: Theme.of(context),
                 child: DropdownButtonFormField<Category>(
-                  key: UniqueKey(),
                   menuMaxHeight: MediaQuery.of(context).size.height * 0.35,
                   isDense: true,
                   isExpanded: true,
@@ -621,7 +655,6 @@ class _AddEditMenuItemScreenState extends State<AddEditMenuItemScreen> {
             child: Theme(
               data: Theme.of(context),
               child: DropdownButtonFormField<SubCategory>(
-                key: UniqueKey(),
                 menuMaxHeight: MediaQuery.of(context).size.height * 0.35,
                 isDense: true,
                 isExpanded: true,
@@ -667,7 +700,6 @@ class _AddEditMenuItemScreenState extends State<AddEditMenuItemScreen> {
           child: Theme(
             data: Theme.of(context),
             child: DropdownButtonFormField<String>(
-              key: UniqueKey(),
               menuMaxHeight: MediaQuery.of(context).size.height * 0.35,
               focusNode: foodTypeFocusNode,
               isDense: true,
@@ -803,7 +835,7 @@ class _AddEditMenuItemScreenState extends State<AddEditMenuItemScreen> {
                               },
                               onFieldSubmitted: (value) {
                                 Future.microtask(() => FocusScope.of(context)
-                                    .requestFocus(dishSellingAmountFocusNode));
+                                    .requestFocus(dishPriceFocusNode));
                               },
                             ),
                           ),
@@ -905,8 +937,7 @@ class _AddEditMenuItemScreenState extends State<AddEditMenuItemScreen> {
                               return null;
                             },
                             onFieldSubmitted: (value) {
-                              FocusScope.of(context)
-                                  .requestFocus(dishPriceFocusNode);
+                              FocusManager.instance.primaryFocus?.unfocus();
                             },
                           ),
                         ),
@@ -934,9 +965,12 @@ class _AddEditMenuItemScreenState extends State<AddEditMenuItemScreen> {
                                 .textTheme
                                 .bodyMedium!
                                 .copyWith(
-                                  color:
-                                      simple_menu_variations_profit_margin! < 0
-                                          ? Colors.red
+                                  color: simple_menu_variations_profit_margin! <
+                                          0
+                                      ? Colors.red
+                                      : simple_menu_variations_profit_margin! ==
+                                              0
+                                          ? null
                                           : Colors.green,
                                   fontWeight: FontWeight.bold,
                                 ),
@@ -963,9 +997,13 @@ class _AddEditMenuItemScreenState extends State<AddEditMenuItemScreen> {
   double? calculateProfitMargin() {
     final dishPriceText = dishPriceTextController!.text;
     final dishSellingAmountText = dishSellingAmountTextController!.text;
+    Constants.debugLog(AddEditMenuItemScreen,"calculateProfitMargin:cost_price:$dishPriceText");
+    Constants.debugLog(AddEditMenuItemScreen,"calculateProfitMargin:selling_price:$dishSellingAmountText");
 
     final dishPrice = double.tryParse(dishPriceText) ?? 0.0;
     final dishSellingAmount = double.tryParse(dishSellingAmountText) ?? 0.0;
+    Constants.debugLog(AddEditMenuItemScreen,"CP_amt:$dishPrice");
+    Constants.debugLog(AddEditMenuItemScreen,"SP_amt:$dishSellingAmount");
 
     if (dishPrice == 0.0) {
       // Avoid division by zero
@@ -978,7 +1016,7 @@ class _AddEditMenuItemScreenState extends State<AddEditMenuItemScreen> {
     }
 
     final profit = dishSellingAmount - dishPrice;
-    final profitMargin = (profit / dishPrice) * 100;
+    final profitMargin = (profit / dishSellingAmount) * 100;
 
     return profitMargin;
   }

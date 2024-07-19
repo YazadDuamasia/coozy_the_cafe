@@ -163,8 +163,9 @@ class _SignUpPageState extends State<SignUpPage> {
             ],
             child: Center(
               child: SingleChildScrollView(
+                keyboardDismissBehavior: ScrollViewKeyboardDismissBehavior.onDrag,
                 controller: _scrollController,
-                physics: const ClampingScrollPhysics(),
+                physics: const ClampingScrollPhysics(parent: AlwaysScrollableScrollPhysics()),
                 child: Card(
                   elevation: 2,
                   margin: const EdgeInsets.only(
@@ -722,8 +723,9 @@ class _SignUpPageState extends State<SignUpPage> {
                         padding: const EdgeInsets.only(
                             left: 0.0, top: 5, bottom: 5, right: 5.0),
                         child: SingleChildScrollView(
+                          keyboardDismissBehavior: ScrollViewKeyboardDismissBehavior.onDrag,
                           controller: _scrollController,
-                          physics: const ClampingScrollPhysics(),
+                          physics: const ClampingScrollPhysics(parent: AlwaysScrollableScrollPhysics()),
                           child: Card(
                             elevation: 2,
                             // margin: const EdgeInsets.only(
@@ -1122,8 +1124,9 @@ class _SignUpPageState extends State<SignUpPage> {
                         padding: const EdgeInsets.only(
                             left: 0.0, top: 5, bottom: 5, right: 5.0),
                         child: SingleChildScrollView(
+                          keyboardDismissBehavior: ScrollViewKeyboardDismissBehavior.onDrag,
                           controller: _scrollController,
-                          physics: const ClampingScrollPhysics(),
+                          physics: const ClampingScrollPhysics(parent: AlwaysScrollableScrollPhysics()),
                           child: Card(
                             elevation: 2,
                             // margin: const EdgeInsets.only(

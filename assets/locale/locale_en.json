@@ -117,8 +117,7 @@
   "leave_screen_option_in_progress": "In progress",
   "leave_screen_option_completed": "Completed",
   "leave_screen_option_canceled": "Canceled",
-  "today_available": "Today Available"
-
-
+  "today_available": "Today Available",
+  "add_edit_menu_item_screen_create_successfully": "Menu item has been created successfully."
 
 }
