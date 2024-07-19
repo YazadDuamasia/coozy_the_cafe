@@ -2613,14 +2613,18 @@ class _SignUpPageState extends State<SignUpPage> {
                 Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: <Widget>[
-                    CupertinoButton(
-                      child: const Text('Cancel'),
+                    TextButton(
+                      child: Text(AppLocalizations.of(context)
+                          ?.translate(StringValue.common_cancel) ??
+                          "Cancel"),
                       onPressed: () {
                         Navigator.of(context).pop();
                       },
                     ),
-                    CupertinoButton(
-                      child: const Text('Done'),
+                    TextButton(
+                      child: Text( AppLocalizations.of(context)
+                          ?.translate(StringValue.common_done) ??
+                          "Done"),
                       onPressed: () {
                         Navigator.of(context).pop(tempPickedDate);
                       },

@@ -4,21 +4,9 @@ description: "Small scale restaurant/cafe order manage system with billing"
 # pub.dev using `flutter pub publish`. This is preferred for private packages.
 publish_to: 'none' # Remove this line if you wish to publish to pub.dev
 
-# The following defines the version and build number for your application.
-# A version number is three numbers separated by dots, like 1.2.43
-# followed by an optional build number separated by a +.
-# Both the version and the builder number may be overridden in flutter
-# build by specifying --build-name and --build-number, respectively.
-# In Android, build-name is used as versionName while build-number used as versionCode.
-# Read more about Android versioning at https://developer.android.com/studio/publish/versioning
-# In iOS, build-name is used as CFBundleShortVersionString while build-number is used as CFBundleVersion.
-# Read more about iOS versioning at
-# https://developer.apple.com/library/archive/documentation/General/Reference/InfoPlistKeyReference/Articles/CoreFoundationKeys.html
-# In Windows, build-name is used as the major, minor, and patch parts
-# of the product and file versions while build-number is used as the build suffix.
 # Using Android Studio Koala | 2024.1.1
-#windows 10 system
-#Flutter version: 3.22.2 stable
+# Windows 10 system
+# Flutter version: 3.22.2 stable
 version: 1.0.0+1
 
 environment:
@@ -83,7 +71,7 @@ dependencies:
   #
   permission_handler: ^11.3.1
   shared_preferences: ^2.2.3
-  http: ^1.2.1
+  http: ^1.2.2
   internet_connection_checker_plus: ^2.5.0
   url_launcher: ^6.3.0
   #
@@ -114,15 +102,15 @@ dependencies:
   geolocator: ^12.0.0
   geocoding: ^3.0.0
   #
-  app_settings: any
+  app_settings:
   rate_my_app: ^2.2.0
   store_redirect: ^2.0.2
   feedback: ^3.1.0
   #  Range Slider
-  syncfusion_flutter_core: ^26.1.39
-  syncfusion_flutter_sliders: ^26.1.39
-  syncfusion_flutter_charts: ^26.1.39
-  syncfusion_flutter_xlsio: ^26.1.39
+  syncfusion_flutter_core: ^26.1.42
+  syncfusion_flutter_sliders: ^26.1.42
+  syncfusion_flutter_charts: ^26.1.42
+  syncfusion_flutter_xlsio: ^26.1.42
   #
   flutter_local_notifications: ^17.2.1+2
   flutter_timezone: ^2.0.1

@@ -577,10 +577,10 @@ packages:
     dependency: "direct main"
     description:
       name: http
-      sha256: "761a297c042deedc1ffbb156d6e2af13886bb305c2a343a4d972504cd67dd938"
+      sha256: b9c29a161230ee03d3ccf545097fccd9b87a5264228c5d348202e0f0c28f9010
       url: "https://pub.dev"
     source: hosted
-    version: "1.2.1"
+    version: "1.2.2"
   http_parser:
     dependency: transitive
     description:
@@ -1190,42 +1190,42 @@ packages:
     dependency: "direct main"
     description:
       name: syncfusion_flutter_charts
-      sha256: "712a32f528ec0f695254966d4fdaf0d333c393963bc412fa1164dda503d643ac"
+      sha256: c26cd2bb40fbe5e786a2bfeacedba9fafda21eb3b6ca473f0439f9dbe44730c8
       url: "https://pub.dev"
     source: hosted
-    version: "26.1.41+1"
+    version: "26.1.42"
   syncfusion_flutter_core:
     dependency: "direct main"
     description:
       name: syncfusion_flutter_core
-      sha256: "78681c79fe14c338b2985c67ab2863df7cf11541fd6d347be3ba37bb0bcd7d81"
+      sha256: "76c0efa89c79108f043602b0170512f88fcb83156cca7f5ca6dfe17e840bc63d"
       url: "https://pub.dev"
     source: hosted
-    version: "26.1.41"
+    version: "26.1.42"
   syncfusion_flutter_sliders:
     dependency: "direct main"
     description:
       name: syncfusion_flutter_sliders
-      sha256: "5f791953a045b80dc7a1925b3433c431ad6f7842ebecdc89efd070b589bbda3b"
+      sha256: "48732897c03c28f41ac7607b59e1026e3e40733bf661d2e5c5eae3d4b69e19d3"
       url: "https://pub.dev"
     source: hosted
-    version: "26.1.41"
+    version: "26.1.42"
   syncfusion_flutter_xlsio:
     dependency: "direct main"
     description:
       name: syncfusion_flutter_xlsio
-      sha256: "34a1c251f56100623ac7a5dfc772afa7021630bec5f7bb0e8500977036db433a"
+      sha256: "091fe59c68aca2bc98fb620a3a43313e4d99e270037fef561ad424ceb7cb05ee"
       url: "https://pub.dev"
     source: hosted
-    version: "26.1.41"
+    version: "26.1.42"
   syncfusion_officecore:
     dependency: transitive
     description:
       name: syncfusion_officecore
-      sha256: "44148cafacbdc6747e95e98f3180862c19c54814915b11c943b897fa9434df3e"
+      sha256: "146466d0e3b58edf431861c4907f3f245b40b46dc2c2bb7946d90f18276485b7"
       url: "https://pub.dev"
     source: hosted
-    version: "26.1.41"
+    version: "26.1.42"
   synchronized:
     dependency: transitive
     description:

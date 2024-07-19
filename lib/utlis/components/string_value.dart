@@ -9,6 +9,7 @@ abstract class StringValue {
   static String common_no = "common_no";
   static String common_save = "common_save";
   static String common_cancel = "common_cancel";
+  static String common_done = "common_done";
   static String common_accept = "common_accept";
   static String common_reject = "common_reject";
   static String common_submit = "common_submit";
@@ -173,4 +174,6 @@ abstract class StringValue {
   static String leave_screen_option_in_progress="leave_screen_option_in_progress";
   static String leave_screen_option_completed="leave_screen_option_completed";
   static String leave_screen_option_canceled="leave_screen_option_canceled";
+
+  static String today_available="today_available";
 }

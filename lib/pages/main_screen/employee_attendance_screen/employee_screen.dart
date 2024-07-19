@@ -111,7 +111,9 @@ class _EmployeeScreenState extends State<EmployeeScreen>
                             focusNode: _searchFocusNode,
                             animationType: AnimationType.typer,
                             hintTextStyle: TextStyle(
-                              color: Theme.of(context).colorScheme.secondaryContainer,
+                              color: Theme.of(context)
+                                  .colorScheme
+                                  .secondaryContainer,
                               overflow: TextOverflow.ellipsis,
                             ),
                             textInputAction: TextInputAction.done,
@@ -132,7 +134,8 @@ class _EmployeeScreenState extends State<EmployeeScreen>
                                   onTap: () {
                                     setState(() {
                                       _searchController!.clear();
-                                      FocusManager.instance.primaryFocus?.unfocus();
+                                      FocusManager.instance.primaryFocus
+                                          ?.unfocus();
                                     });
                                   },
                                   child: const Icon(Icons.clear),
@@ -160,7 +163,8 @@ class _EmployeeScreenState extends State<EmployeeScreen>
                               ),
                               focusedBorder: OutlineInputBorder(
                                 borderSide: BorderSide(
-                                    color: Theme.of(context).colorScheme.primary),
+                                    color:
+                                        Theme.of(context).colorScheme.primary),
                                 borderRadius: BorderRadius.circular(5),
                               ),
                               errorBorder: OutlineInputBorder(
@@ -993,14 +997,22 @@ class _EmployeeScreenState extends State<EmployeeScreen>
                                                     MainAxisAlignment
                                                         .spaceBetween,
                                                 children: <Widget>[
-                                                  CupertinoButton(
-                                                    child: const Text('Cancel'),
+                                                  TextButton(
+                                                    child: Text(AppLocalizations
+                                                                .of(context)
+                                                            ?.translate(StringValue
+                                                                .common_cancel) ??
+                                                        "Cancel"),
                                                     onPressed: () {
                                                       Navigator.pop(context);
                                                     },
                                                   ),
-                                                  CupertinoButton(
-                                                    child: const Text('Done'),
+                                                  TextButton(
+                                                    child: Text(AppLocalizations
+                                                                .of(context)
+                                                            ?.translate(StringValue
+                                                                .common_done) ??
+                                                        "Done"),
                                                     onPressed: () {
                                                       setState(() {
                                                         joiningDate =
@@ -1108,14 +1120,22 @@ class _EmployeeScreenState extends State<EmployeeScreen>
                                                     MainAxisAlignment
                                                         .spaceBetween,
                                                 children: <Widget>[
-                                                  CupertinoButton(
-                                                    child: const Text('Cancel'),
+                                                  TextButton(
+                                                    child: Text(AppLocalizations
+                                                                .of(context)
+                                                            ?.translate(StringValue
+                                                                .common_cancel) ??
+                                                        "Cancel"),
                                                     onPressed: () {
                                                       Navigator.pop(context);
                                                     },
                                                   ),
-                                                  CupertinoButton(
-                                                    child: const Text('Done'),
+                                                  TextButton(
+                                                    child: Text(AppLocalizations
+                                                                .of(context)
+                                                            ?.translate(StringValue
+                                                                .common_done) ??
+                                                        "Done"),
                                                     onPressed: () {
                                                       setState(() {
                                                         leavingDate =
@@ -1230,14 +1250,20 @@ class _EmployeeScreenState extends State<EmployeeScreen>
                                                     MainAxisAlignment
                                                         .spaceBetween,
                                                 children: <Widget>[
-                                                  CupertinoButton(
-                                                    child: const Text('Cancel'),
+                                                  TextButton(
+                                                    child: Text(AppLocalizations
+                                                                .of(context)
+                                                            ?.translate(StringValue
+                                                                .common_cancel) ??
+                                                        "Cancel"),
                                                     onPressed: () {
                                                       Navigator.pop(context);
                                                     },
                                                   ),
-                                                  CupertinoButton(
-                                                    child: const Text('Done'),
+                                                  TextButton(
+                                                    child: Text( AppLocalizations.of(context)
+                                                        ?.translate(StringValue.common_done) ??
+                                                        "Done"),
                                                     onPressed: () {
                                                       setState(() {
                                                         startWorkingTime =
@@ -1364,14 +1390,20 @@ class _EmployeeScreenState extends State<EmployeeScreen>
                                                     MainAxisAlignment
                                                         .spaceBetween,
                                                 children: <Widget>[
-                                                  CupertinoButton(
-                                                    child: const Text('Cancel'),
+                                                  TextButton(
+                                                    child: Text(AppLocalizations
+                                                                .of(context)
+                                                            ?.translate(StringValue
+                                                                .common_cancel) ??
+                                                        "Cancel"),
                                                     onPressed: () {
                                                       Navigator.pop(context);
                                                     },
                                                   ),
-                                                  CupertinoButton(
-                                                    child: const Text('Done'),
+                                                  TextButton(
+                                                    child: Text( AppLocalizations.of(context)
+                                                        ?.translate(StringValue.common_done) ??
+                                                        "Done"),
                                                     onPressed: () async {
                                                       endWorkingTime =
                                                           TimeOfDay(
@@ -1824,15 +1856,21 @@ class _EmployeeScreenState extends State<EmployeeScreen>
                                                       MainAxisAlignment
                                                           .spaceBetween,
                                                   children: <Widget>[
-                                                    CupertinoButton(
-                                                      child:
-                                                          const Text('Cancel'),
+                                                    TextButton(
+                                                      child: Text(AppLocalizations
+                                                                  .of(context)
+                                                              ?.translate(
+                                                                  StringValue
+                                                                      .common_cancel) ??
+                                                          "Cancel"),
                                                       onPressed: () {
                                                         Navigator.pop(context);
                                                       },
                                                     ),
-                                                    CupertinoButton(
-                                                      child: const Text('Done'),
+                                                    TextButton(
+                                                      child:  Text( AppLocalizations.of(context)
+                                                          ?.translate(StringValue.common_done) ??
+                                                          "Done"),
                                                       onPressed: () {
                                                         setState(() {
                                                           joiningDate =
@@ -1943,15 +1981,21 @@ class _EmployeeScreenState extends State<EmployeeScreen>
                                                       MainAxisAlignment
                                                           .spaceBetween,
                                                   children: <Widget>[
-                                                    CupertinoButton(
-                                                      child:
-                                                          const Text('Cancel'),
+                                                    TextButton(
+                                                      child: Text(AppLocalizations
+                                                                  .of(context)
+                                                              ?.translate(
+                                                                  StringValue
+                                                                      .common_cancel) ??
+                                                          "Cancel"),
                                                       onPressed: () {
                                                         Navigator.pop(context);
                                                       },
                                                     ),
-                                                    CupertinoButton(
-                                                      child: const Text('Done'),
+                                                    TextButton(
+                                                      child: Text( AppLocalizations.of(context)
+                                                          ?.translate(StringValue.common_done) ??
+                                                          "Done"),
                                                       onPressed: () {
                                                         setState(() {
                                                           leavingDate =
@@ -2069,16 +2113,22 @@ class _EmployeeScreenState extends State<EmployeeScreen>
                                                       MainAxisAlignment
                                                           .spaceBetween,
                                                   children: <Widget>[
-                                                    CupertinoButton(
-                                                      child:
-                                                          const Text('Cancel'),
+                                                    TextButton(
+                                                      child: Text(AppLocalizations
+                                                                  .of(context)
+                                                              ?.translate(
+                                                                  StringValue
+                                                                      .common_cancel) ??
+                                                          "Cancel"),
                                                       onPressed: () {
                                                         setState(() {});
                                                         Navigator.pop(context);
                                                       },
                                                     ),
-                                                    CupertinoButton(
-                                                      child: const Text('Done'),
+                                                    TextButton(
+                                                      child: Text( AppLocalizations.of(context)
+                                                          ?.translate(StringValue.common_done) ??
+                                                          "Done"),
                                                       onPressed: () {
                                                         startWorkingTime =
                                                             TimeOfDay(
@@ -2206,16 +2256,22 @@ class _EmployeeScreenState extends State<EmployeeScreen>
                                                       MainAxisAlignment
                                                           .spaceBetween,
                                                   children: <Widget>[
-                                                    CupertinoButton(
-                                                      child:
-                                                          const Text('Cancel'),
+                                                    TextButton(
+                                                      child: Text(AppLocalizations
+                                                                  .of(context)
+                                                              ?.translate(
+                                                                  StringValue
+                                                                      .common_cancel) ??
+                                                          "Cancel"),
                                                       onPressed: () {
                                                         setState(() {});
                                                         Navigator.pop(context);
                                                       },
                                                     ),
-                                                    CupertinoButton(
-                                                      child: const Text('Done'),
+                                                    TextButton(
+                                                      child: Text( AppLocalizations.of(context)
+                                                          ?.translate(StringValue.common_done) ??
+                                                          "Done"),
                                                       onPressed: () async {
                                                         endWorkingTime =
                                                             TimeOfDay(

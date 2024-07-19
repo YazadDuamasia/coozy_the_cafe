@@ -1,3 +1,4 @@
+import 'package:coozy_the_cafe/AppLocalization.dart';
 import 'package:coozy_the_cafe/pages/startup_screens/sign_up_page/sign_up_page.dart';
 import 'package:coozy_the_cafe/utlis/utlis.dart';
 import 'package:coozy_the_cafe/widgets/fliter_system_widget/props/filter_item_model.dart';
@@ -120,14 +121,18 @@ class _FilterDatePickerTextFormFieldTitleState
                 Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: <Widget>[
-                    CupertinoButton(
-                      child: const Text('Cancel'),
+                    TextButton(
+                      child: Text(AppLocalizations.of(context)
+                          ?.translate(StringValue.common_cancel) ??
+                          "Cancel"),
                       onPressed: () {
                         Navigator.of(context).pop();
                       },
                     ),
-                    CupertinoButton(
-                      child: const Text('Done'),
+                    TextButton(
+                      child: Text( AppLocalizations.of(context)
+                          ?.translate(StringValue.common_done) ??
+                          "Done"),
                       onPressed: () {
                         Navigator.of(context).pop(tempPickedDate);
                       },

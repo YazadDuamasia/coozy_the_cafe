@@ -12,10 +12,8 @@ class MenuItem {
   double? costPrice; // Added unit price property
   double? sellingPrice; // Added selling price property
   double? stockQuantity;
-  String?
-      quantity; // New property for purchase unit (e.g., "500 grams", "500 kilo", "500 per piece")
-  String?
-      purchaseUnit; // New property for purchase unit (e.g., "grams", "kilo", "per piece")
+  String? purchaseUnit; // New property for purchase unit (e.g., "grams", "kilo", "per piece")
+  String?quantity; // New property for purchase unit (e.g., "500 grams", "500 kilo", "500 per piece")
   List<MenuItemVariation>? variations;
 
   MenuItem(
@@ -97,11 +95,11 @@ class MenuItem {
     int? subcategoryId,
     bool? isTodayAvailable,
     bool? isSimpleVariation,
-    double? unitPrice,
+    double? costPrice,
     double? sellingPrice,
     double? stockQuantity,
-    String? quantity,
     String? purchaseUnit,
+    String? quantity,
     List<MenuItemVariation>? variations,
   }) {
     return MenuItem(
@@ -115,18 +113,19 @@ class MenuItem {
       subcategoryId: subcategoryId ?? this.subcategoryId,
       isTodayAvailable: isTodayAvailable ?? this.isTodayAvailable,
       isSimpleVariation: isSimpleVariation ?? this.isSimpleVariation,
-      costPrice: unitPrice ?? costPrice,
+      costPrice: costPrice ?? this.costPrice,
       sellingPrice: sellingPrice ?? this.sellingPrice,
       stockQuantity: stockQuantity ?? this.stockQuantity,
-      quantity: quantity ?? this.quantity,
       purchaseUnit: purchaseUnit ?? this.purchaseUnit,
+      quantity: quantity ?? this.quantity,
       variations: variations ?? this.variations,
     );
   }
 
+
   @override
   String toString() {
-    return 'MenuItem{id: $id, name: $name, description: $description, creationDate: $creationDate, modificationDate: $modificationDate, duration: $duration, categoryId: $categoryId, subcategoryId: $subcategoryId, isTodayAvailable: $isTodayAvailable, isSimpleVariation: $isSimpleVariation, costPrice: $costPrice, sellingPrice: $sellingPrice, stockQuantity: $stockQuantity, quantity: $quantity, purchaseUnit: $purchaseUnit, variations: $variations}';
+    return 'MenuItem{id: $id, name: $name, description: $description, creationDate: $creationDate, modificationDate: $modificationDate, duration: $duration, categoryId: $categoryId, subcategoryId: $subcategoryId, isTodayAvailable: $isTodayAvailable, isSimpleVariation: $isSimpleVariation, costPrice: $costPrice, sellingPrice: $sellingPrice, stockQuantity: $stockQuantity, purchaseUnit: $purchaseUnit, quantity: $quantity, variations: $variations}';
   }
 }
 

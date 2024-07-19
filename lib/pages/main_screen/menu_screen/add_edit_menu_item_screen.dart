@@ -3,13 +3,14 @@ import 'dart:core';
 import 'package:coozy_the_cafe/AppLocalization.dart';
 import 'package:coozy_the_cafe/bloc/menu_category_full_list_cubit/menu_category_full_list_cubit.dart';
 import 'package:coozy_the_cafe/model/category.dart';
+import 'package:coozy_the_cafe/model/menu_item.dart';
 import 'package:coozy_the_cafe/model/sub_category.dart';
 import 'package:coozy_the_cafe/repositories/components/restaurant_repository.dart';
 import 'package:coozy_the_cafe/utlis/utlis.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:skeletonizer/skeletonizer.dart';
 
 enum MenuVariations { simple, advance }
 
@@ -26,6 +27,10 @@ class _AddEditMenuItemScreenState extends State<AddEditMenuItemScreen> {
   TextEditingController? dishNameTextController =
       TextEditingController(text: "");
   FocusNode? dishNameFocusNode = FocusNode(debugLabel: "dish_name_focus_node");
+  TextEditingController? dishDescriptionTextController =
+      TextEditingController(text: "");
+  FocusNode? disDescriptionFocusNode =
+      FocusNode(debugLabel: "dish_description_focus_node");
   TextEditingController? dishPriceTextController =
       TextEditingController(text: "");
   FocusNode? dishPriceFocusNode =
@@ -38,10 +43,39 @@ class _AddEditMenuItemScreenState extends State<AddEditMenuItemScreen> {
       TextEditingController(text: "");
   FocusNode? dishSellingUnitFocusNode =
       FocusNode(debugLabel: "dish_selling_unit_focus_node");
+
   TextEditingController? dishSellingAmountTextController =
       TextEditingController(text: "");
   FocusNode? dishSellingAmountFocusNode =
       FocusNode(debugLabel: "dish_selling_unit_focus_node");
+
+  TextEditingController dishDurationTextController =
+      TextEditingController(text: "");
+  FocusNode dishDurationFocusNode =
+      FocusNode(debugLabel: "dish_duration_focus_node");
+
+  Duration _selectedDuration = const Duration(hours: 0, minutes: 0, seconds: 0);
+
+  void _showDurationPicker(BuildContext context) async {
+    showTimePicker(
+      context,
+      _selectedDuration,
+      (Duration? pickedDuration) {
+        print(pickedDuration);
+        if (pickedDuration != null) {
+          setState(() {
+            _selectedDuration = pickedDuration;
+            dishDurationTextController.text =
+                _formatDuration(_selectedDuration);
+          });
+        }
+      },
+    );
+  }
+
+  String _formatDuration(Duration duration) {
+    return "${duration.inHours.toString().padLeft(2, '0')}:${(duration.inMinutes % 60).toString().padLeft(2, '0')}:${(duration.inSeconds % 60).toString().padLeft(2, '0')}";
+  }
 
   List<String> foodTypes = [
     'Vegetarian',
@@ -92,7 +126,6 @@ class _AddEditMenuItemScreenState extends State<AddEditMenuItemScreen> {
     'Pint',
     'Quart',
   ];
-
   String? selectedFoodType;
   String? selectedMeasuringUnits;
   Map<String, dynamic>? result;
@@ -105,7 +138,8 @@ class _AddEditMenuItemScreenState extends State<AddEditMenuItemScreen> {
   };
   ValueNotifier<MenuVariations> inputMenuVariationsValue =
       ValueNotifier<MenuVariations>(MenuVariations.simple);
-  ValueNotifier<bool> _switchValue = ValueNotifier<bool>(false);
+  ValueNotifier<bool> _isTodayAvailableValue = ValueNotifier<bool>(false);
+  double? simple_menu_variations_profit_margin = 0.0;
 
   @override
   void initState() {
@@ -113,6 +147,8 @@ class _AddEditMenuItemScreenState extends State<AddEditMenuItemScreen> {
     WidgetsBinding.instance.addPostFrameCallback((_) async {
       await initialData();
     });
+    dishPriceTextController!.addListener(_updateProfitMargin);
+    dishSellingAmountTextController!.addListener(_updateProfitMargin);
   }
 
   Future<void> initialData() async {
@@ -130,6 +166,7 @@ class _AddEditMenuItemScreenState extends State<AddEditMenuItemScreen> {
               .toList()
       };
     }
+
     setState(() {});
   }
 
@@ -189,6 +226,42 @@ class _AddEditMenuItemScreenState extends State<AddEditMenuItemScreen> {
                     return;
                   }
                   _formKey.currentState?.save();
+                  MenuItem menuItem = MenuItem().copyWith(
+                    creationDate: DateUtil.dateToString(
+                        DateTime.now(), DateUtil.DATE_FORMAT15),
+                    categoryId: selectedCategory?.id,
+                    subcategoryId: selectedSubCategory?.id,
+                    isSimpleVariation:
+                        inputMenuVariationsValue.value == MenuVariations.simple
+                            ? true
+                            : false,
+                    name: dishNameTextController?.text ?? null,
+                    description: dishDescriptionTextController?.text ?? null,
+                    sellingPrice: dishSellingAmountTextController!.text == null
+                        ? null
+                        : double.tryParse(
+                            dishSellingAmountTextController!.text ?? ""),
+                    stockQuantity:
+                        inputMenuVariationsValue.value == MenuVariations.simple
+                            ? null
+                            : 0,
+                    purchaseUnit: "$selectedMeasuringUnits",
+                    quantity: selectedMeasuringUnits == "Unit"
+                        ? "1"
+                        : dishSellingUnitTextController?.text ?? null,
+                    costPrice:
+                        inputMenuVariationsValue.value == MenuVariations.simple
+                            ? null
+                            : double.tryParse(
+                                dishSellingAmountTextController?.text ?? "0.0"),
+                    isTodayAvailable: true,
+                    duration: _selectedDuration == null
+                        ? 0
+                        : _selectedDuration.inSeconds,
+                  );
+
+                  Constants.debugLog(AddEditMenuItemScreen,
+                      "Add:menuItem:${menuItem.toJson()}");
                 },
                 style: TextButton.styleFrom(
                   shape: RoundedRectangleBorder(
@@ -197,13 +270,15 @@ class _AddEditMenuItemScreenState extends State<AddEditMenuItemScreen> {
                 ),
                 child: Text(
                   "Add",
-                  style: Theme.of(context).textTheme.bodyMedium!.copyWith(color: Colors.white,fontWeight: FontWeight.w700),
+                  style: Theme.of(context).textTheme.bodyMedium!.copyWith(
+                      color: Colors.white, fontWeight: FontWeight.w700),
                 ),
               ),
             ],
           ),
           body: SingleChildScrollView(
-            physics: const BouncingScrollPhysics(),
+            physics: const BouncingScrollPhysics(
+                parent: AlwaysScrollableScrollPhysics()),
             child: Theme(
               data: Theme.of(context),
               child: Padding(
@@ -240,28 +315,131 @@ class _AddEditMenuItemScreenState extends State<AddEditMenuItemScreen> {
                                 return null;
                               },
                               onFieldSubmitted: (value) {
-                                // Future.microtask(() => FocusScope.of(context).requestFocus(dish_price_focus_node));
+                                Future.microtask(() => FocusScope.of(context)
+                                    .requestFocus(disDescriptionFocusNode));
                               },
                             ),
                           ),
                         ],
                       ),
+                      const SizedBox(
+                        height: 10,
+                      ),
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.start,
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        mainAxisSize: MainAxisSize.min,
+                        children: <Widget>[
+                          Expanded(
+                            child: TextFormField(
+                              autovalidateMode:
+                                  AutovalidateMode.onUserInteraction,
+                              controller: dishDescriptionTextController,
+                              focusNode: disDescriptionFocusNode,
+                              keyboardType: TextInputType.text,
+                              textInputAction: TextInputAction.none,
+                              minLines: 3,
+                              maxLines: null,
+                              decoration: const InputDecoration(
+                                labelText: "Dish Description",
+                                hintText: "Enter dish description",
+                                errorMaxLines: 3,
+                              ),
+                              validator: (value) {
+                                if (value == null || value.isEmpty) {
+                                  return 'Please enter dish description';
+                                }
+                                return null;
+                              },
+                              onFieldSubmitted: (value) {
+                                Future.microtask(() => FocusScope.of(context)
+                                    .requestFocus(FocusNode()));
+                              },
+                            ),
+                          ),
+                        ],
+                      ),
+                      const SizedBox(
+                        height: 10,
+                      ),
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.start,
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        mainAxisSize: MainAxisSize.min,
+                        children: <Widget>[
+                          Expanded(
+                            child: TextFormField(
+                              controller: dishDurationTextController,
+                              focusNode: dishDurationFocusNode,
+                              readOnly: true,
+                              onTap: () => _showDurationPicker(context),
+                              decoration: const InputDecoration(
+                                  labelText: "Cooking Durations",
+                                  hintText:
+                                      'Select cooking Duration (H:M:S) Approx'),
+                            ),
+                          ),
+                        ],
+                      ),
+                      const SizedBox(
+                        height: 5,
+                      ),
                       foodTypeWidget(),
+                      const SizedBox(
+                        height: 5,
+                      ),
                       categoryDropdownWidget(),
                       Visibility(
                         visible: selectedCategory != null,
                         child: subCategoryDropdownWidget(),
                       ),
-                      toogle_simple_widget(),
-                      ValueListenableBuilder<MenuVariations>(
-                        valueListenable: inputMenuVariationsValue,
-                        builder: (context, value, child) {
-                          if (value == MenuVariations.simple)
-                            return measuringUnitsWidget();
-                          else
-                            return advanceSelectPriceWidget();
-                        },
+                      const SizedBox(
+                        height: 5,
                       ),
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.start,
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        mainAxisSize: MainAxisSize.min,
+                        children: <Widget>[
+                          Expanded(
+                            child: ValueListenableBuilder<bool>(
+                              valueListenable: _isTodayAvailableValue,
+                              builder: (context, value, child) {
+                                return Container(
+                                  decoration: BoxDecoration(
+                                    borderRadius: BorderRadius.circular(5.0),
+                                    border: Border.all(
+                                      color:Theme.of(context).colorScheme.primary,
+                                    ),
+                                  ),
+                                  child: ClipRRect(
+                                    borderRadius: BorderRadius.circular(5.0),
+                                    child: SwitchListTile.adaptive(
+                                      title: Text("${AppLocalizations.of(context)!.translate(StringValue.today_available)??"Today Available"} : "),
+                                      value: value,
+                                      onChanged: (newValue) {
+                                        _isTodayAvailableValue.value = newValue;
+                                      },
+                                    ),
+                                  ),
+                                );
+                              },
+                            ),
+                          ),
+                        ],
+                      ),
+
+                      toogle_simple_widget(),
+                      measuringUnitsWidget(),
+                      // ValueListenableBuilder<MenuVariations>(
+                      //   valueListenable: inputMenuVariationsValue,
+                      //   builder: (context, value, child) {
+                      //     if (value == MenuVariations.simple)
+                      //       return measuringUnitsWidget();
+                      //     else
+                      //       return advanceSelectPriceWidget();
+                      //   },
+                      // ),
                     ],
                   ),
                 ),
@@ -416,8 +594,8 @@ class _AddEditMenuItemScreenState extends State<AddEditMenuItemScreen> {
                     await initialData();
                   });
                 },
-                child: Text(AppLocalizations.of(context)
-                        ?.translate(StringValue.menu_category_add_new_category) ??
+                child: Text(AppLocalizations.of(context)?.translate(
+                        StringValue.menu_category_add_new_category) ??
                     'Add new category'),
               ),
             ),
@@ -546,7 +724,8 @@ class _AddEditMenuItemScreenState extends State<AddEditMenuItemScreen> {
                     child: Theme(
                       data: Theme.of(context),
                       child: DropdownButtonFormField<String>(
-                        menuMaxHeight: MediaQuery.of(context).size.height * 0.35,
+                        menuMaxHeight:
+                            MediaQuery.of(context).size.height * 0.35,
                         focusNode: foodMeasuringUnitsFocusNode,
                         isDense: true,
                         isExpanded: true,
@@ -597,11 +776,13 @@ class _AddEditMenuItemScreenState extends State<AddEditMenuItemScreen> {
                         children: <Widget>[
                           Expanded(
                             child: TextFormField(
-                              autovalidateMode: AutovalidateMode.onUserInteraction,
+                              autovalidateMode:
+                                  AutovalidateMode.onUserInteraction,
                               controller: dishSellingUnitTextController,
                               focusNode: dishSellingUnitFocusNode,
-                              keyboardType: const TextInputType.numberWithOptions(
-                                  decimal: true),
+                              keyboardType:
+                                  const TextInputType.numberWithOptions(
+                                      decimal: true),
                               inputFormatters: <TextInputFormatter>[
                                 // up to 3 decimals
                                 FilteringTextInputFormatter.allow(
@@ -621,8 +802,8 @@ class _AddEditMenuItemScreenState extends State<AddEditMenuItemScreen> {
                                 return null;
                               },
                               onFieldSubmitted: (value) {
-                                FocusScope.of(context)
-                                    .requestFocus(dishPriceFocusNode);
+                                Future.microtask(() => FocusScope.of(context)
+                                    .requestFocus(dishSellingAmountFocusNode));
                               },
                             ),
                           ),
@@ -646,11 +827,63 @@ class _AddEditMenuItemScreenState extends State<AddEditMenuItemScreen> {
                       children: <Widget>[
                         Expanded(
                           child: TextFormField(
-                            autovalidateMode: AutovalidateMode.onUserInteraction,
+                            autovalidateMode:
+                                AutovalidateMode.onUserInteraction,
+                            controller: dishPriceTextController,
+                            focusNode: dishPriceFocusNode,
+                            keyboardType: const TextInputType.numberWithOptions(
+                                decimal: true),
+                            inputFormatters: <TextInputFormatter>[
+                              // up to 3 decimals
+                              FilteringTextInputFormatter.allow(
+                                  RegExp(r'^\d+\.?\d{0,3}')),
+                            ],
+                            decoration: const InputDecoration(
+                              labelText: "Cost price",
+                              hintText: "Enter value of costing amount",
+                              errorMaxLines: 3,
+                            ),
+                            validator: (value) {
+                              if (selectedMeasuringUnits != null ||
+                                  inputMenuVariationsValue.value ==
+                                      MenuVariations.simple) {
+                                if (value == null || value.isEmpty) {
+                                  return 'Please enter costing amount';
+                                }
+                              }
+                              return null;
+                            },
+                            onFieldSubmitted: (value) {
+                              FocusScope.of(context)
+                                  .requestFocus(dishSellingAmountFocusNode);
+                            },
+                          ),
+                        ),
+                      ],
+                    ),
+                  ],
+                ),
+              ),
+              Padding(
+                padding: const EdgeInsets.only(top: 10),
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.start,
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.start,
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      mainAxisSize: MainAxisSize.min,
+                      children: <Widget>[
+                        Expanded(
+                          child: TextFormField(
+                            autovalidateMode:
+                                AutovalidateMode.onUserInteraction,
                             controller: dishSellingAmountTextController,
                             focusNode: dishSellingAmountFocusNode,
-                            keyboardType:
-                                const TextInputType.numberWithOptions(decimal: true),
+                            keyboardType: const TextInputType.numberWithOptions(
+                                decimal: true),
                             inputFormatters: <TextInputFormatter>[
                               // up to 3 decimals
                               FilteringTextInputFormatter.allow(
@@ -672,7 +905,8 @@ class _AddEditMenuItemScreenState extends State<AddEditMenuItemScreen> {
                               return null;
                             },
                             onFieldSubmitted: (value) {
-                              FocusScope.of(context).requestFocus(dishPriceFocusNode);
+                              FocusScope.of(context)
+                                  .requestFocus(dishPriceFocusNode);
                             },
                           ),
                         ),
@@ -681,6 +915,38 @@ class _AddEditMenuItemScreenState extends State<AddEditMenuItemScreen> {
                   ],
                 ),
               ),
+              const SizedBox(height: 10),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.start,
+                crossAxisAlignment: CrossAxisAlignment.start,
+                mainAxisSize: MainAxisSize.min,
+                children: <Widget>[
+                  Expanded(
+                    child: RichText(
+                      text: TextSpan(
+                        text: 'Profit Margin: ',
+                        style: Theme.of(context).textTheme.bodyMedium,
+                        children: <TextSpan>[
+                          TextSpan(
+                            text:
+                                '${simple_menu_variations_profit_margin!.toStringAsFixed(2)}%',
+                            style: Theme.of(context)
+                                .textTheme
+                                .bodyMedium!
+                                .copyWith(
+                                  color:
+                                      simple_menu_variations_profit_margin! < 0
+                                          ? Colors.red
+                                          : Colors.green,
+                                  fontWeight: FontWeight.bold,
+                                ),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ),
+                ],
+              ),
             ],
           ),
         ),
@@ -688,8 +954,39 @@ class _AddEditMenuItemScreenState extends State<AddEditMenuItemScreen> {
     );
   }
 
+  void _updateProfitMargin() {
+    setState(() {
+      simple_menu_variations_profit_margin = calculateProfitMargin();
+    });
+  }
+
+  double? calculateProfitMargin() {
+    final dishPriceText = dishPriceTextController!.text;
+    final dishSellingAmountText = dishSellingAmountTextController!.text;
+
+    final dishPrice = double.tryParse(dishPriceText) ?? 0.0;
+    final dishSellingAmount = double.tryParse(dishSellingAmountText) ?? 0.0;
+
+    if (dishPrice == 0.0) {
+      // Avoid division by zero
+      return 0.00;
+    }
+
+    if (dishSellingAmount == 0.0) {
+      // Avoid division by zero
+      return 0.00;
+    }
+
+    final profit = dishSellingAmount - dishPrice;
+    final profitMargin = (profit / dishPrice) * 100;
+
+    return profitMargin;
+  }
+
   @override
   void dispose() {
+    dishPriceTextController?.removeListener(_updateProfitMargin);
+    dishSellingAmountTextController?.removeListener(_updateProfitMargin);
     dishNameTextController?.dispose();
     dishNameFocusNode?.dispose();
     dishPriceTextController?.dispose();
@@ -704,7 +1001,7 @@ class _AddEditMenuItemScreenState extends State<AddEditMenuItemScreen> {
   }
 
   Widget advanceSelectPriceWidget() {
-    return Row(
+    return const Row(
       mainAxisAlignment: MainAxisAlignment.start,
       crossAxisAlignment: CrossAxisAlignment.start,
       mainAxisSize: MainAxisSize.min,
@@ -721,6 +1018,66 @@ class _AddEditMenuItemScreenState extends State<AddEditMenuItemScreen> {
         //   ),
         // )
       ],
+    );
+  }
+
+  void showTimePicker(BuildContext context, Duration initialDuration,
+      Function(Duration?) onDurationPicked) {
+    showModalBottomSheet(
+      context: context,
+      elevation: 5,
+      shape: const RoundedRectangleBorder(
+        borderRadius: BorderRadius.vertical(
+          top: Radius.circular(10.0),
+          bottom: Radius.circular(0.0),
+        ),
+      ),
+      backgroundColor: Theme.of(context).colorScheme.surface,
+      builder: (BuildContext builder) {
+        Duration? selectedDuration = initialDuration;
+
+        return SizedBox(
+          width: MediaQuery.of(context).size.width,
+          height: MediaQuery.of(context).size.height * 0.35,
+          child: Column(
+            children: [
+              // Buttons row
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  TextButton(
+                    child: Text(AppLocalizations.of(context)
+                            ?.translate(StringValue.common_cancel) ??
+                        "Cancel"),
+                    onPressed: () {
+                      Navigator.of(context).pop();
+                    },
+                  ),
+                  TextButton(
+                    child: Text(AppLocalizations.of(context)
+                            ?.translate(StringValue.common_done) ??
+                        "Done"),
+                    onPressed: () {
+                      onDurationPicked(selectedDuration);
+                      Navigator.of(context).pop();
+                    },
+                  ),
+                ],
+              ),
+              // Timer picker
+              Expanded(
+                child: CupertinoTimerPicker(
+                  mode: CupertinoTimerPickerMode.hms,
+                  initialTimerDuration: initialDuration,
+                  onTimerDurationChanged: (Duration duration) {
+                    selectedDuration = duration;
+                  },
+                ),
+              ),
+            ],
+          ),
+        );
+      },
     );
   }
 }

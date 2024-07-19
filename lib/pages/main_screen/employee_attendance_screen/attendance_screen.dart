@@ -834,14 +834,18 @@ class _AttendanceScreenState extends State<AttendanceScreen> {
                                                     MainAxisAlignment
                                                         .spaceBetween,
                                                 children: <Widget>[
-                                                  CupertinoButton(
-                                                    child: const Text('Cancel'),
+                                                  TextButton(
+                                                    child:  Text( AppLocalizations.of(context)
+                                                        ?.translate(StringValue.common_cancel) ??
+                                                        "Cancel"),
                                                     onPressed: () {
                                                       Navigator.pop(context);
                                                     },
                                                   ),
-                                                  CupertinoButton(
-                                                    child: const Text('Done'),
+                                                  TextButton(
+                                                    child:  Text( AppLocalizations.of(context)
+                                                        ?.translate(StringValue.common_done) ??
+                                                        "Done"),
                                                     onPressed: () {
                                                       checkInTime = TimeOfDay(
                                                         hour: tempPickedDateTime
@@ -957,14 +961,18 @@ class _AttendanceScreenState extends State<AttendanceScreen> {
                                                     MainAxisAlignment
                                                         .spaceBetween,
                                                 children: <Widget>[
-                                                  CupertinoButton(
-                                                    child: const Text('Cancel'),
+                                                  TextButton(
+                                                    child: Text(AppLocalizations.of(context)
+                                                        ?.translate(StringValue.common_cancel) ??
+                                                        "Cancel"),
                                                     onPressed: () {
                                                       Navigator.pop(context);
                                                     },
                                                   ),
-                                                  CupertinoButton(
-                                                    child: const Text('Done'),
+                                                  TextButton(
+                                                    child: Text( AppLocalizations.of(context)
+                                                        ?.translate(StringValue.common_done) ??
+                                                        "Done"),
                                                     onPressed: () {
                                                       checkOutTime = TimeOfDay(
                                                         hour: tempPickedDateTime

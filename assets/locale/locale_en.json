@@ -5,6 +5,7 @@
   "common_yes": "Yes",
   "common_no": "No",
   "common_cancel": "Cancel",
+  "common_done": "Done",
   "common_accept": "Accept",
   "common_reject": "Reject",
   "common_submit": "Submit",
@@ -115,7 +116,8 @@
   "leave_screen_option_new": "New",
   "leave_screen_option_in_progress": "In progress",
   "leave_screen_option_completed": "Completed",
-  "leave_screen_option_canceled": "Canceled"
+  "leave_screen_option_canceled": "Canceled",
+  "today_available": "Today Available"
 
 
 

@@ -71,13 +71,13 @@ class _MyAppState extends State<MyApp> {
               builder: (context, child) {
                 return Theme(
                   data: Theme.of(context).copyWith(
-                    elevatedButtonTheme: ElevatedButtonThemeData(
-                      style: ElevatedButton.styleFrom(
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(10.0),
-                        ),
-                      ),
-                    ),
+                    // elevatedButtonTheme: ElevatedButtonThemeData(
+                    //   style: ElevatedButton.styleFrom(
+                    //     shape: RoundedRectangleBorder(
+                    //       borderRadius: BorderRadius.circular(10.0),
+                    //     ),
+                    //   ),
+                    // ),
                     floatingActionButtonTheme: FloatingActionButtonThemeData(
                       iconSize: 25,
                       shape: RoundedRectangleBorder(
