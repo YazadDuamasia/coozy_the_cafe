@@ -3,6 +3,7 @@ import 'dart:async';
 import 'package:coozy_the_cafe/bloc/bloc.dart';
 import 'package:coozy_the_cafe/pages/pages.dart';
 import 'package:coozy_the_cafe/routing/routs.dart';
+import 'package:coozy_the_cafe/utlis/components/global.dart';
 import 'package:coozy_the_cafe/widgets/widgets.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -81,13 +82,15 @@ class _SplashScreenState extends State<SplashScreen> {
     if (isFirstTime) {
       prefs.setBool('isFirstTime', false).then(
         (value) {
-          Future.delayed(const Duration(seconds: 5)).then(
-            (value) => Navigator.pushNamedAndRemoveUntil(
-                context,
-                RouteName.loginRoute,
-                arguments: true,
-                (route) => false),
-          );
+          Future.delayed(const Duration(seconds: 5)).then((value) {
+            // Navigator.pushNamedAndRemoveUntil(
+            //     context,
+            //     RouteName.loginRoute,
+            //     arguments: true,
+            //     (route) => false);
+
+            navigationRoutes.navigateToAppPermissionScreen( nextScreenRoute:RouteName.loginRoute,);
+          });
         },
       );
     } else {

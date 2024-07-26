@@ -25,4 +25,5 @@ class RouteName {
   static const String recipesBookmarkListScreenRoute="/RecipesBookmarkListScreen";
 
   static const String employeeAttendanceScreenRoute="/EmployeeAttendanceScreen";
+  static const String appPermissionScreenRoute="/AppPermissionScreen";
 }

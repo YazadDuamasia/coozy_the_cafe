@@ -1,6 +1,8 @@
 import 'package:coozy_the_cafe/model/recipe_model.dart';
+import 'package:coozy_the_cafe/pages/startup_screens/app_permission_screen/app_permission_screen.dart';
 import 'package:coozy_the_cafe/routing/routs.dart';
 import 'package:coozy_the_cafe/utlis/utlis.dart';
+import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
 class NavigationRoutes {
@@ -114,8 +116,10 @@ class NavigationRoutes {
   void navigateToRecipesScreen() {
     navigatorKey.currentState!.pushNamed(RouteName.recipesListScreenRoute);
   }
+
   void navigateToEmployeeAttendanceScreen() {
-    navigatorKey.currentState!.pushNamed(RouteName.employeeAttendanceScreenRoute);
+    navigatorKey.currentState!
+        .pushNamed(RouteName.employeeAttendanceScreenRoute);
   }
 
   void navigateToRecipesInfoScreen(RecipeModel arguments) {
@@ -128,5 +132,23 @@ class NavigationRoutes {
     await navigatorKey.currentState!.pushNamed(
         RouteName.recipesBookmarkListScreenRoute,
         arguments: arguments);
+  }
+
+  Future navigateToAppPermissionScreen({required String nextScreenRoute}) async {
+    await navigatorKey.currentState!.push(
+      MaterialPageRoute(
+        builder: (context) => AppPermissionScreen(
+          onPermissionsGranted: () {
+            Navigator.of(context).pushReplacementNamed(
+              nextScreenRoute,
+            );
+          },
+        ),
+      ),
+    );
+
+    navigatorKey.currentState!.pushReplacementNamed(
+      RouteName.appPermissionScreenRoute,
+    );
   }
 }

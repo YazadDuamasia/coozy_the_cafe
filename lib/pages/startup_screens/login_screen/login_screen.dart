@@ -49,8 +49,8 @@ class _LoginScreenState extends State<LoginScreen> {
     WidgetsBinding.instance.addPostFrameCallback((_) {
       _loginScreenCubit?.fetchInitialInfo();
       _loginScreenCubit?.dispose();
-      NotificationApi.init(initSchedluled: true);
-      NotificationApi.requestNotificationPermission();
+      // NotificationApi.init(initSchedluled: true);
+      // NotificationApi.requestNotificationPermission();
     });
     emailTextEditingController = TextEditingController(text: "yazad@gmail.com");
     passwordTextEditingController =

@@ -342,6 +342,38 @@ packages:
     description: flutter
     source: sdk
     version: "0.0.0"
+  flutter_background_service:
+    dependency: "direct main"
+    description:
+      name: flutter_background_service
+      sha256: "30d1786c7fccba10ba1ca49297bc14343456f24e3dfd4cafc06f35de68d92619"
+      url: "https://pub.dev"
+    source: hosted
+    version: "5.0.6"
+  flutter_background_service_android:
+    dependency: transitive
+    description:
+      name: flutter_background_service_android
+      sha256: b28215e18ee743eb78105a5869a802ca7a13b01ed21a0401a4b1c4900b63676e
+      url: "https://pub.dev"
+    source: hosted
+    version: "6.2.3"
+  flutter_background_service_ios:
+    dependency: transitive
+    description:
+      name: flutter_background_service_ios
+      sha256: "9365d6b8d71ef967e32320417ea9e2444c82b526930cd6b88adb2c459e7dfc9d"
+      url: "https://pub.dev"
+    source: hosted
+    version: "5.0.1"
+  flutter_background_service_platform_interface:
+    dependency: transitive
+    description:
+      name: flutter_background_service_platform_interface
+      sha256: da16560237e055c0ef65bc93597b71d4442698acee983951474f8882c1928ea7
+      url: "https://pub.dev"
+    source: hosted
+    version: "5.1.0"
   flutter_bloc:
     dependency: "direct main"
     description:
@@ -452,10 +484,10 @@ packages:
     dependency: "direct main"
     description:
       name: flutter_timezone
-      sha256: f9c328f66d58cd2af8a0cbd2f84d0c211fda8b7332b5e458d9848bd9ec936120
+      sha256: "0cb5498dedfaac615c779138194052f04524c31d958fab33d378f22b6cc14686"
       url: "https://pub.dev"
     source: hosted
-    version: "2.0.1"
+    version: "2.1.0"
   flutter_web_plugins:
     dependency: transitive
     description: flutter
@@ -1190,42 +1222,42 @@ packages:
     dependency: "direct main"
     description:
       name: syncfusion_flutter_charts
-      sha256: c26cd2bb40fbe5e786a2bfeacedba9fafda21eb3b6ca473f0439f9dbe44730c8
+      sha256: dc4ad537a0e6d1d751c934509c270aa9bf09958bd6357b4dc744d809d6a8b5d7
       url: "https://pub.dev"
     source: hosted
-    version: "26.1.42"
+    version: "26.2.4"
   syncfusion_flutter_core:
     dependency: "direct main"
     description:
       name: syncfusion_flutter_core
-      sha256: "76c0efa89c79108f043602b0170512f88fcb83156cca7f5ca6dfe17e840bc63d"
+      sha256: "34920fc391f9562d68657b9b25be6e873a67e069a52bcf41ae583b7eb46dcb26"
       url: "https://pub.dev"
     source: hosted
-    version: "26.1.42"
+    version: "26.2.4"
   syncfusion_flutter_sliders:
     dependency: "direct main"
     description:
       name: syncfusion_flutter_sliders
-      sha256: "48732897c03c28f41ac7607b59e1026e3e40733bf661d2e5c5eae3d4b69e19d3"
+      sha256: "3a92c1b89a916c61b0a93f53295829472825a2b5e55fbd29e0e006f5ba991de3"
       url: "https://pub.dev"
     source: hosted
-    version: "26.1.42"
+    version: "26.2.4"
   syncfusion_flutter_xlsio:
     dependency: "direct main"
     description:
       name: syncfusion_flutter_xlsio
-      sha256: "091fe59c68aca2bc98fb620a3a43313e4d99e270037fef561ad424ceb7cb05ee"
+      sha256: "04f4f9a3d23f781a0d4e4630cb38a380cbec27e3395ea41207104a54e3d5cf83"
       url: "https://pub.dev"
     source: hosted
-    version: "26.1.42"
+    version: "26.2.4"
   syncfusion_officecore:
     dependency: transitive
     description:
       name: syncfusion_officecore
-      sha256: "146466d0e3b58edf431861c4907f3f245b40b46dc2c2bb7946d90f18276485b7"
+      sha256: d18138a5d3bfa18b699fa1aa443a580611e41b4ead4cee30e2901755792d0039
       url: "https://pub.dev"
     source: hosted
-    version: "26.1.42"
+    version: "26.2.4"
   synchronized:
     dependency: transitive
     description:

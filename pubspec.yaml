@@ -107,15 +107,17 @@ dependencies:
   store_redirect: ^2.0.2
   feedback: ^3.1.0
   #  Range Slider
-  syncfusion_flutter_core: ^26.1.42
-  syncfusion_flutter_sliders: ^26.1.42
-  syncfusion_flutter_charts: ^26.1.42
-  syncfusion_flutter_xlsio: ^26.1.42
+  syncfusion_flutter_core: ^26.2.4
+  syncfusion_flutter_sliders: ^26.2.4
+  syncfusion_flutter_charts: ^26.2.4
+  syncfusion_flutter_xlsio: ^26.2.4
   #
   flutter_local_notifications: ^17.2.1+2
-  flutter_timezone: ^2.0.1
+  flutter_timezone: ^2.1.0
   timezone: ^0.9.4
   flutter_slidable: ^3.1.0
+  #
+  flutter_background_service: ^5.0.6
 
 dependency_overrides:
   rxdart: ^0.28.0

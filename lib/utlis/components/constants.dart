@@ -244,6 +244,20 @@ class Constants {
     }
   }
 
+  static bool isFuchsia() {
+    try {
+      if (platform.isFuchsia == true) {
+        return true;
+      } else {
+        return false;
+      }
+    } catch (e) {
+      print(e);
+      return false;
+    }
+  }
+
+
   static Future<String> getCurrentPlatform() async {
     try {
       if (platform.isWeb) {
@@ -258,9 +272,29 @@ class Constants {
         return "Android";
       } else if (platform.isIOS) {
         return "iOS";
+      } else if (platform.isFuchsia) {
+        return "Fuchsia";
+      } else if (platform.isIO) {
+        return "IO";
       } else {
         return "Unknown platform";
       }
+    } catch (e) {
+      print(e);
+      return "Unknown platform";
+    }
+  }
+
+  static Future<String> getCurrentPlatformBuildMode() async {
+    try {
+      String buildMode = switch (platform.buildMode) {
+        BuildMode.debug => 'Debug',
+        BuildMode.profile => 'Profile',
+        BuildMode.release => 'Release',
+      };
+      Constants.debugLog(
+          Constants, "getCurrentPlatformBuildMode:buildMode:$buildMode");
+      return buildMode;
     } catch (e) {
       print(e);
       return "Unknown platform";
