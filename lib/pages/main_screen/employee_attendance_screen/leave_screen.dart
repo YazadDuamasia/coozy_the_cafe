@@ -116,8 +116,10 @@ class _LeaveScreenState extends State<LeaveScreen> {
                             controller: _searchController,
                             focusNode: _searchFocusNode,
                             animationType: AnimationType.typer,
-                            hintTextStyle: Theme.of(context).textTheme.bodySmall!.copyWith(
-                              color: Theme.of(context).colorScheme.secondaryContainer,
+                            hintTextStyle: TextStyle(
+                              color: Theme.of(context)
+                                  .colorScheme
+                                  .secondary,
                               overflow: TextOverflow.ellipsis,
                             ),
                             textInputAction: TextInputAction.done,

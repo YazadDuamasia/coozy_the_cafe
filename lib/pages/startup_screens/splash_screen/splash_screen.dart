@@ -83,13 +83,11 @@ class _SplashScreenState extends State<SplashScreen> {
       prefs.setBool('isFirstTime', false).then(
         (value) {
           Future.delayed(const Duration(seconds: 5)).then((value) {
-            // Navigator.pushNamedAndRemoveUntil(
-            //     context,
-            //     RouteName.loginRoute,
-            //     arguments: true,
-            //     (route) => false);
-
-            navigationRoutes.navigateToAppPermissionScreen( nextScreenRoute:RouteName.loginRoute,);
+            Navigator.pushNamedAndRemoveUntil(
+                context,
+                RouteName.loginRoute,
+                arguments: true,
+                (route) => false);
           });
         },
       );

@@ -191,6 +191,35 @@ class _MenuItemFormState extends State<MenuItemForm> {
           SwitchListTile.adaptive(
             title: const Text('Available'),
             value: isAvailable,
+            thumbIcon:
+            WidgetStateProperty.resolveWith<Icon>(
+                  (Set<WidgetState> states) {
+                if (states.containsAll([
+                  WidgetState.disabled,
+                  WidgetState.selected
+                ])) {
+                  return const Icon(Icons.check,
+                      color: Colors.red);
+                }
+
+                if (states.contains(
+                    WidgetState.disabled)) {
+                  return const Icon(
+                    Icons.close,
+                  );
+                }
+
+                if (states.contains(
+                    WidgetState.selected)) {
+                  return const Icon(Icons.check,
+                      color: Colors.green);
+                }
+
+                return const Icon(
+                  Icons.close,
+                );
+              },
+            ),
             onChanged: (value) {
               setState(() {
                 isAvailable = value;

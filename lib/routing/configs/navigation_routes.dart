@@ -146,9 +146,5 @@ class NavigationRoutes {
         ),
       ),
     );
-
-    navigatorKey.currentState!.pushReplacementNamed(
-      RouteName.appPermissionScreenRoute,
-    );
   }
 }

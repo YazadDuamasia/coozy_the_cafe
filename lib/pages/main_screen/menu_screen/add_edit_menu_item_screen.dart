@@ -230,35 +230,37 @@ class _AddEditMenuItemScreenState extends State<AddEditMenuItemScreen> {
                     return;
                   }
                   _formKey.currentState?.save();
-                  MenuItem menuItem = MenuItem().copyWith(
+                  MenuItem menuItem = MenuItem(
+                    variations: [],
+                    modificationDate: null,
                     creationDate: DateUtil.dateToString(
                         DateTime.now(), DateUtil.DATE_FORMAT15),
                     categoryId: selectedCategory?.id,
                     subcategoryId: selectedSubCategory?.id,
                     isSimpleVariation:
-                        inputMenuVariationsValue.value == MenuVariations.simple
-                            ? true
-                            : false,
+                    inputMenuVariationsValue.value == MenuVariations.simple
+                        ? true
+                        : false,
                     name: dishNameTextController?.text.toString() ?? null,
                     description:
-                        dishDescriptionTextController?.text.toString() ?? null,
+                    dishDescriptionTextController?.text.toString() ?? null,
                     sellingPrice: dishSellingAmountTextController!.text == null
                         ? null
                         : double.tryParse(
-                            dishSellingAmountTextController!.text ?? ""),
+                        dishSellingAmountTextController!.text ?? ""),
                     stockQuantity:
-                        inputMenuVariationsValue.value == MenuVariations.simple
-                            ? null
-                            : 0,
+                    inputMenuVariationsValue.value == MenuVariations.simple
+                        ? null
+                        : 0,
                     purchaseUnit: "$selectedMeasuringUnits",
                     quantity: selectedMeasuringUnits == "Unit"
                         ? "1"
                         : dishSellingUnitTextController?.text ?? null,
                     costPrice:
-                        inputMenuVariationsValue.value == MenuVariations.simple
-                            ? double.tryParse(
-                                dishPriceTextController?.text ?? "0.0")
-                            : null,
+                    inputMenuVariationsValue.value == MenuVariations.simple
+                        ? double.tryParse(
+                        dishPriceTextController?.text ?? "0.0")
+                        : null,
                     isTodayAvailable: _isTodayAvailableValue.value,
                     foodType: selectedFoodType ?? "",
                     duration: _selectedDuration == null
@@ -289,6 +291,7 @@ class _AddEditMenuItemScreenState extends State<AddEditMenuItemScreen> {
 
                   Constants.debugLog(AddEditMenuItemScreen,
                       "res:${res}");
+                  navigatorKey.currentState!.pop();
                 },
                 style: TextButton.styleFrom(
                   shape: RoundedRectangleBorder(
@@ -440,7 +443,7 @@ class _AddEditMenuItemScreenState extends State<AddEditMenuItemScreen> {
                                   ),
                                   child: ClipRRect(
                                     borderRadius: BorderRadius.circular(5.0),
-                                    child: SwitchListTile(
+                                    child: SwitchListTile.adaptive(
                                       contentPadding: const EdgeInsets.only(
                                           left: 10, right: 5),
                                       visualDensity:
@@ -450,6 +453,34 @@ class _AddEditMenuItemScreenState extends State<AddEditMenuItemScreen> {
                                         style: Theme.of(context)
                                             .textTheme
                                             .bodyLarge,
+                                      ),
+                                      thumbIcon: WidgetStateProperty.resolveWith<Icon>(
+                                            (Set<WidgetState> states) {
+                                          if (states.containsAll([
+                                            WidgetState.disabled,
+                                            WidgetState.selected
+                                          ])) {
+                                            return const Icon(Icons.check,
+                                                color: Colors.red);
+                                          }
+
+                                          if (states.contains(
+                                              WidgetState.disabled)) {
+                                            return const Icon(
+                                              Icons.close,
+                                            );
+                                          }
+
+                                          if (states.contains(
+                                              WidgetState.selected)) {
+                                            return const Icon(Icons.check,
+                                                color: Colors.green);
+                                          }
+
+                                          return const Icon(
+                                            Icons.close,
+                                          );
+                                        },
                                       ),
                                       value: value,
                                       onChanged: (newValue) {
@@ -464,7 +495,7 @@ class _AddEditMenuItemScreenState extends State<AddEditMenuItemScreen> {
                         ],
                       ),
 
-                      toogle_simple_widget(),
+                      // toogle_simple_widget(),
                       measuringUnitsWidget(),
                       // ValueListenableBuilder<MenuVariations>(
                       //   valueListenable: inputMenuVariationsValue,
@@ -821,8 +852,8 @@ class _AddEditMenuItemScreenState extends State<AddEditMenuItemScreen> {
                                     RegExp(r'^\d+\.?\d{0,3}')),
                               ],
                               decoration: const InputDecoration(
-                                labelText: "Selling Unit Value",
-                                hintText: "Enter value of selling amount",
+                                labelText: "Selling Unit quantity",
+                                hintText: "Enter value of selling quantity ",
                                 errorMaxLines: 3,
                               ),
                               validator: (value) {
@@ -922,7 +953,7 @@ class _AddEditMenuItemScreenState extends State<AddEditMenuItemScreen> {
                                   RegExp(r'^\d+\.?\d{0,3}')),
                             ],
                             decoration: const InputDecoration(
-                              labelText: "Selling Unit amount",
+                              labelText: "Selling price",
                               hintText: "Enter value of selling amount",
                               errorMaxLines: 3,
                             ),

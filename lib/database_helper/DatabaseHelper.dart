@@ -810,7 +810,10 @@ class DatabaseHelper {
         'categoryId': updatedMenuItem.categoryId,
         'subcategoryId': updatedMenuItem.subcategoryId,
         'isTodayAvailable': isTodayAvailable,
-        'isSimpleVariation': updatedMenuItem.isSimpleVariation,
+        'isSimpleVariation': updatedMenuItem.isSimpleVariation == null ||
+                updatedMenuItem.isSimpleVariation == true
+            ? 1
+            : 0,
         'costPrice': updatedMenuItem.costPrice,
         'sellingPrice': updatedMenuItem.sellingPrice,
         'stockQuantity': updatedMenuItem.stockQuantity,
@@ -914,6 +917,7 @@ class DatabaseHelper {
       return MenuItem(
         id: map['id'] as int?,
         name: map['name'] as String?,
+        foodType: map['foodType'] as String?,
         description: map['description'] as String?,
         creationDate: map['creationDate'] as String?,
         modificationDate: map['modificationDate'] as String?,
@@ -993,21 +997,25 @@ class DatabaseHelper {
       return MenuItem(
         id: map['id'],
         name: map['name'],
+        foodType: map['foodType'],
         description: map['description'],
         creationDate: map['creationDate'] ?? '',
         modificationDate: map['modificationDate'] ?? '',
         duration: map['duration'],
         categoryId: map['categoryId'],
         subcategoryId: map['subcategoryId'],
-        isTodayAvailable: map['isTodayAvailable'] == 1,
-        isSimpleVariation: map['isSimpleVariation'] == 1,
+        isTodayAvailable: map['isTodayAvailable'] != null
+            ? map['isTodayAvailable'] == 1
+            : false,
+        isSimpleVariation: map['isTodayAvailable'] != null
+            ? map['isSimpleVariation'] == 1
+            : true,
         costPrice: map['costPrice']?.toDouble(),
         sellingPrice: map['sellingPrice']?.toDouble(),
         stockQuantity: map['stockQuantity']?.toDouble(),
         quantity: map['quantity'],
         purchaseUnit: map['purchaseUnit'],
         variations: variations,
-        // ... other properties
       );
     }).toList());
   }

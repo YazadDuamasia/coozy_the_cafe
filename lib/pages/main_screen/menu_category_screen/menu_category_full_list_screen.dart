@@ -28,13 +28,33 @@ class _MenuCategoryFullListScreenState
   SearchController? searchController = SearchController();
 
   bool positive = false;
-  final MaterialStateProperty<Icon?> thumbIcon =
-      MaterialStateProperty.resolveWith<Icon?>(
-    (Set<MaterialState> states) {
-      if (states.contains(MaterialState.selected)) {
-        return const Icon(Icons.check);
+  final WidgetStateProperty<Icon?> thumbIcon =
+  WidgetStateProperty.resolveWith<Icon>(
+        (Set<WidgetState> states) {
+      if (states.containsAll([
+        WidgetState.disabled,
+        WidgetState.selected
+      ])) {
+        return const Icon(Icons.check,
+            color: Colors.red);
       }
-      return const Icon(Icons.close);
+
+      if (states.contains(
+          WidgetState.disabled)) {
+        return const Icon(
+          Icons.close,
+        );
+      }
+
+      if (states.contains(
+          WidgetState.selected)) {
+        return const Icon(Icons.check,
+            color: Colors.green);
+      }
+
+      return const Icon(
+        Icons.close,
+      );
     },
   );
 

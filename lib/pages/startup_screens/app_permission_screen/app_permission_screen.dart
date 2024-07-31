@@ -224,14 +224,12 @@ class _AppPermissionScreenState extends State<AppPermissionScreen> {
     if (Constants.isAndroid()) {
       AndroidDeviceInfo build = await deviceInfoPlugin.androidInfo;
       if (build.version.sdkInt > 32) {
-        setState(() {
-          _permissions.add(Permission.photos);
-          _permissions.add(Permission.videos);
-        });
+        _permissions.add(Permission.photos);
+        _permissions.add(Permission.videos);
+        setState(() {});
       } else {
-        setState(() {
-          _permissions.add(Permission.storage);
-        });
+        _permissions.add(Permission.storage);
+        setState(() {});
       }
     }
 
@@ -286,7 +284,7 @@ class _AppPermissionScreenState extends State<AppPermissionScreen> {
     });
 
     _handlePermissions(statuses);
-    
+
     // Check if all permissions are granted
     if (_allPermissionsGranted(statuses)) {
       widget.onPermissionsGranted();
@@ -368,7 +366,7 @@ class _AppPermissionScreenState extends State<AppPermissionScreen> {
                       .bodyMedium!
                       .copyWith(fontWeight: FontWeight.w600)),
               TextSpan(
-                text: '${_permissionStatuses[permission]!.name}',
+                text: '${_permissionStatuses[permission]?.name??""}',
                 style: Theme.of(context).textTheme.bodyMedium!.copyWith(
                     color: _permissionStatuses[permission]?.isGranted ?? false
                         ? Colors.green
@@ -427,7 +425,9 @@ class _AppPermissionScreenState extends State<AppPermissionScreen> {
   @override
   void initState() {
     super.initState();
-    _checkPermissions();
+    WidgetsBinding.instance.addPostFrameCallback((_) async {
+      await _checkPermissions();
+    });
   }
 
   @override
@@ -514,6 +514,7 @@ class _AppPermissionScreenState extends State<AppPermissionScreen> {
     super.didChangeDependencies();
     _checkPermissions();
   }
+
   @override
   void dispose() {
     super.dispose();

@@ -257,7 +257,6 @@ class Constants {
     }
   }
 
-
   static Future<String> getCurrentPlatform() async {
     try {
       if (platform.isWeb) {
@@ -989,5 +988,31 @@ class Constants {
         );
       },
     );
+  }
+
+  static String convertSecondsToHMS(int totalSeconds) {
+    int hours = totalSeconds ~/ 3600;
+    int remainingSeconds = totalSeconds % 3600;
+    int minutes = remainingSeconds ~/ 60;
+    int seconds = remainingSeconds % 60;
+    StringBuffer buffer = StringBuffer("");
+    if (hours == null || hours == 0) {
+      buffer.write("");
+    } else {
+      buffer.write("${hours.toString().padLeft(2, '0')} Hours, ");
+    }
+    if (minutes == null || minutes == 0) {
+      buffer.write("");
+    } else {
+      buffer.write("${minutes.toString().padLeft(2, '0')} Minutes, ");
+    }
+
+    if (seconds == null || seconds == 0) {
+      buffer.write("0 Second");
+    } else {
+      buffer.write("${seconds.toString().padLeft(2, '0')} Second");
+    }
+
+    return buffer.toString();
   }
 }

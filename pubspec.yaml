@@ -4,13 +4,13 @@ description: "Small scale restaurant/cafe order manage system with billing"
 # pub.dev using `flutter pub publish`. This is preferred for private packages.
 publish_to: 'none' # Remove this line if you wish to publish to pub.dev
 
-# Using Android Studio Koala | 2024.1.1
+# Using Android Studio Koala | 2024.1.1 Patch 1
 # Windows 10 system
-# Flutter version: 3.22.2 stable
+# Flutter version: 3.22.3 stable
 version: 1.0.0+1
 
 environment:
-  sdk: '>=3.4.3 <4.0.0'
+  sdk: '>=3.4.4 <4.0.0'
 
 # Dependencies specify other packages that your package needs in order to work.
 # To automatically upgrade your package dependencies to the latest versions
@@ -70,7 +70,7 @@ dependencies:
   animated_text_kit: ^4.2.2
   #
   permission_handler: ^11.3.1
-  shared_preferences: ^2.2.3
+  shared_preferences: ^2.3.0
   http: ^1.2.2
   internet_connection_checker_plus: ^2.5.0
   url_launcher: ^6.3.0
@@ -96,7 +96,7 @@ dependencies:
   fancy_shimmer_image: ^2.0.3
   flutter_spinkit: ^5.2.1
   #
-  path_provider: ^2.1.3
+  path_provider: ^2.1.4
   path: ^1.9.0
   lottie: ^3.1.2
   geolocator: ^12.0.0
@@ -107,10 +107,10 @@ dependencies:
   store_redirect: ^2.0.2
   feedback: ^3.1.0
   #  Range Slider
-  syncfusion_flutter_core: ^26.2.4
-  syncfusion_flutter_sliders: ^26.2.4
-  syncfusion_flutter_charts: ^26.2.4
-  syncfusion_flutter_xlsio: ^26.2.4
+  syncfusion_flutter_core: ^26.2.7
+  syncfusion_flutter_sliders: ^26.2.7
+  syncfusion_flutter_charts: ^26.2.7
+  syncfusion_flutter_xlsio: ^26.2.7
   #
   flutter_local_notifications: ^17.2.1+2
   flutter_timezone: ^2.1.0
@@ -125,7 +125,7 @@ dependency_overrides:
 dev_dependencies:
   flutter_test:
     sdk: flutter
-  flutter_lints: ^3.0.0
+  flutter_lints: ^4.0.0
 
 flutter:
   uses-material-design: true

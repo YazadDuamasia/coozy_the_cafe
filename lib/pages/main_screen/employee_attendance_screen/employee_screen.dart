@@ -113,7 +113,7 @@ class _EmployeeScreenState extends State<EmployeeScreen>
                             hintTextStyle: TextStyle(
                               color: Theme.of(context)
                                   .colorScheme
-                                  .secondaryContainer,
+                                  .secondary,
                               overflow: TextOverflow.ellipsis,
                             ),
                             textInputAction: TextInputAction.done,

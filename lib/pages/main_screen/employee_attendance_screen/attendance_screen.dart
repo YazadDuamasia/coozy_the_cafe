@@ -138,7 +138,7 @@ class _AttendanceScreenState extends State<AttendanceScreen> {
                             hintTextStyle: TextStyle(
                               color: Theme.of(context)
                                   .colorScheme
-                                  .secondaryContainer,
+                                  .secondary,
                               overflow: TextOverflow.ellipsis,
                             ),
                             textInputAction: TextInputAction.done,
