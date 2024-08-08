@@ -16,14 +16,16 @@ import 'package:lottie/lottie.dart';
 enum MenuVariations { simple, advance }
 
 class AddEditMenuItemScreen extends StatefulWidget {
-  AddEditMenuItemScreen({Key? key}) : super(key: key);
+  MenuItem? menuItem;
+
+  AddEditMenuItemScreen({Key? key, this.menuItem}) : super(key: key);
 
   @override
   _AddEditMenuItemScreenState createState() => _AddEditMenuItemScreenState();
 }
 
 class _AddEditMenuItemScreenState extends State<AddEditMenuItemScreen> {
-  final _formKey = GlobalKey<FormState>();
+  var _formKey = GlobalKey<FormState>();
 
   TextEditingController? dishNameTextController =
       TextEditingController(text: "");
@@ -139,14 +141,14 @@ class _AddEditMenuItemScreenState extends State<AddEditMenuItemScreen> {
   Set<MenuVariations> selectionMenuVariations = <MenuVariations>{
     MenuVariations.simple
   };
-  ValueNotifier<MenuVariations> inputMenuVariationsValue =
-      ValueNotifier<MenuVariations>(MenuVariations.simple);
+  ValueNotifier<MenuVariations> inputMenuVariationsValue = ValueNotifier<MenuVariations>(MenuVariations.simple);
   ValueNotifier<bool> _isTodayAvailableValue = ValueNotifier<bool>(false);
   double? simple_menu_variations_profit_margin = 0.0;
 
   @override
   void initState() {
     super.initState();
+
     WidgetsBinding.instance.addPostFrameCallback((_) async {
       await initialData();
     });
@@ -155,6 +157,7 @@ class _AddEditMenuItemScreenState extends State<AddEditMenuItemScreen> {
   }
 
   Future<void> initialData() async {
+    _formKey = GlobalKey<FormState>();
     result = await fetchDataFromApi();
     if (result != null) {
       categories = (result!['categories'] as List)
@@ -238,29 +241,29 @@ class _AddEditMenuItemScreenState extends State<AddEditMenuItemScreen> {
                     categoryId: selectedCategory?.id,
                     subcategoryId: selectedSubCategory?.id,
                     isSimpleVariation:
-                    inputMenuVariationsValue.value == MenuVariations.simple
-                        ? true
-                        : false,
+                        inputMenuVariationsValue.value == MenuVariations.simple
+                            ? true
+                            : false,
                     name: dishNameTextController?.text.toString() ?? null,
                     description:
-                    dishDescriptionTextController?.text.toString() ?? null,
+                        dishDescriptionTextController?.text.toString() ?? null,
                     sellingPrice: dishSellingAmountTextController!.text == null
                         ? null
                         : double.tryParse(
-                        dishSellingAmountTextController!.text ?? ""),
+                            dishSellingAmountTextController!.text ?? ""),
                     stockQuantity:
-                    inputMenuVariationsValue.value == MenuVariations.simple
-                        ? null
-                        : 0,
+                        inputMenuVariationsValue.value == MenuVariations.simple
+                            ? null
+                            : 0,
                     purchaseUnit: "$selectedMeasuringUnits",
                     quantity: selectedMeasuringUnits == "Unit"
                         ? "1"
                         : dishSellingUnitTextController?.text ?? null,
                     costPrice:
-                    inputMenuVariationsValue.value == MenuVariations.simple
-                        ? double.tryParse(
-                        dishPriceTextController?.text ?? "0.0")
-                        : null,
+                        inputMenuVariationsValue.value == MenuVariations.simple
+                            ? double.tryParse(
+                                dishPriceTextController?.text ?? "0.0")
+                            : null,
                     isTodayAvailable: _isTodayAvailableValue.value,
                     foodType: selectedFoodType ?? "",
                     duration: _selectedDuration == null
@@ -271,26 +274,27 @@ class _AddEditMenuItemScreenState extends State<AddEditMenuItemScreen> {
                   Constants.debugLog(AddEditMenuItemScreen,
                       "Add:menuItem:${menuItem.toJson()}");
 
-                  final res = await RestaurantRepository().createMenuItem(menuItem);
+                  final res =
+                      await RestaurantRepository().createMenuItem(menuItem);
 
                   Constants.customAutoDismissAlertDialog(
                       classObject: AddEditMenuItemScreen,
                       context: context,
-                      descriptions: AppLocalizations.of(context)
-                          ?.translate(StringValue.add_edit_menu_item_screen_create_successfully) ??
+                      descriptions: AppLocalizations.of(context)?.translate(
+                              StringValue
+                                  .add_edit_menu_item_screen_create_successfully) ??
                           "Menu item has been created successfully.",
                       title: "",
                       titleIcon: Lottie.asset(
                         MediaQuery.of(context).platformBrightness ==
-                            Brightness.light
+                                Brightness.light
                             ? StringImagePath.done_light_brown_color_lottie
                             : StringImagePath.done_brown_color_lottie,
                         repeat: false,
                       ),
                       navigatorKey: navigatorKey);
 
-                  Constants.debugLog(AddEditMenuItemScreen,
-                      "res:${res}");
+                  Constants.debugLog(AddEditMenuItemScreen, "res:${res}");
                   navigatorKey.currentState!.pop();
                 },
                 style: TextButton.styleFrom(
@@ -454,8 +458,9 @@ class _AddEditMenuItemScreenState extends State<AddEditMenuItemScreen> {
                                             .textTheme
                                             .bodyLarge,
                                       ),
-                                      thumbIcon: WidgetStateProperty.resolveWith<Icon>(
-                                            (Set<WidgetState> states) {
+                                      thumbIcon:
+                                          WidgetStateProperty.resolveWith<Icon>(
+                                        (Set<WidgetState> states) {
                                           if (states.containsAll([
                                             WidgetState.disabled,
                                             WidgetState.selected
@@ -464,15 +469,15 @@ class _AddEditMenuItemScreenState extends State<AddEditMenuItemScreen> {
                                                 color: Colors.red);
                                           }
 
-                                          if (states.contains(
-                                              WidgetState.disabled)) {
+                                          if (states
+                                              .contains(WidgetState.disabled)) {
                                             return const Icon(
                                               Icons.close,
                                             );
                                           }
 
-                                          if (states.contains(
-                                              WidgetState.selected)) {
+                                          if (states
+                                              .contains(WidgetState.selected)) {
                                             return const Icon(Icons.check,
                                                 color: Colors.green);
                                           }
@@ -1026,29 +1031,45 @@ class _AddEditMenuItemScreenState extends State<AddEditMenuItemScreen> {
   }
 
   double? calculateProfitMargin() {
+    // Retrieve the text from the TextEditingController
     final dishPriceText = dishPriceTextController!.text;
     final dishSellingAmountText = dishSellingAmountTextController!.text;
-    Constants.debugLog(AddEditMenuItemScreen,"calculateProfitMargin:cost_price:$dishPriceText");
-    Constants.debugLog(AddEditMenuItemScreen,"calculateProfitMargin:selling_price:$dishSellingAmountText");
 
+    // Log the input values for debugging
+    Constants.debugLog(AddEditMenuItemScreen, "calculateProfitMargin: cost_price: $dishPriceText");
+    Constants.debugLog(AddEditMenuItemScreen, "calculateProfitMargin: selling_price: $dishSellingAmountText");
+
+    // Parse the input values to double, defaulting to 0.0 if parsing fails
     final dishPrice = double.tryParse(dishPriceText) ?? 0.0;
     final dishSellingAmount = double.tryParse(dishSellingAmountText) ?? 0.0;
-    Constants.debugLog(AddEditMenuItemScreen,"CP_amt:$dishPrice");
-    Constants.debugLog(AddEditMenuItemScreen,"SP_amt:$dishSellingAmount");
 
+    // Log the parsed values for debugging
+    Constants.debugLog(AddEditMenuItemScreen, "CP_amt: $dishPrice");
+    Constants.debugLog(AddEditMenuItemScreen, "SP_amt: $dishSellingAmount");
+
+    // Check for invalid input to avoid division by zero
     if (dishPrice == 0.0) {
-      // Avoid division by zero
-      return 0.00;
+      // Log the issue for debugging
+      Constants.debugLog(AddEditMenuItemScreen, "Invalid cost price: $dishPrice");
+      return 0.0; // Returning 0.0 to indicate an invalid profit margin
     }
 
     if (dishSellingAmount == 0.0) {
-      // Avoid division by zero
-      return 0.00;
+      // Log the issue for debugging
+      Constants.debugLog(AddEditMenuItemScreen, "Invalid selling price: $dishSellingAmount");
+      return 0.0; // Returning 0.0 to indicate an invalid profit margin
     }
 
+    // Calculate the profit
     final profit = dishSellingAmount - dishPrice;
-    final profitMargin = (profit / dishSellingAmount) * 100;
 
+    // Calculate the profit margin as a percentage of the cost price
+    final profitMargin = (profit / dishPrice) * 100;
+
+    // Log the calculated profit margin for debugging
+    Constants.debugLog(AddEditMenuItemScreen, "Profit margin: $profitMargin%");
+
+    // Return the calculated profit margin
     return profitMargin;
   }
 

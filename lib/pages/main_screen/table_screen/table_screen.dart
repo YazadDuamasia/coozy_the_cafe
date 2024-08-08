@@ -154,22 +154,24 @@ class _TableScreenState extends State<TableScreen>
         addAutomaticKeepAlives: false,
         addRepaintBoundaries: true,
         onReorder: (oldIndex, newIndex) async {
+          if (newIndex > oldIndex) {
+            newIndex -= 1;
+          }
           setState(() {
             BlocProvider.of<TableScreenBloc>(context).add(
               onReOrderTableInfoEvent(
                   oldIndex: oldIndex, newIndex: newIndex, context: context),
             );
           });
-
         },
         placeholderBuilder: (dragIndex, dropIndex, dragWidget) {
           return Container(
             decoration: BoxDecoration(
               border: Border.all(color: Theme.of(context).colorScheme.tertiary),
-              borderRadius: BorderRadius.circular(10.0),
+              borderRadius: BorderRadius.circular(5.0),
             ),
             child: ClipRRect(
-              borderRadius: BorderRadius.circular(10.0),
+              borderRadius: BorderRadius.circular(5.0),
               child: const FrostedGlassWidget(
                 child: SizedBox(),
               ),
@@ -195,7 +197,7 @@ class _TableScreenState extends State<TableScreen>
       shape: RoundedRectangleBorder(
         borderRadius: BorderRadius.circular(5.0),
       ),
-      elevation: 5,
+      elevation: 3,
       child: Stack(
         children: [
           Material(
@@ -291,13 +293,15 @@ class _TableScreenState extends State<TableScreen>
         itemBuilder: (context, index) =>
             buildListItem(list![index], index, list),
         onReorder: (oldIndex, newIndex) async {
+          if (newIndex > oldIndex) {
+            newIndex -= 1;
+          }
           setState(() {
             BlocProvider.of<TableScreenBloc>(context).add(
               onReOrderTableInfoEvent(
                   oldIndex: oldIndex, newIndex: newIndex, context: context),
             );
           });
-
         },
         proxyDecorator: (child, index, animation) {
           return AnimatedBuilder(
@@ -573,7 +577,7 @@ class _TableScreenState extends State<TableScreen>
   void onUpdateModel(TableInfoModel model) async {
     Constants.debugLog(
         TableScreen, "updateTableInfo:model:${model.toString()}");
-   BlocProvider.of<TableScreenBloc>(context).add(
+    BlocProvider.of<TableScreenBloc>(context).add(
       UpdateTableInfoEvent(
         context: context,
         updatedTableInfo: model,

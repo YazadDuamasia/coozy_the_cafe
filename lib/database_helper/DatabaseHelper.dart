@@ -1063,14 +1063,14 @@ class DatabaseHelper {
     });
   }
 
-  //   // Delete a menu item
-  Future<void> deleteMenuItem(int menuItemId) async {
+  // Delete a menu item
+  Future<void> deleteMenuItem(int? menuItemId) async {
     final db = await database;
 
     await db!.transaction((txn) async {
       // Delete variations first
       await txn.delete(menuItemVariationsTable,
-          where: 'menuItemId = ?', whereArgs: [menuItemId]);
+          where: 'menuItemId = ?', whereArgs: [menuItemId!]);
 
       // Delete the menu item
       await txn

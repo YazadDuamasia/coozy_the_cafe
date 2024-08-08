@@ -181,7 +181,7 @@ class RestaurantRepository {
   }
 
 // Deletes a menu item with the specified ID from the database.
-  Future<void> deleteMenuItem(int id) async {
+  Future<void> deleteMenuItem(int? id) async {
     return await _databaseHelper.deleteMenuItem(id);
   }
 

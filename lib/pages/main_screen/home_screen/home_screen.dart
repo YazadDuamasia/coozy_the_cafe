@@ -1,8 +1,10 @@
 import 'dart:io';
 
 import 'package:animations/animations.dart';
+import 'package:coozy_the_cafe/AppLocalization.dart';
 import 'package:coozy_the_cafe/bloc/bloc.dart';
 import 'package:coozy_the_cafe/pages/main_screen/home_screen/home_screen_drawer.dart';
+import 'package:coozy_the_cafe/pages/main_screen/waiter_screen/waiter_screen.dart';
 import 'package:coozy_the_cafe/utlis/utlis.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -18,8 +20,7 @@ class HomeScreen extends StatefulWidget {
   State<HomeScreen> createState() => _HomeScreenState();
 }
 
-class _HomeScreenState extends State<HomeScreen>
-    with SingleTickerProviderStateMixin {
+class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
   Size? size;
   Orientation? orientation;
   DateTime? currentBackPressTime;
@@ -27,105 +28,35 @@ class _HomeScreenState extends State<HomeScreen>
   var key = UniqueKey();
   List<Widget>? mobileListView;
 
+  late TabController _tabController;
+  int _currentIndex = 0;
+
   @override
   void initState() {
-    mobileListView = [
-      // HomePage(scrollController: scrollController),
-      Container(),
-      Container(),
-      Container(),
-    ];
+
 
     super.initState();
 
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      mobileListView = [
+        // HomePage(scrollController: scrollController),
+        WaiterScreen(),
+        Container(),
+        Container(),
+      ];
+
+      _tabController = TabController(length: 3, vsync: this);
+      _tabController.addListener(() {
+        setState(() {
+          _currentIndex = _tabController.index;
+          Constants.debugLog(HomeScreen, "_currentIndex:$_currentIndex");
+        });
+      });
+      BlocProvider.of<TableScreenBloc>(context).add(LoadTableScreenDataEvent());
+    });
+
     // _processCsvToJson();
   }
-
-  /* Future<void> _processCsvToJson() async {
-    try {
-      String jsonContent = await rootBundle.loadString("assets/data/recipes_for_indian_food_dataset.json");
-      List<dynamic> jsonArray = json.decode(jsonContent);
-
-      // Create a new list to store modified objects
-      List<Map<String, dynamic>> modifiedJsonArray = [];
-
-      // Define a map to store key renaming mappings
-      Map<String, String> keyMappings = {
-        "Srno": "id",
-        "RecipeName": "recipe_name",
-        "TranslatedRecipeName": "translated_recipe_name",
-        "Ingredients": "recipe_ingredients",
-        "TranslatedIngredients": "recipe_translated_ingredients",
-        "PrepTimeInMins": "recipe_preparation_time_in_mins",
-        "CookTimeInMins": "recipe_cooking_time_in_mins",
-        "TotalTimeInMins": "recipe_total_time_in_mins",
-        "Servings": "recipe_servings",
-        "Cuisine": "recipe_cuisine",
-        "Course": "recipe_course",
-        "Diet": "recipe_diet",
-        "Instructions": "recipe_instructions",
-        "TranslatedInstructions": "recipe_translated_instructions",
-        "URL\r": "recipe_reference_url"
-      };
-
-      // Iterate through each object in the array
-      for (var jsonObject in jsonArray) {
-        // Create a new map for storing renamed key-value pairs for the current object
-        Map<String, dynamic> modifiedJsonObject = {};
-
-        // Iterate through each key-value pair in the current object
-        // and rename keys using the keyMappings
-        jsonObject.forEach((key, value) {
-          // Look up the new key name from keyMappings
-          String? newKey = keyMappings[key];
-
-          // If new key is found, add it to the modifiedJsonObject
-          if (newKey != null) {
-            modifiedJsonObject[newKey] = value;
-          }
-        });
-
-        // Add the modified object to the list
-        modifiedJsonArray.add(modifiedJsonObject);
-      }
-
-      // Convert the modified data back to JSON
-      String modifiedJsonContent = json.encode(modifiedJsonArray);
-
-      // Print the modified JSON
-      print(modifiedJsonContent);
-      await FileStorage.writeCounter(modifiedJsonContent, "recipes_for_indian_food_dataset.json");
-    */ /*  // Read the CSV file from assets
-      String csvString =
-      await rootBundle.loadString("assets/data/IndianFoodDatasetCSV.csv");
-
-      // Convert CSV to List of Lists
-      List<List<dynamic>?>? csvData =
-      const CsvToListConverter().convert(csvString, eol: "\n");
-
-      // Convert List of Lists to JSON
-      List<Map<String, dynamic>> jsonData = [];
-      List<String>? headers = csvData![0]?.cast<String>();
-      for (int i = 1; i < csvData.length; i++) {
-        Map<String, dynamic> row = {};
-        for (int j = 0; j < headers!.length; j++) {
-          // Check for null values
-          if (csvData[i]![j] != null) {
-            row[headers[j]] = csvData[i]![j];
-          } else {
-            // Handle null values, for example, you can assign a default value
-            row[headers[j]] = ""; // Or any default value you prefer
-          }
-        }
-        jsonData.add(row);
-      }
-
-      await FileStorage.writeCounter(
-          "${jsonEncode(jsonData)}", "recipes_for_indian_food_dataset.json");*/ /*
-    } catch (e) {
-      print('Error converting CSV to JSON: $e');
-    }
-  }*/
 
   Widget buildPageTransitionSwitcher({var list, int? currentIndex}) {
     return PageTransitionSwitcher(
@@ -251,6 +182,7 @@ class _HomeScreenState extends State<HomeScreen>
                   },
                 ),
                 bottom: TabBar(
+                  controller: _tabController,
                   tabs: const <Widget>[
                     Tab(
                       text: 'Waiter',
@@ -271,15 +203,56 @@ class _HomeScreenState extends State<HomeScreen>
                       .copyWith(fontWeight: FontWeight.bold),
                 ),
                 actions: [
+                  Visibility(
+                    visible: _tabController.index == 0 ? true : false,
+                    child: BlocConsumer<TableScreenBloc, TableScreenState>(
+                      listener: (context, state) {},
+                      builder: (context, state) {
+                        if (state is TableScreenLoadedState) {
+                          return IconButton(
+                            onPressed: () async {
+                              context
+                                  .read<TableScreenBloc>()
+                                  .add(SwitchViewTableInfoEvent());
+                            },
+                            icon: AnimatedSwitcher(
+                              duration: const Duration(milliseconds: 500),
+                              child: (state.isGridView ?? false)
+                                  ? Icon(
+                                      Icons.list,
+                                      color: Colors.white,
+                                      key: ValueKey('list'),
+                                    )
+                                  : Icon(
+                                      Icons.grid_view,
+                                      color: Colors.white,
+                                      key: ValueKey('grid'),
+                                    ),
+                            ),
+                            tooltip: (state.isGridView ?? false)
+                                ? (AppLocalizations.of(context)?.translate(
+                                        StringValue
+                                            .common_list_view_tooltip) ??
+                                    "Switch to List View")
+                                : (AppLocalizations.of(context)?.translate(
+                                        StringValue
+                                            .common_grid_view_tooltip) ??
+                                    "Switch to Grid View"),
+                          );
+                        } else {
+                          return const SizedBox.shrink();
+                        }
+                      },
+                    ),
+                  ),
                   Theme(
                     data: Theme.of(context),
                     child: PopupMenuButton(
                       onSelected: (value) async {
                         print(value);
-                        if(value=="clear_data"){
+                        if (value == "clear_data") {
                           final prefs = await SharedPreferences.getInstance();
                           prefs.clear();
-
                         }
                       },
                       itemBuilder: (BuildContext bc) {
@@ -313,6 +286,7 @@ class _HomeScreenState extends State<HomeScreen>
               ),
               drawer: const HomeScreenDrawer(),
               body: TabBarView(
+                controller: _tabController,
                 children: [
                   buildPageTransitionSwitcher(
                       list: mobileListView, currentIndex: 0),
@@ -327,6 +301,12 @@ class _HomeScreenState extends State<HomeScreen>
         ),
       ),
     );
+  }
+
+  @override
+  void dispose() {
+    _tabController.dispose();
+    super.dispose();
   }
 }
 

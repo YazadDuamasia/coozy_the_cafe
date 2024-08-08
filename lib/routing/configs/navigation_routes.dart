@@ -62,9 +62,9 @@ class NavigationRoutes {
     navigatorKey.currentState!.pushNamed(RouteName.menuItemFullListScreenRoute);
   }
 
-  Future navigateTAddNewMenuItemScreen() async {
+  Future navigateTAddNewMenuItemScreen(String arguments) async {
     return await navigatorKey.currentState!
-        .pushNamed(RouteName.addNewMenuItemScreenRoute);
+        .pushNamed(RouteName.addNewMenuItemScreenRoute,arguments: arguments);
   }
 
   navigateToMenuCategoryFullListScreen() {
