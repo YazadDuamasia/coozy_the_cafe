@@ -1,4 +1,4 @@
-import 'dart:io';
+/*import 'dart:io';
 
 import 'package:animations/animations.dart';
 import 'package:coozy_the_cafe/AppLocalization.dart';
@@ -21,34 +21,28 @@ class HomeScreen extends StatefulWidget {
 }
 
 class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
-  Size? size;
-  Orientation? orientation;
   DateTime? currentBackPressTime;
   final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
   var key = UniqueKey();
-  List<Widget>? mobileListView;
+  List<Widget>? mobileListView = [
+    // HomePage(scrollController: scrollController),
+    WaiterScreen(),
+    Container(),
+    Container(),
+  ];
 
-  late TabController _tabController;
+  TabController? _tabController;
   int _currentIndex = 0;
 
   @override
   void initState() {
-
-
     super.initState();
 
     WidgetsBinding.instance.addPostFrameCallback((_) {
-      mobileListView = [
-        // HomePage(scrollController: scrollController),
-        WaiterScreen(),
-        Container(),
-        Container(),
-      ];
-
-      _tabController = TabController(length: 3, vsync: this);
-      _tabController.addListener(() {
+      _tabController = new TabController(length: 3, vsync: this);
+      _tabController!.addListener(() {
         setState(() {
-          _currentIndex = _tabController.index;
+          _currentIndex = _tabController!.index;
           Constants.debugLog(HomeScreen, "_currentIndex:$_currentIndex");
         });
       });
@@ -182,7 +176,7 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
                   },
                 ),
                 bottom: TabBar(
-                  controller: _tabController,
+                  // controller: _tabController,
                   tabs: const <Widget>[
                     Tab(
                       text: 'Waiter',
@@ -204,7 +198,7 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
                 ),
                 actions: [
                   Visibility(
-                    visible: _tabController.index == 0 ? true : false,
+                    visible: _tabController!.index == 0 ? true : false,
                     child: BlocConsumer<TableScreenBloc, TableScreenState>(
                       listener: (context, state) {},
                       builder: (context, state) {
@@ -231,12 +225,10 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
                             ),
                             tooltip: (state.isGridView ?? false)
                                 ? (AppLocalizations.of(context)?.translate(
-                                        StringValue
-                                            .common_list_view_tooltip) ??
+                                        StringValue.common_list_view_tooltip) ??
                                     "Switch to List View")
                                 : (AppLocalizations.of(context)?.translate(
-                                        StringValue
-                                            .common_grid_view_tooltip) ??
+                                        StringValue.common_grid_view_tooltip) ??
                                     "Switch to Grid View"),
                           );
                         } else {
@@ -305,50 +297,327 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
 
   @override
   void dispose() {
-    _tabController.dispose();
+    _tabController?.dispose();
     super.dispose();
   }
+
+}*/
+
+import 'package:animations/animations.dart';
+import 'package:coozy_the_cafe/bloc/bloc.dart';
+import 'package:coozy_the_cafe/pages/main_screen/home_screen/home_screen_drawer.dart';
+import 'package:coozy_the_cafe/pages/main_screen/waiter_screen/waiter_screen.dart';
+import 'package:coozy_the_cafe/utlis/utlis.dart';
+import 'package:flutter/material.dart';
+import 'package:flutter/rendering.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:fluttertoast/fluttertoast.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+
+class HomeScreen extends StatefulWidget {
+  const HomeScreen({super.key});
+
+  @override
+  State<HomeScreen> createState() => _HomeScreenState();
 }
 
-// To save the file in the device
-class FileStorage {
-  static Future<String> getExternalDocumentPath() async {
-    // To check whether permission is given for this app or not.
-    var status = await Permission.storage.status;
-    if (!status.isGranted) {
-      // If not we will ask for permission first
-      await Permission.storage.request();
+class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
+  ScrollController? _scrollController;
+  bool _isAppBarVisible = true;
+  late TabController _tabController;
+  int? currentTabIndex = 0;
+
+  DateTime? currentBackPressTime;
+  final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
+
+  @override
+  void initState() {
+    super.initState();
+    _scrollController = ScrollController();
+    _tabController = TabController(length: 3, vsync: this);
+
+    _tabController.addListener(
+      () {
+        setState(() {
+          currentTabIndex = _tabController.index;
+          Constants.debugLog(HomeScreen, "currentTabIndex:$currentTabIndex");
+          switch (currentTabIndex) {
+            case 0:
+              BlocProvider.of<WaiterListScreenBloc>(context)
+                  .add(InitialLoadWaiterListScreenEvent());
+              break;
+            case 1:
+              break;
+            case 2:
+              break;
+            default:
+              break;
+          }
+        });
+      },
+    );
+    _scrollController!.addListener(_scrollListener);
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      BlocProvider.of<WaiterListScreenBloc>(context)
+          .add(InitialLoadWaiterListScreenEvent());
+    });
+  }
+
+  void _scrollListener() {
+    if (_scrollController!.position.userScrollDirection ==
+        ScrollDirection.reverse) {
+      if (_isAppBarVisible) {
+        setState(() {
+          _isAppBarVisible = false;
+        });
+      }
+    } else if (_scrollController!.position.userScrollDirection ==
+        ScrollDirection.forward) {
+      if (!_isAppBarVisible) {
+        setState(() {
+          _isAppBarVisible = true;
+        });
+      }
     }
-    Directory _directory = Directory("");
-    if (Platform.isAndroid) {
-      // Redirects it to download folder in android
-      _directory = Directory("/storage/emulated/0/Download");
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return SafeArea(
+      child: WillPopScope(
+        onWillPop: onWillPop,
+        child: Scaffold(
+          key: _scaffoldKey,
+          resizeToAvoidBottomInset: true,
+          drawer: const HomeScreenDrawer(),
+          body: CustomScrollView(
+            controller: _scrollController,
+            slivers: <Widget>[
+              SliverAppBar(
+                floating: true,
+                pinned: true,
+                title: Text('Coozy the Cafe'),
+                bottom: _isAppBarVisible
+                    ? TabBar(
+                        controller: _tabController,
+                        indicatorColor: Theme.of(context).dividerColor,
+                        labelColor: Colors.white,
+                        unselectedLabelColor: Colors.black,
+                        unselectedLabelStyle: Theme.of(context)
+                            .textTheme
+                            .titleMedium!
+                            .copyWith(fontWeight: FontWeight.bold),
+                        labelStyle: Theme.of(context)
+                            .textTheme
+                            .titleMedium!
+                            .copyWith(fontWeight: FontWeight.bold),
+                        tabs: [
+                          Tab(text: "Waiter"),
+                          Tab(text: "Kitchen"),
+                          Tab(text: "More"),
+                        ],
+                      )
+                    : null,
+                actions: [
+                  Visibility(
+                    visible: _tabController.index == 0,
+                    child: BlocConsumer<WaiterListScreenBloc,
+                        WaiterListScreenState>(
+                      listener: (BuildContext context,
+                          WaiterListScreenState state) {},
+                      builder: (context, state) {
+                        if (state is WaiterListScreenLoadedState) {
+                          return IconButton(
+                            onPressed: () async {
+                              setState(() {
+                                BlocProvider.of<WaiterListScreenBloc>(context)
+                                    .add(SwitchViewWaiterListScreenEvent());
+                              });
+                            },
+                            icon: AnimatedSwitcher(
+                              duration: const Duration(milliseconds: 500),
+                              child: (context
+                                          .watch<WaiterListScreenBloc>()
+                                          .isGridView ??
+                                      false)
+                                  ? Icon(
+                                      Icons.list,
+                                      color: Colors.white,
+                                      key: ValueKey('list'),
+                                    )
+                                  : Icon(
+                                      Icons.grid_view,
+                                      color: Colors.white,
+                                      key: ValueKey('grid'),
+                                    ),
+                            ),
+                            tooltip: (state.isGridView ?? false)
+                                ? "Switch to List View"
+                                : "Switch to Grid View",
+                          );
+                        } else {
+                          return const SizedBox.shrink();
+                        }
+                      },
+                    ),
+                  ),
+                  Theme(
+                    data: Theme.of(context),
+                    child: PopupMenuButton(
+                      onSelected: (value) async {
+                        if (value == "clear_data") {
+                          final prefs = await SharedPreferences.getInstance();
+                          prefs.clear();
+                        }
+                      },
+                      itemBuilder: (BuildContext bc) {
+                        return const [
+                          PopupMenuItem(
+                            value: 'backup',
+                            child: Text("Backup"),
+                          ),
+                          PopupMenuItem(
+                            value: 'export',
+                            child: Text("Export"),
+                          ),
+                          PopupMenuItem(
+                            value: 'restore',
+                            child: Text("Restore"),
+                          ),
+                          PopupMenuItem(
+                            value: 'clear_data',
+                            child: Text("Clear Data"),
+                          ),
+                        ];
+                      },
+                      icon: Icon(
+                        Icons.more_vert_rounded,
+                        size: Theme.of(context).appBarTheme.iconTheme?.size,
+                        color: Theme.of(context).appBarTheme.iconTheme?.color,
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+              SliverFillRemaining(
+                child: TabBarView(
+                  controller: _tabController,
+                  children: [
+                    buildPageTransitionSwitcher(
+                        screen: WaiterScreen(), currentIndex: 0),
+                    buildPageTransitionSwitcher(
+                        screen: Container(), currentIndex: 1),
+                    buildPageTransitionSwitcher(
+                        screen: Container(), currentIndex: 2),
+                  ],
+                ),
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+
+  Widget buildPageTransitionSwitcher({Widget? screen, int? currentIndex}) {
+    return PageTransitionSwitcher(
+      duration: const Duration(milliseconds: 3000),
+      transitionBuilder: (child, primaryAnimation, secondaryAnimation) =>
+          FadeThroughTransition(
+        animation: primaryAnimation,
+        secondaryAnimation: secondaryAnimation,
+        child: child,
+      ),
+      child: screen ?? Container(),
+    );
+  }
+
+  Future<bool> onWillPop() {
+    Constants.debugLog(HomeScreen, "WillPopScope");
+    if (_tabController.index != 0) {
+      _tabController.animateTo(0);
+      return Future.value(false);
     } else {
-      _directory = await getApplicationDocumentsDirectory();
+      DateTime now = DateTime.now();
+      if (currentBackPressTime == null ||
+          now.difference(currentBackPressTime!) > const Duration(seconds: 2)) {
+        currentBackPressTime = now;
+        Fluttertoast.showToast(
+            msg: "Press back again to exit",
+            toastLength: Toast.LENGTH_SHORT,
+            timeInSecForIosWeb: 3);
+
+        return Future.value(false);
+      } else {
+        onBackPressDialog();
+        return Future.value(true);
+      }
     }
-
-    final exPath = _directory.path;
-    print("Saved Path: $exPath");
-    await Directory(exPath).create(recursive: true);
-    return exPath;
   }
 
-  static Future<String> get _localPath async {
-    // final directory = await getApplicationDocumentsDirectory();
-    // return directory.path;
-    // To get the external path from device of download folder
-    final String directory = await getExternalDocumentPath();
-    return directory;
+  onBackPressDialog() {
+    if (!Constants.isIOS() && !Constants.isMacOS()) {
+      return showDialog(
+        context: context,
+        builder: (context) => Theme(
+          data: Theme.of(context),
+          child: AlertDialog(
+            shape: const RoundedRectangleBorder(
+              borderRadius: BorderRadius.all(Radius.circular(10.0)),
+            ),
+            titlePadding: const EdgeInsets.all(10.0),
+            contentPadding:
+                const EdgeInsets.symmetric(horizontal: 10.0, vertical: 10.0),
+            buttonPadding: const EdgeInsets.symmetric(horizontal: 10.0),
+            title: Text(
+              'Are you sure?',
+              style: Theme.of(context).textTheme.titleLarge,
+            ),
+            content: Text('Do you want to exit the app?',
+                style: Theme.of(context).textTheme.titleSmall),
+            actions: [
+              TextButton(
+                onPressed: () => Navigator.of(context).pop(false),
+                child: const Text('No'),
+              ),
+              TextButton(
+                onPressed: () => navigationRoutes.goBackToExitApp(),
+                child: const Text('Yes'),
+              ),
+            ],
+          ),
+        ),
+      );
+    } else {
+      return showDialog(
+        context: context,
+        builder: (context) => AlertDialog(
+          shape: const RoundedRectangleBorder(
+            borderRadius: BorderRadius.all(Radius.circular(35.0)),
+          ),
+          contentPadding: const EdgeInsets.only(top: 10.0),
+          title: const Text('Are you sure?'),
+          content: const Text('Do you want to exit the app?'),
+          actions: [
+            TextButton(
+              onPressed: () => Navigator.of(context).pop(false),
+              child: const Text('No'),
+            ),
+            TextButton(
+              onPressed: () => Navigator.of(context).pop(true),
+              child: const Text('Yes'),
+            ),
+          ],
+        ),
+      );
+    }
   }
 
-  static Future<File> writeCounter(String bytes, String name) async {
-    final path = await _localPath;
-    // Create a file for the path of
-    // device and file name with extension
-    File file = File('$path/$name');
-    print("Save file");
-
-    // Write the data in the file you have created
-    return file.writeAsString(bytes);
+  @override
+  void dispose() {
+    _scrollController!.removeListener(_scrollListener);
+    _scrollController!.dispose();
+    _tabController.dispose();
+    super.dispose();
   }
 }

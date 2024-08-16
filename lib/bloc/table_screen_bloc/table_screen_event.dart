@@ -4,12 +4,10 @@ abstract class TableScreenEvent extends Equatable {
   const TableScreenEvent();
 
   @override
-  // TODO: implement props
   List<Object?> get props => [];
 }
 
 class LoadTableScreenDataEvent extends TableScreenEvent {}
-
 class SwitchViewTableInfoEvent extends TableScreenEvent {}
 class AddNewTableInfoEvent extends TableScreenEvent {}
 

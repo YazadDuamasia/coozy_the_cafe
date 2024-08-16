@@ -192,9 +192,9 @@ class Constants {
   });
   */
 
-  static bool getIsMobileApp() {
+  static bool isMobileApp() {
     try {
-      if (platform.isMobile == true) {
+      if (platform.mobile == true) {
         return true;
       } else {
         return false;
@@ -207,7 +207,7 @@ class Constants {
 
   static bool isAndroid() {
     try {
-      if (platform.isAndroid == true) {
+      if (platform.android == true) {
         return true;
       } else {
         return false;
@@ -220,7 +220,7 @@ class Constants {
 
   static bool isIOS() {
     try {
-      if (platform.isIOS == true) {
+      if (platform.iOS == true) {
         return true;
       } else {
         return false;
@@ -233,7 +233,7 @@ class Constants {
 
   static bool isMacOS() {
     try {
-      if (platform.isMacOS == true) {
+      if (platform.macOS == true) {
         return true;
       } else {
         return false;
@@ -246,7 +246,7 @@ class Constants {
 
   static bool isFuchsia() {
     try {
-      if (platform.isFuchsia == true) {
+      if (platform.fuchsia == true) {
         return true;
       } else {
         return false;
@@ -259,22 +259,22 @@ class Constants {
 
   static Future<String> getCurrentPlatform() async {
     try {
-      if (platform.isWeb) {
+      if (platform.type == HostPlatformType.js()) {
         return "web";
-      } else if (platform.isMacOS) {
+      } else if (platform.macOS) {
         return "macOS";
-      } else if (platform.isLinux) {
+      } else if (platform.linux) {
         return "Linux";
-      } else if (platform.isWindows) {
+      } else if (platform.windows) {
         return "Windows";
-      } else if (platform.isAndroid) {
+      } else if (platform.android) {
         return "Android";
-      } else if (platform.isIOS) {
+      } else if (platform.iOS) {
         return "iOS";
-      } else if (platform.isFuchsia) {
+      } else if (platform.fuchsia) {
         return "Fuchsia";
-      } else if (platform.isIO) {
-        return "IO";
+      } else if (platform.unknown) {
+        return "Unknown platform";
       } else {
         return "Unknown platform";
       }
@@ -286,16 +286,15 @@ class Constants {
 
   static Future<String> getCurrentPlatformBuildMode() async {
     try {
-      String buildMode = switch (platform.buildMode) {
-        BuildMode.debug => 'Debug',
-        BuildMode.profile => 'Profile',
-        BuildMode.release => 'Release',
+      final String buildMode = switch (platform.buildMode) {
+        BuildMode$Debug _ => 'Debug',
+        BuildMode$Profile _ => 'Profile',
+        BuildMode$Release _ => 'Release',
       };
       Constants.debugLog(
           Constants, "getCurrentPlatformBuildMode:buildMode:$buildMode");
       return buildMode;
     } catch (e) {
-      print(e);
       return "Unknown platform";
     }
   }
@@ -885,7 +884,7 @@ class Constants {
     permission = await Permission.location.status;
 
     if (permission == PermissionStatus.permanentlyDenied) {
-      if (platform.isMobile) {
+      if (Constants.isMobileApp()) {
         showDialog(
           context: context!,
           builder: (BuildContext context) {

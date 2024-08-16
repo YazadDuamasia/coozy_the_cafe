@@ -23,7 +23,7 @@ class LoginWithPhoneCubit extends Cubit<LoginWithPhoneState> {
 
     InternetStatus? connectionStatus = await InternetConnection().internetStatus;
     if (connectionStatus == InternetStatus.connected) {
-      if (Constants.getIsMobileApp() == true) {
+      if (Constants.isMobileApp() == true) {
         try {
           final List<Locale> systemLocales =
               WidgetsBinding.instance.window.locales;
@@ -86,7 +86,7 @@ class LoginWithPhoneCubit extends Cubit<LoginWithPhoneState> {
 
   void updateCountryIosCode(Country? country) async {
     if (country == null) {
-      if (Constants.getIsMobileApp() == true) {
+      if (Constants.isMobileApp() == true) {
         try {
           final List<Locale> systemLocales = WidgetsBinding.instance.window.locales;
           String? isoCountryCode = systemLocales.first.countryCode;

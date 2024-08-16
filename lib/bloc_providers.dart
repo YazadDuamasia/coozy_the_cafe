@@ -7,8 +7,6 @@ List<BlocProvider> blocProviders = [
   BlocProvider<LoginScreenCubit>(create: (context) => LoginScreenCubit()),
   BlocProvider<LoginWithPhoneCubit>(create: (context) => LoginWithPhoneCubit()),
   BlocProvider<SignUpCubit>(create: (context) => SignUpCubit()),
-  BlocProvider<HomePageBottomNavCubit>(
-      create: (context) => HomePageBottomNavCubit()),
   BlocProvider<TableScreenBloc>(create: (context) => TableScreenBloc()),
   BlocProvider<MenuCategoryFullListCubit>(
       create: (context) => MenuCategoryFullListCubit()),
@@ -33,6 +31,10 @@ List<BlocProvider> blocProviders = [
       create: (context) =>
           AttendanceCubit(DatabaseHelper())..fetchAttendance()),
   BlocProvider<LeaveCubit>(
-      create: (context) =>
-      LeaveCubit(DatabaseHelper())..fetchLeaves()),
+      create: (context) => LeaveCubit(DatabaseHelper())..fetchLeaves()),
+  BlocProvider<WaiterListScreenBloc>(
+    create: (context) =>
+        WaiterListScreenBloc()..add(InitialLoadWaiterListScreenEvent()),
+  ),
+
 ];

@@ -28,7 +28,7 @@ class SignUpCubit extends Cubit<SignUpState> {
 
   void fetchInitialInfo() async {
     emit(SignUpLoadingState());
-    if (Constants.getIsMobileApp() == true) {
+    if (Constants.isMobileApp() == true) {
       try {
         final List<Locale> systemLocales =
             WidgetsBinding.instance.window.locales;
@@ -134,7 +134,7 @@ class SignUpCubit extends Cubit<SignUpState> {
 
   void updateCountryIosCode(Country? country) async {
     if (country == null) {
-      if (Constants.getIsMobileApp() == true) {
+      if (Constants.isMobileApp() == true) {
         try {
           final List<Locale> systemLocales =
               WidgetsBinding.instance.window.locales;

@@ -878,7 +878,7 @@ class _LoginViaPhoneNumberPageState extends State<LoginViaPhoneNumberPage> {
   Future<void> verifySubmitPhoneNumber({String? phoneNumber}) async {
     Constants.debugLog(
         LoginViaPhoneNumberPage, "verifySubmit:phoneNumber:$phoneNumber");
-    if (Constants.getIsMobileApp() == true) {
+    if (Constants.isMobileApp() == true) {
       var appSignatureId = await SmsAutoFill().getAppSignature;
       Constants.debugLog(
           LoginViaPhoneNumberPage, "appSignatureId:$appSignatureId");

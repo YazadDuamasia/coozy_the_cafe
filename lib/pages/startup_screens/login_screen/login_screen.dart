@@ -1294,7 +1294,7 @@ class _LoginScreenState extends State<LoginScreen> {
           return TextFormField(
             controller: passwordTextEditingController!,
             focusNode: passwordFocusNode,
-            textInputAction: Constants.getIsMobileApp()
+            textInputAction: Constants.isMobileApp()
                 ? TextInputAction.done
                 : TextInputAction.next,
             autovalidateMode: AutovalidateMode.onUserInteraction,

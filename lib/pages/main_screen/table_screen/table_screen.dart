@@ -249,13 +249,22 @@ class _TableScreenState extends State<TableScreen>
                           Text(
                               "${AppLocalizations.of(context)?.translate(StringValue.table_color_indicator_label_text) ?? "Color Indicator"} : ",
                               textAlign: TextAlign.start),
-                          CircleAvatar(
-                            backgroundColor: Color(int.parse(
-                                    model.colorValue ?? "000000",
-                                    radix: 16) |
-                                0xFF000000),
-                            radius: 10,
-                          )
+                          Container(
+                            width: 30,
+                            height: 30,
+                            decoration: BoxDecoration(
+                              color: Color(int.parse(
+                                      model.colorValue ?? "000000",
+                                      radix: 16) |
+                                  0xFF000000),
+                              border: Border.all(
+                                color: Theme.of(context).colorScheme.primary,
+                              ),
+                              borderRadius: const BorderRadius.all(
+                                Radius.circular(5),
+                              ),
+                            ),
+                          ),
                         ],
                       ),
                     ],

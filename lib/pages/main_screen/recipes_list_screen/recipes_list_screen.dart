@@ -798,7 +798,7 @@ class _RecipesListScreenState extends State<RecipesListScreen> {
                     stepSize: 1,
                     fractionDigits: 0),
               ),
-              FilterListModel(
+        /*      FilterListModel(
                   type: FilterType.DatePicker,
                   filterOptions: [],
                   previousApplied: _getPreviousAppliedFilters(
@@ -875,7 +875,7 @@ class _RecipesListScreenState extends State<RecipesListScreen> {
                       DateTime.now(), DateUtil.TIME_FORMAT1),
                   inputDateFormat: DateFormat(DateUtil.TIME_FORMAT1),
                   labelText: "Time Range Picker",
-                  hintText: "Please enter time"),
+                  hintText: "Please enter time"),*/
             ],
             themeProps: ThemeProps(
               activeFilterTextColor:

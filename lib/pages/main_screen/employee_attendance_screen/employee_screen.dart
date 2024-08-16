@@ -761,7 +761,7 @@ class _EmployeeScreenState extends State<EmployeeScreen>
     InternetStatus? connectionStatus =
         await InternetConnection().internetStatus;
     if (connectionStatus == InternetStatus.connected) {
-      if (Constants.getIsMobileApp() == true) {
+      if (Constants.isMobileApp() == true) {
         try {
           final List<Locale> systemLocales =
               WidgetsBinding.instance.window.locales;

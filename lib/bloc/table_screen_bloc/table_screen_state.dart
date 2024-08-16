@@ -7,10 +7,7 @@ abstract class TableScreenState extends Equatable {
   List<Object> get props => [];
 }
 
-class TableScreenInitial extends TableScreenState {
-  @override
-  List<Object> get props => [];
-}
+class TableScreenInitial extends TableScreenState {}
 
 class TableScreenInitialState extends TableScreenState {}
 
