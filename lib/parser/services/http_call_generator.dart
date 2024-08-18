@@ -10,227 +10,184 @@ import 'package:http/http.dart' as http;
 enum HTTPMethod { GET, POST, PUT, DELETE, POST_ENCODE }
 
 class HttpCallGenerator {
-  static Future<dynamic> _handleResponse(
-      http.Response response) async {
-    if (response.statusCode == 429) {
-      return await _handleResponse(response);
-    } else if (response.statusCode != 200) {
-      return {"isError": true, "response": "Something went wrong."};
-    } else {
-      final jsonResponse = json.decode(response.body);
-      return {"isError": false, "response": jsonResponse};
-    }
-  }
+static const int maxRetries = 3; // Maximum number of retries
+  static const Duration retryDelay = Duration(seconds: 5); // Delay between retries
 
-  static Future<Map<String, dynamic>> makeHttpRequest({
-    required String? url,
-    String? headers,
+  static Future<Map<String, dynamic>?> makeHttpRequest({
+    required String url,
+    Map<String, String>? headers,
     String? params,
     HTTPMethod method = HTTPMethod.GET,
   }) async {
-    try {
-      final uri = Uri.parse(url ?? "");
-      late http.Response response;
+    int retryCount = 0;
+    while (retryCount < maxRetries) {
+      try {
+        final uri = Uri.parse(url);
+        http.Response? response;
+        var bodyMap;
 
-      var headerMap;
-      if (headers != null || headers!.isNotEmpty) {
-        headerMap = convert.json.decode(headers);
-      }
-
-      var bodyMap;
-      if (params != null || params!.isNotEmpty) {
-        bodyMap = convert.json.decode(params);
-      }
-
-      switch (method) {
-        case HTTPMethod.GET:
-          uri.replace(queryParameters: bodyMap);
-
-          String curl = await generateCurlCommandForPost(
-              url: uri.toString(),
-              header: headerMap,
-              method: "GET",
-              params: null);
-          Constants.debugLog(HttpCallGenerator, curl);
-          response = await http
-              .get(
-                uri,
-                headers: headerMap,
-              )
-              .timeout(const Duration(seconds: 15),
-                  onTimeout: () => throw TimeoutException(
-                      "The connection has timed out, Please try again!"));
-          break;
-        case HTTPMethod.POST:
-          String curl = await generateCurlCommandForPost(
-              url: uri.toString(),
-              header: headerMap,
-              method: "POST",
-              params: bodyMap);
-          Constants.debugLog(HttpCallGenerator, curl);
-          response = await http
-              .post(uri, headers: headerMap, body: bodyMap)
-              .timeout(const Duration(seconds: 15),
-                  onTimeout: () => throw TimeoutException(
-                      "The connection has timed out, Please try again!"));
-          {}
-          break;
-        case HTTPMethod.POST_ENCODE:
-          String curl = await generateCurlCommandForPost(
-              url: uri.toString(),
-              header: headerMap,
-              method: "POST",
-              params: bodyMap);
-          Constants.debugLog(HttpCallGenerator, curl);
-          response = await http
-              .post(uri,
-                  headers: headerMap,
-                  body: bodyMap,
-                  encoding: convert.Encoding.getByName("utf-8"))
-              .timeout(const Duration(seconds: 15),
-                  onTimeout: () => throw TimeoutException(
-                      "The connection has timed out, Please try again!"));
-          break;
-        case HTTPMethod.PUT:
-          String curl = await generateCurlCommandForPost(
-              url: uri.toString(),
-              header: headerMap,
-              method: "PUT",
-              params: bodyMap);
-          Constants.debugLog(HttpCallGenerator, curl);
-          response = await http
-              .put(uri, headers: headerMap, body: bodyMap)
-              .timeout(const Duration(seconds: 15),
-                  onTimeout: () => throw TimeoutException(
-                      "The connection has timed out, Please try again!"));
-          break;
-        case HTTPMethod.DELETE:
-          String curl = await generateCurlCommandForPost(
-              url: uri.toString(),
-              header: headerMap,
-              method: "DELETE",
-              params: bodyMap);
-          Constants.debugLog(HttpCallGenerator, curl);
-          response = await http
-              .delete(uri, headers: headerMap, body: bodyMap)
-              .timeout(const Duration(seconds: 15),
-                  onTimeout: () => throw TimeoutException(
-                      "The connection has timed out, Please try again!"));
-          break;
-
-        default:
-          throw Exception("Unsupported HTTP method: $method");
-      }
-
-      return await _handleResponse(response);
-    } on TimeoutException {
-      return {
-        "isError": true,
-        "response": "The connection has timed out. Please try again."
-      };
-    } on SocketException {
-      return {
-        "isError": true,
-        "response":
-            "No Internet Connection. Please check your internet connection."
-      };
-    } catch (e) {
-      return {"isError": true, "response": "Something went wrong."};
-    }
-  }
-
-  static Future<dynamic> callPostFileUploadApi({
-    required String? url,
-    required String? header,
-    required String? params,
-    required String? filepath,
-    required String? fileParmenter,
-  }) async {
-    Constants.debugLog(HttpCallGenerator, "callPostFileUploadApi:url:$url");
-    Constants.debugLog(
-        HttpCallGenerator, "callPostFileUploadApi:params:$params");
-    Constants.debugLog(
-        HttpCallGenerator, "callPostFileUploadApi:filename:$filepath");
-
-    final bodyMap = convert.json.decode(params!);
-
-    try {
-      var request = http.MultipartRequest('POST', Uri.parse(url!));
-      request.files.add(http.MultipartFile(fileParmenter!,
-          File(filepath!).readAsBytes().asStream(), File(filepath).lengthSync(),
-          filename: filepath.split("/").last));
-      http.Response response =
-          await http.Response.fromStream(await request.send()).timeout(
-        const Duration(seconds: 60),
-        onTimeout: () => throw TimeoutException(
-            'The connection has timed out, Please try again!'),
-      );
-
-      if (response.statusCode == 429) {
-        //server is busy.
-        await callPostFileUploadApi(
-            url: url,
-            header: header,
-            params: params,
-            filepath: filepath,
-            fileParmenter: fileParmenter);
-      } else if (response.statusCode != 200) {
-        Map<String, dynamic> result = {
-          "isError": true,
-          "response": "Something when wrong."
-        };
-        return result;
-      } else {
-        if (response.body.isEmpty) {
-          Map<String, dynamic> result = {
-            "isError": true,
-            "response": "Something when wrong."
-          };
-          return result;
+        if (params != null && params.isNotEmpty) {
+          bodyMap = convert.json.decode(params);
         } else {
-          var jsonResponse = convert.jsonDecode(response.body);
-          Map<String, dynamic> result = {
-            "isError": false,
-            "response": jsonResponse
-          };
+          bodyMap = null;
+        }
+
+        switch (method) {
+          case HTTPMethod.GET:
+            response = await http
+                .get(uri, headers: headers)
+                .timeout(const Duration(seconds: 15));
+            break;
+          case HTTPMethod.POST:
+            response = await http
+                .post(uri, headers: headers, body: bodyMap)
+                .timeout(const Duration(seconds: 15));
+            break;
+          case HTTPMethod.POST_ENCODE:
+            response = await http
+                .post(
+                  uri,
+                  headers: headers,
+                  body: bodyMap,
+                  encoding: convert.Encoding.getByName("utf-8"),
+                )
+                .timeout(const Duration(seconds: 15));
+            break;
+          case HTTPMethod.PUT:
+            response = await http
+                .put(uri, headers: headers, body: bodyMap)
+                .timeout(const Duration(seconds: 15));
+            break;
+          case HTTPMethod.DELETE:
+            response = await http
+                .delete(uri, headers: headers, body: bodyMap)
+                .timeout(const Duration(seconds: 15));
+            break;
+          default:
+            throw Exception("Unsupported HTTP method: $method");
+        }
+
+        final result = await _handleResponse(response);
+        if (result != null && result["isError"] == true && result["response"] == "Too many requests. Please try again later.") {
+          // Increment retry count and wait before retrying
+          retryCount++;
+          await Future.delayed(retryDelay);
+        } else {
+          // If no error or error is not related to rate limiting, return the result
           return result;
         }
+      } on TimeoutException catch (e) {
+        return {
+          "isError": true,
+          "errorType": "TimeoutException",
+          "response": "The connection has timed out. Please try again later.",
+          "details": e.toString()
+        };
+      } on FormatException catch (e) {
+        return {
+          "isError": true,
+          "errorType": "FormatException",
+          "response":
+              "Bad response format. The server returned invalid data. Please try again and if not solve please contact us.",
+          "details": e.toString()
+        };
+      } on http.ClientException catch (e) {
+        return {
+          "isError": true,
+          "errorType": "ClientException",
+          "response":
+              "The server returned invalid data. Please try again and if not solve please contact us.",
+          "details": e.toString()
+        };
+      } catch (e) {
+        return {
+          "isError": true,
+          "errorType": "GeneralException",
+          "response": "Something went wrong.",
+          "details": e.toString()
+        };
       }
-    } on TimeoutException {
-      // A timeout occurred.
-      Map<String, dynamic> result = {
+    }
+
+    // If maximum retries reached, return an error response
+    return {
+      "isError": true,
+      "response": "Maximum retries reached. The server is still rate limiting."
+    };
+  }
+
+  static Future<Map<String, dynamic>?> _handleResponse(
+      http.Response? response) async {
+    if (response != null) {
+      switch (response.statusCode) {
+        case 200:
+          // OK
+          try {
+            return {"isError": false, "response": response.body};
+          } catch (e) {
+            return {
+              "isError": true,
+              "errorType": "FormatException",
+              "response": "The server returned invalid data. Please try again and if not solve please contact us.",
+              "details": e.toString()
+            };
+          }
+
+        case 429:
+          // Too Many Requests
+          return {
+            "isError": true,
+            "response": "Too many requests. Please try again later."
+          };
+
+        case 400:
+          // Bad Request
+          return {
+            "isError": true,
+            "response": "Bad request. The server could not understand the request."
+          };
+
+        case 401:
+          // Unauthorized
+          return {
+            "isError": true,
+            "response": "Unauthorized. Please check your credentials."
+          };
+
+        case 403:
+          // Forbidden
+          return {
+            "isError": true,
+            "response": "Forbidden. You do not have permission to access this resource."
+          };
+
+        case 404:
+          // Not Found
+          return {
+            "isError": true,
+            "response": "Not found. The requested resource could not be found."
+          };
+
+        case 500:
+          // Internal Server Error
+          return {
+            "isError": true,
+            "response": "Internal server error. Please try again later."
+          };
+
+        default:
+          // Other unexpected status codes
+          return {
+            "isError": true,
+            "response": "Request failed with status: ${response.statusCode}."
+          };
+      }
+    } else {
+      // Response is null
+      return {
         "isError": true,
-        "response": "The connection has timed out, Please try again!"
+        "response": "No response from the server."
       };
-      return result;
-    } on SocketException {
-      Map<String, dynamic> result = {
-        "isError": true,
-        "response":
-            "No Internet Connection.Please Check your internet Connection."
-      };
-      return result;
-    } on Exception {
-      Map<String, dynamic> result = {
-        "isError": true,
-        "response": "Something when wrong."
-      };
-      return result;
     }
   }
-
-  static Future<String> generateCurlCommandForPost(
-      {String? url, String? method, String? header, String? params}) async {
-    final headerMap = convert.json.decode(header ?? "");
-    final headerString = headerMap.entries
-        .map((entry) => "-H '${entry.key}: ${entry.value}'")
-        .join(" ");
-
-    final paramsMap = convert.json.decode(params ?? "");
-    final paramsString = paramsMap.entries
-        .map((entry) => "-d '${entry.key}=${entry.value}'")
-        .join(" ");
-
-    return 'curl -X ${method == null ? "GET" : method.toUpperCase()} $headerString $paramsString $url';
-  }
-}
+} 
