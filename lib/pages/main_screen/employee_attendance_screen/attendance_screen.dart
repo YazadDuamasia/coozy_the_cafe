@@ -78,8 +78,7 @@ class _AttendanceScreenState extends State<AttendanceScreen> {
                   .showSnackBar(SnackBar(content: Text(state.message ?? "")));
             }
             if (state is AttendanceLoaded) {
-              final employeeCubitState =
-                  context.read<EmployeeCubit>().state as EmployeeLoaded;
+              final employeeCubitState = context.read<EmployeeCubit>().state as EmployeeLoaded;
               employeeList = employeeCubitState.employees;
               _filteredEmployees = employeeList;
               attendance = state.attendance;
@@ -133,8 +132,8 @@ class _AttendanceScreenState extends State<AttendanceScreen> {
                         Expanded(
                           child: AnimatedHintTextField(
                             controller: _searchController,
-                            focusNode: _searchFocusNode,
-                            animationType: AnimationType.typer,
+                              focusNode: _searchFocusNode,
+                              animationType: AnimationType.typer,
                             hintTextStyle: TextStyle(
                               color: Theme.of(context)
                                   .colorScheme
@@ -222,6 +221,7 @@ class _AttendanceScreenState extends State<AttendanceScreen> {
                         },
                         child: SlidableAutoCloseBehavior(
                           child: ListView.builder(
+                            controller: scrollController,
                             itemCount: _filteredAttendance?.length ?? 0,
                             addRepaintBoundaries: true,
                             addAutomaticKeepAlives: false,
@@ -721,6 +721,7 @@ class _AttendanceScreenState extends State<AttendanceScreen> {
               child: Padding(
                 padding: const EdgeInsets.all(10.0),
                 child: SingleChildScrollView(
+                  controller: ScrollController(),
                   keyboardDismissBehavior: ScrollViewKeyboardDismissBehavior.onDrag,
                   child: Form(
                     key: _formKey,

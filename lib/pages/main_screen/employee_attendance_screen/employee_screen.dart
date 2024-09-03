@@ -2570,7 +2570,6 @@ class _EmployeeScreenState extends State<EmployeeScreen>
   @override
   void dispose() {
     scrollController?.dispose();
-    _searchFocusNode?.dispose();
     _searchController?.dispose();
     super.dispose();
   }
