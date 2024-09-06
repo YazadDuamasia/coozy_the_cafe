@@ -6,11 +6,13 @@ import 'package:coozy_the_cafe/model/attendance/leave.dart';
 import 'package:coozy_the_cafe/model/category.dart';
 import 'package:coozy_the_cafe/model/customer.dart';
 import 'package:coozy_the_cafe/model/daily_sales_report_entry.dart';
+import 'package:coozy_the_cafe/model/inventory_model/inventory_model.dart';
 import 'package:coozy_the_cafe/model/invoice.dart';
 import 'package:coozy_the_cafe/model/menu_item.dart';
 import 'package:coozy_the_cafe/model/menu_item_review.dart';
 import 'package:coozy_the_cafe/model/order_item.dart';
 import 'package:coozy_the_cafe/model/order_model.dart';
+import 'package:coozy_the_cafe/model/purchase_model/purchase_model.dart';
 import 'package:coozy_the_cafe/model/recipe_model.dart';
 import 'package:coozy_the_cafe/model/sub_category.dart';
 import 'package:coozy_the_cafe/model/table_info_model.dart';
@@ -37,6 +39,8 @@ class DatabaseHelper {
   final String employeesTable = 'employees';
   final String attendanceTable = 'attendance';
   final String leavesTable = 'leaves';
+  final String inventoryTable = 'inventory';
+  final String purchaseTable = 'purchase';
 
   factory DatabaseHelper() => _instance;
 
@@ -306,6 +310,35 @@ class DatabaseHelper {
       reason TEXT,
       isDeleted INTEGER,
       FOREIGN KEY (employeeId) REFERENCES $employeesTable (id)
+    )
+  ''');
+
+    await db.execute('''
+      CREATE TABLE $inventoryTable(
+        id INTEGER PRIMARY KEY AUTOINCREMENT,
+        hashId TEXT,
+        name TEXT,
+        shortDescription TEXT,
+        purchaseUnit TEXT,
+        currentStock REAL,
+        createdDate TEXT,
+        modifiedDate TEXT
+      )
+    ''');
+
+    await db.execute('''
+    CREATE TABLE $purchaseTable(
+      id INTEGER PRIMARY KEY AUTOINCREMENT,
+      hashId TEXT,
+      inventoryId INTEGER,
+      name TEXT,
+      purchaseUnit TEXT,
+      purchaseQty REAL,
+      purchaseDateTime TEXT,
+      purchasePrice REAL,
+      createdDate TEXT,
+      modifiedDate TEXT,
+      FOREIGN KEY (inventoryId) REFERENCES $inventoryTable(id)
     )
   ''');
   }
@@ -2333,5 +2366,137 @@ class DatabaseHelper {
       where: 'id = ?',
       whereArgs: [id],
     );
+  }
+
+  // CRUD for InventoryModel
+  Future<int?> insertInventory(InventoryModel inventory) async {
+    final db = await database;
+    if (db == null) return null; // Handle null database scenario
+    return await db.insert(inventoryTable, inventory.toJson());
+  }
+
+  Future<List<InventoryModel>?> getAllInventory() async {
+    final db = await database;
+    if (db == null) return null; // Handle null database scenario
+
+    final List<Map<String, dynamic>?>? maps = await db.query(inventoryTable);
+    if (maps == null || maps.isEmpty)
+      return []; // Return empty list if no records
+
+    return List.generate(maps.length, (i) {
+      return InventoryModel.fromJson(maps[i]!);
+    });
+  }
+
+  Future<int?> updateInventory(InventoryModel inventory) async {
+    final db = await database;
+    if (db == null) return null; // Handle null database scenario
+
+    return await db.update(
+      inventoryTable,
+      inventory.toJson(),
+      where: 'id = ?',
+      whereArgs: [inventory.id],
+    );
+  }
+
+  Future<int?> deleteInventory(int id) async {
+    final db = await database;
+    if (db == null) return null; // Handle null database scenario
+
+    return await db.delete(
+      inventoryTable,
+      where: 'id = ?',
+      whereArgs: [id],
+    );
+  }
+
+// CRUD for PurchaseModel
+  Future<int?> insertPurchase(PurchaseModel purchase) async {
+    final db = await database;
+    if (db == null) return null; // Handle null database scenario
+
+    return await db.insert(purchaseTable, purchase.toJson());
+  }
+
+  Future<List<PurchaseModel>?> getAllPurchases() async {
+    final db = await database;
+    if (db == null) return null; // Handle null database scenario
+
+    final List<Map<String, dynamic>>? maps = await db.query(purchaseTable);
+    if (maps == null || maps.isEmpty)
+      return []; // Return empty list if no records
+
+    return List.generate(maps.length, (i) {
+      return PurchaseModel.fromJson(maps[i]);
+    });
+  }
+
+  Future<int?> updatePurchase(PurchaseModel purchase) async {
+    final db = await database;
+    if (db == null) return null; // Handle null database scenario
+
+    return await db.update(
+      purchaseTable,
+      purchase.toJson(),
+      where: 'id = ?',
+      whereArgs: [purchase.id],
+    );
+  }
+
+  Future<int?> deletePurchase(int id) async {
+    final db = await database;
+    if (db == null) return null; // Handle null database scenario
+
+    return await db.delete(
+      purchaseTable,
+      where: 'id = ?',
+      whereArgs: [id],
+    );
+  }
+
+// Get daily expenditure cost
+  Future<double> getDailyExpenditureCost(String date) async {
+    final db = await database;
+    if (db == null) return 0.0; // Return 0.0 if database is null
+
+    final List<Map<String, dynamic>?>? result = await db.query(
+      purchaseTable,
+      where: 'purchaseDateTime LIKE ?',
+      whereArgs: ['$date%'],
+    );
+
+    if (result == null || result.isEmpty) return 0.0; // Return 0.0 if no result
+
+    return result.fold(
+      0.0,
+      (sum, item) =>
+          sum +
+          (item!['purchasePrice'] as double? ??
+              0.0), // Handle null values in purchasePrice
+    );
+  }
+
+// Get monthly expenditure cost
+  Future<double?> getMonthlyExpenditureCost(String month) async {
+    final db = await database;
+    if (db == null) return 0.0; // Return 0.0 if database is null
+
+    final List<Map<String, dynamic>>? result = await db.query(
+      purchaseTable,
+      where: 'purchaseDateTime LIKE ?',
+      whereArgs: ['$month%'],
+    );
+
+    if (result == null || result.isEmpty) return 0.0;
+
+    double? res = result.fold(
+      0.0,
+      (sum, item) =>
+          (sum ?? 0.0) +
+          (item['purchasePrice'] ?? 0.0), // Handle null values in purchasePrice
+    );
+
+    return res ?? 0.0;
   }
 }
