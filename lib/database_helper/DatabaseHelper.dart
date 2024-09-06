@@ -2424,8 +2424,9 @@ class DatabaseHelper {
     if (db == null) return null; // Handle null database scenario
 
     final List<Map<String, dynamic>>? maps = await db.query(purchaseTable);
-    if (maps == null || maps.isEmpty)
-      return []; // Return empty list if no records
+    if (maps == null || maps.isEmpty) {
+      return null;
+    }
 
     return List.generate(maps.length, (i) {
       return PurchaseModel.fromJson(maps[i]);
@@ -2466,15 +2467,11 @@ class DatabaseHelper {
       whereArgs: ['$date%'],
     );
 
-    if (result == null || result.isEmpty) return 0.0; // Return 0.0 if no result
+    if (result == null || result.isEmpty) return 0.0;
 
-    return result.fold(
-      0.0,
-      (sum, item) =>
-          sum +
-          (item!['purchasePrice'] as double? ??
-              0.0), // Handle null values in purchasePrice
-    );
+    double? res = result.fold(
+        0.0, (sum, item) => (sum ?? 0.0) + (item!['purchasePrice'] ?? 0.0));
+    return res ?? 0.0;
   }
 
 // Get monthly expenditure cost
