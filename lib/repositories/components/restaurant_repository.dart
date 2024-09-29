@@ -1,8 +1,10 @@
 import 'package:coozy_the_cafe/database_helper/DatabaseHelper.dart';
 import 'package:coozy_the_cafe/model/category.dart';
 import 'package:coozy_the_cafe/model/customer.dart';
+import 'package:coozy_the_cafe/model/inventory_model/inventory_model.dart';
 import 'package:coozy_the_cafe/model/menu_item.dart';
 import 'package:coozy_the_cafe/model/order_model.dart';
+import 'package:coozy_the_cafe/model/purchase_model/purchase_model.dart';
 import 'package:coozy_the_cafe/model/recipe_model.dart';
 import 'package:coozy_the_cafe/model/sub_category.dart';
 import 'package:coozy_the_cafe/model/table_info_model.dart';
@@ -20,12 +22,14 @@ class RestaurantRepository {
     bool? isFirstTime = await Constants.isFirstTime("recipeList");
 
     if (isFirstTime == true) {
-      final jsonContent = await rootBundle.loadString('assets/data/recipes_for_indian_food_dataset.json');
+      final jsonContent = await rootBundle
+          .loadString('assets/data/recipes_for_indian_food_dataset.json');
       List<RecipeModel> recipes = recipeModelFromJson(jsonContent);
 
       Constants.debugLog(
           RestaurantRepository, "recipeModel length: ${recipes.length}");
-      await _databaseHelper.insertRecipes(recipes); // Insert translated recipes into the database
+      await _databaseHelper.insertRecipes(
+          recipes); // Insert translated recipes into the database
 
       Constants.debugLog(RestaurantRepository, "insertRecipes: Done");
       return recipes;
@@ -263,4 +267,50 @@ class RestaurantRepository {
 //   Future<int?> deleteOrder(int orderId) async {
 //     return await _databaseHelper.deleteOrder(orderId);
 //   }
+
+  Future<int?> insertInventory(InventoryModel inventory) async {
+    return await _databaseHelper.insertInventory(inventory);
+  }
+
+  Future<int?> updateInventory(InventoryModel inventory) async {
+    return await _databaseHelper.updateInventory(inventory);
+  }
+
+  Future<int?> deleteInventory({int? inventoryID}) async {
+    return await _databaseHelper.deleteInventory(inventoryID!);
+  }
+
+  Future<List<InventoryModel>?> getAllEnableInventory() async {
+    return await _databaseHelper.getAllEnableInventory();
+  }
+
+  Future<List<InventoryModel>?> getAllInventory() async {
+    return await _databaseHelper.getAllInventory();
+  }
+
+  Future<int?> insertPurchase(PurchaseModel purchase) async {
+    return await _databaseHelper.insertPurchase(purchase);
+  }
+
+  Future<int?> updatePurchase(PurchaseModel purchase) async {
+    return await _databaseHelper.updatePurchase(purchase);
+  }
+
+  Future<int?> deletePurchase({int? purchaseID}) async {
+    return await _databaseHelper.deletePurchase(purchaseID!);
+  }
+
+  Future<List<PurchaseModel>?> getAllPurchases() async {
+    return await _databaseHelper.getAllPurchases();
+  }
+
+  Future<double?> getDailyExpenditureCost(
+      {String? currentDate}) async {
+    return await _databaseHelper.getDailyExpenditureCost(currentDate!);
+  }
+    Future<double?> getMonthlyExpenditureCost(
+      {String? currentDateMonth}) async {
+    return await _databaseHelper.getMonthlyExpenditureCost(currentDateMonth!);
+  }
+
 }

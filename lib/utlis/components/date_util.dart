@@ -53,6 +53,8 @@ class DateUtil {
   // 'dd-MM-yyyy hh:mm:ss aaa =>"11-02-2022 04:16:58 AM"
   static const DATE_FORMAT15 = 'dd-MM-yyyy hh:mm:ss aaa';
 
+  static const DATE_FORMAT16 = 'dd-MM-yyyy hh:mm aaa';
+
   // 'hh:mm:ss aaa'=>"04:16:58 AM"
   static const TIME_FORMAT1 = 'hh:mm:ss aaa';
 

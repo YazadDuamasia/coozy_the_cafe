@@ -85,7 +85,8 @@ class _MyAppState extends State<MyApp> {
                       ),
                     ),
                     inputDecorationTheme: InputDecorationTheme(
-                      contentPadding: const EdgeInsets.only(left: 10, right: 10, bottom: 5, top: 5),
+                      contentPadding: const EdgeInsets.only(
+                          left: 10, right: 10, bottom: 5, top: 5),
                       border: OutlineInputBorder(
                         borderSide: BorderSide(
                           color: Theme.of(context).colorScheme.primary,
@@ -94,7 +95,7 @@ class _MyAppState extends State<MyApp> {
                       ),
                       disabledBorder: OutlineInputBorder(
                         borderSide: BorderSide(
-                            color: Theme.of(context).disabledColor,
+                          color: Theme.of(context).disabledColor,
                         ),
                         borderRadius: BorderRadius.circular(5),
                       ),

@@ -5,8 +5,9 @@ class InventoryModel {
   String? shortDescription;
   String? purchaseUnit;
   double? currentStock;
-  String? createdDate; // using String instead of DateTime
-  String? modifiedDate; // using String instead of DateTime
+  bool? isEnabled;
+  String? createdDate;
+  String? modifiedDate;
 
   InventoryModel({
     this.id,
@@ -15,6 +16,7 @@ class InventoryModel {
     this.shortDescription,
     this.purchaseUnit,
     this.currentStock,
+    this.isEnabled,
     this.createdDate,
     this.modifiedDate,
   });
@@ -32,9 +34,11 @@ class InventoryModel {
       currentStock: (json['currentStock'] == null)
           ? null
           : json['currentStock'].toDouble(),
+      isEnabled: (json['isEnabled'] == null) ? false : json['isEnabled'] == 1,
       createdDate: (json['createdDate'] == null) ? null : json['createdDate'],
       modifiedDate:
           (json['modifiedDate'] == null) ? null : json['modifiedDate'],
+
     );
   }
 
@@ -47,6 +51,7 @@ class InventoryModel {
       'shortDescription': shortDescription,
       'purchaseUnit': purchaseUnit,
       'currentStock': currentStock,
+      'isEnabled': isEnabled == true ? 1 : 0,
       'createdDate': createdDate,
       'modifiedDate': modifiedDate,
     }..removeWhere((key, value) => value == null);
@@ -59,8 +64,10 @@ class InventoryModel {
     String? shortDescription,
     String? purchaseUnit,
     double? currentStock,
+    bool? isEnabled,
     String? createdDate,
     String? modifiedDate,
+
   }) {
     return InventoryModel(
       id: id ?? this.id,
@@ -69,6 +76,7 @@ class InventoryModel {
       shortDescription: shortDescription ?? this.shortDescription,
       purchaseUnit: purchaseUnit ?? this.purchaseUnit,
       currentStock: currentStock ?? this.currentStock,
+      isEnabled: isEnabled ?? this.isEnabled,
       createdDate: createdDate ?? this.createdDate,
       modifiedDate: modifiedDate ?? this.modifiedDate,
     );
@@ -76,6 +84,6 @@ class InventoryModel {
 
   @override
   String toString() {
-    return 'InventoryModel{id: $id, hashId: $hashId, name: $name, shortDescription: $shortDescription, purchaseUnit: $purchaseUnit, currentStock: $currentStock, createdDate: $createdDate, modifiedDate: $modifiedDate}';
+    return 'InventoryModel{id: $id, hashId: $hashId, name: $name, shortDescription: $shortDescription, purchaseUnit: $purchaseUnit, currentStock: $currentStock, isEnabled: $isEnabled, createdDate: $createdDate, modifiedDate: $modifiedDate}';
   }
 }

@@ -1,16 +1,12 @@
 import 'dart:async';
 import 'dart:convert' as convert;
-import 'dart:convert';
-import 'dart:io';
-
-import 'package:coozy_the_cafe/utlis/utlis.dart';
 import 'package:http/http.dart' as http;
-
+import 'package:flutter/foundation.dart';
 
 enum HTTPMethod { GET, POST, PUT, DELETE, POST_ENCODE }
 
 class HttpCallGenerator {
-static const int maxRetries = 3; // Maximum number of retries
+  static const int maxRetries = 3; // Maximum number of retries
   static const Duration retryDelay = Duration(seconds: 5); // Delay between retries
 
   static Future<Map<String, dynamic>?> makeHttpRequest({
@@ -19,52 +15,62 @@ static const int maxRetries = 3; // Maximum number of retries
     String? params,
     HTTPMethod method = HTTPMethod.GET,
   }) async {
+    return await compute(_performHttpRequest, {
+      'url': url,
+      'headers': headers,
+      'params': params,
+      'method': method,
+    });
+  }
+
+  static Future<Map<String, dynamic>?> _performHttpRequest(
+      Map<String, dynamic> arguments) async {
     int retryCount = 0;
     while (retryCount < maxRetries) {
       try {
-        final uri = Uri.parse(url);
+        final uri = Uri.parse(arguments['url']);
         http.Response? response;
         var bodyMap;
 
-        if (params != null && params.isNotEmpty) {
-          bodyMap = convert.json.decode(params);
+        if (arguments['params'] != null && arguments['params'].isNotEmpty) {
+          bodyMap = convert.json.decode(arguments['params']);
         } else {
           bodyMap = null;
         }
 
-        switch (method) {
+        switch (arguments['method']) {
           case HTTPMethod.GET:
             response = await http
-                .get(uri, headers: headers)
+                .get(uri, headers: arguments['headers'])
                 .timeout(const Duration(seconds: 15));
             break;
           case HTTPMethod.POST:
             response = await http
-                .post(uri, headers: headers, body: bodyMap)
+                .post(uri, headers: arguments['headers'], body: bodyMap)
                 .timeout(const Duration(seconds: 15));
             break;
           case HTTPMethod.POST_ENCODE:
             response = await http
                 .post(
-                  uri,
-                  headers: headers,
-                  body: bodyMap,
-                  encoding: convert.Encoding.getByName("utf-8"),
-                )
+              uri,
+              headers: arguments['headers'],
+              body: bodyMap,
+              encoding: convert.Encoding.getByName("utf-8"),
+            )
                 .timeout(const Duration(seconds: 15));
             break;
           case HTTPMethod.PUT:
             response = await http
-                .put(uri, headers: headers, body: bodyMap)
+                .put(uri, headers: arguments['headers'], body: bodyMap)
                 .timeout(const Duration(seconds: 15));
             break;
           case HTTPMethod.DELETE:
             response = await http
-                .delete(uri, headers: headers, body: bodyMap)
+                .delete(uri, headers: arguments['headers'], body: bodyMap)
                 .timeout(const Duration(seconds: 15));
             break;
           default:
-            throw Exception("Unsupported HTTP method: $method");
+            throw Exception("Unsupported HTTP method: ${arguments['method']}");
         }
 
         final result = await _handleResponse(response);
@@ -88,7 +94,7 @@ static const int maxRetries = 3; // Maximum number of retries
           "isError": true,
           "errorType": "FormatException",
           "response":
-              "Bad response format. The server returned invalid data. Please try again and if not solve please contact us.",
+          "Bad response format. The server returned invalid data. Please try again and if not solve please contact us.",
           "details": e.toString()
         };
       } on http.ClientException catch (e) {
@@ -96,7 +102,7 @@ static const int maxRetries = 3; // Maximum number of retries
           "isError": true,
           "errorType": "ClientException",
           "response":
-              "The server returned invalid data. Please try again and if not solve please contact us.",
+          "The server returned invalid data. Please try again and if not solve please contact us.",
           "details": e.toString()
         };
       } catch (e) {
@@ -121,7 +127,7 @@ static const int maxRetries = 3; // Maximum number of retries
     if (response != null) {
       switch (response.statusCode) {
         case 200:
-          // OK
+        // OK
           try {
             return {"isError": false, "response": response.body};
           } catch (e) {
@@ -134,49 +140,49 @@ static const int maxRetries = 3; // Maximum number of retries
           }
 
         case 429:
-          // Too Many Requests
+        // Too Many Requests
           return {
             "isError": true,
             "response": "Too many requests. Please try again later."
           };
 
         case 400:
-          // Bad Request
+        // Bad Request
           return {
             "isError": true,
             "response": "Bad request. The server could not understand the request."
           };
 
         case 401:
-          // Unauthorized
+        // Unauthorized
           return {
             "isError": true,
             "response": "Unauthorized. Please check your credentials."
           };
 
         case 403:
-          // Forbidden
+        // Forbidden
           return {
             "isError": true,
             "response": "Forbidden. You do not have permission to access this resource."
           };
 
         case 404:
-          // Not Found
+        // Not Found
           return {
             "isError": true,
             "response": "Not found. The requested resource could not be found."
           };
 
         case 500:
-          // Internal Server Error
+        // Internal Server Error
           return {
             "isError": true,
             "response": "Internal server error. Please try again later."
           };
 
         default:
-          // Other unexpected status codes
+        // Other unexpected status codes
           return {
             "isError": true,
             "response": "Request failed with status: ${response.statusCode}."
@@ -190,4 +196,4 @@ static const int maxRetries = 3; // Maximum number of retries
       };
     }
   }
-} 
+}

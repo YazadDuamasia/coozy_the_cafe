@@ -1,6 +1,6 @@
 # coozy_the_cafe
 
-Small open-end real world offline cafe management system with employees attendance system. Road map to complete proper ordering system with kitchen management support from single app all database management system is ready just desgin stuffs pending out 
+A new Flutter project.
 
 ## Getting Started
 

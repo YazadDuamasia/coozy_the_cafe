@@ -5,10 +5,10 @@ class PurchaseModel {
   String? name;
   String? purchaseUnit;
   double? purchaseQty;
-  String? purchaseDateTime; // using String instead of DateTime
+  String? purchaseDateTime;
   double? purchasePrice;
-  String? createdDate; // using String instead of DateTime
-  String? modifiedDate; // using String instead of DateTime
+  String? createdDate;
+  String? modifiedDate;
 
   PurchaseModel({
     this.id,
