@@ -12,17 +12,12 @@ import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 import 'package:url_strategy/url_strategy.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
   setPathUrlStrategy();
   GestureBinding.instance.resamplingEnabled = true;
-
-  // Load the theme from shared preferences
-  final prefs = await SharedPreferences.getInstance();
-  final index = prefs.getInt('theme') ?? 0;
   Bloc.observer = SimpleBlocObserver();
 
   runApp(const MyApp());
@@ -44,7 +39,9 @@ class _MyAppState extends State<MyApp> {
 
   @override
   Widget build(BuildContext context) {
+
     final List<LanguageModel> languages = LanguageModel.getLanguages();
+
     // Retrieves the default theme for the platform
     //TextTheme textTheme = Theme.of(context).textTheme;
 

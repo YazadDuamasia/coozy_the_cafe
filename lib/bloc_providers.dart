@@ -1,5 +1,5 @@
 import 'package:coozy_the_cafe/bloc/bloc.dart';
-import 'package:coozy_the_cafe/database_helper/DatabaseHelper.dart';
+import 'package:coozy_the_cafe/database/database.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
 List<BlocProvider> blocProviders = [

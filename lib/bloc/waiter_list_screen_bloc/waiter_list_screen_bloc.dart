@@ -2,7 +2,7 @@ import 'dart:async';
 import 'dart:math';
 
 import 'package:coozy_the_cafe/AppLocalization.dart';
-import 'package:coozy_the_cafe/database_helper/DatabaseHelper.dart';
+import 'package:coozy_the_cafe/database/database.dart';
 import 'package:coozy_the_cafe/model/table_info_model.dart';
 import 'package:coozy_the_cafe/pages/main_screen/table_screen/table_update_dialog.dart';
 import 'package:coozy_the_cafe/repositories/repositories.dart';

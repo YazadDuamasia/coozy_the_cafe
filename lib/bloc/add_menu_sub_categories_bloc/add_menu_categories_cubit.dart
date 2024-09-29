@@ -39,8 +39,8 @@ class AddMenuCategoryCubit extends Cubit<AddMenuCategoryState> {
   }
 
   void resetData() {
-    menuCategoryNameController = TextEditingController(text: "");
-    menuCategoryNameFocusNode = FocusNode();
+    menuCategoryNameController = new TextEditingController(text: "");
+    menuCategoryNameFocusNode = new FocusNode();
     List<String> currentList = [];
     _subCategoryListController.add(currentList);
 

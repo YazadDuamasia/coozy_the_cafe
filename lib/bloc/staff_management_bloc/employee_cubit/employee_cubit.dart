@@ -1,5 +1,5 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:coozy_the_cafe/database_helper/DatabaseHelper.dart';
+import 'package:coozy_the_cafe/database/database.dart';
 import 'package:coozy_the_cafe/model/attendance/employee.dart';
 import 'package:equatable/equatable.dart';
 

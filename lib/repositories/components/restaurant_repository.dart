@@ -1,4 +1,4 @@
-import 'package:coozy_the_cafe/database_helper/DatabaseHelper.dart';
+import 'package:coozy_the_cafe/database/database.dart';
 import 'package:coozy_the_cafe/model/category.dart';
 import 'package:coozy_the_cafe/model/customer.dart';
 import 'package:coozy_the_cafe/model/inventory_model/inventory_model.dart';
@@ -10,7 +10,6 @@ import 'package:coozy_the_cafe/model/sub_category.dart';
 import 'package:coozy_the_cafe/model/table_info_model.dart';
 import 'package:coozy_the_cafe/utlis/components/constants.dart';
 import 'package:flutter/services.dart';
-import 'package:translator/translator.dart';
 
 class RestaurantRepository {
   final DatabaseHelper _databaseHelper = DatabaseHelper();

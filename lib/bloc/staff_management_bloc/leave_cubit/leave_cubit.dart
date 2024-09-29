@@ -1,4 +1,4 @@
-import 'package:coozy_the_cafe/database_helper/DatabaseHelper.dart';
+import 'package:coozy_the_cafe/database/database.dart';
 import 'package:coozy_the_cafe/model/attendance/leave.dart';
 import 'package:coozy_the_cafe/utlis/utlis.dart';
 import 'package:equatable/equatable.dart';

@@ -4,7 +4,7 @@ export 'package:coozy_the_cafe/utlis/components/constants.dart';
 export 'package:coozy_the_cafe/utlis/components/custom_icons.dart';
 export 'package:coozy_the_cafe/utlis/components/date_util.dart';
 export 'package:coozy_the_cafe/utlis/components/global.dart';
-export 'package:coozy_the_cafe/utlis/components/language_preferences.dart';
+export 'package:coozy_the_cafe/config/app_config/language_preferences.dart';
 export 'package:coozy_the_cafe/utlis/components/local_push_notifications_api.dart';
 export 'package:coozy_the_cafe/utlis/components/mask_text_input_formatter.dart';
 export 'package:coozy_the_cafe/utlis/components/page_transition.dart';
