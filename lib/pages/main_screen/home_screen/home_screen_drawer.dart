@@ -4,15 +4,24 @@ import 'package:flutter/material.dart';
 import 'package:line_icons/line_icons.dart';
 import 'package:material_design_icons_flutter/material_design_icons_flutter.dart';
 
-class HomeScreenDrawer extends StatelessWidget {
+class HomeScreenDrawer extends StatefulWidget {
   const HomeScreenDrawer({super.key});
+
+  @override
+  State<HomeScreenDrawer> createState() => _HomeScreenDrawerState();
+}
+
+class _HomeScreenDrawerState extends State<HomeScreenDrawer> {
+
 
   @override
   Widget build(BuildContext context) {
     return Drawer(
-      child: ListView(
-        padding: EdgeInsets.zero,
-        children: <Widget>[
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.start,
+        crossAxisAlignment: CrossAxisAlignment.start,
+        mainAxisSize: MainAxisSize.max,
+        children: [
           const DrawerHeader(
             decoration: BoxDecoration(
               color: Colors.blue,
@@ -27,87 +36,122 @@ class HomeScreenDrawer extends StatelessWidget {
               ),
             ),
           ),
-          ListTile(
-            leading: const Icon(Icons.home),
-            title: const Text('Home'),
-            onTap: () {
-              // Handle drawer item click for home
-              Navigator.pop(context);
-            },
-          ),
-          ListTile(
-            leading: const Icon(Icons.table_restaurant),
-            title: Text(
-              AppLocalizations.of(context)
-                      ?.translate(StringValue.table_info_app_bar_title) ??
-                  "Table Info",
+          Expanded(
+            child: ListView(
+              padding: EdgeInsets.zero,
+              children: [
+                _buildDrawerItem(
+                  context,
+                  icon: Icons.home,
+                  title: 'Home',
+                  index: 0,
+                  onTap: () {
+                    Navigator.pop(context);
+                  },
+                ),
+                _buildDrawerItem(
+                  context,
+                  icon: Icons.table_restaurant,
+                  title: AppLocalizations.of(context)?.translate(StringValue.table_info_app_bar_title) ?? "Table Info",
+                  index: 1,
+                  onTap: () {
+                    Navigator.pop(context);
+                    navigationRoutes.navigateToTableInfoScreen();
+                  },
+                ),
+                _buildDrawerItem(
+                  context,
+                  icon: Icons.restaurant_menu,
+                  title: 'Menu Items',
+                  index: 2,
+                  onTap: () {
+                    Navigator.pop(context);
+                    navigationRoutes.navigateToMenuItemFullListScreen();
+                  },
+                ),
+                _buildDrawerItem(
+                  context,
+                  icon: Icons.category,
+                  title: 'Menu Category',
+                  index: 3,
+                  onTap: () {
+                    Navigator.pop(context);
+                    navigationRoutes.navigateToMenuCategoryFullListScreen();
+                  },
+                ),
+                _buildDrawerItem(
+                  context,
+                  icon: Icons.category,
+                  title: 'Menu Subcategory',
+                  index: 4,
+                  onTap: () {
+                    Navigator.pop(context);
+                    navigationRoutes.navigateToMenuAllSubCategoryFullListScreen();
+                  },
+                ),
+                _buildDrawerItem(
+                  context,
+                  icon: MdiIcons.orderBoolDescending,
+                  title: 'Order List',
+                  index: 5,
+                  onTap: () {
+                    Navigator.pop(context);
+                  },
+                ),
+                _buildDrawerItem(
+                  context,
+                  icon: MenuIcons.recipe_cooking_book,
+                  title: 'Recipes',
+                  index: 6,
+                  onTap: () {
+                    Navigator.pop(context);
+                    navigationRoutes.navigateToRecipesScreen();
+                  },
+                ),
+                _buildDrawerItem(
+                  context,
+                  icon: LineIcons.paperHandAlt,
+                  title: 'Staff Attendance',
+                  index: 7,
+                  onTap: () {
+                    Navigator.pop(context);
+                    navigationRoutes.navigateToEmployeeAttendanceScreen();
+                  },
+                ),
+                _buildDrawerItem(
+                  context,
+                  icon: Icons.settings,
+                  title: 'Settings',
+                  index: 8,
+                  onTap: () {
+                    Navigator.pop(context);
+                  },
+                ),
+              ],
             ),
-            onTap: () {
-              Navigator.pop(context);
-              navigationRoutes.navigateToTableInfoScreen();
-            },
-          ),
-          ListTile(
-            leading: const Icon(Icons.restaurant_menu),
-            title: const Text('Menu Items'),
-            onTap: () {
-              Navigator.pop(context);
-              navigationRoutes.navigateToMenuItemFullListScreen();
-            },
-          ),
-          ListTile(
-            leading: const Icon(Icons.category),
-            title: const Text('Menu category'),
-            onTap: () {
-              Navigator.pop(context);
-              navigationRoutes.navigateToMenuCategoryFullListScreen();
-            },
-          ),
-          ListTile(
-            leading: const Icon(Icons.category),
-            title: const Text('Menu subcategory'),
-            onTap: () {
-              Navigator.pop(context);
-              navigationRoutes.navigateToMenuAllSubCategoryFullListScreen();
-            },
-          ),
-          ListTile(
-            leading: Icon(
-              MdiIcons.orderBoolDescending,
-            ),
-            title: const Text('Order List'),
-            onTap: () {
-              Navigator.pop(context);
-            },
-          ),
-          ListTile(
-            leading: Icon(
-              MenuIcons.recipe_cooking_book,
-            ),
-            title: const Text('Recipes'),
-            onTap: () {
-              Navigator.pop(context);
-              navigationRoutes.navigateToRecipesScreen();
-            },
-          ),
-          ListTile(
-            leading: Icon(LineIcons.paperHandAlt),
-            title: const Text('Staff Attendance'),
-            onTap: () {
-              Navigator.pop(context);
-              navigationRoutes.navigateToEmployeeAttendanceScreen();
-            },
-          ),
-          ListTile(
-            leading: const Icon(Icons.settings),
-            title: const Text('Settings'),
-            onTap: () {
-              // Handle drawer item click for settings
-              Navigator.pop(context);
-            },
           ),
         ],
       ),
+    );
+  }
+
+  // Helper method to build a drawer item with underline
+  Widget _buildDrawerItem(
+      BuildContext context, {
+        required IconData icon,
+        required String title,
+        required int index,
+        required VoidCallback onTap,
+      }) {
+    return ListTile(
+      leading: Icon(icon),
+      title: Text(
+        title,
+        style: TextStyle(
+          decoration: TextDecoration.none,
+        ),
+      ),
+      onTap: onTap,
     );
   }
 }

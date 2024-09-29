@@ -18,7 +18,7 @@ import 'package:timeago/timeago.dart' as timeago;
 
 class Constants {
   static const String prefThemeModeKey = "user_theme";
-  static const String appName = "Coozy Cafe";
+  static const String appName = "Coozy The Cafe";
   static const String prefFirstTimeVistedKey = "user_first_time_app";
   static Map<String, String> hashMap = <String, String>{};
   static String kValidHexPattern = r'^#?[0-9a-fA-F]{1,8}';
