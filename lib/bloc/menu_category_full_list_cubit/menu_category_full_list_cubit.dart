@@ -51,6 +51,37 @@ class MenuCategoryFullListCubit extends Cubit<MenuCategoryFullListState> {
     }
   }
 
+  Future<void> deletecategory({int? categoryId}) async {
+
+
+    try {
+      await RestaurantRepository().delete_complete_record_category(categoryId!);
+      // Replace this with your actual data loading logic
+      Map<String, dynamic>? data = await fetchDataFromApi();
+      if (data == null || data.isEmpty) {
+        emit(LoadedState(
+            data: null,
+            expansionTileKeys: null,
+            expandedTitleControllerList: null));
+      } else {
+        List<GlobalKey?>? expansionTileKeys = List.generate(
+            data == null ? 0 : data['categories'].length ?? 0,
+            (index) => GlobalKey());
+        List<ExpansionTileController>? expandedTitleControllerList =
+            List.generate(data == null ? 0 : data['categories'].length ?? 0,
+                (index) => ExpansionTileController());
+
+        emit(LoadedState(
+            data: data,
+            expansionTileKeys: expansionTileKeys,
+            expandedTitleControllerList: expandedTitleControllerList));
+      }
+      //   emit(NoInternetState());
+    } catch (e) {
+      emit(ErrorState('An error occurred: $e'));
+    }
+  }
+
   Future<Map<String, dynamic>?> fetchDataFromApi() async {
     try {
       List<Category>? categoryList =

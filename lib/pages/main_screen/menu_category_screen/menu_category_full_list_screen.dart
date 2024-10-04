@@ -10,6 +10,7 @@ import 'package:coozy_the_cafe/widgets/post_time_text_widget/post_time_text_widg
 import 'package:coozy_the_cafe/widgets/responsive_layout/responsive_layout.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_slidable/flutter_slidable.dart';
 import 'package:material_design_icons_flutter/material_design_icons_flutter.dart';
 
 class MenuCategoryFullListScreen extends StatefulWidget {
@@ -29,27 +30,20 @@ class _MenuCategoryFullListScreenState
 
   bool positive = false;
   final WidgetStateProperty<Icon?> thumbIcon =
-  WidgetStateProperty.resolveWith<Icon>(
-        (Set<WidgetState> states) {
-      if (states.containsAll([
-        WidgetState.disabled,
-        WidgetState.selected
-      ])) {
-        return const Icon(Icons.check,
-            color: Colors.red);
+      WidgetStateProperty.resolveWith<Icon>(
+    (Set<WidgetState> states) {
+      if (states.containsAll([WidgetState.disabled, WidgetState.selected])) {
+        return const Icon(Icons.check, color: Colors.red);
       }
 
-      if (states.contains(
-          WidgetState.disabled)) {
+      if (states.contains(WidgetState.disabled)) {
         return const Icon(
           Icons.close,
         );
       }
 
-      if (states.contains(
-          WidgetState.selected)) {
-        return const Icon(Icons.check,
-            color: Colors.green);
+      if (states.contains(WidgetState.selected)) {
+        return const Icon(Icons.check, color: Colors.green);
       }
 
       return const Icon(
@@ -181,7 +175,6 @@ class _MenuCategoryFullListScreenState
                         controller.openView();
                       }
                     },
-
                     onSubmitted: (value) {
                       Constants.debugLog(MenuCategoryFullListScreen,
                           "SearchAnchor:onSubmitted:$value");
@@ -281,7 +274,6 @@ class _MenuCategoryFullListScreenState
                     "SearchAnchor:onChanged:$value");
                 scrollToItemAndExpand(value);
               },
-
               onSubmitted: (value) {
                 Constants.debugLog(MenuCategoryFullListScreen,
                     "SearchAnchor:onSubmitted:$value");
@@ -305,18 +297,20 @@ class _MenuCategoryFullListScreenState
         physics: const ClampingScrollPhysics(
             parent: AlwaysScrollableScrollPhysics()),
         slivers: [
-          SliverList(
-            delegate: SliverChildBuilderDelegate((context, index) {
-              var category = map![index];
-              return menuCategoryExpansionTileItem(
-                  state: state,
-                  model: category,
-                  index: index,
-                  totalItemLength: map?.length ?? 0);
-            },
-                addAutomaticKeepAlives: true,
-                addRepaintBoundaries: false,
-                childCount: map?.length ?? 0),
+          SlidableAutoCloseBehavior(
+            child: SliverList(
+              delegate: SliverChildBuilderDelegate((context, index) {
+                var category = map![index];
+                return menuCategoryExpansionTileItem(
+                    state: state,
+                    model: category,
+                    index: index,
+                    totalItemLength: map?.length ?? 0);
+              },
+                  addAutomaticKeepAlives: true,
+                  addRepaintBoundaries: false,
+                  childCount: map?.length ?? 0),
+            ),
           ),
         ],
       );
@@ -339,7 +333,8 @@ class _MenuCategoryFullListScreenState
     List<dynamic>? dynamicSubCategories =
         model["subCategories"] as List<dynamic>?;
 
-    List<SubCategory>? subCategoryList = SubCategory.convertDynamicListToSubCategoryList(dynamicSubCategories);
+    List<SubCategory>? subCategoryList =
+        SubCategory.convertDynamicListToSubCategoryList(dynamicSubCategories);
     final theme = Theme.of(context);
     return Theme(
       data: theme.copyWith(dividerColor: Colors.transparent),
@@ -351,142 +346,251 @@ class _MenuCategoryFullListScreenState
             bottom: (index < totalItemLength - 1) ? 0 : 10),
         child: ClipRRect(
           borderRadius: BorderRadius.circular(10),
-          child: ExpansionTile(
-            // shape: Border(),
-            key: state.expansionTileKeys![index] ?? GlobalKey(),
-            maintainState: true,
-            collapsedBackgroundColor: theme.colorScheme.primaryContainer,
-            backgroundColor: theme.colorScheme.primaryContainer,
-            tilePadding: EdgeInsets.zero,
-            childrenPadding: const EdgeInsets.symmetric(horizontal: 10),
-            title: Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 20),
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.start,
-                crossAxisAlignment: CrossAxisAlignment.start,
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  Expanded(child: Text(category.name ?? "")),
-                ],
-              ),
-            ),
-            subtitle: Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 20),
-              child: Column(
-                mainAxisSize: MainAxisSize.min,
-                mainAxisAlignment: MainAxisAlignment.start,
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.start,
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    mainAxisSize: MainAxisSize.min,
-                    children: <Widget>[
-                      RichText(
-                        text: TextSpan(
-                          text: 'Enable Status: ',
-                          style: Theme.of(context).textTheme.bodyMedium,
-                          children: [
-                            TextSpan(
-                              text: category.isActive == 1
-                                  ? AppLocalizations.of(context)?.translate(
-                                          StringValue.common_active) ??
-                                      "Active"
-                                  : AppLocalizations.of(context)?.translate(
-                                          StringValue.common_inactive) ??
-                                      "inactive",
-                              style: Theme.of(context)
-                                  .textTheme
-                                  .bodyMedium!
-                                  .copyWith(
-                                    color: category.isActive == 1
-                                        ? Colors.green
-                                        : Colors.red,
-                                  ),
-                            ),
-                          ],
-                        ),
-                      ),
-                    ],
-                  ),
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.start,
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    mainAxisSize: MainAxisSize.min,
-                    children: [
-                      Expanded(
-                        child: PostTimeTextWidget(
-                          key: UniqueKey(),
-                          creationDate: category.createdDate ?? "",
-                          localizedCode:
-                              AppLocalizations.getCurrentLanguageCode(context),
-                        ),
-                      ),
-                    ],
-                  ),
-                ],
-              ),
-            ),
-            trailing: Row(
-              crossAxisAlignment: CrossAxisAlignment.center,
-              mainAxisAlignment: MainAxisAlignment.start,
-              mainAxisSize: MainAxisSize.min,
+          child: Slidable(
+            closeOnScroll: true,
+            endActionPane: ActionPane(
+              motion: const DrawerMotion(),
               children: [
-                SizedBox(
-                  height: 30,
-                  child: FittedBox(
-                    fit: BoxFit.fill,
-                    child: Switch.adaptive(
-                      value: category.isActive == 1 ? true : false,
-                      onChanged: (bool isEnable) async {
-                        BlocProvider.of<MenuCategoryFullListCubit>(context)
-                            .handleIsEnableCategory(
-                                context, category, isEnable);
-
-                      },
-                      materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
-                      thumbIcon: thumbIcon,
-                    ),
-                  ),
-                ),
-                IconButton(
-                  icon: Icon(MdiIcons.circleEditOutline),
-                  onPressed: () async {
-                    Constants.debugLog(MenuCategoryFullListScreen,
-                        "menuCategoryExpansionTileItem:IconButton:Index:${index}");
+                SlidableAction(
+                  onPressed: (BuildContext context) async {
+                    Constants.debugLog(MenuCategoryFullListScreen, "menuCategoryExpansionTileItem:IconButton:Index:${index}");
                     navigationRoutes
                         .navigateToUpdateMenuCategoryScreen(
-                            categoryId: category.id)
+                        categoryId: category.id)
                         .then((value) async => context
-                            .read<MenuCategoryFullListCubit>()
-                            .loadData());
+                        .read<MenuCategoryFullListCubit>()
+                        .loadData());
+                  },
+                  backgroundColor: Colors.lightBlueAccent,
+                  foregroundColor: Colors.white,
+                  autoClose: true,
+                  icon: MdiIcons.circleEditOutline,
+                  borderRadius: BorderRadius.only(
+                    topLeft: Radius.circular(10),
+                    bottomLeft: Radius.circular(10),
+                    bottomRight: Radius.circular(0),
+                    topRight: Radius.circular(0),
+                  ),
+                  label:"${AppLocalizations.of(context)?.translate(StringValue.common_edit) ?? "Edit"}",
+                ),
+                SlidableAction(
+                  backgroundColor: Colors.red,
+                  foregroundColor: Colors.white,
+                  autoClose: true,
+                  borderRadius: BorderRadius.only(
+                    topRight: Radius.circular(10),
+                    bottomRight: Radius.circular(10),
+                    topLeft: Radius.circular(0),
+                    bottomLeft: Radius.circular(0),
+                  ),
+                  icon: MdiIcons.delete,
+                  label:"${AppLocalizations.of(context)?.translate(StringValue.common_delete) ?? "Delete"}",
+                  onPressed: (BuildContext ctx) {
+                    Constants.customPopUpDialogMessage(
+                      classObject: AttendanceScreen,
+                      context: this.context,
+                      titleIcon: Icon(
+                        Icons.info_outline,
+                        size: 40,
+                        color:
+                        Theme.of(context).primaryColor,
+                      ),
+                      title:
+                      "${AppLocalizations.of(context)?.translate(StringValue.menu_category_full_list_delete_dialog_title) ?? "Are you sure ?"}",
+                      descriptions:
+                      "${AppLocalizations.of(context)?.translate(StringValue.menu_category_full_list_delete_dialog_subTitle) ?? "Do you really want to delete this category information? You will not be able to undo this action."}",
+                      actions: Row(
+                        mainAxisAlignment:
+                        MainAxisAlignment.center,
+                        crossAxisAlignment:
+                        CrossAxisAlignment.center,
+                        mainAxisSize: MainAxisSize.max,
+                        children: [
+                          TextButton(
+                            child: Text(
+                              "${AppLocalizations.of(context)!.translate(StringValue.common_cancel)}",
+                              style: Theme.of(context)
+                                  .textTheme
+                                  .titleSmall!
+                                  .copyWith(
+                                color: Theme.of(context)
+                                    .brightness ==
+                                    Brightness.light
+                                    ? Colors.white
+                                    : null,
+                                fontWeight:
+                                FontWeight.w700,
+                              ),
+                            ),
+                            onPressed: () =>
+                                Navigator.pop(this.context),
+                          ),
+                          TextButton(
+                            child: Text(
+                              "${AppLocalizations.of(context)!.translate(StringValue.common_okay)}",
+                              style: Theme.of(context)
+                                  .textTheme
+                                  .titleSmall!
+                                  .copyWith(
+                                color: Theme.of(context)
+                                    .brightness ==
+                                    Brightness.light
+                                    ? Colors.white
+                                    : null,
+                                fontWeight:
+                                FontWeight.w700,
+                              ),
+                            ),
+                            onPressed: () {
+                              Navigator.pop(this.context);
+                              BlocProvider.of<MenuCategoryFullListCubit>(context).deletecategory(categoryId: category.id);
+                            },
+                          )
+                        ],
+                      ),
+                    );
                   },
                 ),
               ],
             ),
-            controller: state.expandedTitleControllerList![index],
-            children: <Widget>[
-              Visibility(
-                visible: (subCategoryList != null && subCategoryList.isNotEmpty)
-                    ? true
-                    : false,
-                child: ResponsiveLayout(
-                  mobile: MenuSubCategoryExpansionChildListViewWidget(
-                      key: UniqueKey(),
-                      subCategoryList: subCategoryList,
-                      itemsToShow: 5),
-                  tablet: MenuSubCategoryExpansionChildListViewWidget(
-                      key: UniqueKey(),
-                      subCategoryList: subCategoryList,
-                      itemsToShow: 10),
-                  desktop: MenuSubCategoryExpansionChildListViewWidget(
-                    key: UniqueKey(),
-                    subCategoryList: subCategoryList,
-                    itemsToShow: 10,
-                  ),
+            child: ExpansionTile(
+              // shape: Border(),
+              key: state.expansionTileKeys![index] ?? GlobalKey(),
+              maintainState: true,
+              collapsedBackgroundColor: theme.colorScheme.primaryContainer,
+              backgroundColor: theme.colorScheme.primaryContainer,
+              tilePadding: EdgeInsets.zero,
+              childrenPadding: const EdgeInsets.symmetric(horizontal: 10),
+              title: Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 20),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.start,
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    Expanded(child: Text(category.name ?? "")),
+                  ],
                 ),
-              )
-            ],
+              ),
+              subtitle: Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 20),
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  mainAxisAlignment: MainAxisAlignment.start,
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.start,
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      mainAxisSize: MainAxisSize.min,
+                      children: <Widget>[
+                        RichText(
+                          text: TextSpan(
+                            text: 'Enable Status: ',
+                            style: Theme.of(context).textTheme.bodyMedium,
+                            children: [
+                              TextSpan(
+                                text: category.isActive == 1
+                                    ? AppLocalizations.of(context)?.translate(
+                                            StringValue.common_active) ??
+                                        "Active"
+                                    : AppLocalizations.of(context)?.translate(
+                                            StringValue.common_inactive) ??
+                                        "inactive",
+                                style: Theme.of(context)
+                                    .textTheme
+                                    .bodyMedium!
+                                    .copyWith(
+                                      color: category.isActive == 1
+                                          ? Colors.green
+                                          : Colors.red,
+                                    ),
+                              ),
+                            ],
+                          ),
+                        ),
+                      ],
+                    ),
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.start,
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        Expanded(
+                          child: PostTimeTextWidget(
+                            key: UniqueKey(),
+                            creationDate: category.createdDate ?? "",
+                            localizedCode:
+                                AppLocalizations.getCurrentLanguageCode(
+                                    context),
+                          ),
+                        ),
+                      ],
+                    ),
+                  ],
+                ),
+              ),
+              trailing: Row(
+                crossAxisAlignment: CrossAxisAlignment.center,
+                mainAxisAlignment: MainAxisAlignment.start,
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  SizedBox(
+                    height: 30,
+                    child: FittedBox(
+                      fit: BoxFit.fill,
+                      child: Switch.adaptive(
+                        value: category.isActive == 1 ? true : false,
+                        onChanged: (bool isEnable) async {
+                          BlocProvider.of<MenuCategoryFullListCubit>(context)
+                              .handleIsEnableCategory(
+                                  context, category, isEnable);
+                        },
+                        materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
+                        thumbIcon: thumbIcon,
+                      ),
+                    ),
+                  ),
+                  // IconButton(
+                  //   icon: Icon(MdiIcons.circleEditOutline),
+                  //   onPressed: () async {
+                  //     Constants.debugLog(MenuCategoryFullListScreen,
+                  //         "menuCategoryExpansionTileItem:IconButton:Index:${index}");
+                  //     navigationRoutes
+                  //         .navigateToUpdateMenuCategoryScreen(
+                  //             categoryId: category.id)
+                  //         .then((value) async => context
+                  //             .read<MenuCategoryFullListCubit>()
+                  //             .loadData());
+                  //   },
+                  // ),
+                ],
+              ),
+              controller: state.expandedTitleControllerList![index],
+              children: <Widget>[
+                Visibility(
+                  visible:
+                      (subCategoryList != null && subCategoryList.isNotEmpty)
+                          ? true
+                          : false,
+                  child: ResponsiveLayout(
+                    mobile: MenuSubCategoryExpansionChildListViewWidget(
+                        key: UniqueKey(),
+                        subCategoryList: subCategoryList,
+                        itemsToShow: 5),
+                    tablet: MenuSubCategoryExpansionChildListViewWidget(
+                        key: UniqueKey(),
+                        subCategoryList: subCategoryList,
+                        itemsToShow: 10),
+                    desktop: MenuSubCategoryExpansionChildListViewWidget(
+                      key: UniqueKey(),
+                      subCategoryList: subCategoryList,
+                      itemsToShow: 10,
+                    ),
+                  ),
+                )
+              ],
+            ),
           ),
         ),
       ),

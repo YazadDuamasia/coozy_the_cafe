@@ -118,6 +118,9 @@
   "leave_screen_option_completed": "Completed",
   "leave_screen_option_canceled": "Canceled",
   "today_available": "Today Available",
-  "add_edit_menu_item_screen_create_successfully": "Menu item has been created successfully."
+  "add_edit_menu_item_screen_create_successfully": "Menu item has been created successfully.",
+  "menu_category_full_list_delete_dialog_title": "Are you sure ?",
+  "menu_category_full_list_delete_dialog_subTitle": "Do you really want to delete this category information? You will not be able to undo this action."
+
 
 }

@@ -14,6 +14,7 @@ abstract class StringValue {
   static String common_reject = "common_reject";
   static String common_submit = "common_submit";
   static String common_update = "common_update";
+  static String common_delete = "common_delete";
   static String common_search_hint_text = "common_search_hint_text";
   static String common_alert_title_text = "common_alert_title_text";
   static String common_active = "common_active";
@@ -31,10 +32,9 @@ abstract class StringValue {
   static String common_password_validator_error_msg =
       "common_password_validator_error_msg";
   static String common_phoneNumber_label = "common_phoneNumber_label";
-  static String common_common_phoneNumber_hint =
-      "common_common_phoneNumber_hint";
-  static String common_common_phoneNumber_validator_error_empty_msg =
-      "common_common_phoneNumber_validator_error_empty_msg";
+  static String common_common_phoneNumber_hint = "common_common_phoneNumber_hint";
+  static String common_common_phoneNumber_validator_error_empty_msg = "common_common_phoneNumber_validator_error_empty_msg";
+
 
   //LoginScreen
   static String login_welcome = "login_welcome";
@@ -178,4 +178,8 @@ abstract class StringValue {
   static String today_available="today_available";
 
   static String add_edit_menu_item_screen_create_successfully="add_edit_menu_item_screen_create_successfully";
+
+  static String menu_category_full_list_delete_dialog_title="menu_category_full_list_delete_dialog_title";
+
+  static String menu_category_full_list_delete_dialog_subTitle="menu_category_full_list_delete_dialog_subTitle";
 }

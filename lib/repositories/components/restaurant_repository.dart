@@ -71,8 +71,28 @@ class RestaurantRepository {
   }
 
 // Deletes a category with the specified ID from the database.
-  Future<int?> deleteCategory(int categoryId) async {
+  Future<int?> deleteCategory(int? categoryId) async {
     return await _databaseHelper.deleteCategory(categoryId);
+  }
+
+// Deletes complete record category with its sub category with the specified category ID from the database.
+  Future<int?> delete_complete_record_category(int? categoryId) async {
+    try {
+      // First delete all subcategories associated with the category
+      int? deletedSubcategories = await _databaseHelper.deleteAllSubcategoryBasedOnCategoryId(categoryId: categoryId);
+
+      // Then delete the main category
+      int? deletedCategory = await _databaseHelper.deleteCategory(categoryId);
+
+      // Return the result (you could return the sum of deleted rows if needed)
+      return deletedCategory;
+    } catch (e) {
+      // Handle any errors or exceptions
+      print("Error while deleting category and subcategories: $e");
+
+      // Optionally, return null or any custom error code to indicate failure
+      return null;
+    }
   }
 
 // Subcategory CRUD operations
@@ -303,13 +323,11 @@ class RestaurantRepository {
     return await _databaseHelper.getAllPurchases();
   }
 
-  Future<double?> getDailyExpenditureCost(
-      {String? currentDate}) async {
+  Future<double?> getDailyExpenditureCost({String? currentDate}) async {
     return await _databaseHelper.getDailyExpenditureCost(currentDate!);
   }
-    Future<double?> getMonthlyExpenditureCost(
-      {String? currentDateMonth}) async {
+
+  Future<double?> getMonthlyExpenditureCost({String? currentDateMonth}) async {
     return await _databaseHelper.getMonthlyExpenditureCost(currentDateMonth!);
   }
-
 }

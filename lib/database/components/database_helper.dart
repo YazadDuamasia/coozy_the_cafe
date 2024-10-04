@@ -596,7 +596,7 @@ class DatabaseHelper {
     }
   }
 
-  Future<int?> deleteCategory(int categoryId) async {
+  Future<int?> deleteCategory(int? categoryId) async {
     final db = await database;
     return await db?.delete(
       categoriesTable,
