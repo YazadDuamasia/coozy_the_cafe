@@ -19,7 +19,7 @@ part 'edit_menu_category_state.dart';
 class EditMenuCategoryBloc
     extends Bloc<EditMenuCategoryEvent, EditMenuCategoryState> {
   final BehaviorSubject<EditMenuCategoryState> _stateSubject =
-      BehaviorSubject();
+  BehaviorSubject();
 
   Stream<EditMenuCategoryState> get stateStream => _stateSubject.stream;
 

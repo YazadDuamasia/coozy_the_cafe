@@ -61,7 +61,7 @@ dependencies:
   permission_handler: ^11.3.1
   shared_preferences: ^2.3.2
   http: ^1.2.2
-  internet_connection_checker_plus: ^2.5.1
+  internet_connection_checker_plus: ^2.5.2
   url_launcher: ^6.3.0
   #
   url_strategy: ^0.3.0
