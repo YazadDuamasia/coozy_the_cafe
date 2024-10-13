@@ -1,11 +1,10 @@
 name: coozy_the_cafe
 description: "A new Flutter project."
-
+publish_to: 'none' # Remove this line if you wish to publish to pub.dev
 version: 1.0.0+1
 
-# Using Android Studio Jellyfish | 2023.3.1 Patch 2
-# Windows 10 system
-# Flutter version: 3.24.3 stable
+#  Android Studio Ladybug | 2024.2.1
+#  Flutter version 3.24.3 stable
 environment:
   sdk: ^3.5.3
 
@@ -31,9 +30,9 @@ dependencies:
   pin_code_fields: ^8.0.1
   sms_autofill: ^2.4.0
   #
-#  firebase_auth: ^5.1.4
-#  firebase_core: ^3.3.0
-#  google_sign_in: ^6.2.1
+  #  firebase_auth: ^5.1.4
+  #  firebase_core: ^3.3.0
+  #  google_sign_in: ^6.2.1
   #
   #  flutter_webview_plugin_ios_android: ^0.3.13+12
   #
@@ -41,7 +40,7 @@ dependencies:
   #
   platform_info: ^5.0.0
   package_info_plus: ^8.0.2
-  device_info_plus: ^10.1.2
+  device_info_plus: ^11.0.0
   #
   fluttertoast: ^8.2.8
   another_flushbar: ^1.12.30
@@ -53,6 +52,7 @@ dependencies:
   file_picker: ^8.1.2
   flutter_colorpicker: ^1.1.0
   duration_picker: ^1.2.0
+  flutter_staggered_grid_view: ^0.7.0
   #
   animations: ^2.0.11
   animate_to: ^0.1.0
@@ -92,8 +92,8 @@ dependencies:
   geocoding: ^3.0.0
   #
   app_settings: ^5.1.1
-#  rate_my_app: ^2.2.0
-#  store_redirect: ^2.0.2
+  #  rate_my_app: ^2.2.0
+  #  store_redirect: ^2.0.2
   feedback: ^3.1.0
   #  Range Slider
   syncfusion_flutter_core: ^27.1.51
@@ -147,8 +147,8 @@ flutter:
         - asset: assets/font/BwAletaNo10/BwAletaNo10_Regular.ttf
           weight: 400
         - asset: assets/font/BwAletaNo10/BwAletaNo10_Medium.ttf
-                    #          weight: 500
-                   #        - asset: assets/font/BwAletaNo10/BwAletaNo10_SemiBold.ttf
+            #          weight: 500
+          #        - asset: assets/font/BwAletaNo10/BwAletaNo10_SemiBold.ttf
           weight: 600
         - asset: assets/font/BwAletaNo10/BwAletaNo10_Bold.ttf
           weight: 700

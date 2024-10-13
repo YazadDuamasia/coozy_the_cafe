@@ -64,7 +64,7 @@ class NavigationRoutes {
 
   Future navigateTAddNewMenuItemScreen(String arguments) async {
     return await navigatorKey.currentState!
-        .pushNamed(RouteName.addNewMenuItemScreenRoute,arguments: arguments);
+        .pushNamed(RouteName.addNewMenuItemScreenRoute, arguments: arguments);
   }
 
   navigateToMenuCategoryFullListScreen() {
@@ -127,6 +127,10 @@ class NavigationRoutes {
         .pushNamed(RouteName.recipesInfoScreenRoute, arguments: arguments);
   }
 
+  Future navigateToImageGridScreenRoute() async {
+    await navigatorKey.currentState!.pushNamed(RouteName.imageGridScreenRoute);
+  }
+
   Future navigateToRecipesBookmarkListScreen(
       List<RecipeModel>? arguments) async {
     await navigatorKey.currentState!.pushNamed(
@@ -134,7 +138,8 @@ class NavigationRoutes {
         arguments: arguments);
   }
 
-  Future navigateToAppPermissionScreen({required String nextScreenRoute}) async {
+  Future navigateToAppPermissionScreen(
+      {required String nextScreenRoute}) async {
     await navigatorKey.currentState!.push(
       MaterialPageRoute(
         builder: (context) => AppPermissionScreen(

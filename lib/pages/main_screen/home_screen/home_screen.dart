@@ -468,6 +468,8 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
                         if (value == "clear_data") {
                           final prefs = await SharedPreferences.getInstance();
                           prefs.clear();
+                        } if (value == "export") {
+                          navigationRoutes.navigateToImageGridScreenRoute();
                         }
                       },
                       itemBuilder: (BuildContext bc) {

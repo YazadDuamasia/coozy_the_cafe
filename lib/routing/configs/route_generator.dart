@@ -1,5 +1,6 @@
 import 'package:coozy_the_cafe/model/recipe_model.dart';
 import 'package:coozy_the_cafe/pages/main_screen/employee_attendance_screen/employee_attendance_screen.dart';
+import 'package:coozy_the_cafe/pages/main_screen/image_grid_view_page/image_grid_view_page.dart';
 import 'package:coozy_the_cafe/pages/main_screen/menu_all_sub_category_screen/menu_all_sub_category_screen.dart';
 import 'package:coozy_the_cafe/pages/main_screen/menu_category_screen/add_menu_category_screen/add_new_menu_category_screen.dart';
 import 'package:coozy_the_cafe/pages/main_screen/menu_category_screen/edit_menu_category/edit_menu_category_screen.dart';
@@ -204,6 +205,14 @@ class RouteGenerator {
           settings: settings,
           curve: Curves.easeInOut,
           child: EmployeeAttendanceScreen(),
+        );
+
+        case RouteName.imageGridScreenRoute:
+        return PageTransition(
+          type: PageTransitionType.rightToLeftWithFade,
+          settings: settings,
+          curve: Curves.easeInOut,
+          child: ImageGridScreen(),
         );
 
       default:

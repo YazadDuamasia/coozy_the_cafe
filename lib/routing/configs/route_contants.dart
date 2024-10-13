@@ -26,4 +26,5 @@ class RouteName {
 
   static const String employeeAttendanceScreenRoute="/EmployeeAttendanceScreen";
   static const String appPermissionScreenRoute="/AppPermissionScreen";
+  static const String imageGridScreenRoute="/ImageGridScreen";
 }
