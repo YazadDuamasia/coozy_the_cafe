@@ -1,6 +1,8 @@
 import 'dart:async';
 import 'dart:convert';
 import 'dart:ui' as ui;
+import 'package:coozy_the_cafe/pages/pages.dart';
+import 'package:coozy_the_cafe/utlis/utlis.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_staggered_grid_view/flutter_staggered_grid_view.dart';
@@ -14,11 +16,9 @@ class ImageGridScreen extends StatefulWidget {
 
 class _ImageGridScreenState extends State<ImageGridScreen> {
   List<Map<String, dynamic>> _images = [];
-  Map<String, CachedNetworkImageProvider> _imageProviderMap =
-      {}; // Store CachedNetworkImageProviders
   Map<String, Size> _imageSizeMap = {}; // To store image sizes
   int _page = 1;
-  int _limit = 100;
+  int _limit = 50;
   bool _isLoading = false;
   final ScrollController _scrollController = ScrollController();
 
@@ -47,11 +47,9 @@ class _ImageGridScreenState extends State<ImageGridScreen> {
     if (response.statusCode == 200) {
       final List<dynamic> data = json.decode(response.body);
       for (var imageData in data) {
-        final imageUrl = imageData['download_url'];
-        final imageProvider = CachedNetworkImageProvider(imageUrl);
-
         // Load the image and get its dimensions in one go
-        _loadImageDimensions(imageProvider, imageUrl);
+        await _loadImageDimensions(
+            Uri.tryParse(imageData["download_url"]).toString() ?? "");
 
         setState(() {
           _images.add({
@@ -59,9 +57,8 @@ class _ImageGridScreenState extends State<ImageGridScreen> {
             'author': imageData['author'],
             'url': Uri.tryParse(imageData["url"]).toString() ?? "",
             'download_url':
-                Uri.tryParse(imageData["download_url"]).toString() ?? "",
+            Uri.tryParse(imageData["download_url"]).toString() ?? "",
           });
-          _imageProviderMap[imageUrl] = imageProvider;
         });
       }
       setState(() {
@@ -76,7 +73,7 @@ class _ImageGridScreenState extends State<ImageGridScreen> {
   }
 
   Future<Size> _calculateImageSize(String imageUrl) async {
-    final imageProvider = CachedNetworkImageProvider(imageUrl);
+    final ImageProvider imageProvider = NetworkImage(imageUrl);
     final Completer<ui.Image> completer = Completer<ui.Image>();
 
     imageProvider
@@ -89,10 +86,8 @@ class _ImageGridScreenState extends State<ImageGridScreen> {
     return Size(image.width.toDouble(), image.height.toDouble());
   }
 
-  Future<void> _loadImageDimensions(
-      CachedNetworkImageProvider imageProvider, String imageUrl) async {
-    final Size imageSize = await compute(_calculateImageSize, imageUrl);
-
+  Future<void> _loadImageDimensions(String imageUrl) async {
+    final Size imageSize = await _calculateImageSize(imageUrl);
     // Store the image size once resolved
     setState(() {
       _imageSizeMap[imageUrl] = imageSize;
@@ -107,70 +102,200 @@ class _ImageGridScreenState extends State<ImageGridScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: const Text('Dynamic Grid with Cached Images'),
+    return SafeArea(
+      child: Scaffold(
+        resizeToAvoidBottomInset: false,
+        appBar: AppBar(
+          title: const Text('Dynamic Grid with Cached Images'),
+        ),
+        body: _images.isEmpty ? LoadingPage() : buildMasonryGridView(),
       ),
-      body: _images.isEmpty
-          ? const Center(child: CircularProgressIndicator())
-          : MasonryGridView.builder(
-              controller: _scrollController,
-              addSemanticIndexes: true,
-              shrinkWrap: true,
-              physics: BouncingScrollPhysics(
-                decelerationRate: ScrollDecelerationRate.normal,
-                parent: AlwaysScrollableScrollPhysics(),
-              ),
-              gridDelegate: SliverSimpleGridDelegateWithFixedCrossAxisCount(
-                  crossAxisCount: 3),
-              addRepaintBoundaries: true,
-              crossAxisSpacing: 10,
-              mainAxisSpacing: 10,
-              addAutomaticKeepAlives: true,
-              itemCount: _images.length + (_isLoading ? 1 : 0),
-              itemBuilder: (context, index) {
-                if (index == _images.length) {
-                  return const Center(child: CircularProgressIndicator());
-                }
-                final image = _images[index];
-                final String imageUrl = image['download_url'];
-                final Size? imageSize = _imageSizeMap[imageUrl];
-
-                // Calculate dynamic height based on image size
-                final double placeholderHeight = imageSize != null
-                    ? (imageSize.height / imageSize.width) *
-                        MediaQuery.of(context).size.width /
-                        3
-                    : 150.0; // Default static height for error or if size not loaded
-
-                return StaggeredGridTile.fit(
-                  crossAxisCellCount: 1,
-                  child: CachedNetworkImage(
-                    imageUrl: imageUrl,
-                    fit: BoxFit.fill,
-                    // height: placeholderHeight,
-                    fadeInDuration: const Duration(seconds: 2),
-                    // 2-second fade-in animation
-                    fadeOutDuration: const Duration(milliseconds: 500),
-                    placeholder: (context, url) => Container(
-                      width: MediaQuery.of(context).size.width,
-                      height: placeholderHeight,
-                      decoration: BoxDecoration(
-                        borderRadius: BorderRadius.circular(10),
-                      ),
-                      child: Center(
-                        child: CircularProgressIndicator(),
-                      ),
-                    ),
-                    errorWidget: (context, url, error) => Container(
-                      height: 200.0, // Static height for error
-                      color: Colors.red.shade300,
-                      child: const Icon(Icons.error),
-                    ),
-                  ),
-                );
-              },
-            ),
     );
+  }
+
+  Widget buildMasonryGridView() {
+    return Column(
+      mainAxisAlignment: MainAxisAlignment.start,
+      crossAxisAlignment: CrossAxisAlignment.start,
+      mainAxisSize: MainAxisSize.min,
+      children: [
+        MasonryGridView.builder(
+          addSemanticIndexes: true,
+          shrinkWrap: true,
+          physics: BouncingScrollPhysics(
+            decelerationRate: ScrollDecelerationRate.normal,
+            parent: AlwaysScrollableScrollPhysics(),
+          ),
+          gridDelegate:
+              SliverSimpleGridDelegateWithFixedCrossAxisCount(crossAxisCount: 3),
+          addRepaintBoundaries: true,
+          crossAxisSpacing: 10,
+          mainAxisSpacing: 10,
+          addAutomaticKeepAlives: false,
+          cacheExtent: 10,
+          keyboardDismissBehavior: ScrollViewKeyboardDismissBehavior.onDrag,
+          // itemCount: _images.length + (_isLoading ? 1 : 0),
+          itemCount: _images.length ,
+          itemBuilder: (context, index) {
+          /*  if (index == _images.length) {
+              return  Container(
+                width: MediaQuery.of(context).size.width,
+                height: 150,
+                decoration: BoxDecoration(
+                  color: Colors.amberAccent,
+                  borderRadius: BorderRadius.circular(10),
+                ),
+                child: Center(
+                  child: CircularProgressIndicator(),
+                ),
+              );
+            }*/
+            final image = _images[index];
+            final String imageUrl = image['download_url'];
+            final Size? imageSize = _imageSizeMap[imageUrl];
+
+            // Calculate dynamic height based on image size
+            final double placeholderHeight = imageSize != null
+                ? (imageSize.height / imageSize.width) *
+                    MediaQuery.of(context).size.width /
+                    3
+                : 150.0; // Default static height for error or if size not loaded
+
+            return StaggeredGridTile.fit(
+              crossAxisCellCount: 1,
+              child: CachedNetworkImage(
+                imageUrl: imageUrl,
+                fit: BoxFit.fill,
+                height: placeholderHeight,
+                imageBuilder: (context, imageProvider) {
+                  return Container(
+                    width: MediaQuery.of(context).size.width,
+                    decoration: BoxDecoration(
+                      borderRadius: BorderRadius.circular(10),
+                    ),
+                    child: Image(
+                      image: imageProvider,
+                      fit: BoxFit.fill,
+                      filterQuality: FilterQuality.high,
+                    ),
+                  );
+                },
+
+                placeholder: (context, url) => Container(
+                  width: MediaQuery.of(context).size.width,
+                  height: placeholderHeight,
+                  decoration: BoxDecoration(
+                    color: Colors.amberAccent,
+                    borderRadius: BorderRadius.circular(10),
+                  ),
+                  child: Center(
+                    child: CircularProgressIndicator(),
+                  ),
+                ),
+                errorWidget: (context, url, error) => Container(
+                  height: 200.0, // Static height for error
+                  color: Colors.red.shade300,
+                  child: const Icon(
+                    Icons.error,
+                    size: 50,
+                    color: Colors.white,
+                  ),
+                ),
+              ),
+            );
+          },
+        ),
+
+      ],
+    );
+/*    return Scrollbar(
+      controller: _scrollController,
+      interactive: true,
+      child: SingleChildScrollView(
+        physics: BouncingScrollPhysics(),
+        keyboardDismissBehavior: ScrollViewKeyboardDismissBehavior.onDrag,
+        controller: _scrollController,
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          crossAxisAlignment: CrossAxisAlignment.start,
+          mainAxisAlignment: MainAxisAlignment.start,
+          children: [
+            SizedBox(height: 10,),
+            Row(
+              mainAxisSize: MainAxisSize.min,
+              crossAxisAlignment: CrossAxisAlignment.start,
+              mainAxisAlignment: MainAxisAlignment.start,
+              children: [
+                Expanded(
+                  child: StaggeredGrid.count(
+                    crossAxisCount: 3,
+                    mainAxisSpacing: 10,
+                    crossAxisSpacing: 10,
+                    children: List.generate(
+                      _images.length ?? 0,
+                          (index) {
+                        final image = _images[index];
+                        final String imageUrl = image['download_url'];
+                        final Size? imageSize = _imageSizeMap[imageUrl];
+                        // Calculate dynamic height based on image size
+                        final double placeholderHeight = imageSize != null
+                            ? (imageSize.height / imageSize.width) *
+                            MediaQuery.of(context).size.width /
+                            3
+                            : 150.0; // Default static height for error or if size not
+                        Constants.debugLog(ImageGridScreen,
+                            "image:-\t width: ${imageSize?.width}\theight:${imageSize?.height}");
+                        return StaggeredGridTile.fit(
+                          crossAxisCellCount: 1,
+                          child: CachedNetworkImage(
+                            imageUrl: imageUrl,
+                            fit: BoxFit.fill,
+                            height: placeholderHeight,
+                            imageBuilder: (context, imageProvider) {
+                              return Container(
+                                width: MediaQuery.of(context).size.width,
+                                decoration: BoxDecoration(
+                                  borderRadius: BorderRadius.circular(10),
+                                ),
+                                child: Image(
+                                  image: imageProvider,
+                                  fit: BoxFit.fill,
+                                  filterQuality: FilterQuality.high,
+                                ),
+                              );
+                            },
+
+                            placeholder: (context, url) => Container(
+                              width: MediaQuery.of(context).size.width,
+                              height: placeholderHeight,
+                              decoration: BoxDecoration(
+                                color: Colors.amberAccent,
+                                borderRadius: BorderRadius.circular(10),
+                              ),
+                              child: Center(
+                                child: CircularProgressIndicator(),
+                              ),
+                            ),
+                            errorWidget: (context, url, error) => Container(
+                              height: 200.0, // Static height for error
+                              color: Colors.red.shade300,
+                              child: const Icon(
+                                Icons.error,
+                                size: 50,
+                                color: Colors.white,
+                              ),
+                            ),
+                          ),
+                        );
+                      },
+                    ).toList(growable: true),
+                  ),
+                )
+              ],
+            )
+          ],
+        ),
+      ),
+    );*/
   }
 }

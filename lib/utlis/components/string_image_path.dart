@@ -2,6 +2,8 @@
   static String loading_lottie = "assets/lottie/loading.json";
   static String error_loader_lottie = "assets/lottie/error_loader.json";
   static String lost_connection_lottie = "assets/lottie/lost_connection.json";
+  static String image_loader_dark_theme_lottie = "assets/lottie/image_loader_dark_theme.json";
+  static String image_loader_light_theme_lottie = "assets/lottie/image_loader_light_theme.json";
 
   static String done_brown_color_lottie = "assets/lottie/done_brown_color_lottie.json";
   static String done_light_brown_color_lottie = "assets/lottie/done_light_brown_color.json";
@@ -20,4 +22,5 @@
   static String hill = "assets/images/hill.jpg";
   static String sun_rise = "assets/images/sun_rise.jpg";
   static String sun_set = "assets/images/sun_set.jpg";
+  static const String image_placeholder = "assets/images/image_placeholder.png";
 }
