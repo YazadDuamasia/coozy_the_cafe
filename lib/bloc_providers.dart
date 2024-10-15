@@ -36,5 +36,7 @@ List<BlocProvider> blocProviders = [
     create: (context) =>
         WaiterListScreenBloc()..add(InitialLoadWaiterListScreenEvent()),
   ),
-
+  BlocProvider<PostGridPageCubit>(
+    create: (context) => PostGridPageCubit(),
+  ),
 ];

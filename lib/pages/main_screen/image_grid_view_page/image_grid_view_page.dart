@@ -1,12 +1,9 @@
-import 'dart:async';
-import 'dart:convert';
-import 'dart:ui' as ui;
+import 'package:coozy_the_cafe/bloc/bloc.dart';
 import 'package:coozy_the_cafe/pages/pages.dart';
 import 'package:coozy_the_cafe/utlis/utlis.dart';
-import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_staggered_grid_view/flutter_staggered_grid_view.dart';
-import 'package:http/http.dart' as http;
 import 'package:cached_network_image/cached_network_image.dart';
 
 class ImageGridScreen extends StatefulWidget {
@@ -15,82 +12,22 @@ class ImageGridScreen extends StatefulWidget {
 }
 
 class _ImageGridScreenState extends State<ImageGridScreen> {
-  List<Map<String, dynamic>> _images = [];
-  Map<String, Size> _imageSizeMap = {}; // To store image sizes
-  int _page = 1;
-  int _limit = 50;
   bool _isLoading = false;
   final ScrollController _scrollController = ScrollController();
 
   @override
   void initState() {
     super.initState();
-    _fetchImages();
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      BlocProvider.of<PostGridPageCubit>(context).fetchInitialData();
+    });
     _scrollController.addListener(() {
       if (_scrollController.position.pixels ==
           _scrollController.position.maxScrollExtent) {
-        _fetchImages();
-      }
-    });
-  }
-
-  Future<void> _fetchImages() async {
-    if (_isLoading) return;
-    setState(() {
-      _isLoading = true;
-    });
-
-    final response = await http.get(
-      Uri.parse('https://picsum.photos/v2/list?page=$_page&limit=$_limit'),
-    );
-
-    if (response.statusCode == 200) {
-      final List<dynamic> data = json.decode(response.body);
-      for (var imageData in data) {
-        // Load the image and get its dimensions in one go
-        await _loadImageDimensions(
-            Uri.tryParse(imageData["download_url"]).toString() ?? "");
-
         setState(() {
-          _images.add({
-            'id': imageData['id'],
-            'author': imageData['author'],
-            'url': Uri.tryParse(imageData["url"]).toString() ?? "",
-            'download_url':
-            Uri.tryParse(imageData["download_url"]).toString() ?? "",
-          });
+          BlocProvider.of<PostGridPageCubit>(context).loadMore();
         });
       }
-      setState(() {
-        _page++; // Increment page for next fetch
-        _isLoading = false;
-      });
-    } else {
-      setState(() {
-        _isLoading = false;
-      });
-    }
-  }
-
-  Future<Size> _calculateImageSize(String imageUrl) async {
-    final ImageProvider imageProvider = NetworkImage(imageUrl);
-    final Completer<ui.Image> completer = Completer<ui.Image>();
-
-    imageProvider
-        .resolve(const ImageConfiguration())
-        .addListener(ImageStreamListener((ImageInfo info, bool _) {
-      completer.complete(info.image);
-    }));
-
-    final ui.Image image = await completer.future;
-    return Size(image.width.toDouble(), image.height.toDouble());
-  }
-
-  Future<void> _loadImageDimensions(String imageUrl) async {
-    final Size imageSize = await _calculateImageSize(imageUrl);
-    // Store the image size once resolved
-    setState(() {
-      _imageSizeMap[imageUrl] = imageSize;
     });
   }
 
@@ -108,194 +45,229 @@ class _ImageGridScreenState extends State<ImageGridScreen> {
         appBar: AppBar(
           title: const Text('Dynamic Grid with Cached Images'),
         ),
-        body: _images.isEmpty ? LoadingPage() : buildMasonryGridView(),
+        body: BlocConsumer<PostGridPageCubit, PostGridPageState>(
+          listener: (context, state) {
+            setState(() {});
+          },
+          builder: (context, state) {
+            if (state is PostGridPageInitial ||
+                state is PostGridPageLoadingState) {
+              return LoadingPage();
+            } else if (state is PostGridPageLoadedState) {
+              List<Map<String, dynamic>>? data = state.data;
+              if (data == null || data.isEmpty) {
+                return empty_view(context);
+              } else {
+                return list_view(data);
+              }
+            } else if (state is PostGridPageErrorState) {
+              return ErrorPage(
+                onPressedRetryButton: () {
+                  BlocProvider.of<PostGridPageCubit>(context)
+                      .fetchInitialData();
+                },
+              );
+            } else if (state is PostGridPageNoInternetState) {
+              return NoInternetPage(
+                onPressedRetryButton: () {
+                  BlocProvider.of<PostGridPageCubit>(context)
+                      .fetchInitialData();
+                },
+              );
+            } else {
+              return SizedBox.shrink();
+            }
+          },
+        ),
       ),
     );
   }
 
-  Widget buildMasonryGridView() {
+  Column empty_view(BuildContext context) {
     return Column(
-      mainAxisAlignment: MainAxisAlignment.start,
-      crossAxisAlignment: CrossAxisAlignment.start,
-      mainAxisSize: MainAxisSize.min,
+      mainAxisAlignment: MainAxisAlignment.center,
+      crossAxisAlignment: CrossAxisAlignment.center,
+      mainAxisSize: MainAxisSize.max,
       children: [
-        MasonryGridView.builder(
-          addSemanticIndexes: true,
-          shrinkWrap: true,
-          physics: BouncingScrollPhysics(
-            decelerationRate: ScrollDecelerationRate.normal,
-            parent: AlwaysScrollableScrollPhysics(),
-          ),
-          gridDelegate:
-              SliverSimpleGridDelegateWithFixedCrossAxisCount(crossAxisCount: 3),
-          addRepaintBoundaries: true,
-          crossAxisSpacing: 10,
-          mainAxisSpacing: 10,
-          addAutomaticKeepAlives: false,
-          cacheExtent: 10,
-          keyboardDismissBehavior: ScrollViewKeyboardDismissBehavior.onDrag,
-          // itemCount: _images.length + (_isLoading ? 1 : 0),
-          itemCount: _images.length ,
-          itemBuilder: (context, index) {
-          /*  if (index == _images.length) {
-              return  Container(
-                width: MediaQuery.of(context).size.width,
-                height: 150,
-                decoration: BoxDecoration(
-                  color: Colors.amberAccent,
-                  borderRadius: BorderRadius.circular(10),
-                ),
-                child: Center(
-                  child: CircularProgressIndicator(),
-                ),
-              );
-            }*/
-            final image = _images[index];
-            final String imageUrl = image['download_url'];
-            final Size? imageSize = _imageSizeMap[imageUrl];
-
-            // Calculate dynamic height based on image size
-            final double placeholderHeight = imageSize != null
-                ? (imageSize.height / imageSize.width) *
-                    MediaQuery.of(context).size.width /
-                    3
-                : 150.0; // Default static height for error or if size not loaded
-
-            return StaggeredGridTile.fit(
-              crossAxisCellCount: 1,
-              child: CachedNetworkImage(
-                imageUrl: imageUrl,
-                fit: BoxFit.fill,
-                height: placeholderHeight,
-                imageBuilder: (context, imageProvider) {
-                  return Container(
-                    width: MediaQuery.of(context).size.width,
-                    decoration: BoxDecoration(
-                      borderRadius: BorderRadius.circular(10),
-                    ),
-                    child: Image(
-                      image: imageProvider,
-                      fit: BoxFit.fill,
-                      filterQuality: FilterQuality.high,
-                    ),
-                  );
-                },
-
-                placeholder: (context, url) => Container(
-                  width: MediaQuery.of(context).size.width,
-                  height: placeholderHeight,
-                  decoration: BoxDecoration(
-                    color: Colors.amberAccent,
-                    borderRadius: BorderRadius.circular(10),
-                  ),
-                  child: Center(
-                    child: CircularProgressIndicator(),
-                  ),
-                ),
-                errorWidget: (context, url, error) => Container(
-                  height: 200.0, // Static height for error
-                  color: Colors.red.shade300,
-                  child: const Icon(
-                    Icons.error,
-                    size: 50,
-                    color: Colors.white,
-                  ),
-                ),
+        Row(
+          mainAxisAlignment: MainAxisAlignment.center,
+          crossAxisAlignment: CrossAxisAlignment.center,
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Expanded(
+              child: Text(
+                "No Data found",
+                style: Theme.of(context).textTheme.bodyLarge,
               ),
-            );
-          },
+            ),
+          ],
         ),
-
       ],
     );
-/*    return Scrollbar(
+  }
+
+  Widget list_view(List<Map<String, dynamic>>? data) {
+    return SingleChildScrollView(
       controller: _scrollController,
-      interactive: true,
-      child: SingleChildScrollView(
-        physics: BouncingScrollPhysics(),
-        keyboardDismissBehavior: ScrollViewKeyboardDismissBehavior.onDrag,
-        controller: _scrollController,
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          crossAxisAlignment: CrossAxisAlignment.start,
-          mainAxisAlignment: MainAxisAlignment.start,
-          children: [
-            SizedBox(height: 10,),
-            Row(
-              mainAxisSize: MainAxisSize.min,
-              crossAxisAlignment: CrossAxisAlignment.start,
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.start,
+        crossAxisAlignment: CrossAxisAlignment.start,
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Padding(
+            padding: const EdgeInsets.all(5.0),
+            child: Row(
               mainAxisAlignment: MainAxisAlignment.start,
+              crossAxisAlignment: CrossAxisAlignment.start,
+              mainAxisSize: MainAxisSize.min,
               children: [
                 Expanded(
                   child: StaggeredGrid.count(
                     crossAxisCount: 3,
-                    mainAxisSpacing: 10,
                     crossAxisSpacing: 10,
+                    mainAxisSpacing: 10,
                     children: List.generate(
-                      _images.length ?? 0,
-                          (index) {
-                        final image = _images[index];
+                      data!.length,
+                      (index) {
+                        final image = data[index];
                         final String imageUrl = image['download_url'];
-                        final Size? imageSize = _imageSizeMap[imageUrl];
-                        // Calculate dynamic height based on image size
-                        final double placeholderHeight = imageSize != null
-                            ? (imageSize.height / imageSize.width) *
-                            MediaQuery.of(context).size.width /
-                            3
-                            : 150.0; // Default static height for error or if size not
-                        Constants.debugLog(ImageGridScreen,
-                            "image:-\t width: ${imageSize?.width}\theight:${imageSize?.height}");
+                        var imageWidth = image['image_width'] ?? 0;
+                        var imageHeight = image['image_height'] ?? 0;
+                        double? placeholderHeight;
+                        try {
+                          placeholderHeight = (imageHeight / imageWidth) *
+                              MediaQuery.of(context).size.width /
+                              3;
+                        } catch (e) {
+                          placeholderHeight = 250;
+
+                          print(e);
+                        }
                         return StaggeredGridTile.fit(
                           crossAxisCellCount: 1,
-                          child: CachedNetworkImage(
-                            imageUrl: imageUrl,
-                            fit: BoxFit.fill,
-                            height: placeholderHeight,
-                            imageBuilder: (context, imageProvider) {
-                              return Container(
-                                width: MediaQuery.of(context).size.width,
-                                decoration: BoxDecoration(
-                                  borderRadius: BorderRadius.circular(10),
-                                ),
-                                child: Image(
-                                  image: imageProvider,
-                                  fit: BoxFit.fill,
-                                  filterQuality: FilterQuality.high,
-                                ),
-                              );
-                            },
-
-                            placeholder: (context, url) => Container(
-                              width: MediaQuery.of(context).size.width,
-                              height: placeholderHeight,
-                              decoration: BoxDecoration(
-                                color: Colors.amberAccent,
-                                borderRadius: BorderRadius.circular(10),
-                              ),
-                              child: Center(
-                                child: CircularProgressIndicator(),
-                              ),
-                            ),
-                            errorWidget: (context, url, error) => Container(
-                              height: 200.0, // Static height for error
-                              color: Colors.red.shade300,
-                              child: const Icon(
-                                Icons.error,
-                                size: 50,
-                                color: Colors.white,
-                              ),
-                            ),
-                          ),
+                          child: cachedNetworkImage(
+                              imageUrl, context, placeholderHeight),
                         );
                       },
                     ).toList(growable: true),
                   ),
-                )
+                ),
               ],
-            )
-          ],
+            ),
+          ),
+        ],
+      ),
+    );
+    // return Padding(
+    //   padding: const EdgeInsets.all(5.0),
+    //   child: MasonryGridView.count(
+    //     crossAxisCount: 3,
+    //     controller: _scrollController,
+    //     shrinkWrap: true,
+    //     crossAxisSpacing: 10,
+    //     physics: BouncingScrollPhysics(),
+    //     addSemanticIndexes: true,
+    //     addRepaintBoundaries: true,
+    //     addAutomaticKeepAlives: false,
+    //     mainAxisSpacing: 10,
+    //     itemCount: data?.length ?? 0,
+    //     keyboardDismissBehavior: ScrollViewKeyboardDismissBehavior.onDrag,
+    //     itemBuilder: (context, index) {
+    //       final image = data![index];
+    //       final String imageUrl = image['download_url'];
+    //       var imageWidth = image['image_width'] ?? 0;
+    //       var imageHeight = image['image_height'] ?? 0;
+    //       double? placeholderHeight;
+    //       try {
+    //         placeholderHeight = (imageHeight / imageWidth) *
+    //             MediaQuery.of(context).size.width /
+    //             3;
+    //       } catch (e) {
+    //         placeholderHeight = 250;
+    //         print(e);
+    //       }
+    //       return StaggeredGridTile.fit(
+    //         crossAxisCellCount: 1,
+    //         child: cachedNetworkImage(imageUrl, context, placeholderHeight),
+    //       );
+    //     },
+    //   ),
+    // );
+  }
+
+  /*
+     final image = data![index];
+          final String imageUrl = image['download_url'];
+          var imageWidth = image['image_width'] ?? 0;
+          var imageHeight = image['image_height'] ?? 0;
+          double? placeholderHeight;
+          try {
+            placeholderHeight = (imageHeight / imageWidth) *
+                MediaQuery.of(context).size.width /
+                3;
+          } catch (e) {
+            placeholderHeight = 250;
+
+            print(e);
+          }
+          return cachedNetworkImage(imageUrl, context, placeholderHeight);*/
+  Widget cachedNetworkImage(
+      String imageUrl, BuildContext context, double? placeholderHeight) {
+    return Card(
+      elevation: 3,
+      margin: EdgeInsets.zero,
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(10.0),
+      ),
+      child: ClipRRect(
+        borderRadius: BorderRadius.circular(10.0),
+        child: FadeInImage.assetNetwork(
+          placeholder: StringImagePath.image_placeholder,
+          image: imageUrl,
+          height: placeholderHeight,
+          placeholderFit: BoxFit.fill,
+          fit: BoxFit.fill,
         ),
       ),
-    );*/
+    );
+    // return CachedNetworkImage(
+    //   imageUrl: imageUrl,
+    //   width: MediaQuery.of(context).size.width,
+    //   fit: BoxFit.fill,
+    //   imageBuilder: (context, imageProvider) {
+    //     return Container(
+    //       width: MediaQuery.of(context).size.width,
+    //       decoration: BoxDecoration(
+    //         borderRadius: BorderRadius.circular(10),
+    //       ),
+    //       child: Image(
+    //         image: imageProvider,
+    //         fit: BoxFit.fill,
+    //         filterQuality: FilterQuality.high,
+    //       ),
+    //     );
+    //   },
+    //   placeholder: (context, url) => Container(
+    //     width: MediaQuery.of(context).size.width,
+    //     height: placeholderHeight,
+    //     decoration: BoxDecoration(
+    //       color: Colors.amberAccent,
+    //       borderRadius: BorderRadius.circular(10),
+    //     ),
+    //     child: Center(
+    //       child: CircularProgressIndicator(),
+    //     ),
+    //   ),
+    //   errorWidget: (context, url, error) => Container(
+    //     width: MediaQuery.of(context).size.width,
+    //     height: 200.0,
+    //     color: Colors.red.shade300,
+    //     child: const Icon(
+    //       Icons.error,
+    //       size: 50,
+    //       color: Colors.white,
+    //     ),
+    //   ),
+    // );
   }
 }

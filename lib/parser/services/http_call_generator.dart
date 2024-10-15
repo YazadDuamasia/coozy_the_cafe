@@ -42,12 +42,12 @@ class HttpCallGenerator {
           case HTTPMethod.GET:
             response = await http
                 .get(uri, headers: arguments['headers'])
-                .timeout(const Duration(seconds: 15));
+                .timeout(const Duration(seconds: 20));
             break;
           case HTTPMethod.POST:
             response = await http
                 .post(uri, headers: arguments['headers'], body: bodyMap)
-                .timeout(const Duration(seconds: 15));
+                .timeout(const Duration(seconds: 20));
             break;
           case HTTPMethod.POST_ENCODE:
             response = await http
@@ -57,17 +57,17 @@ class HttpCallGenerator {
               body: bodyMap,
               encoding: convert.Encoding.getByName("utf-8"),
             )
-                .timeout(const Duration(seconds: 15));
+                .timeout(const Duration(seconds: 20));
             break;
           case HTTPMethod.PUT:
             response = await http
                 .put(uri, headers: arguments['headers'], body: bodyMap)
-                .timeout(const Duration(seconds: 15));
+                .timeout(const Duration(seconds: 20));
             break;
           case HTTPMethod.DELETE:
             response = await http
                 .delete(uri, headers: arguments['headers'], body: bodyMap)
-                .timeout(const Duration(seconds: 15));
+                .timeout(const Duration(seconds: 20));
             break;
           default:
             throw Exception("Unsupported HTTP method: ${arguments['method']}");
