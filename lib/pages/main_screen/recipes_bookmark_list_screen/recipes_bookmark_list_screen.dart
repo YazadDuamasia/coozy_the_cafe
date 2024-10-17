@@ -1,14 +1,15 @@
 import 'package:coozy_the_cafe/AppLocalization.dart';
 import 'package:coozy_the_cafe/bloc/bloc.dart';
+import 'package:coozy_the_cafe/bloc/recipes_bookmark_list_cubit/recipes_bookmark_list_cubit.dart';
 import 'package:coozy_the_cafe/model/recipe_model.dart';
+import 'package:coozy_the_cafe/pages/pages.dart';
+import 'package:coozy_the_cafe/routing/configs/route_contants.dart';
 import 'package:coozy_the_cafe/utlis/utlis.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
 class RecipesBookmarkListScreen extends StatefulWidget {
-  List<RecipeModel>? list;
-
-  RecipesBookmarkListScreen({Key? key, this.list}) : super(key: key);
+  RecipesBookmarkListScreen({Key? key}) : super(key: key);
 
   @override
   _RecipesBookmarkListScreenState createState() =>
@@ -19,7 +20,9 @@ class _RecipesBookmarkListScreenState extends State<RecipesBookmarkListScreen> {
   @override
   void initState() {
     super.initState();
-    WidgetsBinding.instance.addPostFrameCallback((_) {});
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      BlocProvider.of<RecipesBookmarkListCubit>(context).loadData();
+    });
   }
 
   @override
@@ -32,82 +35,150 @@ class _RecipesBookmarkListScreenState extends State<RecipesBookmarkListScreen> {
           appBar: AppBar(
             title: const Text('Recipe Bookmarks'),
           ),
-          body: Visibility(
-            visible:
-                (widget.list == null || widget.list!.isEmpty) ? false : true,
-            replacement: Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              crossAxisAlignment: CrossAxisAlignment.center,
-              mainAxisSize: MainAxisSize.max,
-              children: [
-                Icon(
-                  MenuIcons.recipe_bookmark,
-                  size: 120,
-                  color: Theme.of(context).colorScheme.primary,
-                ),
-                Padding(
-                  padding: const EdgeInsets.only(
-                      top: 10, bottom: 0, left: 20, right: 20),
-                  child: Row(
+          body:
+              BlocConsumer<RecipesBookmarkListCubit, RecipesBookmarkListState>(
+            listener: (context, state) {
+              // TODO: implement listener
+            },
+            builder: (context, state) {
+              if (state is RecipesBookmarkListInitialState ||
+                  state is RecipesBookmarkListLoadingState) {
+                return const Column(
+                  mainAxisAlignment: MainAxisAlignment.start,
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  mainAxisSize: MainAxisSize.max,
+                  children: [
+                    Expanded(child: LoadingPage()),
+                  ],
+                );
+              } else if (state is RecipesBookmarkListLoadedState) {
+                return Visibility(
+                  visible: (state.data == null || state.data!.isEmpty)
+                      ? false
+                      : true,
+                  replacement: Column(
                     mainAxisAlignment: MainAxisAlignment.center,
                     crossAxisAlignment: CrossAxisAlignment.center,
-                    mainAxisSize: MainAxisSize.min,
-                    children: <Widget>[
-                      Expanded(
-                        child: Text(
-                          "${AppLocalizations.of(context)!.translate(StringValue.recipes_bookmark_no_record_title)}",
-                          textAlign: TextAlign.center,
-                          style: Theme.of(context).textTheme.titleLarge!.copyWith(fontWeight: FontWeight.w700),
+                    mainAxisSize: MainAxisSize.max,
+                    children: [
+                      Icon(
+                        MenuIcons.recipe_bookmark,
+                        size: 120,
+                        color: Theme.of(context).colorScheme.primary,
+                      ),
+                      Padding(
+                        padding: const EdgeInsets.only(
+                            top: 10, bottom: 0, left: 20, right: 20),
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          crossAxisAlignment: CrossAxisAlignment.center,
+                          mainAxisSize: MainAxisSize.min,
+                          children: <Widget>[
+                            Expanded(
+                              child: Text(
+                                "${AppLocalizations.of(context)!.translate(StringValue.recipes_bookmark_no_record_title)}",
+                                textAlign: TextAlign.center,
+                                style: Theme.of(context)
+                                    .textTheme
+                                    .titleLarge!
+                                    .copyWith(fontWeight: FontWeight.w700),
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                      Padding(
+                        padding: const EdgeInsets.only(
+                            top: 10, bottom: 10, left: 20, right: 20),
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          crossAxisAlignment: CrossAxisAlignment.center,
+                          mainAxisSize: MainAxisSize.min,
+                          children: <Widget>[
+                            Expanded(
+                              child: Text(
+                                "${AppLocalizations.of(context)!.translate(StringValue.recipes_bookmark_no_record_sub_title)}",
+                                textAlign: TextAlign.center,
+                                style: Theme.of(context)
+                                    .textTheme
+                                    .titleMedium!
+                                    .copyWith(fontWeight: FontWeight.w600),
+                              ),
+                            ),
+                          ],
                         ),
                       ),
                     ],
                   ),
-                ),
-                Padding(
-                  padding: const EdgeInsets.only(
-                      top: 10, bottom: 10, left: 20, right: 20),
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    crossAxisAlignment: CrossAxisAlignment.center,
-                    mainAxisSize: MainAxisSize.min,
-                    children: <Widget>[
-                      Expanded(
-                        child: Text(
-                          "${AppLocalizations.of(context)!.translate(StringValue.recipes_bookmark_no_record_sub_title)}",
-                          textAlign: TextAlign.center,
-                          style: Theme.of(context).textTheme.titleMedium!.copyWith(fontWeight: FontWeight.w600),
-                        ),
+                  child: Scrollbar(
+                    thumbVisibility: true,
+                    radius: const Radius.circular(10.0),
+                    child: CustomScrollView(
+                      physics: const ClampingScrollPhysics(
+                        parent: AlwaysScrollableScrollPhysics(),
                       ),
-                    ],
+                      shrinkWrap: true,
+                      slivers: [
+                        SliverList(
+                          delegate: SliverChildBuilderDelegate(
+                              (context, index) {
+                            RecipeModel model = state.data![index];
+                            return RepaintBoundary(
+                              child: recipeItem(
+                                model: model,
+                                index: index,
+                              ),
+                            );
+                          },
+                              addSemanticIndexes: true,
+                              addAutomaticKeepAlives: true,
+                              addRepaintBoundaries: false,
+                              childCount: state.data?.length ?? 0),
+                        ),
+                      ],
+                    ),
                   ),
-                ),
-              ],
-            ),
-            child: Scrollbar(
-              thumbVisibility: true,
-              radius: const Radius.circular(10.0),
-              child: CustomScrollView(
-                physics: const ClampingScrollPhysics(
-                  parent: AlwaysScrollableScrollPhysics(),
-                ),
-                shrinkWrap: true,
-                slivers: [
-                  SliverList(
-                    delegate: SliverChildBuilderDelegate((context, index) {
-                      RecipeModel model = widget.list![index];
-                      return recipeItem(
-                        model: model,
-                        index: index,
-                      );
-                    },
-                        addSemanticIndexes: true,
-                        addAutomaticKeepAlives: true,
-                        addRepaintBoundaries: false,
-                        childCount: widget.list?.length ?? 0),
-                  ),
-                ],
-              ),
-            ),
+                );
+              } else if (state is RecipesBookmarkListErrorState) {
+                return Column(
+                  mainAxisAlignment: MainAxisAlignment.start,
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  mainAxisSize: MainAxisSize.max,
+                  children: [
+                    Expanded(
+                      child: ErrorPage(
+                        onPressedRetryButton: () async {
+                          setState(() {
+                            BlocProvider.of<RecipesBookmarkListCubit>(context)
+                                .loadData();
+                          });
+                        },
+                      ),
+                    ),
+                  ],
+                );
+              } else if (state is RecipesBookmarkListNoInternetState) {
+                return Column(
+                  mainAxisAlignment: MainAxisAlignment.start,
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  mainAxisSize: MainAxisSize.max,
+                  children: [
+                    Expanded(
+                      child: NoInternetPage(
+                        onPressedRetryButton: () async {
+                          setState(() {
+                            BlocProvider.of<RecipesBookmarkListCubit>(context)
+                                .loadData();
+                          });
+                        },
+                      ),
+                    ),
+                  ],
+                );
+              } else {
+                return const SizedBox.shrink();
+              }
+            },
           ),
         ),
       ),
@@ -127,7 +198,7 @@ class _RecipesBookmarkListScreenState extends State<RecipesBookmarkListScreen> {
           borderRadius: BorderRadius.circular(5),
           onTap: () async {
             Constants.debugLog(RecipesBookmarkListScreen, model.toString());
-            navigationRoutes.navigateToRecipesInfoScreen(model);
+            navigationRoutes.navigateToRecipesInfoScreen(model: model);
           },
           child: Padding(
             padding: const EdgeInsets.all(10.0),
@@ -363,16 +434,9 @@ class _RecipesBookmarkListScreenState extends State<RecipesBookmarkListScreen> {
                 IconButton(
                   onPressed: () async {
                     setState(() {
-                      BlocProvider.of<RecipesFullListCubit>(context)
-                          .updateBookmark(
-                              model: model,
-                              context: context,
-                              currentIndex: index)
-                          .then((value) {
-                        setState(() {
-                          widget.list!.removeAt(index);
-                        });
-                      });
+                      BlocProvider.of<RecipesBookmarkListCubit>(context)
+                          .updateRecipe(
+                              model.copyWith(isBookmark: !model.isBookmark!));
                     });
                   },
                   icon: Icon(

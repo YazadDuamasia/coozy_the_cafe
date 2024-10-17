@@ -2,6 +2,7 @@ import 'dart:convert';
 
 import 'package:coozy_the_cafe/model/category.dart';
 import 'package:coozy_the_cafe/model/menu_item.dart';
+import 'package:coozy_the_cafe/model/recipe_model.dart';
 import 'package:coozy_the_cafe/model/sub_category.dart';
 
 //-------------------------------------------------------------------------------------------------------------------//
@@ -24,8 +25,7 @@ class CommonScreenArgument {
         memberId: json["memberId"],
       );
 
-  Map<String, dynamic> toMap() =>
-      {
+  Map<String, dynamic> toMap() => {
         "memberId": memberId,
       };
 
@@ -40,28 +40,26 @@ class CommonScreenArgument {
 //-------------------------------------------------------------------------------------------------------------------//
 
 UpdateMenuCategoryScreenArgument updateMenuCategoryScreenArgumentFromMap(
-    String str) => UpdateMenuCategoryScreenArgument.fromMap(json.decode(str));
+        String str) =>
+    UpdateMenuCategoryScreenArgument.fromMap(json.decode(str));
 
 String updateMenuCategoryScreenArgumentToMap(
-    UpdateMenuCategoryScreenArgument data) => json.encode(data.toMap());
+        UpdateMenuCategoryScreenArgument data) =>
+    json.encode(data.toMap());
 
 class UpdateMenuCategoryScreenArgument {
   var categoryId;
 
   UpdateMenuCategoryScreenArgument({
     required this.categoryId,
-
   });
 
   factory UpdateMenuCategoryScreenArgument.fromMap(Map<String, dynamic> json) =>
       UpdateMenuCategoryScreenArgument(
-          categoryId: json['categoryId'] != null ? json['categoryId'] : null
-      );
+          categoryId: json['categoryId'] != null ? json['categoryId'] : null);
 
-  Map<String, dynamic> toMap() =>
-      {
+  Map<String, dynamic> toMap() => {
         'categoryId': categoryId ?? null,
-
       };
 
   static String updateMenuCategoryScreenArgument({categoryId}) {
@@ -72,11 +70,10 @@ class UpdateMenuCategoryScreenArgument {
   }
 }
 
-
 //-------------------------------------------------------------------------------------------------------------------//
 
 OtpVerificationScreenArgument otpVerificationScreenArgumentFromMap(
-    String str) =>
+        String str) =>
     OtpVerificationScreenArgument.fromMap(json.decode(str));
 
 String otpVerificationScreenArgumentToMap(OtpVerificationScreenArgument data) =>
@@ -109,8 +106,7 @@ class OtpVerificationScreenArgument {
         customerID: json["customerID"] ?? null,
       );
 
-  Map<String, dynamic> toMap() =>
-      {
+  Map<String, dynamic> toMap() => {
         "phoneNumber": phoneNumber ?? null,
         "isForgetPassword": isForgetPassword ?? null,
         "otpNumber": otpNumber ?? null,
@@ -119,12 +115,13 @@ class OtpVerificationScreenArgument {
         "customerID": customerID ?? null,
       };
 
-  static String addOtpVerfiy({required phoneNumber,
-    required isForgetPassword,
-    required isLoginScreen,
-    customerID,
-    otpNumber,
-    appSignature}) {
+  static String addOtpVerfiy(
+      {required phoneNumber,
+      required isForgetPassword,
+      required isLoginScreen,
+      customerID,
+      otpNumber,
+      appSignature}) {
     Map<String, dynamic> map = {
       'phoneNumber': phoneNumber.toString(),
       'otpNumber': otpNumber,
@@ -154,8 +151,8 @@ class AddEditMenuItemArgument {
       );
 
   Map<String, dynamic> toMap() => {
-    "menuItem": menuItem?.toJson(),
-  };
+        "menuItem": menuItem?.toJson(),
+      };
 
   static String addEditMenuItemToJson(AddEditMenuItemArgument data) =>
       json.encode(data.toMap());
@@ -163,3 +160,37 @@ class AddEditMenuItemArgument {
   static AddEditMenuItemArgument addEditMenuItemFromJson(String str) =>
       AddEditMenuItemArgument.fromMap(json.decode(str));
 }
+
+//-------------------------------------------------------------------------------------------------------------------//
+
+class RecipesInfoScreenArgument {
+  RecipesInfoScreenArgument({
+    this.model,
+    this.currentIndex,
+  });
+
+  RecipeModel? model;
+  var currentIndex;
+
+  factory RecipesInfoScreenArgument.fromMap(Map<String, dynamic> json) =>
+      RecipesInfoScreenArgument(
+        model:
+            json["model"] != null ? RecipeModel.fromJson(json["model"]) : null,
+        currentIndex: json["currentIndex"],
+      );
+
+  Map<String, dynamic> toMap() => {
+        "model": model?.toJson(),
+        "currentIndex": currentIndex,
+      };
+
+  static String recipesInfoScreenArgumentToJson(
+          RecipesInfoScreenArgument data) =>
+      json.encode(data.toMap());
+
+  static RecipesInfoScreenArgument recipesInfoScreenArgumentFromJson(
+          String str) =>
+      RecipesInfoScreenArgument.fromMap(json.decode(str));
+}
+
+//-------------------------------------------------------------------------------------------------------------------//

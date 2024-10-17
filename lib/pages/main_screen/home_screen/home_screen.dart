@@ -312,6 +312,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:fluttertoast/fluttertoast.dart';
+import 'package:lottie/lottie.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class HomeScreen extends StatefulWidget {
@@ -468,7 +469,8 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
                         if (value == "clear_data") {
                           final prefs = await SharedPreferences.getInstance();
                           prefs.clear();
-                        } if (value == "export") {
+                        }
+                        if (value == "grid_data") {
                           navigationRoutes.navigateToImageGridScreenRoute();
                         }
                       },
@@ -489,6 +491,10 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
                           PopupMenuItem(
                             value: 'clear_data',
                             child: Text("Clear Data"),
+                          ),
+                          PopupMenuItem(
+                            value: 'grid_data',
+                            child: Text("Grid Data"),
                           ),
                         ];
                       },

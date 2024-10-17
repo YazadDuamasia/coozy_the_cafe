@@ -49,6 +49,10 @@ class RestaurantRepository {
     return await _databaseHelper.updateRecipe(recipeModel);
   }
 
+  Future<int?> deleteRecipe(recipe_id) async {
+    return await _databaseHelper.deleteRecipe(id: recipe_id);
+  }
+
 // Retrieves a list of all categories from the database.
   Future<List<Category>?> getCategories() async {
     return await _databaseHelper.getCategories();
@@ -79,7 +83,8 @@ class RestaurantRepository {
   Future<int?> delete_complete_record_category(int? categoryId) async {
     try {
       // First delete all subcategories associated with the category
-      int? deletedSubcategories = await _databaseHelper.deleteAllSubcategoryBasedOnCategoryId(categoryId: categoryId);
+      int? deletedSubcategories = await _databaseHelper
+          .deleteAllSubcategoryBasedOnCategoryId(categoryId: categoryId);
 
       // Then delete the main category
       int? deletedCategory = await _databaseHelper.deleteCategory(categoryId);

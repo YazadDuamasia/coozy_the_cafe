@@ -1,5 +1,5 @@
-import 'package:bloc/bloc.dart';
 import 'package:equatable/equatable.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:rxdart/rxdart.dart';
 
 part 'my_general_state.dart';
@@ -7,7 +7,8 @@ part 'my_general_state.dart';
 class MyGeneralCubit extends Cubit<MyGeneralState> {
   MyGeneralCubit() : super(InitialState());
 
-  final BehaviorSubject<MyGeneralState> _stateSubject = BehaviorSubject();
+  final BehaviorSubject<MyGeneralState> _stateSubject =
+      BehaviorSubject<MyGeneralState>();
 
   Stream<MyGeneralState> get stateStream => _stateSubject.stream;
 

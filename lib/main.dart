@@ -40,7 +40,6 @@ class _MyAppState extends State<MyApp> {
 
   @override
   Widget build(BuildContext context) {
-
     final List<LanguageModel> languages = LanguageModel.getLanguages();
 
     // Retrieves the default theme for the platform

@@ -77,7 +77,7 @@ class RouteGenerator {
 
       case RouteName.otpVerificationRoute:
         OtpVerificationScreenArgument otpVerificationScreenArgument =
-            otpVerificationScreenArgumentFromMap(args.toString());
+        otpVerificationScreenArgumentFromMap(args.toString());
         return PageTransition(
           type: PageTransitionType.rightToLeftWithFade,
           settings: settings,
@@ -127,7 +127,7 @@ class RouteGenerator {
 
       case RouteName.addNewMenuItemScreenRoute:
         AddEditMenuItemArgument otpVerificationScreenArgument =
-            AddEditMenuItemArgument.addEditMenuItemFromJson(args.toString());
+        AddEditMenuItemArgument.addEditMenuItemFromJson(args.toString());
         return PageTransition(
           type: PageTransitionType.rightToLeftWithFade,
           settings: settings,
@@ -152,7 +152,7 @@ class RouteGenerator {
         );
       case RouteName.updateMenuCategoryScreenRoute:
         UpdateMenuCategoryScreenArgument argument =
-            updateMenuCategoryScreenArgumentFromMap(args.toString());
+        updateMenuCategoryScreenArgumentFromMap(args.toString());
         return PageTransition(
           type: PageTransitionType.rightToLeftWithFade,
           settings: settings,
@@ -176,20 +176,15 @@ class RouteGenerator {
           curve: Curves.easeInOut,
           child: const RecipesListScreen(),
         );
-      case RouteName.recipesInfoScreenRoute:
-        return PageTransition(
-          type: PageTransitionType.rightToLeftWithFade,
-          settings: settings,
-          curve: Curves.easeInOut,
-          child: RecipesInfoScreen(model: args as RecipeModel),
-        );
 
       case RouteName.recipesInfoScreenRoute:
+        RecipesInfoScreenArgument argument = RecipesInfoScreenArgument
+            .recipesInfoScreenArgumentFromJson(args.toString());
         return PageTransition(
           type: PageTransitionType.rightToLeftWithFade,
           settings: settings,
           curve: Curves.easeInOut,
-          child: RecipesInfoScreen(model: args as RecipeModel),
+          child: RecipesInfoScreen(model:argument.model, currentIndex:argument.currentIndex,),
         );
 
       case RouteName.recipesBookmarkListScreenRoute:
@@ -197,7 +192,7 @@ class RouteGenerator {
           type: PageTransitionType.rightToLeftWithFade,
           settings: settings,
           curve: Curves.easeInOut,
-          child: RecipesBookmarkListScreen(list: args as List<RecipeModel>?),
+          child: RecipesBookmarkListScreen(),
         );
       case RouteName.employeeAttendanceScreenRoute:
         return PageTransition(
@@ -207,7 +202,7 @@ class RouteGenerator {
           child: EmployeeAttendanceScreen(),
         );
 
-        case RouteName.imageGridScreenRoute:
+      case RouteName.imageGridScreenRoute:
         return PageTransition(
           type: PageTransitionType.rightToLeftWithFade,
           settings: settings,

@@ -1,4 +1,5 @@
 import 'package:coozy_the_cafe/bloc/bloc.dart';
+import 'package:coozy_the_cafe/bloc/recipes_bookmark_list_cubit/recipes_bookmark_list_cubit.dart';
 import 'package:coozy_the_cafe/database/database.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
@@ -38,5 +39,8 @@ List<BlocProvider> blocProviders = [
   ),
   BlocProvider<PostGridPageCubit>(
     create: (context) => PostGridPageCubit(),
+  ),
+  BlocProvider<RecipesBookmarkListCubit>(
+    create: (context) => RecipesBookmarkListCubit(),
   ),
 ];

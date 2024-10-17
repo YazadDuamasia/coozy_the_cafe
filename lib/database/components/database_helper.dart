@@ -365,8 +365,8 @@ class DatabaseHelper {
 
   Future<int?> updateRecipe(RecipeModel recipe) async {
     final db = await database;
-
-    int? rowsAffected = await db!.update(
+    if (db == null) return null; // Handle null database scenario
+    int? rowsAffected = await db.update(
       recipeModelTable,
       recipe.toJson(),
       where: 'recipe_id = ?',
@@ -375,9 +375,24 @@ class DatabaseHelper {
     return rowsAffected;
   }
 
-  Future<List<RecipeModel>> getRecipes() async {
+  Future<int?> deleteRecipe({int? id}) async {
     final db = await database;
-    final List<Map<String, dynamic>> maps = await db!.query(recipeModelTable);
+    if (db == null) return null;
+
+    return await db.transaction<int>((txn) async {
+      return await txn.delete(
+        recipeModelTable,
+        where: 'recipe_id = ?',
+        whereArgs: [id],
+      );
+    });
+  }
+
+  Future<List<RecipeModel>?> getRecipes() async {
+    final db = await database;
+    if (db == null) return null;
+
+    final List<Map<String, dynamic>> maps = await db.query(recipeModelTable);
     return List.generate(maps.length, (i) {
       return RecipeModel(
         recipeID: maps[i]['recipe_id'],

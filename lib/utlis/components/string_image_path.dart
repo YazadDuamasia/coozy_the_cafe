@@ -4,6 +4,7 @@
   static String lost_connection_lottie = "assets/lottie/lost_connection.json";
   static String image_loader_dark_theme_lottie = "assets/lottie/image_loader_dark_theme.json";
   static String image_loader_light_theme_lottie = "assets/lottie/image_loader_light_theme.json";
+  static String red_circled_white_cross_error_lottie = "assets/lottie/red_circled_white_cross_error.json";
 
   static String done_brown_color_lottie = "assets/lottie/done_brown_color_lottie.json";
   static String done_light_brown_color_lottie = "assets/lottie/done_light_brown_color.json";

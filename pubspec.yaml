@@ -44,6 +44,7 @@ dependencies:
   #
   fluttertoast: ^8.2.8
   another_flushbar: ^1.12.30
+  share_plus: ^10.0.3
   #
   bubble_showcase: ^1.1.0
   cached_network_image: ^3.4.1

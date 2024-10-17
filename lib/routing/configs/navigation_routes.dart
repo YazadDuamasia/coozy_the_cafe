@@ -122,20 +122,22 @@ class NavigationRoutes {
         .pushNamed(RouteName.employeeAttendanceScreenRoute);
   }
 
-  void navigateToRecipesInfoScreen(RecipeModel arguments) {
+  Future<void> navigateToRecipesInfoScreen(
+      {required RecipeModel? model, var currentIndex})async {
+    String arg = RecipesInfoScreenArgument.recipesInfoScreenArgumentToJson(
+        RecipesInfoScreenArgument(currentIndex: currentIndex, model: model));
     navigatorKey.currentState!
-        .pushNamed(RouteName.recipesInfoScreenRoute, arguments: arguments);
+        .pushNamed(RouteName.recipesInfoScreenRoute, arguments: arg);
   }
 
   Future navigateToImageGridScreenRoute() async {
     await navigatorKey.currentState!.pushNamed(RouteName.imageGridScreenRoute);
   }
 
-  Future navigateToRecipesBookmarkListScreen(
-      List<RecipeModel>? arguments) async {
+  Future navigateToRecipesBookmarkListScreen() async {
     await navigatorKey.currentState!.pushNamed(
-        RouteName.recipesBookmarkListScreenRoute,
-        arguments: arguments);
+      RouteName.recipesBookmarkListScreenRoute,
+    );
   }
 
   Future navigateToAppPermissionScreen(

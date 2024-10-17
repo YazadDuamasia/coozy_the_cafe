@@ -1,16 +1,23 @@
 import 'dart:io';
 
+import 'package:coozy_the_cafe/bloc/recipes_bookmark_list_cubit/recipes_bookmark_list_cubit.dart';
+import 'package:coozy_the_cafe/bloc/recipes_full_list_cubit/recipes_full_list_cubit.dart';
 import 'package:coozy_the_cafe/model/recipe_model.dart';
 import 'package:coozy_the_cafe/model/translator_language/translator_language.dart';
+import 'package:coozy_the_cafe/routing/routs.dart';
 import 'package:coozy_the_cafe/utlis/components/constants.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:translator/translator.dart';
 import 'package:url_launcher/url_launcher.dart';
+import "dart:ui" as ui;
 
 class RecipesInfoScreen extends StatefulWidget {
   RecipeModel? model;
+  var currentIndex;
 
-  RecipesInfoScreen({Key? key, required this.model}) : super(key: key);
+  RecipesInfoScreen({Key? key, required this.model, this.currentIndex})
+      : super(key: key);
 
   @override
   _RecipesInfoScreenState createState() => _RecipesInfoScreenState();
@@ -69,6 +76,20 @@ class _RecipesInfoScreenState extends State<RecipesInfoScreen> {
               " Recipes Details",
             ),
             centerTitle: false,
+            actions: [
+              IconButton(
+                onPressed: bookmark,
+                icon: widget.model?.isBookmark == true
+                    ? const Icon(Icons.bookmark, color: Colors.white)
+                    : const Icon(Icons.bookmark_outline, color: Colors.white),
+                tooltip: "Bookmark",
+              ),
+              IconButton(
+                onPressed: shareRecipe,
+                icon: const Icon(Icons.share, color: Colors.white),
+                tooltip: "Share this recipe",
+              ),
+            ],
           ),
           body: SingleChildScrollView(
             keyboardDismissBehavior: ScrollViewKeyboardDismissBehavior.onDrag,
@@ -85,19 +106,20 @@ class _RecipesInfoScreenState extends State<RecipesInfoScreen> {
                     mainAxisSize: MainAxisSize.min,
                     children: <Widget>[
                       Expanded(
-                        child: RichText(
-                          text: TextSpan(
+                        child: SelectableText.rich(
+                          selectionHeightStyle: ui.BoxHeightStyle.strut,
+                          TextSpan(
                             children: [
                               TextSpan(
                                 text: 'Title: ',
                                 style: Theme.of(context)
                                     .textTheme
-                                    .bodyMedium
+                                    .titleLarge
                                     ?.copyWith(fontWeight: FontWeight.w700),
                               ),
                               TextSpan(
                                 text: '${widget.model?.recipeName ?? ""}',
-                                style: Theme.of(context).textTheme.bodyMedium,
+                                style: Theme.of(context).textTheme.titleLarge,
                               ),
                             ],
                           ),
@@ -114,20 +136,21 @@ class _RecipesInfoScreenState extends State<RecipesInfoScreen> {
                     mainAxisSize: MainAxisSize.min,
                     children: <Widget>[
                       Expanded(
-                        child: RichText(
-                          text: TextSpan(
+                        child: SelectableText.rich(
+                          selectionHeightStyle: ui.BoxHeightStyle.strut,
+                          TextSpan(
                             children: [
                               TextSpan(
                                 text: 'Translated title: ',
                                 style: Theme.of(context)
                                     .textTheme
-                                    .bodyMedium
+                                    .titleMedium
                                     ?.copyWith(fontWeight: FontWeight.w700),
                               ),
                               TextSpan(
                                 text:
                                     '${widget.model?.translatedRecipeName ?? ""}',
-                                style: Theme.of(context).textTheme.bodyMedium,
+                                style: Theme.of(context).textTheme.titleMedium,
                               ),
                             ],
                           ),
@@ -1138,7 +1161,8 @@ class _RecipesInfoScreenState extends State<RecipesInfoScreen> {
   }
 
   void _showIngredientLanguageSelectionBottomSheet(BuildContext context) {
-    List<TranslatorLanguageModel> filteredLanguages = List.from(Constants.languages);
+    List<TranslatorLanguageModel> filteredLanguages =
+        List.from(Constants.languages);
 
     showModalBottomSheet(
       context: context,
@@ -1311,5 +1335,29 @@ class _RecipesInfoScreenState extends State<RecipesInfoScreen> {
   @override
   void dispose() {
     super.dispose();
+  }
+
+  Future<void> shareRecipe() async {}
+
+  bool _wasPreviousRouteRecipesBookmarkListScreen(BuildContext context) {
+    if (Navigator.of(context).canPop()) {
+      final ModalRoute? previousRoute = ModalRoute.of(context);
+      if (previousRoute != null) {
+        // Compare previous route name with RecipesBookmarkListScreen route name
+        return previousRoute.settings.name ==
+            RouteName.recipesBookmarkListScreenRoute;
+      }
+    }
+    return false;
+  }
+
+  void bookmark() {
+    BlocProvider.of<RecipesBookmarkListCubit>(context).updateRecipe(
+        widget.model!.copyWith(isBookmark: !widget.model!.isBookmark!));
+
+    setState(() {
+      widget.model = widget.model!
+          .copyWith(isBookmark: !widget.model!.isBookmark! ?? false);
+    });
   }
 }

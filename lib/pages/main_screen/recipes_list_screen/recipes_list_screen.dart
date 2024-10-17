@@ -46,29 +46,13 @@ class _RecipesListScreenState extends State<RecipesListScreen> {
               IconButton(
                   tooltip: "Bookmarks",
                   onPressed: () async {
-                    List<RecipeModel>? data;
-                    try {
-                      data =
-                          await RestaurantRepository().getBookmarkedRecipes();
-                    } catch (e) {
-                      print(e);
-                      return;
-                    }
-                    if (data == null || data.isEmpty) {
-                      Constants.showToastMsg(
-                          msg: "Please select recipes to bookmark");
-                    } else {
-                      await navigationRoutes
-                          .navigateToRecipesBookmarkListScreen(data)
-                          .then((value) {
-                        setState(() {});
+                    await navigationRoutes
+                        .navigateToRecipesBookmarkListScreen()
+                        .then((value) {
+                      setState(() {
+                        BlocProvider.of<RecipesFullListCubit>(context).loadData();
                       });
-                    }
-                    // await navigationRoutes
-                    //     .navigateToRecipesBookmarkListScreen(data)
-                    //     .then((value) {
-                    //   setState(() {});
-                    // });
+                    });
                   },
                   icon: Icon(MdiIcons.bookmarkMultiple)),
             ],
@@ -76,17 +60,8 @@ class _RecipesListScreenState extends State<RecipesListScreen> {
           body: BlocConsumer<RecipesFullListCubit, RecipesFullListState>(
             listener: (BuildContext context, RecipesFullListState state) {},
             builder: (BuildContext context, RecipesFullListState state) {
-              if (state is RecipesInitialState) {
-                return const Column(
-                  mainAxisAlignment: MainAxisAlignment.start,
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  mainAxisSize: MainAxisSize.max,
-                  children: [
-                    Expanded(child: LoadingPage()),
-                  ],
-                );
-              }
-              if (state is RecipesLoadingState) {
+              if (state is RecipesInitialState ||
+                  state is RecipesLoadingState) {
                 return const Column(
                   mainAxisAlignment: MainAxisAlignment.start,
                   crossAxisAlignment: CrossAxisAlignment.start,
@@ -379,301 +354,318 @@ class _RecipesListScreenState extends State<RecipesListScreen> {
       {required RecipesLoadedState state,
       required RecipeModel model,
       required int index}) {
-    return Card(
-      elevation: 3,
-      shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(5),
-      ),
-      margin: const EdgeInsets.only(right: 10, left: 10, bottom: 10),
-      child: Material(
-        type: MaterialType.transparency,
-        child: InkWell(
+    return RepaintBoundary(
+      child: Card(
+        elevation: 3,
+        shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(5),
-          onTap: () async {
-            Constants.debugLog(RecipesListScreen, model.toString());
-            navigationRoutes.navigateToRecipesInfoScreen(model);
-          },
-          child: Padding(
-            padding: const EdgeInsets.all(10.0),
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.start,
-              crossAxisAlignment: CrossAxisAlignment.start,
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                /*  Padding(
-                  padding: const EdgeInsets.only(right: 5.0),
-                  child: CircleAvatar(child: Text("${(state.startIndex??0 )+ index+1}"),),
-                ),*/
-                Expanded(
-                  child: Column(
-                    mainAxisAlignment: MainAxisAlignment.start,
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    mainAxisSize: MainAxisSize.min,
-                    children: <Widget>[
-                      Visibility(
-                        visible: (model.translatedRecipeName == null ||
-                                model.translatedRecipeName!.isEmpty)
-                            ? false
-                            : true,
-                        child: Row(
-                          mainAxisAlignment: MainAxisAlignment.start,
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          mainAxisSize: MainAxisSize.min,
-                          children: <Widget>[
-                            Expanded(
-                              child: Text(model.translatedRecipeName ?? "",
-                                  style: Theme.of(context)
-                                      .textTheme
-                                      .bodyLarge
-                                      ?.copyWith(fontWeight: FontWeight.w700)),
-                            )
-                          ],
-                        ),
-                      ),
-                      Visibility(
-                        visible: (model.recipeName == null ||
-                                model.recipeName!.isEmpty)
-                            ? false
-                            : true,
-                        child: Padding(
-                          padding: const EdgeInsets.only(top: 5),
+        ),
+        margin: const EdgeInsets.only(right: 10, left: 10, bottom: 10),
+        child: Material(
+          type: MaterialType.transparency,
+          child: InkWell(
+            borderRadius: BorderRadius.circular(5),
+            onTap: () async {
+              Constants.debugLog(RecipesListScreen, model.toString());
+              await navigationRoutes
+                  .navigateToRecipesInfoScreen(
+                      model: model, currentIndex: index)
+                  .then(
+                (value) {
+                  setState(() {
+                    BlocProvider.of<RecipesFullListCubit>(context).loadData();
+                  });
+                },
+              );
+            },
+            child: Padding(
+              padding: const EdgeInsets.all(10.0),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.start,
+                crossAxisAlignment: CrossAxisAlignment.start,
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  /*  Padding(
+                    padding: const EdgeInsets.only(right: 5.0),
+                    child: CircleAvatar(child: Text("${(state.startIndex??0 )+ index+1}"),),
+                  ),*/
+                  Expanded(
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.start,
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      mainAxisSize: MainAxisSize.min,
+                      children: <Widget>[
+                        Visibility(
+                          visible: (model.translatedRecipeName == null ||
+                                  model.translatedRecipeName!.isEmpty)
+                              ? false
+                              : true,
                           child: Row(
                             mainAxisAlignment: MainAxisAlignment.start,
                             crossAxisAlignment: CrossAxisAlignment.start,
                             mainAxisSize: MainAxisSize.min,
                             children: <Widget>[
                               Expanded(
-                                child: Text(model.recipeName ?? "",
-                                    style:
-                                        Theme.of(context).textTheme.bodyMedium),
+                                child: Text(model.translatedRecipeName ?? "",
+                                    style: Theme.of(context)
+                                        .textTheme
+                                        .bodyLarge
+                                        ?.copyWith(
+                                            fontWeight: FontWeight.w700)),
                               )
                             ],
                           ),
                         ),
-                      ),
-                      Padding(
-                        padding: const EdgeInsets.only(top: 5),
-                        child: Row(
-                          mainAxisSize: MainAxisSize.min,
-                          mainAxisAlignment: MainAxisAlignment.start,
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Expanded(
-                              child: RichText(
-                                text: TextSpan(
-                                  text: 'Servings: ',
-                                  style: Theme.of(context)
-                                      .textTheme
-                                      .bodyMedium!
-                                      .copyWith(fontWeight: FontWeight.w700),
-                                  children: [
-                                    TextSpan(
-                                        text: model.recipeServings.toString() ??
-                                            "",
-                                        style: Theme.of(context)
-                                            .textTheme
-                                            .bodyMedium!),
-                                  ],
-                                ),
-                              ),
-                            ),
-                          ],
-                        ),
-                      ),
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                        crossAxisAlignment: CrossAxisAlignment.center,
-                        mainAxisSize: MainAxisSize.min,
-                        children: <Widget>[
-                          Expanded(
-                            child: Column(
+                        Visibility(
+                          visible: (model.recipeName == null ||
+                                  model.recipeName!.isEmpty)
+                              ? false
+                              : true,
+                          child: Padding(
+                            padding: const EdgeInsets.only(top: 5),
+                            child: Row(
                               mainAxisAlignment: MainAxisAlignment.start,
                               crossAxisAlignment: CrossAxisAlignment.start,
                               mainAxisSize: MainAxisSize.min,
                               children: <Widget>[
-                                Padding(
-                                  padding: const EdgeInsets.only(top: 5),
-                                  child: Row(
-                                    mainAxisAlignment: MainAxisAlignment.start,
-                                    crossAxisAlignment:
-                                        CrossAxisAlignment.start,
-                                    mainAxisSize: MainAxisSize.min,
-                                    children: <Widget>[
-                                      Expanded(
-                                        child: RichText(
-                                          text: TextSpan(
-                                            children: [
-                                              TextSpan(
-                                                text: 'Total cooking time: ',
-                                                style: Theme.of(context)
-                                                    .textTheme
-                                                    .bodyMedium
-                                                    ?.copyWith(
-                                                        fontWeight:
-                                                            FontWeight.w700),
-                                              ),
-                                              TextSpan(
-                                                text:
-                                                    '${model.recipeTotalTimeInMins ?? 0} mins',
-                                                style: Theme.of(context)
-                                                    .textTheme
-                                                    .bodyMedium,
-                                              ),
-                                            ],
-                                          ),
-                                        ),
-                                      ),
-                                    ],
-                                  ),
-                                ),
-                                Padding(
-                                  padding: const EdgeInsets.only(top: 5),
-                                  child: Row(
-                                    mainAxisAlignment: MainAxisAlignment.start,
-                                    crossAxisAlignment:
-                                        CrossAxisAlignment.start,
-                                    mainAxisSize: MainAxisSize.min,
-                                    children: <Widget>[
-                                      Expanded(
-                                        child: RichText(
-                                          text: TextSpan(
-                                            children: [
-                                              TextSpan(
-                                                text: 'Cooking time: ',
-                                                style: Theme.of(context)
-                                                    .textTheme
-                                                    .bodyMedium
-                                                    ?.copyWith(
-                                                        fontWeight:
-                                                            FontWeight.w700),
-                                              ),
-                                              TextSpan(
-                                                text:
-                                                    '${model.recipeCookingTimeInMins ?? 0} mins',
-                                                style: Theme.of(context)
-                                                    .textTheme
-                                                    .bodyMedium,
-                                              ),
-                                            ],
-                                          ),
-                                        ),
-                                      ),
-                                    ],
-                                  ),
-                                ),
-                                Padding(
-                                  padding: const EdgeInsets.only(top: 5),
-                                  child: Row(
-                                    mainAxisAlignment: MainAxisAlignment.start,
-                                    crossAxisAlignment:
-                                        CrossAxisAlignment.start,
-                                    mainAxisSize: MainAxisSize.min,
-                                    children: <Widget>[
-                                      Expanded(
-                                        child: RichText(
-                                          text: TextSpan(
-                                            children: [
-                                              TextSpan(
-                                                text: 'Preparation time: ',
-                                                style: Theme.of(context)
-                                                    .textTheme
-                                                    .bodyMedium
-                                                    ?.copyWith(
-                                                        fontWeight:
-                                                            FontWeight.w700),
-                                              ),
-                                              TextSpan(
-                                                text:
-                                                    '${model.recipePreparationTimeInMins ?? 0} mins',
-                                                style: Theme.of(context)
-                                                    .textTheme
-                                                    .bodyMedium,
-                                              ),
-                                            ],
-                                          ),
-                                        ),
-                                      ),
-                                    ],
-                                  ),
-                                ),
+                                Expanded(
+                                  child: Text(model.recipeName ?? "",
+                                      style: Theme.of(context)
+                                          .textTheme
+                                          .bodyMedium),
+                                )
                               ],
                             ),
-                          )
-                        ],
-                      ),
-                      Padding(
-                        padding: const EdgeInsets.only(top: 5),
-                        child: Row(
-                          mainAxisSize: MainAxisSize.min,
-                          mainAxisAlignment: MainAxisAlignment.start,
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Expanded(
-                              child: RichText(
-                                text: TextSpan(
-                                  text: 'Cuisine: ',
-                                  style: Theme.of(context)
-                                      .textTheme
-                                      .bodyMedium!
-                                      .copyWith(fontWeight: FontWeight.w700),
-                                  children: [
-                                    TextSpan(
-                                        text: "${model.recipeCuisine}",
-                                        style: Theme.of(context)
-                                            .textTheme
-                                            .bodyMedium!),
-                                  ],
+                          ),
+                        ),
+                        Padding(
+                          padding: const EdgeInsets.only(top: 5),
+                          child: Row(
+                            mainAxisSize: MainAxisSize.min,
+                            mainAxisAlignment: MainAxisAlignment.start,
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Expanded(
+                                child: RichText(
+                                  text: TextSpan(
+                                    text: 'Servings: ',
+                                    style: Theme.of(context)
+                                        .textTheme
+                                        .bodyMedium!
+                                        .copyWith(fontWeight: FontWeight.w700),
+                                    children: [
+                                      TextSpan(
+                                          text:
+                                              model.recipeServings.toString() ??
+                                                  "",
+                                          style: Theme.of(context)
+                                              .textTheme
+                                              .bodyMedium!),
+                                    ],
+                                  ),
                                 ),
                               ),
-                            ),
+                            ],
+                          ),
+                        ),
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                          crossAxisAlignment: CrossAxisAlignment.center,
+                          mainAxisSize: MainAxisSize.min,
+                          children: <Widget>[
+                            Expanded(
+                              child: Column(
+                                mainAxisAlignment: MainAxisAlignment.start,
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                mainAxisSize: MainAxisSize.min,
+                                children: <Widget>[
+                                  Padding(
+                                    padding: const EdgeInsets.only(top: 5),
+                                    child: Row(
+                                      mainAxisAlignment:
+                                          MainAxisAlignment.start,
+                                      crossAxisAlignment:
+                                          CrossAxisAlignment.start,
+                                      mainAxisSize: MainAxisSize.min,
+                                      children: <Widget>[
+                                        Expanded(
+                                          child: RichText(
+                                            text: TextSpan(
+                                              children: [
+                                                TextSpan(
+                                                  text: 'Total cooking time: ',
+                                                  style: Theme.of(context)
+                                                      .textTheme
+                                                      .bodyMedium
+                                                      ?.copyWith(
+                                                          fontWeight:
+                                                              FontWeight.w700),
+                                                ),
+                                                TextSpan(
+                                                  text:
+                                                      '${model.recipeTotalTimeInMins ?? 0} mins',
+                                                  style: Theme.of(context)
+                                                      .textTheme
+                                                      .bodyMedium,
+                                                ),
+                                              ],
+                                            ),
+                                          ),
+                                        ),
+                                      ],
+                                    ),
+                                  ),
+                                  Padding(
+                                    padding: const EdgeInsets.only(top: 5),
+                                    child: Row(
+                                      mainAxisAlignment:
+                                          MainAxisAlignment.start,
+                                      crossAxisAlignment:
+                                          CrossAxisAlignment.start,
+                                      mainAxisSize: MainAxisSize.min,
+                                      children: <Widget>[
+                                        Expanded(
+                                          child: RichText(
+                                            text: TextSpan(
+                                              children: [
+                                                TextSpan(
+                                                  text: 'Cooking time: ',
+                                                  style: Theme.of(context)
+                                                      .textTheme
+                                                      .bodyMedium
+                                                      ?.copyWith(
+                                                          fontWeight:
+                                                              FontWeight.w700),
+                                                ),
+                                                TextSpan(
+                                                  text:
+                                                      '${model.recipeCookingTimeInMins ?? 0} mins',
+                                                  style: Theme.of(context)
+                                                      .textTheme
+                                                      .bodyMedium,
+                                                ),
+                                              ],
+                                            ),
+                                          ),
+                                        ),
+                                      ],
+                                    ),
+                                  ),
+                                  Padding(
+                                    padding: const EdgeInsets.only(top: 5),
+                                    child: Row(
+                                      mainAxisAlignment:
+                                          MainAxisAlignment.start,
+                                      crossAxisAlignment:
+                                          CrossAxisAlignment.start,
+                                      mainAxisSize: MainAxisSize.min,
+                                      children: <Widget>[
+                                        Expanded(
+                                          child: RichText(
+                                            text: TextSpan(
+                                              children: [
+                                                TextSpan(
+                                                  text: 'Preparation time: ',
+                                                  style: Theme.of(context)
+                                                      .textTheme
+                                                      .bodyMedium
+                                                      ?.copyWith(
+                                                          fontWeight:
+                                                              FontWeight.w700),
+                                                ),
+                                                TextSpan(
+                                                  text:
+                                                      '${model.recipePreparationTimeInMins ?? 0} mins',
+                                                  style: Theme.of(context)
+                                                      .textTheme
+                                                      .bodyMedium,
+                                                ),
+                                              ],
+                                            ),
+                                          ),
+                                        ),
+                                      ],
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            )
                           ],
                         ),
-                      ),
-                      Padding(
-                        padding: const EdgeInsets.only(top: 5),
-                        child: Row(
-                          mainAxisSize: MainAxisSize.min,
-                          mainAxisAlignment: MainAxisAlignment.start,
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Expanded(
-                              child: RichText(
-                                text: TextSpan(
-                                  text: 'Course: ',
-                                  style: Theme.of(context)
-                                      .textTheme
-                                      .bodyMedium!
-                                      .copyWith(fontWeight: FontWeight.w700),
-                                  children: [
-                                    TextSpan(
-                                        text: model.recipeCourse ?? "",
-                                        style: Theme.of(context)
-                                            .textTheme
-                                            .bodyMedium!),
-                                  ],
+                        Padding(
+                          padding: const EdgeInsets.only(top: 5),
+                          child: Row(
+                            mainAxisSize: MainAxisSize.min,
+                            mainAxisAlignment: MainAxisAlignment.start,
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Expanded(
+                                child: RichText(
+                                  text: TextSpan(
+                                    text: 'Cuisine: ',
+                                    style: Theme.of(context)
+                                        .textTheme
+                                        .bodyMedium!
+                                        .copyWith(fontWeight: FontWeight.w700),
+                                    children: [
+                                      TextSpan(
+                                          text: "${model.recipeCuisine}",
+                                          style: Theme.of(context)
+                                              .textTheme
+                                              .bodyMedium!),
+                                    ],
+                                  ),
                                 ),
                               ),
-                            ),
-                          ],
+                            ],
+                          ),
                         ),
-                      ),
-                    ],
+                        Padding(
+                          padding: const EdgeInsets.only(top: 5),
+                          child: Row(
+                            mainAxisSize: MainAxisSize.min,
+                            mainAxisAlignment: MainAxisAlignment.start,
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Expanded(
+                                child: RichText(
+                                  text: TextSpan(
+                                    text: 'Course: ',
+                                    style: Theme.of(context)
+                                        .textTheme
+                                        .bodyMedium!
+                                        .copyWith(fontWeight: FontWeight.w700),
+                                    children: [
+                                      TextSpan(
+                                          text: model.recipeCourse ?? "",
+                                          style: Theme.of(context)
+                                              .textTheme
+                                              .bodyMedium!),
+                                    ],
+                                  ),
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+                      ],
+                    ),
                   ),
-                ),
-                IconButton(
-                    onPressed: () async {
-                      setState(() {
-                        BlocProvider.of<RecipesFullListCubit>(context)
-                            .updateBookmark(
-                                model: model,
-                                context: context,
-                                currentIndex: index);
-                      });
-                    },
-                    icon: Icon(model.isBookmark == true
-                        ? Icons.bookmark
-                        : Icons.bookmark_outline)),
-              ],
+                  IconButton(
+                      onPressed: () async {
+                        setState(() {
+                          BlocProvider.of<RecipesFullListCubit>(context)
+                              .updateBookmark(
+                                  model: model,
+                                  context: context,
+                                  currentIndex: index);
+                        });
+                      },
+                      icon: Icon(model.isBookmark == true
+                          ? Icons.bookmark
+                          : Icons.bookmark_outline)),
+                ],
+              ),
             ),
           ),
         ),
@@ -798,7 +790,7 @@ class _RecipesListScreenState extends State<RecipesListScreen> {
                     stepSize: 1,
                     fractionDigits: 0),
               ),
-        /*      FilterListModel(
+              /*      FilterListModel(
                   type: FilterType.DatePicker,
                   filterOptions: [],
                   previousApplied: _getPreviousAppliedFilters(

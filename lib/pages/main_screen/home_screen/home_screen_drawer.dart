@@ -3,6 +3,7 @@ import 'package:coozy_the_cafe/utlis/utlis.dart';
 import 'package:flutter/material.dart';
 import 'package:line_icons/line_icons.dart';
 import 'package:material_design_icons_flutter/material_design_icons_flutter.dart';
+import 'package:package_info_plus/package_info_plus.dart';
 
 class HomeScreenDrawer extends StatefulWidget {
   const HomeScreenDrawer({super.key});
@@ -12,8 +13,6 @@ class HomeScreenDrawer extends StatefulWidget {
 }
 
 class _HomeScreenDrawerState extends State<HomeScreenDrawer> {
-
-
   @override
   Widget build(BuildContext context) {
     return Drawer(
@@ -52,7 +51,9 @@ class _HomeScreenDrawerState extends State<HomeScreenDrawer> {
                 _buildDrawerItem(
                   context,
                   icon: Icons.table_restaurant,
-                  title: AppLocalizations.of(context)?.translate(StringValue.table_info_app_bar_title) ?? "Table Info",
+                  title: AppLocalizations.of(context)
+                          ?.translate(StringValue.table_info_app_bar_title) ??
+                      "Table Info",
                   index: 1,
                   onTap: () {
                     Navigator.pop(context);
@@ -86,7 +87,8 @@ class _HomeScreenDrawerState extends State<HomeScreenDrawer> {
                   index: 4,
                   onTap: () {
                     Navigator.pop(context);
-                    navigationRoutes.navigateToMenuAllSubCategoryFullListScreen();
+                    navigationRoutes
+                        .navigateToMenuAllSubCategoryFullListScreen();
                   },
                 ),
                 _buildDrawerItem(
@@ -127,6 +129,26 @@ class _HomeScreenDrawerState extends State<HomeScreenDrawer> {
                     Navigator.pop(context);
                   },
                 ),
+                _buildDrawerItem(
+                  context,
+                  icon: MdiIcons.certificate,
+                  title: 'License',
+                  index: 9,
+                  onTap: () {
+                    PackageInfo.fromPlatform().then((PackageInfo packageInfo) {
+                      String appName = packageInfo.appName;
+                      String packageName = packageInfo.packageName;
+                      String version = packageInfo.version;
+                      String buildNumber = packageInfo.buildNumber;
+
+                      navigationRoutes.showLicensePage(
+                          applicationName: appName,
+                          applicationIcon: FlutterLogo(),
+                          applicationVersion: version,
+                          useRootNavigator: true);
+                    });
+                  },
+                ),
               ],
             ),
           ),
@@ -137,12 +159,12 @@ class _HomeScreenDrawerState extends State<HomeScreenDrawer> {
 
   // Helper method to build a drawer item with underline
   Widget _buildDrawerItem(
-      BuildContext context, {
-        required IconData icon,
-        required String title,
-        required int index,
-        required VoidCallback onTap,
-      }) {
+    BuildContext context, {
+    required IconData icon,
+    required String title,
+    required int index,
+    required VoidCallback onTap,
+  }) {
     return ListTile(
       leading: Icon(icon),
       title: Text(

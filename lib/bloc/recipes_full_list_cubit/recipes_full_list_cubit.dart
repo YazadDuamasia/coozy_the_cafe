@@ -18,7 +18,7 @@ class RecipesFullListCubit extends Cubit<RecipesFullListState> {
   final BehaviorSubject<RecipesFullListState> _stateSubject = BehaviorSubject();
 
   Stream<RecipesFullListState> get stateStream => _stateSubject.stream;
-  List<int> itemsPerPageList = [10, 20, 30, 40, 50,100];
+  List<int> itemsPerPageList = [10, 20, 30, 40, 50, 100];
 
   List<RecipeModel>? recipeList = [];
 
@@ -31,7 +31,7 @@ class RecipesFullListCubit extends Cubit<RecipesFullListState> {
   List<String>? uniqueCourse = [];
   List<FilterItemModel>? courseFilterOptionsList = [];
 
-  List<String>? uniqueDiet = [];
+  List<String?>? uniqueDiet = [];
   List<FilterItemModel>? dietFilterOptionsList = [];
 
   List<int?>? uniqueCookingTime = [];
@@ -45,7 +45,6 @@ class RecipesFullListCubit extends Cubit<RecipesFullListState> {
 
   List<dynamic>? uniqueTime = [];
   List<FilterItemModel>? timeFilterOptionsList = [];
-
 
   List<AppliedFilterModel>? appliedFilterList = [];
 
@@ -159,7 +158,7 @@ class RecipesFullListCubit extends Cubit<RecipesFullListState> {
         // Merge sort uniqueCourse list
         uniqueCourse!.sort((a, b) => a[0].compareTo(b[0]));
         // Merge sort uniqueDiet list
-        uniqueDiet!.sort((a, b) => a[0].compareTo(b[0]));
+        uniqueDiet!.sort((a, b) => a![0].compareTo(b![0]));
         uniqueCookingTime!.sort((a, b) => a!.compareTo(b!));
         uniqueTotalCookingTime!.sort((a, b) => a!.compareTo(b!));
 
@@ -523,7 +522,7 @@ class RecipesFullListCubit extends Cubit<RecipesFullListState> {
         // Get the paginated data based on the calculated indices
         List<RecipeModel>? paginatedData =
             recipesLoadedState.list?.sublist(startIndex, endIndex);
-        await Future.delayed(const Duration(milliseconds: 700));
+        // await Future.delayed(const Duration(milliseconds: 700));
         currentPage = nextPage;
         currentItemsPerPage = recipesLoadedState.itemsPerPage;
         emit(RecipesLoadedState(
@@ -653,11 +652,11 @@ class RecipesFullListCubit extends Cubit<RecipesFullListState> {
             },
           );
           // Merge sort uniqueCuisine list
-          uniqueCuisine!.sort((a, b) => a[0].compareTo(b[0]));
+            uniqueCuisine!.sort((a, b) => a[0].compareTo(b[0]));
           // Merge sort uniqueCourse list
           uniqueCourse!.sort((a, b) => a[0].compareTo(b[0]));
           // Merge sort uniqueDiet list
-          uniqueDiet!.sort((a, b) => a[0].compareTo(b[0]));
+          uniqueDiet!.sort((a, b) => a![0].compareTo(b![0]));
           uniqueCookingTime!.sort((a, b) => a!.compareTo(b!));
           uniqueTotalCookingTime!.sort((a, b) => a!.compareTo(b!));
 
