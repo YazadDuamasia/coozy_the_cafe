@@ -213,61 +213,80 @@ class _ImageGridScreenState extends State<ImageGridScreen> {
           return cachedNetworkImage(imageUrl, context, placeholderHeight);*/
   Widget cachedNetworkImage(
       String imageUrl, BuildContext context, double? placeholderHeight) {
-    return Card(
-      elevation: 3,
-      margin: EdgeInsets.zero,
-      shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(10.0),
-      ),
-      child: ClipRRect(
-        borderRadius: BorderRadius.circular(10.0),
-        child: FadeInImage.assetNetwork(
-          placeholder: StringImagePath.image_placeholder,
-          image: imageUrl,
-          height: placeholderHeight,
-          placeholderFit: BoxFit.fill,
-          fit: BoxFit.fill,
-        ),
-      ),
-    );
-    // return CachedNetworkImage(
-    //   imageUrl: imageUrl,
-    //   width: MediaQuery.of(context).size.width,
-    //   fit: BoxFit.fill,
-    //   imageBuilder: (context, imageProvider) {
-    //     return Container(
-    //       width: MediaQuery.of(context).size.width,
-    //       decoration: BoxDecoration(
-    //         borderRadius: BorderRadius.circular(10),
-    //       ),
-    //       child: Image(
-    //         image: imageProvider,
+    // return RepaintBoundary(
+    //   child: Card(
+    //     elevation: 3,
+    //     margin: EdgeInsets.zero,
+    //     shape: RoundedRectangleBorder(
+    //       borderRadius: BorderRadius.circular(10.0),
+    //     ),
+    //     child: ClipRRect(
+    //       borderRadius: BorderRadius.circular(10.0),
+    //       child: FadeInImage.assetNetwork(
+    //         placeholder: StringImagePath.image_placeholder,
+    //         image: imageUrl,
+    //         height: placeholderHeight,
+    //         placeholderFit: BoxFit.fill,
     //         fit: BoxFit.fill,
-    //         filterQuality: FilterQuality.high,
     //       ),
-    //     );
-    //   },
-    //   placeholder: (context, url) => Container(
-    //     width: MediaQuery.of(context).size.width,
-    //     height: placeholderHeight,
-    //     decoration: BoxDecoration(
-    //       color: Colors.amberAccent,
-    //       borderRadius: BorderRadius.circular(10),
-    //     ),
-    //     child: Center(
-    //       child: CircularProgressIndicator(),
-    //     ),
-    //   ),
-    //   errorWidget: (context, url, error) => Container(
-    //     width: MediaQuery.of(context).size.width,
-    //     height: 200.0,
-    //     color: Colors.red.shade300,
-    //     child: const Icon(
-    //       Icons.error,
-    //       size: 50,
-    //       color: Colors.white,
     //     ),
     //   ),
     // );
+
+    return RepaintBoundary(
+      child: CachedNetworkImage(
+        imageUrl: imageUrl,
+        width: MediaQuery.of(context).size.width,
+        fit: BoxFit.fill,
+        imageBuilder: (context, imageProvider) {
+          return Card(
+            elevation: 3,
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(10.0),
+            ),
+            child: ClipRRect(
+              borderRadius: BorderRadius.circular(10.0),
+              child: Image(
+                image: imageProvider,
+                fit: BoxFit.fill,
+                filterQuality: FilterQuality.high,
+              ),
+            ),
+          );
+        },
+        placeholder: (context, url) => Card(
+          elevation: 3,
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(10.0),
+          ),
+          child: ClipRRect(
+            borderRadius: BorderRadius.circular(10.0),
+            child: SizedBox(
+              width: MediaQuery.of(context).size.width,
+              height: placeholderHeight,
+              child: Center(
+                child: CircularProgressIndicator(),
+              ),
+            ),
+          ),
+        ),
+        errorWidget: (context, url, error) => Card(
+          elevation: 3,
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(10.0),
+          ),
+          color: Colors.redAccent.withOpacity(0.5),
+          child: SizedBox(
+            width: MediaQuery.of(context).size.width,
+            height: 200.0,
+            child: const Icon(
+              Icons.error,
+              size: 50,
+              color: Colors.white,
+            ),
+          ),
+        ),
+      ),
+    );
   }
 }

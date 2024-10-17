@@ -6,6 +6,7 @@ import 'package:coozy_the_cafe/bloc_providers.dart';
 import 'package:coozy_the_cafe/config/config.dart';
 import 'package:coozy_the_cafe/model/language_model/language_model.dart';
 import 'package:coozy_the_cafe/routing/routs.dart';
+import 'package:coozy_the_cafe/services/services.dart';
 import 'package:coozy_the_cafe/simple_bloc_observer.dart';
 import 'package:coozy_the_cafe/utlis/utlis.dart';
 import 'package:flutter/gestures.dart';
@@ -129,6 +130,7 @@ class _MyAppState extends State<MyApp> {
               },
               restorationScopeId: 'app',
               navigatorKey: navigatorKey,
+              navigatorObservers: [LoggerNavigatorObserver()],
               scrollBehavior: ScrollConfiguration.of(context).copyWith(
                 multitouchDragStrategy: MultitouchDragStrategy.sumAllPointers,
                 physics: const BouncingScrollPhysics(

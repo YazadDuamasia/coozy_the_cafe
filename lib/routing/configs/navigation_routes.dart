@@ -152,4 +152,21 @@ class NavigationRoutes {
       ),
     );
   }
+
+  Future showLicensePage({
+    required String? applicationName,
+    String? applicationVersion,
+    Widget? applicationIcon,
+    String? applicationLegalese,
+    bool useRootNavigator = false,
+  }) async {
+    await navigatorKey.currentState?.push(MaterialPageRoute<void>(
+      builder: (BuildContext context) => LicensePage(
+        applicationName: applicationName,
+        applicationVersion: applicationVersion,
+        applicationIcon: applicationIcon,
+        applicationLegalese: applicationLegalese,
+      ),
+    ));
+  }
 }
