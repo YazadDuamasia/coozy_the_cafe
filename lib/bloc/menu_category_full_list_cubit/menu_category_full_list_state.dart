@@ -1,48 +1,57 @@
 part of 'menu_category_full_list_cubit.dart';
 
-abstract class MenuCategoryFullListState extends Equatable {
+sealed class MenuCategoryFullListState extends Equatable {
   const MenuCategoryFullListState();
+}
 
+class MenuCategoryFullListInitialState extends MenuCategoryFullListState {
   @override
   List<Object> get props => [];
 }
 
-class InitialState extends MenuCategoryFullListState {}
+class MenuCategoryFullListLoadingState extends MenuCategoryFullListState {
+  @override
+  List<Object> get props => [];
+}
 
-class LoadingState extends MenuCategoryFullListState {}
-
-class LoadedState extends MenuCategoryFullListState {
+class MenuCategoryFullListLoadedState extends MenuCategoryFullListState {
   final Map<String, dynamic>? data;
-  List<GlobalKey?>? expansionTileKeys;
-  List<ExpansionTileController>? expandedTitleControllerList;
+  final List<GlobalKey?>? expansionTileKeys;
+  final List<ExpansionTileController>? expandedTitleControllerList;
 
-  LoadedState(
+  const MenuCategoryFullListLoadedState(
       {required this.data,
       required this.expansionTileKeys,
       this.expandedTitleControllerList});
 
-  LoadedState copyWith({
+  MenuCategoryFullListLoadedState copyWith({
     Map<String, dynamic>? data,
     List<GlobalKey?>? expansionTileKeys,
     List<ExpansionTileController>? expandedTitleControllerList,
   }) {
-    return LoadedState(
+    return MenuCategoryFullListLoadedState(
       data: data ?? this.data,
       expansionTileKeys: expansionTileKeys ?? this.expansionTileKeys,
-      expandedTitleControllerList: expandedTitleControllerList ?? this.expandedTitleControllerList,
+      expandedTitleControllerList:
+          expandedTitleControllerList ?? this.expandedTitleControllerList,
     );
   }
+
   @override
-  List<Object> get props => [data!];
+  List<Object> get props =>
+      [data!, expansionTileKeys!, expandedTitleControllerList!];
 }
 
-class ErrorState extends MenuCategoryFullListState {
+class MenuCategoryFullListErrorState extends MenuCategoryFullListState {
   final String? errorMessage;
 
-  const ErrorState(this.errorMessage);
+  const MenuCategoryFullListErrorState(this.errorMessage);
 
   @override
   List<Object> get props => [errorMessage!];
 }
 
-class NoInternetState extends MenuCategoryFullListState {}
+class MenuCategoryFullListNoInternetState extends MenuCategoryFullListState {
+  @override
+  List<Object> get props => [];
+}

@@ -72,6 +72,7 @@ class DatabaseHelper {
       id INTEGER PRIMARY KEY AUTOINCREMENT,
       name TEXT,
       isActive INTEGER,
+      position INTEGER,
       createdDate TEXT
     )
   ''');
@@ -84,6 +85,7 @@ class DatabaseHelper {
       createdDate TEXT,
       categoryId INTEGER,
       isActive INTEGER,
+      position INTEGER,
       FOREIGN KEY(categoryId) REFERENCES $categoriesTable(id)
     )
   ''');
@@ -525,9 +527,23 @@ class DatabaseHelper {
   // Category CRUD operations
   Future<int?> addCategory(Category category) async {
     final db = await database;
+
+    // Use a subquery to get the maximum sortOrderIndex
+    final List<
+        Map<String,
+            dynamic>> maxSortRecordIndexResult = await db!.rawQuery(
+        'SELECT COALESCE(MAX(position), -1) AS maxIndex FROM $categoriesTable');
+
+    int? maxSortRecordIndex =
+        Sqflite.firstIntValue(maxSortRecordIndexResult) ?? -1;
+
+    // Automatically generate sortOrderIndex based on the last position
+    category.position = maxSortRecordIndex + 1;
+
+
     Category? model = await getCategoryBasedOnName(name: category.name);
     if (model == null) {
-      return await db?.insert(categoriesTable, category.toJson(),
+      return await db.insert(categoriesTable, category.toJson(),
           conflictAlgorithm: ConflictAlgorithm.replace);
     }
     return null;
@@ -537,7 +553,7 @@ class DatabaseHelper {
     final db = await database;
     final List<Map<String, dynamic>>? maps = await db?.query(
       categoriesTable,
-      orderBy: 'name ASC', // Order by the 'name' column in ascending order
+      orderBy: 'position ASC', // Order by the 'name' column in ascending order
     );
 
     if (maps == null) {
@@ -611,13 +627,65 @@ class DatabaseHelper {
     }
   }
 
-  Future<int?> deleteCategory(int? categoryId) async {
+/*  Future<int?> deleteCategory(int? categoryId) async {
     final db = await database;
+
     return await db?.delete(
       categoriesTable,
       where: 'id = ?',
       whereArgs: [categoryId],
     );
+  } */
+
+  Future<int?> deleteCategory(Category? model) async {
+    final db = await database;
+
+    // Start a transaction to ensure atomicity
+    return db!.transaction((txn) async {
+      int sortRecordIndexToDelete = model!.position ?? 0;
+
+      // Step 1: Delete the item from the database
+      int rowsAffected = await txn.delete(
+        categoriesTable,
+        where: 'id = ?',
+        whereArgs: [model.id!],
+      );
+
+      // Step 2: Update sortOrderIndex for items with a higher index in batches
+      const int batchSize = 100; // Adjust this size based on performance testing
+      int totalRowsUpdated = 0;
+
+      // Calculate how many rows need to be updated
+      var totalRowsToUpdate = await txn.rawQuery(
+        'SELECT COUNT(*) FROM $categoriesTable WHERE position > ?',
+        [sortRecordIndexToDelete],
+      );
+
+      // Extracting the number of rows to update correctly
+      var rowsToUpdate = totalRowsToUpdate.isNotEmpty
+          ? (totalRowsToUpdate[0]['COUNT(*)'] as int?) ?? 0
+          : 0;
+
+      // Perform batched updates
+      while (rowsToUpdate > 0) {
+        // Calculate the number of rows to update in this batch
+        int currentBatchSize = (rowsToUpdate < batchSize) ? rowsToUpdate : batchSize;
+
+        // Update the sortOrderIndex for the current batch
+        await txn.rawUpdate(
+          'UPDATE $categoriesTable SET position = position - 1 '
+              'WHERE position > ? LIMIT ?',
+          [sortRecordIndexToDelete, currentBatchSize],
+        );
+
+        // Decrement the remaining rows to update
+        rowsToUpdate -= currentBatchSize;
+        totalRowsUpdated += currentBatchSize;
+      }
+
+      // Return the result of the transaction (number of rows deleted)
+      return rowsAffected;
+    });
   }
 
   // Subcategory CRUD operations
@@ -633,7 +701,7 @@ class DatabaseHelper {
     final db = await database;
     final List<Map<String, dynamic>> maps = await db!.query(
       subcategoriesTable,
-      orderBy: 'name ASC',
+      orderBy: 'position ASC',
     );
     if (maps.isNotEmpty) {
       return List.generate(maps.length, (i) {
@@ -652,7 +720,7 @@ class DatabaseHelper {
       subcategoriesTable,
       where: 'categoryId = ?',
       whereArgs: [categoryId],
-      orderBy: 'name ASC',
+      orderBy: 'position ASC',
     );
 
     if (maps != null && maps.isNotEmpty) {
@@ -1307,7 +1375,7 @@ class DatabaseHelper {
   }
 
 // Delete a table info
-  Future<int?> deleteTableInfo(TableInfoModel model) async {
+/*  Future<int?> deleteTableInfo(TableInfoModel model) async {
     final db = await database;
 
     // Start a transaction to ensure atomicity
@@ -1325,6 +1393,57 @@ class DatabaseHelper {
       );
 
       // Return the result of the transaction
+      return rowsAffected;
+    });
+  }*/
+
+  Future<int?> deleteTableInfo(TableInfoModel model) async {
+    final db = await database;
+
+    // Start a transaction to ensure atomicity
+    return db!.transaction((txn) async {
+      int sortRecordIndexToDelete = model.sortOrderIndex ?? 0;
+
+      // Step 1: Delete the item from the database
+      int rowsAffected = await txn.delete(
+        tableInfoTable,
+        where: 'id = ?',
+        whereArgs: [model.id],
+      );
+
+      // Step 2: Update sortOrderIndex for items with a higher index in batches
+      const int batchSize = 100; // Adjust this size based on performance testing
+      int totalRowsUpdated = 0;
+
+      // Calculate how many rows need to be updated
+      var totalRowsToUpdate = await txn.rawQuery(
+        'SELECT COUNT(*) FROM $tableInfoTable WHERE sortOrderIndex > ?',
+        [sortRecordIndexToDelete],
+      );
+
+      // Extracting the number of rows to update correctly
+      var rowsToUpdate = totalRowsToUpdate.isNotEmpty
+          ? (totalRowsToUpdate[0]['COUNT(*)'] as int?) ?? 0
+          : 0;
+
+      // Perform batched updates
+      while (rowsToUpdate > 0) {
+        // Calculate the number of rows to update in this batch
+        int currentBatchSize = (rowsToUpdate < batchSize) ? rowsToUpdate : batchSize;
+
+        // Update the sortOrderIndex for the current batch
+        await txn.rawUpdate(
+          'UPDATE $tableInfoTable SET sortOrderIndex = sortOrderIndex - 1 '
+              'WHERE sortOrderIndex > ? LIMIT ?',
+          [sortRecordIndexToDelete, currentBatchSize],
+        );
+
+        // Decrement the remaining rows to update
+        rowsToUpdate -= currentBatchSize;
+        totalRowsUpdated += currentBatchSize;
+      }
+
+      // Return the result of the transaction (number of rows deleted)
       return rowsAffected;
     });
   }

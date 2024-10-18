@@ -103,11 +103,11 @@ class _MenuCategoryFullListScreenState
               // TODO: implement listener
             },
             builder: (context, state) {
-              if (state is InitialState) {
+              if (state is MenuCategoryFullListInitialState) {
                 return const LoadingPage();
-              } else if (state is LoadingState) {
+              } else if (state is MenuCategoryFullListLoadingState) {
                 return const LoadingPage();
-              } else if (state is LoadedState) {
+              } else if (state is MenuCategoryFullListLoadedState) {
                 return Column(
                   mainAxisAlignment: MainAxisAlignment.start,
                   crossAxisAlignment: CrossAxisAlignment.start,
@@ -119,14 +119,14 @@ class _MenuCategoryFullListScreenState
                     ),
                   ],
                 );
-              } else if (state is ErrorState) {
+              } else if (state is MenuCategoryFullListErrorState) {
                 return ErrorPage(
                   key: UniqueKey(),
                   onPressedRetryButton: () async =>
                       BlocProvider.of<MenuCategoryFullListCubit>(context)
                           .loadData(),
                 );
-              } else if (state is NoInternetState) {
+              } else if (state is MenuCategoryFullListNoInternetState) {
                 return NoInternetPage(
                   key: UniqueKey(),
                   onPressedRetryButton: () async =>
@@ -144,7 +144,7 @@ class _MenuCategoryFullListScreenState
   }
 
   Widget searchBarWithSuggestionWidget(
-      BuildContext context, LoadedState state) {
+      BuildContext context, MenuCategoryFullListLoadedState state) {
     return Padding(
       padding: const EdgeInsets.fromLTRB(20, 20, 20, 20),
       child: Row(
@@ -256,7 +256,8 @@ class _MenuCategoryFullListScreenState
     );
   }
 
-  Widget searchBarWidget(BuildContext context, LoadedState state) {
+  Widget searchBarWidget(
+      BuildContext context, MenuCategoryFullListLoadedState state) {
     return Padding(
       padding: const EdgeInsets.fromLTRB(20, 20, 20, 20),
       child: Row(
@@ -288,7 +289,7 @@ class _MenuCategoryFullListScreenState
   }
 
   // menuItemWidget(result!["categories"]) ,
-  Widget menuItemWidget(LoadedState state) {
+  Widget menuItemWidget(MenuCategoryFullListLoadedState state) {
     var map = state.data?["categories"];
     if (map != null && map.isNotEmpty) {
       return CustomScrollView(
@@ -320,7 +321,7 @@ class _MenuCategoryFullListScreenState
   }
 
   Widget menuCategoryExpansionTileItem(
-      {required LoadedState state,
+      {required MenuCategoryFullListLoadedState state,
       dynamic model,
       required int index,
       required int totalItemLength}) {
@@ -337,6 +338,7 @@ class _MenuCategoryFullListScreenState
         SubCategory.convertDynamicListToSubCategoryList(dynamicSubCategories);
     final theme = Theme.of(context);
     return Theme(
+      key: ValueKey("$index"),
       data: theme.copyWith(dividerColor: Colors.transparent),
       child: Padding(
         padding: EdgeInsets.only(
@@ -353,13 +355,14 @@ class _MenuCategoryFullListScreenState
               children: [
                 SlidableAction(
                   onPressed: (BuildContext context) async {
-                    Constants.debugLog(MenuCategoryFullListScreen, "menuCategoryExpansionTileItem:IconButton:Index:${index}");
+                    Constants.debugLog(MenuCategoryFullListScreen,
+                        "menuCategoryExpansionTileItem:IconButton:Index:${index}");
                     navigationRoutes
                         .navigateToUpdateMenuCategoryScreen(
-                        categoryId: category.id)
+                            categoryId: category.id)
                         .then((value) async => context
-                        .read<MenuCategoryFullListCubit>()
-                        .loadData());
+                            .read<MenuCategoryFullListCubit>()
+                            .loadData());
                   },
                   backgroundColor: Colors.lightBlueAccent,
                   foregroundColor: Colors.white,
@@ -371,7 +374,8 @@ class _MenuCategoryFullListScreenState
                     bottomRight: Radius.circular(0),
                     topRight: Radius.circular(0),
                   ),
-                  label:"${AppLocalizations.of(context)?.translate(StringValue.common_edit) ?? "Edit"}",
+                  label:
+                      "${AppLocalizations.of(context)?.translate(StringValue.common_edit) ?? "Edit"}",
                 ),
                 SlidableAction(
                   backgroundColor: Colors.red,
@@ -384,7 +388,8 @@ class _MenuCategoryFullListScreenState
                     bottomLeft: Radius.circular(0),
                   ),
                   icon: MdiIcons.delete,
-                  label:"${AppLocalizations.of(context)?.translate(StringValue.common_delete) ?? "Delete"}",
+                  label:
+                      "${AppLocalizations.of(context)?.translate(StringValue.common_delete) ?? "Delete"}",
                   onPressed: (BuildContext ctx) {
                     Constants.customPopUpDialogMessage(
                       classObject: AttendanceScreen,
@@ -392,18 +397,15 @@ class _MenuCategoryFullListScreenState
                       titleIcon: Icon(
                         Icons.info_outline,
                         size: 40,
-                        color:
-                        Theme.of(context).primaryColor,
+                        color: Theme.of(context).primaryColor,
                       ),
                       title:
-                      "${AppLocalizations.of(context)?.translate(StringValue.menu_category_full_list_delete_dialog_title) ?? "Are you sure ?"}",
+                          "${AppLocalizations.of(context)?.translate(StringValue.menu_category_full_list_delete_dialog_title) ?? "Are you sure ?"}",
                       descriptions:
-                      "${AppLocalizations.of(context)?.translate(StringValue.menu_category_full_list_delete_dialog_subTitle) ?? "Do you really want to delete this category information? You will not be able to undo this action."}",
+                          "${AppLocalizations.of(context)?.translate(StringValue.menu_category_full_list_delete_dialog_subTitle) ?? "Do you really want to delete this category information? You will not be able to undo this action."}",
                       actions: Row(
-                        mainAxisAlignment:
-                        MainAxisAlignment.center,
-                        crossAxisAlignment:
-                        CrossAxisAlignment.center,
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        crossAxisAlignment: CrossAxisAlignment.center,
                         mainAxisSize: MainAxisSize.max,
                         children: [
                           TextButton(
@@ -413,17 +415,14 @@ class _MenuCategoryFullListScreenState
                                   .textTheme
                                   .titleSmall!
                                   .copyWith(
-                                color: Theme.of(context)
-                                    .brightness ==
-                                    Brightness.light
-                                    ? Colors.white
-                                    : null,
-                                fontWeight:
-                                FontWeight.w700,
-                              ),
+                                    color: Theme.of(context).brightness ==
+                                            Brightness.light
+                                        ? Colors.white
+                                        : null,
+                                    fontWeight: FontWeight.w700,
+                                  ),
                             ),
-                            onPressed: () =>
-                                Navigator.pop(this.context),
+                            onPressed: () => Navigator.pop(this.context),
                           ),
                           TextButton(
                             child: Text(
@@ -432,18 +431,20 @@ class _MenuCategoryFullListScreenState
                                   .textTheme
                                   .titleSmall!
                                   .copyWith(
-                                color: Theme.of(context)
-                                    .brightness ==
-                                    Brightness.light
-                                    ? Colors.white
-                                    : null,
-                                fontWeight:
-                                FontWeight.w700,
-                              ),
+                                    color: Theme.of(context).brightness ==
+                                            Brightness.light
+                                        ? Colors.white
+                                        : null,
+                                    fontWeight: FontWeight.w700,
+                                  ),
                             ),
                             onPressed: () {
                               Navigator.pop(this.context);
-                              BlocProvider.of<MenuCategoryFullListCubit>(context).deletecategory(categoryId: category.id);
+                              BlocProvider.of<MenuCategoryFullListCubit>(
+                                      context)
+                                  .deletecategory(
+                                      categoryId: category.id,
+                                      category: category);
                             },
                           )
                         ],
@@ -518,7 +519,6 @@ class _MenuCategoryFullListScreenState
                       children: [
                         Expanded(
                           child: PostTimeTextWidget(
-                            key: UniqueKey(),
                             creationDate: category.createdDate ?? "",
                             localizedCode:
                                 AppLocalizations.getCurrentLanguageCode(
@@ -535,6 +535,54 @@ class _MenuCategoryFullListScreenState
                 mainAxisAlignment: MainAxisAlignment.start,
                 mainAxisSize: MainAxisSize.min,
                 children: [
+                  Row(
+                    crossAxisAlignment: CrossAxisAlignment.center,
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      Visibility(
+                        visible: index == 0 ? false : true,
+                        child: IconButton(
+                          onPressed: () async {
+                            // onMoveItemUpTableInfoEvent
+                            Constants.showLoadingDialog(context);
+                            setState(() {
+                              BlocProvider.of<MenuCategoryFullListCubit>(
+                                      context)
+                                  .moveCategoryUp(index, context)
+                                  .then(
+                                    (value) => navigationRoutes.goBack(),
+                                  );
+                            });
+                          },
+                          icon: const Icon(Icons.keyboard_arrow_up),
+                        ),
+                      ),
+                      Visibility(
+                        visible: index < (totalItemLength - 1),
+                        child: Padding(
+                          padding: index == 0
+                              ? const EdgeInsets.all(0.0)
+                              : const EdgeInsets.only(top: 5.0),
+                          child: IconButton(
+                            onPressed: () async {
+                              // onMoveItemDownTableInfoEvent
+                              Constants.showLoadingDialog(context);
+                              setState(() {
+                                BlocProvider.of<MenuCategoryFullListCubit>(
+                                        context)
+                                    .moveCategoryDown(index, context)
+                                    .then(
+                                      (value) => navigationRoutes.goBack(),
+                                    );
+                              });
+                            },
+                            icon: const Icon(Icons.keyboard_arrow_down),
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
                   SizedBox(
                     height: 30,
                     child: FittedBox(
@@ -551,19 +599,6 @@ class _MenuCategoryFullListScreenState
                       ),
                     ),
                   ),
-                  // IconButton(
-                  //   icon: Icon(MdiIcons.circleEditOutline),
-                  //   onPressed: () async {
-                  //     Constants.debugLog(MenuCategoryFullListScreen,
-                  //         "menuCategoryExpansionTileItem:IconButton:Index:${index}");
-                  //     navigationRoutes
-                  //         .navigateToUpdateMenuCategoryScreen(
-                  //             categoryId: category.id)
-                  //         .then((value) async => context
-                  //             .read<MenuCategoryFullListCubit>()
-                  //             .loadData());
-                  //   },
-                  // ),
                 ],
               ),
               controller: state.expandedTitleControllerList![index],
@@ -599,10 +634,10 @@ class _MenuCategoryFullListScreenState
 
   void scrollToItemAndExpand(String keyword) {
     if (BlocProvider.of<MenuCategoryFullListCubit>(context).state
-        is LoadedState) {
-      LoadedState loadedState =
+        is MenuCategoryFullListLoadedState) {
+      MenuCategoryFullListLoadedState loadedState =
           BlocProvider.of<MenuCategoryFullListCubit>(context).state
-              as LoadedState;
+              as MenuCategoryFullListLoadedState;
 
       if (keyword != null &&
           keyword.isNotEmpty &&

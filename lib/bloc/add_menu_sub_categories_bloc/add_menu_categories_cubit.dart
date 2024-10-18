@@ -114,6 +114,7 @@ class AddMenuCategoryCubit extends Cubit<AddMenuCategoryState> {
                   name: subCategoryList[i],
                   createdDate: DateTime.now().toUtc().toIso8601String(),
                   categoryId: category.id,
+                  position: i
                 );
                 int subcategoryId =
                     await repository.createSubcategory(subCategory);

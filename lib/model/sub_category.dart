@@ -6,9 +6,15 @@ class SubCategory extends ISuspensionBean {
   String? createdDate;
   int? categoryId;
   int? isActive;
+  int? position;
 
   SubCategory(
-      {this.id, this.name, this.createdDate, this.categoryId, this.isActive});
+      {this.id,
+      this.name,
+      this.createdDate,
+      this.categoryId,
+      this.isActive,
+      this.position});
 
   factory SubCategory.fromJson(Map<String, dynamic> json) {
     return SubCategory(
@@ -17,6 +23,7 @@ class SubCategory extends ISuspensionBean {
       createdDate: json['createdDate'],
       categoryId: json['categoryId'],
       isActive: json['isActive'],
+      position: json['position'],
     );
   }
 
@@ -26,7 +33,8 @@ class SubCategory extends ISuspensionBean {
       'name': name,
       'createdDate': createdDate,
       'categoryId': categoryId,
-      'isActive': isActive ?? 1
+      'isActive': isActive ?? 1,
+      'position': position
     }..removeWhere((key, value) => value == null);
   }
 
@@ -36,6 +44,7 @@ class SubCategory extends ISuspensionBean {
     String? createdDate,
     int? categoryId,
     int? isActive,
+    int? position,
   }) {
     return SubCategory(
       id: id ?? this.id,
@@ -43,6 +52,7 @@ class SubCategory extends ISuspensionBean {
       createdDate: createdDate ?? this.createdDate,
       categoryId: categoryId ?? this.categoryId,
       isActive: isActive ?? this.isActive ?? 1,
+      position: position ?? this.position,
     );
   }
 
@@ -75,6 +85,6 @@ class SubCategory extends ISuspensionBean {
 
   @override
   String toString() {
-    return 'SubCategory{id: $id, name: $name, createdDate: $createdDate, categoryId: $categoryId, isActive: $isActive}';
+    return 'SubCategory{id: $id, name: $name, categoryId: $categoryId, isActive: $isActive, position: $position, createdDate: $createdDate}';
   }
 }

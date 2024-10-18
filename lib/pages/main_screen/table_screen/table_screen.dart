@@ -192,102 +192,104 @@ class _TableScreenState extends State<TableScreen>
 
   Widget buildGridItem(
       TableInfoModel model, var index, List<TableInfoModel>? list) {
-    return Card(
-      key: ValueKey("$index"),
-      shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(5.0),
-      ),
-      elevation: 3,
-      child: Stack(
-        children: [
-          Material(
-            color: Colors.transparent,
-            type: MaterialType.card,
-            child: InkWell(
-              onTap: () async {
-                onUpdateModel(model);
-              },
-              borderRadius: BorderRadius.circular(5.0),
-              child: Center(
-                child: Padding(
-                  padding: const EdgeInsets.only(
-                      left: 10, right: 10, top: 30, bottom: 10),
-                  child: Column(
-                    mainAxisAlignment: MainAxisAlignment.start,
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    mainAxisSize: MainAxisSize.min,
-                    children: [
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.start,
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        mainAxisSize: MainAxisSize.min,
-                        children: <Widget>[
-                          Expanded(
-                            child: Text(
-                                "${AppLocalizations.of(context)?.translate(StringValue.table_name_label_text) ?? "Table Name"}: ${model.name}",
+    return RepaintBoundary(
+      child: Card(
+        key: ValueKey("$index"),
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(5.0),
+        ),
+        elevation: 3,
+        child: Stack(
+          children: [
+            Material(
+              color: Colors.transparent,
+              type: MaterialType.card,
+              child: InkWell(
+                onTap: () async {
+                  onUpdateModel(model);
+                },
+                borderRadius: BorderRadius.circular(5.0),
+                child: Center(
+                  child: Padding(
+                    padding: const EdgeInsets.only(
+                        left: 10, right: 10, top: 30, bottom: 10),
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.start,
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.start,
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          mainAxisSize: MainAxisSize.min,
+                          children: <Widget>[
+                            Expanded(
+                              child: Text(
+                                  "${AppLocalizations.of(context)?.translate(StringValue.table_name_label_text) ?? "Table Name"}: ${model.name}",
+                                  textAlign: TextAlign.start),
+                            ),
+                          ],
+                        ),
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.start,
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          mainAxisSize: MainAxisSize.min,
+                          children: <Widget>[
+                            Expanded(
+                              child: Text(
+                                  "${AppLocalizations.of(context)?.translate(StringValue.table_nos_of_chairs_label_text) ?? "Nos Of Chairs per Table"}: ${model.nosOfChairs}",
+                                  textAlign: TextAlign.start),
+                            ),
+                          ],
+                        ),
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.start,
+                          crossAxisAlignment: CrossAxisAlignment.center,
+                          mainAxisSize: MainAxisSize.min,
+                          children: <Widget>[
+                            Text(
+                                "${AppLocalizations.of(context)?.translate(StringValue.table_color_indicator_label_text) ?? "Color Indicator"} : ",
                                 textAlign: TextAlign.start),
-                          ),
-                        ],
-                      ),
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.start,
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        mainAxisSize: MainAxisSize.min,
-                        children: <Widget>[
-                          Expanded(
-                            child: Text(
-                                "${AppLocalizations.of(context)?.translate(StringValue.table_nos_of_chairs_label_text) ?? "Nos Of Chairs per Table"}: ${model.nosOfChairs}",
-                                textAlign: TextAlign.start),
-                          ),
-                        ],
-                      ),
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.start,
-                        crossAxisAlignment: CrossAxisAlignment.center,
-                        mainAxisSize: MainAxisSize.min,
-                        children: <Widget>[
-                          Text(
-                              "${AppLocalizations.of(context)?.translate(StringValue.table_color_indicator_label_text) ?? "Color Indicator"} : ",
-                              textAlign: TextAlign.start),
-                          Container(
-                            width: 30,
-                            height: 30,
-                            decoration: BoxDecoration(
-                              color: Color(int.parse(
-                                      model.colorValue ?? "000000",
-                                      radix: 16) |
-                                  0xFF000000),
-                              border: Border.all(
-                                color: Theme.of(context).colorScheme.primary,
-                              ),
-                              borderRadius: const BorderRadius.all(
-                                Radius.circular(5),
+                            Container(
+                              width: 30,
+                              height: 30,
+                              decoration: BoxDecoration(
+                                color: Color(int.parse(
+                                        model.colorValue ?? "000000",
+                                        radix: 16) |
+                                    0xFF000000),
+                                border: Border.all(
+                                  color: Theme.of(context).colorScheme.primary,
+                                ),
+                                borderRadius: const BorderRadius.all(
+                                  Radius.circular(5),
+                                ),
                               ),
                             ),
-                          ),
-                        ],
-                      ),
-                    ],
+                          ],
+                        ),
+                      ],
+                    ),
                   ),
                 ),
               ),
             ),
-          ),
-          Positioned(
-            top: 5.0, // Adjust the top position as needed
-            right: 5.0, // Adjust the right position as needed
-            child: GestureDetector(
-              onTap: () async {
-                ondDelete(model, index);
-              },
-              child: const Icon(
-                Icons.delete,
-                color: Colors.red,
-                size: 24.0,
+            Positioned(
+              top: 5.0, // Adjust the top position as needed
+              right: 5.0, // Adjust the right position as needed
+              child: GestureDetector(
+                onTap: () async {
+                  ondDelete(model, index);
+                },
+                child: const Icon(
+                  Icons.delete,
+                  color: Colors.red,
+                  size: 24.0,
+                ),
               ),
             ),
-          ),
-        ],
+          ],
+        ),
       ),
     );
   }
@@ -322,7 +324,7 @@ class _TableScreenState extends State<TableScreen>
               final double scale = lerpDouble(1, 1.02, animValue)!;
               return Transform.scale(
                 scale: scale,
-                child: buildListItem(list![index], index, list),
+                child: buildListItem(list[index], index, list),
               );
             },
             child: child,
