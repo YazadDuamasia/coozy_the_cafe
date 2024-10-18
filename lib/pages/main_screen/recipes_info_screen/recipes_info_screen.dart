@@ -1,7 +1,7 @@
 import 'dart:io';
-
-import 'package:coozy_the_cafe/bloc/recipes_bookmark_list_cubit/recipes_bookmark_list_cubit.dart';
 import 'package:coozy_the_cafe/bloc/recipes_full_list_cubit/recipes_full_list_cubit.dart';
+import 'package:share_plus/share_plus.dart';
+import 'package:coozy_the_cafe/bloc/recipes_bookmark_list_cubit/recipes_bookmark_list_cubit.dart';
 import 'package:coozy_the_cafe/model/recipe_model.dart';
 import 'package:coozy_the_cafe/model/translator_language/translator_language.dart';
 import 'package:coozy_the_cafe/routing/routs.dart';
@@ -1337,7 +1337,25 @@ class _RecipesInfoScreenState extends State<RecipesInfoScreen> {
     super.dispose();
   }
 
-  Future<void> shareRecipe() async {}
+  Future<void> shareRecipe() async {
+    StringBuffer stringBuffer = StringBuffer("");
+    if (widget.model!.recipeName != null ||
+        widget.model!.recipeName!.isNotEmpty) {
+      stringBuffer.write("Recipe: ${widget.model!.recipeName ?? ""}");
+    }
+    if (widget.model!.recipeReferenceUrl != null ||
+        widget.model!.recipeReferenceUrl!.isNotEmpty) {
+      stringBuffer
+          .write("\nReference: ${widget.model!.recipeReferenceUrl ?? ""}");
+    }
+
+    stringBuffer.write(widget.model!.recipeName ?? "");
+    final result = await Share.share("${stringBuffer.toString()}");
+
+    if (result.status == ShareResultStatus.success) {
+      print('Thank you for sharing my website!');
+    }
+  }
 
   bool _wasPreviousRouteRecipesBookmarkListScreen(BuildContext context) {
     if (Navigator.of(context).canPop()) {
@@ -1354,6 +1372,14 @@ class _RecipesInfoScreenState extends State<RecipesInfoScreen> {
   void bookmark() {
     BlocProvider.of<RecipesBookmarkListCubit>(context).updateRecipe(
         widget.model!.copyWith(isBookmark: !widget.model!.isBookmark!));
+
+    // if (_wasPreviousRouteRecipesBookmarkListScreen(context)) {
+    //   BlocProvider.of<RecipesFullListCubit>(context).updateBookmark(
+    //       model: widget.model!
+    //           .copyWith(isBookmark: !widget.model!.isBookmark! ?? false),
+    //       context: context,
+    //       currentIndex: widget.currentIndex);
+    // }
 
     setState(() {
       widget.model = widget.model!

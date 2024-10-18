@@ -46,11 +46,12 @@ class _RecipesListScreenState extends State<RecipesListScreen> {
               IconButton(
                   tooltip: "Bookmarks",
                   onPressed: () async {
-                    await navigationRoutes
+                    navigationRoutes
                         .navigateToRecipesBookmarkListScreen()
                         .then((value) {
                       setState(() {
-                        BlocProvider.of<RecipesFullListCubit>(context).loadData();
+                        BlocProvider.of<RecipesFullListCubit>(context)
+                            .reloadWithCurrentState(context);
                       });
                     });
                   },
@@ -367,16 +368,12 @@ class _RecipesListScreenState extends State<RecipesListScreen> {
             borderRadius: BorderRadius.circular(5),
             onTap: () async {
               Constants.debugLog(RecipesListScreen, model.toString());
-              await navigationRoutes
-                  .navigateToRecipesInfoScreen(
-                      model: model, currentIndex: index)
-                  .then(
-                (value) {
-                  setState(() {
-                    BlocProvider.of<RecipesFullListCubit>(context).loadData();
-                  });
-                },
-              );
+              var res = await navigationRoutes.navigateToRecipesInfoScreen(
+                  model: model, currentIndex: index);
+              setState(() {
+                BlocProvider.of<RecipesFullListCubit>(context)
+                    .reloadWithCurrentState(context);
+              });
             },
             child: Padding(
               padding: const EdgeInsets.all(10.0),

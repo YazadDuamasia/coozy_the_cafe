@@ -47,6 +47,7 @@ class RecipesBookmarkListCubit extends Cubit<RecipesBookmarkListState> {
   Future<void> updateRecipe(RecipeModel updatedRecipe) async {
     try {
       emit(RecipesBookmarkListLoadingState());
+
       var res = await RestaurantRepository().updateRecipe(updatedRecipe);
       Constants.debugLog(RecipesBookmarkListCubit, "updateBookmark:res:$res ");
       List<RecipeModel>? result = await fetchDataFromApi();

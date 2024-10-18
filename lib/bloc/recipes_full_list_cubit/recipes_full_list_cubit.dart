@@ -116,6 +116,7 @@ class RecipesFullListCubit extends Cubit<RecipesFullListState> {
             totalPages: 0,
             startIndex: 0,
             endIndex: 0,
+            appliedFilterList: appliedFilterList,
             isInternalLoading: false,
             itemsPerPageList: itemsPerPageList,
           ),
@@ -262,6 +263,7 @@ class RecipesFullListCubit extends Cubit<RecipesFullListState> {
             itemsPerPage: itemsPerPageList.first,
             totalElements: data.length ?? 0,
             totalPages: totalPages,
+            appliedFilterList: appliedFilterList,
             itemsPerPageList: itemsPerPageList));
       }
       //   emit(NoInternetState());
@@ -271,21 +273,305 @@ class RecipesFullListCubit extends Cubit<RecipesFullListState> {
     }
   }
 
+  Future<void> reloadWithCurrentState(context) async {
+    final currentState = state as RecipesLoadedState;
+    Constants.showLoadingDialog(context);
+    List<RecipeModel>? present_list = currentState.list;
+    List<RecipeModel>? present_paginatedData = currentState.paginatedData;
+    int? page_no = currentState.currentPage;
+    int? present_itemsPerPage = currentState.itemsPerPage;
+    int? present_totalPages = currentState.totalPages;
+    int? present_totalElements = currentState.totalElements;
+    List<int>? present_itemsPerPageList = currentState.itemsPerPageList;
+    int? present_startIndex;
+    present_startIndex = currentState.startIndex;
+    int? present_endIndex;
+    present_endIndex = currentState.endIndex;
+    bool? present_isInternalLoading = currentState.isInternalLoading;
+    appliedFilterList = currentState.appliedFilterList ?? [];
+
+    uniqueServings = [];
+    servingsFilterOptionsList = [];
+    uniqueCuisine = [];
+    cuisineFilterOptionsList = [];
+    uniqueCourse = [];
+    courseFilterOptionsList = [];
+    uniqueDiet = [];
+    dietFilterOptionsList = [];
+    uniqueCookingTime = [];
+    cookingTimeFilterOptionsList = [];
+    uniqueTotalCookingTime = [];
+    totalCookingTimeFilterOptionsList = [];
+
+    uniqueDate = [];
+    dateFilterOptionsList = [];
+
+    uniqueTime = [];
+    timeFilterOptionsList = [];
+
+    // Replace this with your actual data loading logic
+    List<RecipeModel>? data;
+    try {
+      data = await RestaurantRepository().recipeList();
+    } catch (e) {
+      print(e);
+      emit(RecipesErrorState(e.toString()));
+      return; // Exit the method on failure
+    }
+    recipeList = data;
+
+    if (data == null || data.isEmpty) {
+      uniqueServings = [];
+      servingsFilterOptionsList = [];
+      uniqueCuisine = [];
+      cuisineFilterOptionsList = [];
+      uniqueCourse = [];
+      courseFilterOptionsList = [];
+      uniqueDiet = [];
+      dietFilterOptionsList = [];
+      uniqueCookingTime = [];
+      cookingTimeFilterOptionsList = [];
+      uniqueTotalCookingTime = [];
+      totalCookingTimeFilterOptionsList = [];
+      uniqueDate = [];
+      dateFilterOptionsList = [];
+
+      uniqueTime = [];
+      timeFilterOptionsList = [];
+
+      page_no = 1;
+      currentItemsPerPage = 0;
+      emit(
+        RecipesLoadedState(
+          list: [],
+          paginatedData: [],
+          currentPage: page_no,
+          itemsPerPage: present_itemsPerPage,
+          totalElements: 0,
+          totalPages: 0,
+          startIndex: present_startIndex,
+          endIndex: present_endIndex,
+          isInternalLoading: false,
+          appliedFilterList: appliedFilterList,
+          itemsPerPageList: present_itemsPerPageList,
+        ),
+      );
+    } else {
+      data.forEach((recipe) {
+        // Extract unique values for each attribute and add them to the respective lists
+        if (!uniqueServings!.contains(recipe.recipeServings)) {
+          uniqueServings!.add(recipe.recipeServings);
+        }
+        if (!uniqueCuisine!.contains(recipe.recipeCuisine)) {
+          uniqueCuisine!.add(recipe.recipeCuisine ?? "");
+        }
+        if (!uniqueCourse!.contains(recipe.recipeCourse)) {
+          uniqueCourse!.add(recipe.recipeCourse ?? "");
+        }
+        if (!uniqueDiet!.contains(recipe.recipeDiet)) {
+          uniqueDiet!.add(recipe.recipeDiet ?? "");
+        }
+        if (!uniqueCookingTime!.contains(recipe.recipeCookingTimeInMins)) {
+          uniqueCookingTime!.add(recipe.recipeCookingTimeInMins);
+        }
+        if (!uniqueTotalCookingTime!.contains(recipe.recipeTotalTimeInMins)) {
+          uniqueTotalCookingTime!.add(recipe.recipeTotalTimeInMins);
+        }
+      });
+
+      // Merge sort uniqueServings list
+      mergeSort(
+        uniqueServings!,
+        compare: (a, b) {
+          if (a == null || b == null) {
+            return 0; // Handle null values if necessary
+          }
+          return a.compareTo(b);
+        },
+      );
+      // Merge sort uniqueCuisine list
+      uniqueCuisine!.sort((a, b) => a[0].compareTo(b[0]));
+      // Merge sort uniqueCourse list
+      uniqueCourse!.sort((a, b) => a[0].compareTo(b[0]));
+      // Merge sort uniqueDiet list
+      uniqueDiet!.sort((a, b) => a![0].compareTo(b![0]));
+      uniqueCookingTime!.sort((a, b) => a!.compareTo(b!));
+      uniqueTotalCookingTime!.sort((a, b) => a!.compareTo(b!));
+
+      uniqueServings?.forEach((int? serving) {
+        if (serving != null) {
+          servingsFilterOptionsList!.add(FilterItemModel(
+            filterTitle: serving.toString(),
+            filterKey: serving,
+          ));
+        }
+      });
+
+      uniqueCuisine?.forEach((String? cuisine) {
+        if (cuisine != null) {
+          cuisineFilterOptionsList!.add(FilterItemModel(
+            filterTitle: cuisine.toString(),
+            filterKey: cuisine,
+          ));
+        }
+      });
+
+      uniqueCourse?.forEach((String? course) {
+        if (course != null) {
+          courseFilterOptionsList!.add(FilterItemModel(
+            filterTitle: course.toString(),
+            filterKey: course,
+          ));
+        }
+      });
+
+      uniqueDiet?.forEach((String? diet) {
+        if (diet != null) {
+          dietFilterOptionsList!.add(FilterItemModel(
+            filterTitle: diet.toString(),
+            filterKey: diet,
+          ));
+        }
+      });
+      uniqueCookingTime?.forEach((int? time) {
+        if (time != null) {
+          cookingTimeFilterOptionsList!.add(FilterItemModel(
+            filterTitle: "${time ?? 0} mins",
+            filterKey: time,
+          ));
+        }
+      });
+      uniqueTotalCookingTime?.forEach((int? time) {
+        if (time != null) {
+          totalCookingTimeFilterOptionsList!.add(FilterItemModel(
+            filterTitle: "${time ?? 0} mins",
+            filterKey: time,
+          ));
+        }
+      });
+
+      Constants.debugLog(RecipesFullListCubit,
+          "reloadWithCurrentState:uniqueServings:${uniqueServings?.length ?? 0}");
+      Constants.debugLog(RecipesFullListCubit,
+          "reloadWithCurrentState:uniqueServings:${json.encode(uniqueServings)}");
+
+      Constants.debugLog(RecipesFullListCubit,
+          "reloadWithCurrentState:uniqueCuisine:${uniqueCuisine?.length ?? 0}");
+      Constants.debugLog(RecipesFullListCubit,
+          "reloadWithCurrentState:uniqueCuisine:${json.encode(uniqueCuisine)}");
+
+      Constants.debugLog(RecipesFullListCubit,
+          "reloadWithCurrentState:uniqueCourse:${uniqueCourse?.length ?? 0}");
+      Constants.debugLog(RecipesFullListCubit,
+          "reloadWithCurrentState:uniqueCourse:${json.encode(uniqueCourse)}");
+
+      Constants.debugLog(RecipesFullListCubit,
+          "reloadWithCurrentState:uniqueDiet:${uniqueDiet?.length ?? 0}");
+      Constants.debugLog(RecipesFullListCubit,
+          "reloadWithCurrentState:uniqueDiet:${json.encode(uniqueDiet)}");
+    }
+
+    List<RecipeModel>? filteredRecipes = data;
+    recipeList = data;
+    if (appliedFilterList != null && appliedFilterList!.isNotEmpty) {
+      //Applying filter to new list
+      filteredRecipes = _applyFilters(appliedFilterList!, data);
+
+      Constants.debugLog(RecipesFullListCubit,
+          "reloadWithCurrentState:applyFilter:filteredRecipes:Length${filteredRecipes?.length ?? 0}");
+      // Constants.debugLog(RecipesFullListCubit, "reloadWithCurrentState:applyFilter:filteredRecipes:${json.encode(filteredRecipes)}");
+      if (filteredRecipes == null || filteredRecipes.isEmpty) {
+        currentPage = page_no;
+        this.currentItemsPerPage = present_itemsPerPage;
+        emit(RecipesLoadedState(
+            list: data ?? [],
+            paginatedData: [],
+            currentPage: currentPage,
+            itemsPerPage: present_itemsPerPage,
+            totalElements: 0,
+            totalPages: 0,
+            startIndex: present_startIndex,
+            endIndex: present_endIndex,
+            isInternalLoading: false,
+            itemsPerPageList: present_itemsPerPageList,
+            appliedFilterList: appliedFilterList));
+      } else {
+        currentPage = page_no;
+        this.currentItemsPerPage = present_itemsPerPage;
+
+        int totalPages =
+            ((filteredRecipes.length ?? 0) / present_itemsPerPage!).ceil();
+        // Ensure endIndex doesn't exceed the total number of elements
+        present_endIndex =
+            (present_endIndex ?? 0) > (filteredRecipes.length ?? 0)
+                ? (filteredRecipes.length ?? 0)
+                : present_endIndex;
+        List<RecipeModel>? paginatedData =
+            filteredRecipes.sublist(present_startIndex ?? 0, present_endIndex);
+        Constants.debugLog(RecipesFullListCubit,
+            "reloadWithCurrentState:applyFilter:paginatedData:${paginatedData.length ?? 0}");
+        emit(RecipesLoadedState(
+            list: filteredRecipes ?? [],
+            paginatedData: paginatedData ?? [],
+            startIndex: present_startIndex,
+            endIndex: present_endIndex,
+            currentPage: page_no,
+            isInternalLoading: false,
+            itemsPerPage: present_itemsPerPage,
+            totalElements: filteredRecipes.length ?? 0,
+            totalPages: totalPages,
+            appliedFilterList: appliedFilterList,
+            itemsPerPageList: present_itemsPerPageList));
+      }
+    } else {
+      //update old view without any filter
+
+      // Calculate the total number of pages
+      int totalPages = ((data?.length ?? 0) / present_itemsPerPage!).ceil();
+
+      // Ensure endIndex doesn't exceed the total number of elements
+      present_endIndex = present_endIndex! > (data!.length ?? 0)
+          ? (data.length ?? 0)
+          : present_endIndex;
+
+      // Get the paginated data based on the calculated indices
+      List<RecipeModel>? paginatedData =
+          data.sublist(present_startIndex ?? 0, present_endIndex ?? 0);
+
+      currentPage = page_no;
+      this.currentItemsPerPage = present_itemsPerPage;
+
+      emit(RecipesLoadedState(
+          list: data ?? [],
+          paginatedData: paginatedData ?? [],
+          startIndex: present_startIndex,
+          endIndex: present_endIndex,
+          currentPage: currentPage,
+          isInternalLoading: false,
+          itemsPerPage: present_itemsPerPage,
+          totalElements: data.length ?? 0,
+          totalPages: totalPages,
+          appliedFilterList: appliedFilterList,
+          itemsPerPageList: present_itemsPerPageList));
+    }
+    navigationRoutes.goBack();
+  }
+
   Future<void> updatePageItems({int? itemsPerPage}) async {
     try {
       RecipesLoadedState currentState = state as RecipesLoadedState;
       emit(RecipesLoadedState(
-        list: currentState.list,
-        paginatedData: currentState.paginatedData,
-        currentPage: currentState.currentPage,
-        itemsPerPage: itemsPerPage,
-        totalPages: currentState.totalPages,
-        totalElements: currentState.totalElements,
-        itemsPerPageList: currentState.itemsPerPageList,
-        startIndex: currentState.startIndex,
-        endIndex: currentState.endIndex,
-        isInternalLoading: true,
-      ));
+          list: currentState.list,
+          paginatedData: currentState.paginatedData,
+          currentPage: currentState.currentPage,
+          itemsPerPage: itemsPerPage,
+          totalPages: currentState.totalPages,
+          totalElements: currentState.totalElements,
+          itemsPerPageList: currentState.itemsPerPageList,
+          startIndex: currentState.startIndex,
+          endIndex: currentState.endIndex,
+          isInternalLoading: true,
+          appliedFilterList: appliedFilterList));
 
       RecipesLoadedState recipesLoadedState = state as RecipesLoadedState;
 
@@ -302,6 +588,7 @@ class RecipesFullListCubit extends Cubit<RecipesFullListState> {
             totalPages: 0,
             startIndex: 0,
             endIndex: 0,
+            appliedFilterList: appliedFilterList,
             isInternalLoading: false,
             itemsPerPageList: itemsPerPageList));
       } else {
@@ -332,17 +619,17 @@ class RecipesFullListCubit extends Cubit<RecipesFullListState> {
         Constants.debugLog(RecipesFullListCubit,
             "updatePageItems:list:size:${recipesLoadedState.list?.length ?? 0}");
         emit(RecipesLoadedState(
-          list: recipesLoadedState.list ?? [],
-          paginatedData: paginatedData ?? [],
-          currentPage: 1,
-          startIndex: startIndex,
-          endIndex: endIndex,
-          itemsPerPage: itemsPerPage,
-          isInternalLoading: false,
-          totalElements: recipesLoadedState.list!.length,
-          totalPages: totalPages,
-          itemsPerPageList: itemsPerPageList,
-        ));
+            list: recipesLoadedState.list ?? [],
+            paginatedData: paginatedData ?? [],
+            currentPage: 1,
+            startIndex: startIndex,
+            endIndex: endIndex,
+            itemsPerPage: itemsPerPage,
+            isInternalLoading: false,
+            totalElements: recipesLoadedState.list!.length,
+            totalPages: totalPages,
+            appliedFilterList: appliedFilterList,
+            itemsPerPageList: itemsPerPageList));
       }
       //   emit(NoInternetState());
     } catch (e) {
@@ -373,17 +660,17 @@ class RecipesFullListCubit extends Cubit<RecipesFullListState> {
 
     Navigator.pop(context);
     emit(RecipesLoadedState(
-      list: currentState.list,
-      paginatedData: currentState.paginatedData,
-      currentPage: currentState.currentPage,
-      itemsPerPage: currentState.itemsPerPage,
-      totalPages: currentState.totalPages,
-      totalElements: currentState.totalElements,
-      itemsPerPageList: currentState.itemsPerPageList,
-      startIndex: currentState.startIndex,
-      endIndex: currentState.endIndex,
-      isInternalLoading: false,
-    ));
+        list: currentState.list,
+        paginatedData: currentState.paginatedData,
+        currentPage: currentState.currentPage,
+        itemsPerPage: currentState.itemsPerPage,
+        totalPages: currentState.totalPages,
+        totalElements: currentState.totalElements,
+        itemsPerPageList: currentState.itemsPerPageList,
+        startIndex: currentState.startIndex,
+        endIndex: currentState.endIndex,
+        isInternalLoading: false,
+        appliedFilterList: appliedFilterList));
   }
 
   Future<void> pullToRefresh({int? itemsPerPage}) async {
@@ -391,17 +678,17 @@ class RecipesFullListCubit extends Cubit<RecipesFullListState> {
       RecipesLoadedState recipesLoadedState = state as RecipesLoadedState;
 
       emit(RecipesLoadedState(
-        list: recipesLoadedState.list,
-        paginatedData: recipesLoadedState.paginatedData,
-        currentPage: recipesLoadedState.currentPage,
-        itemsPerPage: itemsPerPage,
-        totalPages: recipesLoadedState.totalPages,
-        totalElements: recipesLoadedState.totalElements,
-        itemsPerPageList: recipesLoadedState.itemsPerPageList,
-        startIndex: recipesLoadedState.startIndex,
-        endIndex: recipesLoadedState.endIndex,
-        isInternalLoading: true,
-      ));
+          list: recipesLoadedState.list,
+          paginatedData: recipesLoadedState.paginatedData,
+          currentPage: recipesLoadedState.currentPage,
+          itemsPerPage: itemsPerPage,
+          totalPages: recipesLoadedState.totalPages,
+          totalElements: recipesLoadedState.totalElements,
+          itemsPerPageList: recipesLoadedState.itemsPerPageList,
+          startIndex: recipesLoadedState.startIndex,
+          endIndex: recipesLoadedState.endIndex,
+          isInternalLoading: true,
+          appliedFilterList: appliedFilterList));
 
       // Replace this with your actual data loading logic
       if (recipesLoadedState.list == null || recipesLoadedState.list!.isEmpty) {
@@ -419,6 +706,7 @@ class RecipesFullListCubit extends Cubit<RecipesFullListState> {
             startIndex: 0,
             endIndex: 0,
             isInternalLoading: false,
+            appliedFilterList: appliedFilterList,
             itemsPerPageList: itemsPerPageList));
       } else {
 /*        List<GlobalKey?>? expansionTileKeys =
@@ -455,6 +743,7 @@ class RecipesFullListCubit extends Cubit<RecipesFullListState> {
             isInternalLoading: false,
             totalElements: recipesLoadedState.list?.length ?? 0,
             totalPages: totalPages,
+            appliedFilterList: appliedFilterList,
             itemsPerPageList: itemsPerPageList));
       }
       //   emit(NoInternetState());
@@ -475,17 +764,17 @@ class RecipesFullListCubit extends Cubit<RecipesFullListState> {
       RecipesLoadedState recipesLoadedState = state as RecipesLoadedState;
 
       emit(RecipesLoadedState(
-        list: recipesLoadedState.list,
-        paginatedData: recipesLoadedState.paginatedData,
-        currentPage: nextPage,
-        itemsPerPage: recipesLoadedState.itemsPerPage,
-        totalPages: recipesLoadedState.totalPages,
-        totalElements: recipesLoadedState.totalElements,
-        itemsPerPageList: recipesLoadedState.itemsPerPageList,
-        startIndex: recipesLoadedState.startIndex,
-        endIndex: recipesLoadedState.endIndex,
-        isInternalLoading: true,
-      ));
+          list: recipesLoadedState.list,
+          paginatedData: recipesLoadedState.paginatedData,
+          currentPage: nextPage,
+          itemsPerPage: recipesLoadedState.itemsPerPage,
+          totalPages: recipesLoadedState.totalPages,
+          totalElements: recipesLoadedState.totalElements,
+          itemsPerPageList: recipesLoadedState.itemsPerPageList,
+          startIndex: recipesLoadedState.startIndex,
+          endIndex: recipesLoadedState.endIndex,
+          isInternalLoading: true,
+          appliedFilterList: appliedFilterList));
 
       // emit(RecipesLoadingState());
       // Replace this with your actual data loading logic
@@ -503,7 +792,8 @@ class RecipesFullListCubit extends Cubit<RecipesFullListState> {
             startIndex: 0,
             endIndex: 0,
             isInternalLoading: false,
-            itemsPerPageList: itemsPerPageList));
+            itemsPerPageList: itemsPerPageList,
+            appliedFilterList: appliedFilterList));
       } else {
         // Calculate the new start index based on the next page
         int totalPages = ((recipesLoadedState.list?.length ?? 0) /
@@ -535,6 +825,7 @@ class RecipesFullListCubit extends Cubit<RecipesFullListState> {
             itemsPerPage: recipesLoadedState.itemsPerPage,
             totalElements: recipesLoadedState.list?.length ?? 0,
             totalPages: totalPages,
+            appliedFilterList: appliedFilterList,
             itemsPerPageList: itemsPerPageList));
       }
       //   emit(NoInternetState());
@@ -559,6 +850,7 @@ class RecipesFullListCubit extends Cubit<RecipesFullListState> {
             itemsPerPage: itemsPerPageList.first,
             totalElements: 0,
             totalPages: 0,
+            appliedFilterList: appliedFilterList,
             itemsPerPageList: itemsPerPageList));
         uniqueServings = [];
         servingsFilterOptionsList = [];
@@ -614,6 +906,7 @@ class RecipesFullListCubit extends Cubit<RecipesFullListState> {
               startIndex: 0,
               endIndex: 0,
               isInternalLoading: false,
+              appliedFilterList: appliedFilterList,
               itemsPerPageList: itemsPerPageList,
             ),
           );
@@ -652,7 +945,7 @@ class RecipesFullListCubit extends Cubit<RecipesFullListState> {
             },
           );
           // Merge sort uniqueCuisine list
-            uniqueCuisine!.sort((a, b) => a[0].compareTo(b[0]));
+          uniqueCuisine!.sort((a, b) => a[0].compareTo(b[0]));
           // Merge sort uniqueCourse list
           uniqueCourse!.sort((a, b) => a[0].compareTo(b[0]));
           // Merge sort uniqueDiet list
@@ -760,6 +1053,7 @@ class RecipesFullListCubit extends Cubit<RecipesFullListState> {
               itemsPerPage: itemsPerPageList.first,
               totalElements: data.length ?? 0,
               totalPages: totalPages,
+              appliedFilterList: appliedFilterList,
               itemsPerPageList: itemsPerPageList));
         }
         //   emit(NoInternetState());
@@ -781,6 +1075,7 @@ class RecipesFullListCubit extends Cubit<RecipesFullListState> {
           startIndex: 0,
           endIndex: 0,
           isInternalLoading: true,
+          appliedFilterList: appliedFilterList,
           itemsPerPageList: itemsPerPageList,
         ));
 
@@ -811,6 +1106,7 @@ class RecipesFullListCubit extends Cubit<RecipesFullListState> {
             startIndex: 0,
             endIndex: 0,
             isInternalLoading: false,
+            appliedFilterList: appliedFilterList,
             itemsPerPageList: itemsPerPageList,
           ));
         } else {
@@ -843,6 +1139,7 @@ class RecipesFullListCubit extends Cubit<RecipesFullListState> {
               itemsPerPage: itemsPerPageList.first,
               totalElements: searchResults.length ?? 0,
               totalPages: (searchResults.length ?? 0) ~/ itemsPerPageList.first,
+              appliedFilterList: appliedFilterList,
               itemsPerPageList: itemsPerPageList));
         }
       } catch (e) {
@@ -872,17 +1169,17 @@ class RecipesFullListCubit extends Cubit<RecipesFullListState> {
         currentPage = 1;
         currentItemsPerPage = recipesLoadedState.itemsPerPage;
         emit(RecipesLoadedState(
-          list: [],
-          paginatedData: [],
-          currentPage: 1,
-          itemsPerPage: recipesLoadedState.itemsPerPage,
-          totalElements: 0,
-          totalPages: 0,
-          startIndex: 0,
-          endIndex: 0,
-          isInternalLoading: false,
-          itemsPerPageList: itemsPerPageList,
-        ));
+            list: [],
+            paginatedData: [],
+            currentPage: 1,
+            itemsPerPage: recipesLoadedState.itemsPerPage,
+            totalElements: 0,
+            totalPages: 0,
+            startIndex: 0,
+            endIndex: 0,
+            isInternalLoading: false,
+            itemsPerPageList: itemsPerPageList,
+            appliedFilterList: appliedFilterList));
       } else {
         int totalPages =
             ((filteredRecipes.length ?? 0) / recipesLoadedState.itemsPerPage!)
@@ -913,6 +1210,7 @@ class RecipesFullListCubit extends Cubit<RecipesFullListState> {
             itemsPerPage: recipesLoadedState.itemsPerPage,
             totalElements: filteredRecipes.length ?? 0,
             totalPages: totalPages,
+            appliedFilterList: appliedFilterList,
             itemsPerPageList: itemsPerPageList));
       }
     } catch (e) {

@@ -122,11 +122,11 @@ class NavigationRoutes {
         .pushNamed(RouteName.employeeAttendanceScreenRoute);
   }
 
-  Future<void> navigateToRecipesInfoScreen(
+  Future navigateToRecipesInfoScreen(
       {required RecipeModel? model, var currentIndex})async {
     String arg = RecipesInfoScreenArgument.recipesInfoScreenArgumentToJson(
         RecipesInfoScreenArgument(currentIndex: currentIndex, model: model));
-    navigatorKey.currentState!
+    return await navigatorKey.currentState!
         .pushNamed(RouteName.recipesInfoScreenRoute, arguments: arg);
   }
 

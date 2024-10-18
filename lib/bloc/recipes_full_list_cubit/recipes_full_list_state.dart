@@ -14,6 +14,8 @@ class RecipesLoadingState extends RecipesFullListState {}
 class RecipesLoadedState extends RecipesFullListState {
   final List<RecipeModel>? list;
   final List<RecipeModel>? paginatedData;
+  List<AppliedFilterModel>? appliedFilterList;
+
   int? currentPage;
   int? itemsPerPage;
   int? totalPages;
@@ -33,6 +35,7 @@ class RecipesLoadedState extends RecipesFullListState {
       this.itemsPerPageList,
       this.startIndex,
       this.endIndex,
+      required this.appliedFilterList,
       this.isInternalLoading = false});
 
   @override
@@ -45,7 +48,8 @@ class RecipesLoadedState extends RecipesFullListState {
         totalPages!,
         totalElements!,
         startIndex!,
-        endIndex!
+        endIndex!,
+        appliedFilterList!
       ];
 }
 
